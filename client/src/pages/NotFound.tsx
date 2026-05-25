@@ -20,11 +20,11 @@ export default function NotFound() {
           <CatConfused className="w-32 h-40 mx-auto opacity-75" />
         </div>
 
-        <h2 className="text-xl tracking-[0.2em] text-[#3D4144]/60 mb-3"
+        <h2 className="text-xl tracking-[0.2em] text-[#31353A]/60 mb-3"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
           這隻貓咪也找不到你要的頁面⋯⋯
         </h2>
-        <p className="text-xs text-[#3D4144]/35 tracking-[0.15em] mb-2 max-w-xs leading-[2]"
+        <p className="text-xs text-[#31353A]/35 tracking-[0.15em] mb-2 max-w-xs leading-[2]"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
           你所尋找的頁面不存在，或許它正在宇宙的另一個角落等待你。
         </p>
@@ -33,7 +33,7 @@ export default function NotFound() {
           "Even the cat is confused, but the crystals know the way."
         </p>
         <Link href="/">
-          <button className="text-xs tracking-[0.25em] px-8 py-3 bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#3D4144] transition-all duration-500 active:scale-95"
+          <button className="text-xs tracking-[0.25em] px-8 py-3 bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             帶貓咪回到聖所
           </button>

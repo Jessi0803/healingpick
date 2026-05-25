@@ -363,7 +363,7 @@ export default function CatCompanion() {
               </span>
               <button
                 onClick={() => { setChatMode(false); setChatHistory([]); }}
-                className="text-[10px] text-[#3D4144]/30 hover:text-[#3D4144]/60 transition-colors"
+                className="text-[10px] text-[#31353A]/30 hover:text-[#31353A]/60 transition-colors"
               >
                 ✕
               </button>
@@ -376,7 +376,7 @@ export default function CatCompanion() {
             <div>
               <div className="px-4 pt-3 pb-2" onClick={handleBubbleClick} style={{ cursor: 'pointer' }}>
                 <p
-                  className="text-[11px] leading-[1.8] text-[#3D4144]/70 tracking-wider"
+                  className="text-[11px] leading-[1.8] text-[#31353A]/70 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
                   {message}
@@ -404,7 +404,7 @@ export default function CatCompanion() {
                     }}
                     onFocus={() => enterChatMode()}
                     placeholder="說給 Mochi 聽 ♡"
-                    className="flex-1 text-[10px] bg-transparent border-b border-[#D1BE9B]/30 focus:border-[#D1BE9B]/60 outline-none py-1 text-[#3D4144]/70 placeholder-[#D1BE9B]/40 tracking-wider"
+                    className="flex-1 text-[10px] bg-transparent border-b border-[#D1BE9B]/30 focus:border-[#D1BE9B]/60 outline-none py-1 text-[#31353A]/70 placeholder-[#D1BE9B]/40 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
                   <button
@@ -433,8 +433,8 @@ export default function CatCompanion() {
                     <div
                       className={`max-w-[85%] px-3 py-2 rounded-xl text-[10px] leading-[1.7] tracking-wider ${
                         msg.role === 'user'
-                          ? 'bg-[#D1BE9B]/20 text-[#3D4144]/75 rounded-tr-sm'
-                          : 'bg-white/60 text-[#3D4144]/70 rounded-tl-sm border border-[#D1BE9B]/15'
+                          ? 'bg-[#D1BE9B]/20 text-[#31353A]/75 rounded-tr-sm'
+                          : 'bg-white/60 text-[#31353A]/70 rounded-tl-sm border border-[#D1BE9B]/15'
                       }`}
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
@@ -468,7 +468,7 @@ export default function CatCompanion() {
                   onKeyDown={handleKeyDown}
                   placeholder="說點什麼…"
                   disabled={mochiChat.isPending}
-                  className="flex-1 bg-white/50 border border-[#D1BE9B]/20 rounded-full px-3 py-1.5 text-[10px] text-[#3D4144]/70 tracking-wider focus:outline-none focus:border-[#D1BE9B]/40 placeholder:text-[#3D4144]/25 disabled:opacity-50"
+                  className="flex-1 bg-white/50 border border-[#D1BE9B]/20 rounded-full px-3 py-1.5 text-[10px] text-[#31353A]/70 tracking-wider focus:outline-none focus:border-[#D1BE9B]/40 placeholder:text-[#31353A]/25 disabled:opacity-50"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 />
                 <button

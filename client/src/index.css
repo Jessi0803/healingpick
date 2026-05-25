@@ -78,7 +78,7 @@
   --secondary:           oklch(0.940 0.010 75);
   --secondary-foreground:oklch(0.400 0.015 250);
   --muted:               oklch(0.950 0.008 75);
-  --muted-foreground:    oklch(0.550 0.015 250);
+  --muted-foreground:    oklch(0.470 0.015 250);
   --accent:              oklch(0.905 0.020 295);
   --accent-foreground:   oklch(0.295 0.010 250);
   --destructive:         oklch(0.577 0.245 27.325);
@@ -111,6 +111,9 @@
 
   html {
     scroll-behavior: smooth;
+    /* Nudge the whole site slightly larger for readability while keeping
+       every element's proportions in harmony. */
+    zoom: 1.06;
   }
 
   body {

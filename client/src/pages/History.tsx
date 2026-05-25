@@ -48,7 +48,7 @@ export default function HistoryPage() {
         <div className="min-h-[60vh] flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <div className="w-8 h-8 rounded-full border-2 border-[#D1BE9B]/40 border-t-[#D1BE9B] animate-spin" />
-            <p className="text-xs tracking-[0.2em] text-[#3D4144]/40"
+            <p className="text-xs tracking-[0.2em] text-[#31353A]/40"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               載入中⋯
             </p>
@@ -64,17 +64,17 @@ export default function HistoryPage() {
       <PageLayout>
         <div className="min-h-[70vh] flex flex-col items-center justify-center px-6 text-center">
           <div className="text-4xl mb-6 opacity-40">✦</div>
-          <h2 className="text-xl tracking-[0.2em] text-[#3D4144]/65 mb-3"
+          <h2 className="text-xl tracking-[0.2em] text-[#31353A]/65 mb-3"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
             請先登入
           </h2>
-          <p className="text-xs tracking-[0.15em] text-[#3D4144]/40 mb-8 max-w-xs leading-[2]"
+          <p className="text-xs tracking-[0.15em] text-[#31353A]/40 mb-8 max-w-xs leading-[2]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
             登入後即可查看你的占卜紀錄與心靈樹洞對話歷史。
           </p>
           <a href={getLoginUrl()}>
             <button
-              className="px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#3D4144] transition-all duration-500 active:scale-95"
+              className="px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
               登入 Manus
             </button>
@@ -98,11 +98,11 @@ export default function HistoryPage() {
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               My Records
             </span>
-            <h1 className="text-3xl tracking-[0.2em] font-extralight text-[#3D4144] mt-3 mb-3"
+            <h1 className="text-3xl tracking-[0.2em] font-extralight text-[#31353A] mt-3 mb-3"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               我的紀錄
             </h1>
-            <p className="text-xs italic text-[#3D4144]/40 tracking-[0.15em]"
+            <p className="text-xs italic text-[#31353A]/40 tracking-[0.15em]"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               "Every reading is a conversation with the universe."
             </p>
@@ -120,7 +120,7 @@ export default function HistoryPage() {
                 className={`px-5 py-2 rounded-full text-xs tracking-[0.15em] border transition-all duration-200 ${
                   activeTab === tab.id
                     ? 'bg-[#3D4144] text-[#FAF7F4] border-[#3D4144]'
-                    : 'border-[#D1BE9B]/25 text-[#3D4144]/60 hover:border-[#D1BE9B]/50 bg-white/30'
+                    : 'border-[#D1BE9B]/25 text-[#31353A]/60 hover:border-[#D1BE9B]/50 bg-white/30'
                 }`}
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {tab.label}
@@ -141,7 +141,7 @@ export default function HistoryPage() {
               ) : readingsQuery.isError ? (
                 <div className="text-center py-16">
                   <div className="text-3xl mb-4 opacity-25">⚠️</div>
-                  <p className="text-xs tracking-[0.2em] text-[#3D4144]/50"
+                  <p className="text-xs tracking-[0.2em] text-[#31353A]/50"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     載入失敗，請稍後再試
                   </p>
@@ -155,11 +155,11 @@ export default function HistoryPage() {
               ) : readings.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="text-3xl mb-4 opacity-25">🔮</div>
-                  <p className="text-xs tracking-[0.2em] text-[#3D4144]/35"
+                  <p className="text-xs tracking-[0.2em] text-[#31353A]/35"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     還沒有占卜紀錄
                   </p>
-                  <p className="text-[10px] tracking-[0.15em] text-[#3D4144]/25 mt-2 mb-6"
+                  <p className="text-[10px] tracking-[0.15em] text-[#31353A]/25 mt-2 mb-6"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     開始你的第一次占卜吧！
                   </p>
@@ -182,7 +182,7 @@ export default function HistoryPage() {
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{TYPE_ICONS[r.type] ?? '✦'}</span>
                           <div>
-                            <p className="text-xs tracking-[0.15em] text-[#3D4144]/75"
+                            <p className="text-xs tracking-[0.15em] text-[#31353A]/75"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                               {TYPE_LABELS[r.type] ?? r.type}
                             </p>
@@ -194,7 +194,7 @@ export default function HistoryPage() {
                             )}
                           </div>
                         </div>
-                        <p className="text-[9px] tracking-[0.1em] text-[#3D4144]/30 flex-shrink-0 ml-2"
+                        <p className="text-[9px] tracking-[0.1em] text-[#31353A]/30 flex-shrink-0 ml-2"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                           {new Date(r.createdAt).toLocaleDateString('zh-TW', {
                             year: 'numeric', month: 'long', day: 'numeric',
@@ -210,7 +210,7 @@ export default function HistoryPage() {
                             查看解讀內容
                           </summary>
                           <div className="mt-3 pt-3 border-t border-[#D1BE9B]/15">
-                            <div className="text-[11px] leading-[2] text-[#3D4144]/60 tracking-wider prose-sm max-w-none"
+                            <div className="text-[11px] leading-[2] text-[#31353A]/60 tracking-wider prose-sm max-w-none"
                               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                               <Streamdown>{r.interpretation}</Streamdown>
                             </div>
@@ -234,7 +234,7 @@ export default function HistoryPage() {
               ) : treeholeQuery.isError ? (
                 <div className="text-center py-16">
                   <div className="text-3xl mb-4 opacity-25">⚠️</div>
-                  <p className="text-xs tracking-[0.2em] text-[#3D4144]/50"
+                  <p className="text-xs tracking-[0.2em] text-[#31353A]/50"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     載入失敗，請稍後再試
                   </p>
@@ -248,11 +248,11 @@ export default function HistoryPage() {
               ) : treeholeSessions.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="text-3xl mb-4 opacity-25">🌿</div>
-                  <p className="text-xs tracking-[0.2em] text-[#3D4144]/35"
+                  <p className="text-xs tracking-[0.2em] text-[#31353A]/35"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     還沒有心靈樹洞紀錄
                   </p>
-                  <p className="text-[10px] tracking-[0.15em] text-[#3D4144]/25 mt-2 mb-6"
+                  <p className="text-[10px] tracking-[0.15em] text-[#31353A]/25 mt-2 mb-6"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     有話想說嗎？跟 Mochi 說說吧。
                   </p>
@@ -281,13 +281,13 @@ export default function HistoryPage() {
                                 心情：{s.mood}
                               </p>
                             )}
-                            <p className="text-[10px] tracking-[0.1em] text-[#3D4144]/60 mt-0.5 italic line-clamp-1"
+                            <p className="text-[10px] tracking-[0.1em] text-[#31353A]/60 mt-0.5 italic line-clamp-1"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                               「{s.userText.slice(0, 50)}{s.userText.length > 50 ? '⋯' : ''}」
                             </p>
                           </div>
                         </div>
-                        <p className="text-[9px] tracking-[0.1em] text-[#3D4144]/30 flex-shrink-0 ml-2"
+                        <p className="text-[9px] tracking-[0.1em] text-[#31353A]/30 flex-shrink-0 ml-2"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                           {new Date(s.createdAt).toLocaleDateString('zh-TW', {
                             year: 'numeric', month: 'long', day: 'numeric',
@@ -310,7 +310,7 @@ export default function HistoryPage() {
                             查看 Mochi 的回應
                           </summary>
                           <div className="mt-3 pt-3 border-t border-[#D1BE9B]/15">
-                            <div className="text-[11px] leading-[2] text-[#3D4144]/60 tracking-wider prose-sm max-w-none"
+                            <div className="text-[11px] leading-[2] text-[#31353A]/60 tracking-wider prose-sm max-w-none"
                               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                               <Streamdown>{s.aiResponse}</Streamdown>
                             </div>

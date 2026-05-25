@@ -28,20 +28,20 @@ export default function Footer() {
           <div className="md:col-span-2">
             <div className="mb-4">
               <span
-                className="text-2xl tracking-[0.25em] font-light text-[#3D4144]/85"
+                className="text-2xl tracking-[0.25em] font-light text-[#31353A]/85"
                 style={{ fontFamily: 'Cormorant Garamond, serif' }}
               >
                 Healing pick
               </span>
               <div
-                className="text-[9px] tracking-[0.3em] text-[#3D4144]/40 mt-1"
+                className="text-[9px] tracking-[0.3em] text-[#31353A]/40 mt-1"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 癒見好物
               </div>
             </div>
             <p
-              className="text-[11px] leading-[2] text-[#3D4144]/55 max-w-xs tracking-wider"
+              className="text-[11px] leading-[2] text-[#31353A]/55 max-w-xs tracking-wider"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
             >
               有些心事，只需要一個溫柔的出口。<br />
@@ -75,7 +75,7 @@ export default function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-[11px] tracking-[0.15em] text-[#3D4144]/55 hover:text-[#D1BE9B] transition-colors duration-300"
+                    className="text-[11px] tracking-[0.15em] text-[#31353A]/55 hover:text-[#D1BE9B] transition-colors duration-300"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     {item.label}
@@ -103,7 +103,7 @@ export default function Footer() {
                 <li key={item.label}>
                   <a
                     href={item.href}
-                    className="text-[11px] tracking-[0.15em] text-[#3D4144]/55 hover:text-[#D1BE9B] transition-colors duration-300"
+                    className="text-[11px] tracking-[0.15em] text-[#31353A]/55 hover:text-[#D1BE9B] transition-colors duration-300"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     {item.label}
@@ -123,13 +123,13 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-3">
           <p
-            className="text-[10px] tracking-[0.15em] text-[#3D4144]/35"
+            className="text-[10px] tracking-[0.15em] text-[#31353A]/35"
             style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
           >
             © 2025 SOUL EASE 能量聖所 All rights reserved.
           </p>
           <p
-            className="text-[10px] tracking-[0.15em] text-[#3D4144]/30 italic"
+            className="text-[10px] tracking-[0.15em] text-[#31353A]/30 italic"
             style={{ fontFamily: 'Cormorant Garamond, serif' }}
           >
             Made with love & crystal energy ✦
