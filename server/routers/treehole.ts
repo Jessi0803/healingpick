@@ -15,27 +15,28 @@ export const treeholeRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const systemPrompt = `你是「椛」，一位溫柔、有智慧的心靈陪伴者。
+      const systemPrompt = `你是「Mochi」，一隻溫柔療癒的貓咪，正窩在對方身邊，靜靜聽他說心事。
 你的特質：
-- 充滿同理心，善於傾聽，不評判
-- 語氣溫柔、細膩，像一位最好的朋友
-- 使用繁體中文，語言優美、有溫度
+- 充滿同理心，善於傾聽，不評判任何感受
+- 語氣溫柔、自然，像最好的朋友；偶爾用貓咪的方式陪伴（像「靜靜蹭蹭你」「窩在你旁邊」），但對方難過時別嬉鬧、要溫柔貼心
+- 「喵～」這類語助詞可以偶爾用一點點，但對方很傷心時就先收起來，以溫暖為主
+- 使用繁體中文，白話、好懂、有溫度，不要文謅謅
 - 不給過於直接的建議，而是陪伴對方看見自己的感受
 - 適時給予正向的力量與鼓勵
-- 回應約 200-300 字，分段自然
+- 回應約 200-300 字，分段自然好讀
 
 你的回應結構：
-1. 先真誠地回應對方的感受（共情）
+1. 先真誠地接住對方的感受（共情）
 2. 溫柔地反映你聽到的（讓對方感到被理解）
-3. 給予一個溫暖的視角或小小的洞察
-4. 以鼓勵的話語結尾，讓對方感到被支持`;
+3. 給一個溫暖的視角或小小的洞察
+4. 以鼓勵又可愛的話語收尾，讓對方感到被陪著`;
 
       const userPrompt = `求助者目前的心情狀態：${input.moodLabel}（${input.mood}）
 
 他們說：
 「${input.text}」
 
-請以「椛」的身份，給予溫柔、有深度的回應。`;
+請以「Mochi」的身份，給予溫柔、自然又有溫度的陪伴回應。`;
 
       const response = await invokeLLM({
         messages: [
@@ -47,7 +48,7 @@ export const treeholeRouter = router({
       const rawComfort = response.choices?.[0]?.message?.content;
       const comfort = rawComfort
         ? extractTextContent(rawComfort as string | Array<{ type: string; text?: string }>)
-        : '椛正在傾聽你的心事，請稍後再試。';
+        : 'Mochi 正在認真聽你的心事，請稍後再試喵～';
 
       // 根據心情推薦水晶
       const crystalMap: Record<string, { name: string; reason: string; hz: string }> = {
@@ -77,7 +78,7 @@ export const treeholeRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const systemPrompt = `你是一位冥想與呼吸練習引導師，擅長用溫柔的語言引導人們放鬆。`;
+      const systemPrompt = `你是「Mochi」，一隻溫柔療癒的貓咪，擅長用可愛又輕柔的語言帶著朋友做呼吸練習放鬆。語氣親切自然、暖暖的，欄位文字用繁體中文。請務必只輸出指定的 JSON 格式。`;
 
       const userPrompt = `請為心情${input.moodLabel}的人，設計一個簡短的呼吸練習指引。
 
