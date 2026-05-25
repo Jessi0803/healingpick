@@ -1,0 +1,354 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   SOUL EASE | 椛．crystal
+   Design System: Wabi-Sabi Luxe × Morandi Oat Milk
+   Color Philosophy: 溫柔、安全、靈性
+   ============================================================ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* === SOUL EASE Custom Tokens === */
+  --font-serif-tc: 'Noto Serif TC', serif;
+  --font-sans-tc: 'Noto Sans TC', sans-serif;
+  --font-en-serif: 'Cormorant Garamond', serif;
+
+  /* Morandi Oat Milk Palette */
+  --morandi-bg:       oklch(0.978 0.006 75);    /* #FAF7F4 */
+  --morandi-bg2:      oklch(0.955 0.010 75);    /* #F2EDE8 */
+  --morandi-gold:     oklch(0.790 0.052 78);    /* #D1BE9B */
+  --morandi-gold-deep:oklch(0.700 0.060 78);    /* #A38D6B */
+  --morandi-lavender: oklch(0.905 0.020 295);   /* #E5DFEE */
+  --morandi-charcoal: oklch(0.295 0.010 250);   /* #3D4144 */
+  --morandi-card:     oklch(0.940 0.010 75);    /* #EDE8E2 */
+  --morandi-misty:    oklch(0.920 0.008 75);    /* #E8E3DD */
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Morandi Light Theme */
+  --background:          oklch(0.978 0.006 75);
+  --foreground:          oklch(0.295 0.010 250);
+  --card:                oklch(0.965 0.008 75);
+  --card-foreground:     oklch(0.295 0.010 250);
+  --popover:             oklch(0.975 0.006 75);
+  --popover-foreground:  oklch(0.295 0.010 250);
+  --primary:             oklch(0.700 0.060 78);
+  --primary-foreground:  oklch(0.978 0.006 75);
+  --secondary:           oklch(0.940 0.010 75);
+  --secondary-foreground:oklch(0.400 0.015 250);
+  --muted:               oklch(0.950 0.008 75);
+  --muted-foreground:    oklch(0.550 0.015 250);
+  --accent:              oklch(0.905 0.020 295);
+  --accent-foreground:   oklch(0.295 0.010 250);
+  --destructive:         oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border:              oklch(0.900 0.012 75);
+  --input:               oklch(0.900 0.012 75);
+  --ring:                oklch(0.790 0.052 78);
+  --chart-1:             oklch(0.790 0.052 78);
+  --chart-2:             oklch(0.905 0.020 295);
+  --chart-3:             oklch(0.700 0.060 78);
+  --chart-4:             oklch(0.850 0.030 75);
+  --chart-5:             oklch(0.600 0.040 250);
+  --sidebar:             oklch(0.965 0.008 75);
+  --sidebar-foreground:  oklch(0.295 0.010 250);
+  --sidebar-primary:     oklch(0.700 0.060 78);
+  --sidebar-primary-foreground: oklch(0.978 0.006 75);
+  --sidebar-accent:      oklch(0.940 0.010 75);
+  --sidebar-accent-foreground: oklch(0.295 0.010 250);
+  --sidebar-border:      oklch(0.900 0.012 75);
+  --sidebar-ring:        oklch(0.790 0.052 78);
+}
+
+/* ============================================================
+   Global Base Styles
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+/* ============================================================
+   SOUL EASE Utility Classes
+   ============================================================ */
+
+/* Aurora flowing background */
+@keyframes auroraFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.bg-aurora {
+  background: linear-gradient(
+    135deg,
+    #FAF7F4 0%,
+    #F5F0EA 28%,
+    #EFEBE4 55%,
+    #F5F1EB 78%,
+    #FAF7F5 100%
+  );
+  background-size: 300% 300%;
+  animation: auroraFlow 22s ease infinite;
+}
+
+/* Glass morphism panel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.glass-panel-dark {
+  background: rgba(61, 65, 68, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(209, 190, 155, 0.18);
+}
+
+/* Gold emboss text */
+.text-gold-emboss {
+  font-family: 'Noto Serif TC', serif;
+  color: #bfa37a;
+  text-shadow:
+    -0.5px -0.5px 0.5px rgba(0, 0, 0, 0.12),
+    0.5px 0.5px 0.5px rgba(255, 255, 255, 0.85),
+    0px 0px 8px rgba(209, 190, 155, 0.18);
+  font-weight: 300;
+}
+
+/* Serif TC font utilities */
+.font-serif-tc {
+  font-family: 'Noto Serif TC', serif;
+}
+
+.font-en-serif {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Slow rotation animation */
+@keyframes slowRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes slowRotateCounter {
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
+}
+.rotate-slow         { animation: slowRotate 180s linear infinite; }
+.rotate-slow-counter { animation: slowRotateCounter 140s linear infinite; }
+
+/* Crystal float */
+@keyframes crystalFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-8px) rotate(2deg); }
+}
+.animate-float-1 { animation: crystalFloat 6s ease-in-out infinite; }
+.animate-float-2 { animation: crystalFloat 7s ease-in-out infinite; animation-delay: -1.5s; }
+.animate-float-3 { animation: crystalFloat 8s ease-in-out infinite; animation-delay: -3s; }
+
+/* Glow pulse */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50%       { opacity: 0.45; transform: scale(1.12); }
+}
+.animate-glow-pulse { animation: glowPulse 4s ease-in-out infinite; }
+
+/* Flame wobble */
+@keyframes flameWobble {
+  0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.85; }
+  30%       { transform: scale(1.06) rotate(1.5deg); opacity: 0.95; }
+  50%       { transform: scale(0.95) rotate(-1.5deg); opacity: 0.8; }
+  80%       { transform: scale(1.08) rotate(0.5deg); opacity: 1; }
+}
+.animate-flame {
+  transform-origin: bottom center;
+  animation: flameWobble 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(209, 190, 155, 0.8));
+}
+
+/* Spark particle */
+@keyframes sparkUp {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+  20%  { opacity: 0.6; }
+  80%  { opacity: 0.2; }
+  100% { transform: translateY(-60px) scale(0.2); opacity: 0; }
+}
+.animate-spark { animation: sparkUp 5s linear infinite; }
+
+/* Fade in up */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Stagger delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+
+/* Divider ornament */
+.divider-gold {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #D1BE9B;
+}
+.divider-gold::before,
+.divider-gold::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D1BE9B, transparent);
+}
+
+/* Tarot card flip */
+@keyframes cardReveal {
+  from { transform: rotateY(90deg) scale(0.95); opacity: 0; }
+  to   { transform: rotateY(0deg) scale(1); opacity: 1; }
+}
+.animate-card-reveal {
+  animation: cardReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Page transition */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageEnter 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* ============================================================
+   Layout Utilities
+   ============================================================ */
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1280px;
+    }
+  }
+}
+
+/* ============================================================
+   Floating Tarot Card Animations
+   ============================================================ */
+@keyframes floatCard1 {
+  0%   { transform: rotate(-12deg) translateY(0px); }
+  50%  { transform: rotate(-12deg) translateY(-10px); }
+  100% { transform: rotate(-12deg) translateY(0px); }
+}
+@keyframes floatCard2 {
+  0%   { transform: translateX(-50%) translateY(0px); }
+  50%  { transform: translateX(-50%) translateY(-14px); }
+  100% { transform: translateX(-50%) translateY(0px); }
+}
+@keyframes floatCard3 {
+  0%   { transform: rotate(10deg) translateY(0px); }
+  50%  { transform: rotate(10deg) translateY(-8px); }
+  100% { transform: rotate(10deg) translateY(0px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [style*="floatCard"] {
+    animation: none !important;
+  }
+}

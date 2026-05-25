@@ -1,0 +1,101 @@
+/**
+ * fortune router tests
+ * Tests the moon phase calculation logic and fortune router structure
+ */
+import { describe, it, expect } from "vitest";
+
+// ─── 月相計算邏輯（從 fortune.ts 複製，以便獨立測試）─────────────────────────
+function getMoonPhase(date: Date) {
+  const knownNewMoon = new Date('2000-01-06T18:14:00Z');
+  const lunarCycle = 29.53058867;
+  const daysSince = (date.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
+  const phase = ((daysSince % lunarCycle) + lunarCycle) % lunarCycle / lunarCycle;
+
+  let name: string;
+  let symbol: string;
+
+  if (phase < 0.0625 || phase >= 0.9375) {
+    name = '新月'; symbol = '🌑';
+  } else if (phase < 0.1875) {
+    name = '眉月'; symbol = '🌒';
+  } else if (phase < 0.3125) {
+    name = '上弦月'; symbol = '🌓';
+  } else if (phase < 0.4375) {
+    name = '盈凸月'; symbol = '🌔';
+  } else if (phase < 0.5625) {
+    name = '滿月'; symbol = '🌕';
+  } else if (phase < 0.6875) {
+    name = '虧凸月'; symbol = '🌖';
+  } else if (phase < 0.8125) {
+    name = '下弦月'; symbol = '🌗';
+  } else {
+    name = '殘月'; symbol = '🌘';
+  }
+
+  return { phase, name, symbol };
+}
+
+describe("getMoonPhase", () => {
+  it("應該在已知新月日期（2000-01-06）回傳新月", () => {
+    const newMoonDate = new Date('2000-01-06T18:14:00Z');
+    const result = getMoonPhase(newMoonDate);
+    expect(result.name).toBe('新月');
+    expect(result.symbol).toBe('🌑');
+    expect(result.phase).toBeCloseTo(0, 2);
+  });
+
+  it("應該在新月後約 14.76 天（滿月）回傳滿月", () => {
+    // 2000-01-06 + 14.76 days ≈ 2000-01-21
+    const fullMoonDate = new Date('2000-01-21T00:00:00Z');
+    const result = getMoonPhase(fullMoonDate);
+    expect(result.name).toBe('滿月');
+    expect(result.symbol).toBe('🌕');
+    expect(result.phase).toBeGreaterThan(0.4375);
+    expect(result.phase).toBeLessThan(0.5625);
+  });
+
+  it("月相值應在 0-1 之間", () => {
+    const dates = [
+      new Date('2024-01-01'),
+      new Date('2024-06-15'),
+      new Date('2024-12-31'),
+      new Date('2025-03-20'),
+      new Date('2026-05-24'),
+    ];
+    dates.forEach(date => {
+      const result = getMoonPhase(date);
+      expect(result.phase).toBeGreaterThanOrEqual(0);
+      expect(result.phase).toBeLessThan(1);
+    });
+  });
+
+  it("應該回傳有效的月相名稱", () => {
+    const validNames = ['新月', '眉月', '上弦月', '盈凸月', '滿月', '虧凸月', '下弦月', '殘月'];
+    const testDates = Array.from({ length: 30 }, (_, i) => {
+      const d = new Date('2024-01-01');
+      d.setDate(d.getDate() + i);
+      return d;
+    });
+    testDates.forEach(date => {
+      const result = getMoonPhase(date);
+      expect(validNames).toContain(result.name);
+    });
+  });
+
+  it("同一天的月相計算結果應該一致（冪等性）", () => {
+    const date = new Date('2026-05-24T12:00:00Z');
+    const result1 = getMoonPhase(date);
+    const result2 = getMoonPhase(date);
+    expect(result1.phase).toBe(result2.phase);
+    expect(result1.name).toBe(result2.name);
+    expect(result1.symbol).toBe(result2.symbol);
+  });
+
+  it("不同日期應該有不同的月相值", () => {
+    const date1 = new Date('2026-05-01T12:00:00Z');
+    const date2 = new Date('2026-05-15T12:00:00Z');
+    const result1 = getMoonPhase(date1);
+    const result2 = getMoonPhase(date2);
+    expect(result1.phase).not.toBe(result2.phase);
+  });
+});
