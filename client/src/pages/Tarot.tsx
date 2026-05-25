@@ -885,7 +885,12 @@ export default function TarotPage() {
                   </div>
                 )}
                 {llmInterpretation && (
-                  <div className="text-[12px] leading-[2.1] text-[#3D4144]/65 tracking-wider"
+                  <div className="prose prose-sm max-w-none text-[12px] leading-[2.1] text-[#3D4144]/70 tracking-wider
+                    prose-headings:font-normal prose-headings:tracking-[0.18em] prose-headings:text-[#A38D6B]
+                    prose-h3:text-[13px] prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
+                    prose-p:my-1.5 prose-p:text-[#3D4144]/70
+                    prose-strong:text-[#3D4144]/85 prose-strong:font-medium
+                    prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                     <Streamdown>{llmInterpretation}</Streamdown>
                   </div>
