@@ -571,22 +571,53 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   跟隨直覺，點選讓你感應到的牌
                 </p>
-                <div className="mt-3 flex items-center justify-center gap-2">
-                  <div className="flex gap-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
+
+                {/* 位置進度：讓使用者知道每一張代表哪個位置 */}
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+                  {SPREAD_POSITIONS.map((p, i) => {
+                    const done = i < pickedIndices.length;
+                    const current = i === pickedIndices.length;
+                    return (
                       <div
-                        key={i}
-                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                          i < pickedIndices.length ? 'bg-[#D1BE9B]' : 'bg-[#D1BE9B]/20'
+                        key={p.id}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] tracking-[0.15em] transition-all duration-300 ${
+                          done
+                            ? 'border-[#D1BE9B] bg-[#D1BE9B]/15 text-[#A38D6B]'
+                            : current
+                            ? 'border-[#D1BE9B] bg-[#D1BE9B]/10 text-[#A38D6B] scale-110 shadow-[0_4px_14px_rgba(209,190,155,0.35)]'
+                            : 'border-[#D1BE9B]/20 text-[#3D4144]/35'
                         }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-[10px] text-[#3D4144]/40 tracking-wider"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    {pickedIndices.length} / 5
-                  </span>
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] ${
+                          done ? 'bg-[#D1BE9B] text-white' : current ? 'bg-[#D1BE9B]/50 text-white' : 'bg-[#D1BE9B]/15 text-[#3D4144]/40'
+                        }`}>
+                          {done ? '✓' : i + 1}
+                        </span>
+                        {p.label}
+                      </div>
+                    );
+                  })}
                 </div>
+
+                {/* 目前要選的牌代表什麼 */}
+                {pickedIndices.length < 5 ? (
+                  <div className="mt-4 inline-block px-5 py-2.5 rounded-2xl bg-[#D1BE9B]/8 border border-[#D1BE9B]/20">
+                    <p className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      🐾 第 {pickedIndices.length + 1} 張 · <span className="text-[#3D4144]/80">{SPREAD_POSITIONS[pickedIndices.length].label}</span>
+                    </p>
+                    <p className="mt-1 text-[10px] leading-[1.7] text-[#3D4144]/45 tracking-wider"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      {SPREAD_POSITIONS[pickedIndices.length].desc}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="mt-4 text-[11px] tracking-[0.2em] text-[#A38D6B] animate-pulse"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    🐾 五張牌都選好了，正在為你攤開牌陣…
+                  </p>
+                )}
               </div>
 
               {/* Card grid — 22 cards face down */}
@@ -600,19 +631,25 @@ export default function TarotPage() {
                       onClick={() => handlePickCard(deckIdx)}
                       className={`relative cursor-pointer transition-all duration-300 ${
                         isPicked
-                          ? 'opacity-40 scale-90 pointer-events-none'
-                          : pickedIndices.length >= 10
-                          ? 'opacity-30 pointer-events-none'
+                          ? 'opacity-95 scale-95 pointer-events-none'
                           : 'hover:scale-110 hover:-translate-y-2 hover:drop-shadow-[0_8px_20px_rgba(209,190,155,0.5)]'
                       }`}
-                      style={{ animationDelay: `${deckIdx * 0.02}s` }}
                     >
-                      <div className="w-full aspect-[3/5]">
+                      <div
+                        className="w-full aspect-[3/5] tarot-pick-float"
+                        style={{ animationDelay: `${(deckIdx % 11) * 0.18}s` }}
+                      >
                         <CardBack />
                       </div>
                       {isPicked && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-[#D1BE9B] text-lg font-light">{pickOrder + 1}</span>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg bg-[#3D4144]/55 backdrop-blur-[1px] animate-fade-in-up">
+                          <span className="w-5 h-5 rounded-full bg-[#D1BE9B] text-white text-[10px] flex items-center justify-center">
+                            {pickOrder + 1}
+                          </span>
+                          <span className="text-[9px] tracking-[0.1em] text-white/95 px-1 text-center leading-tight"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                            {SPREAD_POSITIONS[pickOrder]?.label}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -627,20 +664,18 @@ export default function TarotPage() {
                   <span className="text-[9px] tracking-[0.15em] text-[#D1BE9B]/50"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     {pickedIndices.length === 0
-                      ? '跟著直覺選牌 ✦'
+                      ? '跟著直覺，選出第一張牌吧 🐾'
                       : pickedIndices.length < 5
-                      ? `已選 ${pickedIndices.length} 張，加油！ ♡`
-                      : pickedIndices.length < 10
-                      ? `快完成了！還需 ${10 - pickedIndices.length} 張 ✦`
-                      : '全部選好了！我很期待 ♥'}
+                      ? `已選 ${pickedIndices.length} 張，接下來選「${SPREAD_POSITIONS[pickedIndices.length].label}」🐾`
+                      : '五張都選好了，我很期待 ♡'}
                   </span>
                 </div>
               </div>
 
-              {pickedIndices.length > 0 && pickedIndices.length < 10 && (
+              {pickedIndices.length > 0 && pickedIndices.length < 5 && (
                 <p className="text-center mt-2 text-[10px] text-[#3D4144]/35 tracking-wider animate-pulse"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  還需選 {10 - pickedIndices.length} 張牌
+                  還需選 {5 - pickedIndices.length} 張牌
                 </p>
               )}
             </div>

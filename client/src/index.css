@@ -347,8 +347,16 @@
   100% { transform: rotate(10deg) translateY(0px); }
 }
 
+/* Gentle idle bob for the pick-step deck */
+@keyframes tarotPickFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.tarot-pick-float { animation: tarotPickFloat 3.6s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-  [style*="floatCard"] {
+  [style*="floatCard"],
+  .tarot-pick-float {
     animation: none !important;
   }
 }
