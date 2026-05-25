@@ -356,14 +356,14 @@ export default function CatCompanion() {
           {chatMode && (
             <div className="flex items-center justify-between px-3 py-2 border-b border-[#D1BE9B]/15">
               <span
-                className="text-[10px] tracking-[0.15em] text-[#D1BE9B]"
+                className="text-[11px] tracking-[0.15em] text-[#D1BE9B]"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300, color: '#888072', fontSize: '11px' }}
               >
                 遇到什麼煩惱嗎？跟 Mochi 說說 ♡
               </span>
               <button
                 onClick={() => { setChatMode(false); setChatHistory([]); }}
-                className="text-[10px] text-[#31353A]/30 hover:text-[#31353A]/60 transition-colors"
+                className="text-[11px] text-[#31353A]/30 hover:text-[#31353A]/60 transition-colors"
               >
                 ✕
               </button>
@@ -376,13 +376,13 @@ export default function CatCompanion() {
             <div>
               <div className="px-4 pt-3 pb-2" onClick={handleBubbleClick} style={{ cursor: 'pointer' }}>
                 <p
-                  className="text-[11px] leading-[1.8] text-[#31353A]/70 tracking-wider"
+                  className="text-[12px] leading-[1.8] text-[#31353A]/70 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
                   {message}
                 </p>
                 <p
-                  className="text-[9px] text-[#D1BE9B]/60 tracking-wider mt-1"
+                  className="text-[11px] text-[#D1BE9B]/60 tracking-wider mt-1"
                   style={{ fontFamily: 'Noto Serif TC, serif' }}
                 >
                   點擊換一句 ✦
@@ -404,13 +404,13 @@ export default function CatCompanion() {
                     }}
                     onFocus={() => enterChatMode()}
                     placeholder="說給 Mochi 聽 ♡"
-                    className="flex-1 text-[10px] bg-transparent border-b border-[#D1BE9B]/30 focus:border-[#D1BE9B]/60 outline-none py-1 text-[#31353A]/70 placeholder-[#D1BE9B]/40 tracking-wider"
+                    className="flex-1 text-[11px] bg-transparent border-b border-[#D1BE9B]/30 focus:border-[#D1BE9B]/60 outline-none py-1 text-[#31353A]/70 placeholder-[#D1BE9B]/40 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
                   <button
                     onClick={() => { enterChatMode(); setTimeout(() => handleSendMessage(), 50); }}
                     disabled={!inputText.trim()}
-                    className="text-[10px] text-[#D1BE9B]/60 hover:text-[#D1BE9B] disabled:opacity-30 transition-colors"
+                    className="text-[11px] text-[#D1BE9B]/60 hover:text-[#D1BE9B] disabled:opacity-30 transition-colors"
                   >
                     ↑
                   </button>
@@ -431,7 +431,7 @@ export default function CatCompanion() {
                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-[85%] px-3 py-2 rounded-xl text-[10px] leading-[1.7] tracking-wider ${
+                      className={`max-w-[85%] px-3 py-2 rounded-xl text-[11px] leading-[1.7] tracking-wider ${
                         msg.role === 'user'
                           ? 'bg-[#D1BE9B]/20 text-[#31353A]/75 rounded-tr-sm'
                           : 'bg-white/60 text-[#31353A]/70 rounded-tl-sm border border-[#D1BE9B]/15'
@@ -445,7 +445,7 @@ export default function CatCompanion() {
                 {mochiChat.isPending && (
                   <div className="flex justify-start">
                     <div
-                      className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/60 border border-[#D1BE9B]/15 text-[10px] text-[#D1BE9B]/60"
+                      className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/60 border border-[#D1BE9B]/15 text-[11px] text-[#D1BE9B]/60"
                       style={{ fontFamily: 'Noto Serif TC, serif' }}
                     >
                       <span className="inline-flex gap-0.5">
@@ -468,7 +468,7 @@ export default function CatCompanion() {
                   onKeyDown={handleKeyDown}
                   placeholder="說點什麼…"
                   disabled={mochiChat.isPending}
-                  className="flex-1 bg-white/50 border border-[#D1BE9B]/20 rounded-full px-3 py-1.5 text-[10px] text-[#31353A]/70 tracking-wider focus:outline-none focus:border-[#D1BE9B]/40 placeholder:text-[#31353A]/25 disabled:opacity-50"
+                  className="flex-1 bg-white/50 border border-[#D1BE9B]/20 rounded-full px-3 py-1.5 text-[11px] text-[#31353A]/70 tracking-wider focus:outline-none focus:border-[#D1BE9B]/40 placeholder:text-[#31353A]/25 disabled:opacity-50"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 />
                 <button
@@ -511,7 +511,7 @@ export default function CatCompanion() {
         <CompanionCatSVG mood={mood} onClick={handleCatClick} />
         <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap">
           <span
-            className="text-[8px] tracking-[0.15em] text-[#D1BE9B]/60"
+            className="text-[10px] tracking-[0.15em] text-[#D1BE9B]/60"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, color: '#918888', fontSize: '10px' }}
           >
             點擊跟Mochi對話

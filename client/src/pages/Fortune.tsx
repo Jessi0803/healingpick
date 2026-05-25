@@ -39,7 +39,7 @@ function HowItWorksPanel() {
 
   return (
     <div className="mb-8 px-5 py-4 rounded-2xl border border-[#D1BE9B]/15 bg-[#D1BE9B]/5">
-      <p className="text-[9px] tracking-[0.3em] text-[#D1BE9B] mb-3 text-center"
+      <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-3 text-center"
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
         ◎ 運勢如何計算
       </p>
@@ -56,11 +56,11 @@ function HowItWorksPanel() {
                 {step.icon}
               </div>
               <div>
-                <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
+                <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   {step.label}
                 </p>
-                <p className="text-[11px] leading-[1.7] text-[#31353A]/50 tracking-wide"
+                <p className="text-[12px] leading-[1.7] text-[#31353A]/50 tracking-wide"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                   {step.desc}
                 </p>
@@ -78,7 +78,7 @@ function ScoreBar({ label, score, color }: { label: string; score: number; color
   const pct = Math.min(100, Math.max(0, score * 10)); // score 1-10 → 10-100%
   return (
     <div className="flex items-center gap-3">
-      <span className="text-[10px] tracking-[0.15em] text-[#31353A]/60 w-12 flex-shrink-0"
+      <span className="text-[11px] tracking-[0.15em] text-[#31353A]/60 w-12 flex-shrink-0"
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
         {label}
       </span>
@@ -88,7 +88,7 @@ function ScoreBar({ label, score, color }: { label: string; score: number; color
           style={{ width: `${pct}%`, background: color }}
         />
       </div>
-      <span className="text-[10px] tracking-wider text-[#31353A]/50 w-6 text-right"
+      <span className="text-[11px] tracking-wider text-[#31353A]/50 w-6 text-right"
         style={{ fontFamily: 'Cormorant Garamond, serif' }}>
         {score}
       </span>
@@ -101,7 +101,7 @@ function MoonPhaseBadge({ symbol, name }: { symbol: string; name: string }) {
   return (
     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D1BE9B]/10 border border-[#D1BE9B]/20">
       <span className="text-base leading-none">{symbol}</span>
-      <span className="text-[9px] tracking-[0.2em] text-[#D1BE9B]"
+      <span className="text-[11px] tracking-[0.2em] text-[#D1BE9B]"
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
         {name}
       </span>
@@ -168,7 +168,7 @@ export default function FortunePage() {
 
           {/* Header */}
           <div className="text-center mb-10 animate-fade-in-up">
-            <span className="text-[9px] tracking-[0.4em] text-[#D1BE9B] uppercase"
+            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               Celestial Guidance
             </span>
@@ -193,7 +193,7 @@ export default function FortunePage() {
                   <span className="text-2xl opacity-60">◆</span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-[9px] tracking-[0.3em] text-[#D1BE9B] mb-1"
+                  <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-1"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     今日能量水晶
                   </p>
@@ -201,7 +201,7 @@ export default function FortunePage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     {aiData?.crystal || '選擇星座以獲取推薦'}
                   </p>
-                  <p className="text-[11px] leading-[1.9] text-[#31353A]/50 tracking-wider"
+                  <p className="text-[12px] leading-[1.9] text-[#31353A]/50 tracking-wider"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                     {aiData?.crystalReason || '選擇你的星座，Mochi 將根據今日月相為你推薦最適合的能量水晶。'}
                   </p>
@@ -231,11 +231,11 @@ export default function FortunePage() {
                       background: selectedSign === sign.id ? sign.color + '25' : 'rgba(250,247,244,0.6)',
                     }}>
                     <span className="text-xl" style={{ color: sign.color }}>{sign.symbol}</span>
-                    <span className="text-[9px] tracking-[0.1em] text-[#31353A]/70"
+                    <span className="text-[11px] tracking-[0.1em] text-[#31353A]/70"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {sign.name}
                     </span>
-                    <span className="text-[7px] text-[#31353A]/35 tracking-wider"
+                    <span className="text-[9px] text-[#31353A]/35 tracking-wider"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       {sign.dates}
                     </span>
@@ -261,7 +261,7 @@ export default function FortunePage() {
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                           {selectedSignData.name}
                         </h3>
-                        <p className="text-[10px] italic text-[#D1BE9B]"
+                        <p className="text-[11px] italic text-[#D1BE9B]"
                           style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                           {selectedSignData.en} · {selectedSignData.element}象星座
                         </p>
@@ -274,7 +274,7 @@ export default function FortunePage() {
                         {dailyFortuneQuery.isLoading && (
                           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D1BE9B]/10 border border-[#D1BE9B]/20">
                             <span className="text-[#D1BE9B] animate-spin text-xs">✦</span>
-                            <span className="text-[9px] tracking-[0.15em] text-[#31353A]/40"
+                            <span className="text-[11px] tracking-[0.15em] text-[#31353A]/40"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                               計算月相中...
                             </span>
@@ -287,7 +287,7 @@ export default function FortunePage() {
                     {dailyFortuneQuery.isLoading && (
                       <div className="flex flex-col items-center gap-4 py-12">
                         <div className="text-3xl animate-pulse">🌙</div>
-                        <p className="text-[11px] tracking-[0.2em] text-[#31353A]/40"
+                        <p className="text-[12px] tracking-[0.2em] text-[#31353A]/40"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                           Mochi 正在觀察今日月相與星象能量...
                         </p>
@@ -297,13 +297,13 @@ export default function FortunePage() {
                     {/* Error state */}
                     {dailyFortuneQuery.isError && (
                       <div className="text-center py-8">
-                        <p className="text-[11px] text-[#31353A]/40 tracking-wider mb-3"
+                        <p className="text-[12px] text-[#31353A]/40 tracking-wider mb-3"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                           運勢解讀暫時無法取得，請稍後再試
                         </p>
                         <button
                           onClick={() => dailyFortuneQuery.refetch()}
-                          className="text-[10px] tracking-[0.15em] text-[#D1BE9B] border-b border-[#D1BE9B]/40 pb-0.5"
+                          className="text-[11px] tracking-[0.15em] text-[#D1BE9B] border-b border-[#D1BE9B]/40 pb-0.5"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                           重新嘗試
                         </button>
@@ -329,7 +329,7 @@ export default function FortunePage() {
                             { label: '能量水晶', value: aiData.crystal },
                           ].map(item => (
                             <div key={item.label} className="text-center p-3 rounded-xl bg-[#D1BE9B]/8">
-                              <p className="text-[8px] tracking-[0.2em] text-[#D1BE9B] mb-1"
+                              <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-1"
                                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                                 {item.label}
                               </p>
@@ -352,11 +352,11 @@ export default function FortunePage() {
                             <div key={item.label} className="flex gap-3">
                               <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">{item.icon}</span>
                               <div>
-                                <p className="text-[9px] tracking-[0.2em] text-[#D1BE9B] mb-1"
+                                <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-1"
                                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                                   {item.label}
                                 </p>
-                                <p className="text-[11px] leading-[2] text-[#31353A]/60 tracking-wider"
+                                <p className="text-[12px] leading-[2] text-[#31353A]/60 tracking-wider"
                                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                                   {item.text}
                                 </p>
@@ -370,11 +370,11 @@ export default function FortunePage() {
                           <div className="flex gap-3">
                             <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">☽</span>
                             <div>
-                              <p className="text-[9px] tracking-[0.2em] text-[#D1BE9B] mb-1"
+                              <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-1"
                                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                                 今日月相指引
                               </p>
-                              <p className="text-[11px] leading-[2] text-[#31353A]/60 tracking-wider italic"
+                              <p className="text-[12px] leading-[2] text-[#31353A]/60 tracking-wider italic"
                                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                                 {aiData.advice}
                               </p>
@@ -384,12 +384,12 @@ export default function FortunePage() {
 
                         {/* Crystal CTA */}
                         <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15 flex items-center justify-between">
-                          <p className="text-[11px] text-[#31353A]/50 tracking-wider"
+                          <p className="text-[12px] text-[#31353A]/50 tracking-wider"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                             今日推薦攜帶：<span className="text-[#D1BE9B]">{aiData.crystal}</span>
                           </p>
                           <Link href="/shop">
-                            <button className="text-[10px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
+                            <button className="text-[11px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                               選購水晶 →
                             </button>

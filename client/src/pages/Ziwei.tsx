@@ -198,7 +198,7 @@ export default function ZiweiPage() {
 
           {/* Header */}
           <div className="text-center mb-12 animate-fade-in-up">
-            <span className="text-[9px] tracking-[0.4em] text-[#D1BE9B] uppercase"
+            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               中國命理學
             </span>
@@ -223,7 +223,7 @@ export default function ZiweiPage() {
 
                 {/* Gender */}
                 <div className="mb-5">
-                  <label className="block text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-3"
+                  <label className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-3"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     性別
                   </label>
@@ -247,7 +247,7 @@ export default function ZiweiPage() {
 
                 {/* Birth date (solar) */}
                 <div className="mb-4">
-                  <label className="block text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-2"
+                  <label className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     陽曆生日
                   </label>
@@ -260,7 +260,7 @@ export default function ZiweiPage() {
                     className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-2.5 text-xs text-[#31353A]/70 tracking-wider focus:outline-none focus:border-[#D1BE9B]/50"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
-                  <p className="mt-1.5 text-[9px] text-[#31353A]/35 tracking-wider"
+                  <p className="mt-1.5 text-[11px] text-[#31353A]/35 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     ✦ 請輸入陽曆（國曆）生日，系統會自動換算農曆
                   </p>
@@ -268,7 +268,7 @@ export default function ZiweiPage() {
 
                 {/* Hour */}
                 <div className="mb-5">
-                  <label className="block text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-2"
+                  <label className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     出生時辰
                   </label>
@@ -281,7 +281,7 @@ export default function ZiweiPage() {
                       <option key={h.value} value={h.value}>{h.label}</option>
                     ))}
                   </select>
-                  <p className="mt-1.5 text-[9px] text-[#31353A]/35 tracking-wider"
+                  <p className="mt-1.5 text-[11px] text-[#31353A]/35 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     ✦ 出生時辰影響命宮位置，請盡量精確填寫
                   </p>
@@ -289,7 +289,7 @@ export default function ZiweiPage() {
 
                 {/* Focus area (optional) */}
                 <div className="mb-6">
-                  <label className="block text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-2"
+                  <label className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     想了解的面向（選填）
                   </label>
@@ -321,14 +321,14 @@ export default function ZiweiPage() {
               <div className="flex justify-end mt-4 mb-2 pr-2">
                 <div className="flex flex-col items-center gap-1">
                   <CatPeeking className="w-14 h-16" side="left" />
-                  <span className="text-[8px] tracking-[0.15em] text-[#D1BE9B]/40"
+                  <span className="text-[10px] tracking-[0.15em] text-[#D1BE9B]/40"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>我也想看你的命盤 ✦</span>
                 </div>
               </div>
 
               {/* How It Works */}
               <div className="mt-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/15 bg-[#D1BE9B]/5">
-                <p className="text-[9px] tracking-[0.3em] text-[#D1BE9B] mb-3 text-center"
+                <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-3 text-center"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   ◎ 命盤如何排列
                 </p>
@@ -349,11 +349,11 @@ export default function ZiweiPage() {
                           {s.icon}
                         </div>
                         <div>
-                          <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
+                          <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             {s.label}
                           </p>
-                          <p className="text-[11px] leading-[1.7] text-[#31353A]/50 tracking-wide"
+                          <p className="text-[12px] leading-[1.7] text-[#31353A]/50 tracking-wide"
                             style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                             {s.desc}
                           </p>
@@ -378,7 +378,7 @@ export default function ZiweiPage() {
                   { label: '身主', value: astrolabe.body },
                 ].map(item => (
                   <div key={item.label} className="glass-panel rounded-xl px-4 py-2.5 border border-[#D1BE9B]/20 text-center">
-                    <p className="text-[8px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
+                    <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                       {item.label}
                     </p>
@@ -424,23 +424,23 @@ export default function ZiweiPage() {
                           {/* Life palace indicator */}
                           {isLife && (
                             <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#D1BE9B]/60 flex items-center justify-center">
-                              <span className="text-[7px] text-[#31353A]">命</span>
+                              <span className="text-[9px] text-[#31353A]">命</span>
                             </div>
                           )}
                           {/* Body palace indicator */}
                           {palace.isBodyPalace && (
                             <div className="absolute top-1.5 left-1.5 w-4 h-4 rounded-full bg-rose-300/60 flex items-center justify-center">
-                              <span className="text-[7px] text-rose-800">身</span>
+                              <span className="text-[9px] text-rose-800">身</span>
                             </div>
                           )}
 
                           {/* Palace name + stem/branch */}
                           <div className="mb-1.5">
-                            <p className="text-[10px] tracking-[0.15em] text-[#31353A]/80"
+                            <p className="text-[11px] tracking-[0.15em] text-[#31353A]/80"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                               {palace.name}
                             </p>
-                            <p className="text-[8px] tracking-wider text-[#31353A]/35"
+                            <p className="text-[10px] tracking-wider text-[#31353A]/35"
                               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                               {palace.heavenlyStem}{palace.earthlyBranch}
                             </p>
@@ -454,7 +454,7 @@ export default function ZiweiPage() {
                               return (
                                 <span
                                   key={star.name}
-                                  className="text-[8px] tracking-[0.05em] px-1.5 py-0.5 rounded-full"
+                                  className="text-[10px] tracking-[0.05em] px-1.5 py-0.5 rounded-full"
                                   style={{
                                     background: color + '30',
                                     color: bs ? bs.color : color,
@@ -467,7 +467,7 @@ export default function ZiweiPage() {
                               );
                             })}
                             {palace.majorStars.length === 0 && (
-                              <span className="text-[8px] text-[#31353A]/25 tracking-wider"
+                              <span className="text-[10px] text-[#31353A]/25 tracking-wider"
                                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                                 空宮
                               </span>
@@ -478,7 +478,7 @@ export default function ZiweiPage() {
                           {palace.minorStars.slice(0, 2).length > 0 && (
                             <div className="mt-1 flex flex-wrap gap-0.5">
                               {palace.minorStars.slice(0, 2).map(s => (
-                                <span key={s.name} className="text-[7px] text-[#31353A]/35"
+                                <span key={s.name} className="text-[9px] text-[#31353A]/35"
                                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                                   {s.name}
                                 </span>
@@ -488,7 +488,7 @@ export default function ZiweiPage() {
 
                           {/* Stage */}
                           <div className="absolute bottom-1.5 right-2">
-                            <span className="text-[7px] text-[#31353A]/30"
+                            <span className="text-[9px] text-[#31353A]/30"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                               {palace.stage?.range?.[0]}–{palace.stage?.range?.[1]}
                             </span>
@@ -504,15 +504,15 @@ export default function ZiweiPage() {
                     >
                       <div className="text-center p-4">
                         <p className="text-lg text-[#D1BE9B]/50 mb-2">✦</p>
-                        <p className="text-[10px] tracking-[0.2em] text-[#31353A]/50"
+                        <p className="text-[11px] tracking-[0.2em] text-[#31353A]/50"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                           {astrolabe.solarDate}
                         </p>
-                        <p className="text-[9px] tracking-[0.15em] text-[#D1BE9B]/70 mt-1"
+                        <p className="text-[11px] tracking-[0.15em] text-[#D1BE9B]/70 mt-1"
                           style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic' }}>
                           {astrolabe.zodiac} · {astrolabe.sign}
                         </p>
-                        <p className="text-[8px] tracking-[0.1em] text-[#31353A]/35 mt-2"
+                        <p className="text-[10px] tracking-[0.1em] text-[#31353A]/35 mt-2"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                           {gender}命
                         </p>
@@ -520,7 +520,7 @@ export default function ZiweiPage() {
                     </div>
                   </div>
 
-                  <p className="text-center mt-3 text-[9px] tracking-[0.15em] text-[#31353A]/35"
+                  <p className="text-center mt-3 text-[11px] tracking-[0.15em] text-[#31353A]/35"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     點擊宮位查看詳細解讀
                   </p>
@@ -533,7 +533,7 @@ export default function ZiweiPage() {
                       <div className="flex items-center gap-2 mb-4">
                         <div className="w-8 h-8 rounded-full flex items-center justify-center"
                           style={{ background: PALACE_COLORS[astrolabe.palaces.findIndex(p => p.name === selectedPalace.name)] ?? '#EDE8E2' }}>
-                          <span className="text-[10px] text-[#31353A]/70"
+                          <span className="text-[11px] text-[#31353A]/70"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             {selectedPalace.name.slice(0, 1)}
                           </span>
@@ -547,23 +547,23 @@ export default function ZiweiPage() {
                         </div>
                       </div>
 
-                      <p className="text-[11px] leading-[1.9] text-[#31353A]/55 tracking-wider mb-4"
+                      <p className="text-[12px] leading-[1.9] text-[#31353A]/55 tracking-wider mb-4"
                         style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                         {PALACE_DESCS[selectedPalace.name]?.desc ?? ''}
                       </p>
 
                       {/* Stem/Branch + Stage */}
                       <div className="flex gap-2 mb-3">
-                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                           {selectedPalace.heavenlyStem}{selectedPalace.earthlyBranch}
                         </span>
-                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                           大限 {selectedPalace.stage?.range?.[0]}–{selectedPalace.stage?.range?.[1]}
                         </span>
                         {selectedPalace.changsheng12 && (
-                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
+                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             {selectedPalace.changsheng12}
                           </span>
@@ -572,7 +572,7 @@ export default function ZiweiPage() {
 
                       {selectedPalace.majorStars.length > 0 && (
                         <div className="border-t border-[#D1BE9B]/15 pt-4">
-                          <p className="text-[9px] tracking-[0.2em] text-[#D1BE9B] mb-3"
+                          <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-3"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             本宮主星
                           </p>
@@ -582,7 +582,7 @@ export default function ZiweiPage() {
                               return (
                                 <div key={star.name} className="flex items-center gap-2">
                                   <span
-                                    className="text-[9px] px-2 py-0.5 rounded-full"
+                                    className="text-[11px] px-2 py-0.5 rounded-full"
                                     style={{
                                       background: color + '25',
                                       color,
@@ -593,7 +593,7 @@ export default function ZiweiPage() {
                                     {star.name}
                                   </span>
                                   {star.brightness && (
-                                    <span className="text-[9px]"
+                                    <span className="text-[11px]"
                                       style={{ color: BRIGHTNESS_STYLE[star.brightness]?.color ?? '#888', fontWeight: BRIGHTNESS_STYLE[star.brightness]?.weight ?? '300' }}>
                                       {star.brightness}
                                     </span>
@@ -607,13 +607,13 @@ export default function ZiweiPage() {
 
                       {selectedPalace.minorStars.length > 0 && (
                         <div className="border-t border-[#D1BE9B]/15 pt-3 mt-3">
-                          <p className="text-[9px] tracking-[0.2em] text-[#D1BE9B] mb-2"
+                          <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-2"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             輔星
                           </p>
                           <div className="flex flex-wrap gap-1">
                             {selectedPalace.minorStars.map(s => (
-                              <span key={s.name} className="text-[8px] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/10 text-[#31353A]/50 border border-[#D1BE9B]/20"
+                              <span key={s.name} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/10 text-[#31353A]/50 border border-[#D1BE9B]/20"
                                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                                 {s.name}
                               </span>
@@ -624,7 +624,7 @@ export default function ZiweiPage() {
 
                       {selectedPalace.majorStars.length === 0 && (
                         <div className="border-t border-[#D1BE9B]/15 pt-4">
-                          <p className="text-[11px] leading-[1.9] text-[#31353A]/45 tracking-wider italic"
+                          <p className="text-[12px] leading-[1.9] text-[#31353A]/45 tracking-wider italic"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                             此宮為空宮，代表此方面的事務較為自由，
                             不受特定星曜的強烈影響，走向較為中性平和。
@@ -644,7 +644,7 @@ export default function ZiweiPage() {
 
                   {/* Crystal recommendation */}
                   <div className="mt-4 glass-panel rounded-xl p-4 border border-[#D1BE9B]/15">
-                    <p className="text-[9px] tracking-[0.2em] text-[#D1BE9B] mb-2"
+                    <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-2"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       命盤推薦水晶
                     </p>
@@ -652,14 +652,14 @@ export default function ZiweiPage() {
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {gender === '女' ? '紫水晶 × 月光石' : '黃水晶 × 黑碧璽'}
                     </p>
-                    <p className="text-[10px] leading-[1.8] text-[#31353A]/50 tracking-wider mb-3"
+                    <p className="text-[11px] leading-[1.8] text-[#31353A]/50 tracking-wider mb-3"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       {gender === '女'
                         ? '增強直覺力，平衡陰性能量，提升靈性感知'
                         : '強化行動力，穩定根輪能量，防護負面磁場'}
                     </p>
                     <Link href="/shop">
-                      <button className="text-[10px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
+                      <button className="text-[11px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         查看推薦商品 →
                       </button>
@@ -687,7 +687,7 @@ export default function ZiweiPage() {
               {/* Cat staring at the chart */}
               <div className="flex items-center gap-3 mb-2 px-1">
                 <CatListening className="w-12 h-14 flex-shrink-0" />
-                <p className="text-[9px] tracking-[0.15em] text-[#D1BE9B]/50 italic"
+                <p className="text-[11px] tracking-[0.15em] text-[#D1BE9B]/50 italic"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, color: '#766060', fontSize: '12px' }}>
                   Mochi 認真地看著你的命盤… ✦
                 </p>
@@ -697,7 +697,7 @@ export default function ZiweiPage() {
               <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-[#D1BE9B]" style={{ fontSize: '18px' }}>☯</span>
-                  <h4 className="text-[12px] tracking-[0.2em] text-[#31353A]/80"
+                  <h4 className="text-[13px] tracking-[0.2em] text-[#31353A]/80"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     命盤整體解讀
                   </h4>
@@ -705,23 +705,23 @@ export default function ZiweiPage() {
                 {interpretMutation.isPending && (
                   <div className="flex flex-col items-center py-8 gap-3">
                     <div className="text-[#D1BE9B] text-2xl animate-spin">☯</div>
-                    <p className="text-[10px] tracking-[0.15em] text-[#31353A]/40"
+                    <p className="text-[11px] tracking-[0.15em] text-[#31353A]/40"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       正在解讀你的命盤...
                     </p>
                   </div>
                 )}
                 {interpretMutation.isError && (
-                  <p className="text-[10px] text-[#EAA8AC] tracking-wider">解讀暫時無法取得，請稍後再試。</p>
+                  <p className="text-[11px] text-[#EAA8AC] tracking-wider">解讀暫時無法取得，請稍後再試。</p>
                 )}
                 {!interpretMutation.isPending && !interpretMutation.isError && !llmInterpretation && (
-                  <p className="text-[11px] text-[#31353A]/35 tracking-wider text-center py-4"
+                  <p className="text-[12px] text-[#31353A]/35 tracking-wider text-center py-4"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     排盤完成後將自動生成 AI 命盤解讀
                   </p>
                 )}
                 {llmInterpretation && (
-                  <div className="text-[12px] leading-[2.2] text-[#31353A]/65 tracking-wider"
+                  <div className="text-[13px] leading-[2.2] text-[#31353A]/65 tracking-wider"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                     <Streamdown>{llmInterpretation}</Streamdown>
                   </div>

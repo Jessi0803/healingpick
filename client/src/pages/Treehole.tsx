@@ -230,13 +230,13 @@ function BreathingExercise() {
               {count}
             </p>
           )}
-          <p className="text-[9px] tracking-[0.15em]"
+          <p className="text-[11px] tracking-[0.15em]"
             style={{ color: phaseColors[phase], fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             {phaseLabels[phase]}
           </p>
         </div>
       </div>
-      <p className="text-[9px] tracking-[0.15em] text-[#31353A]/35"
+      <p className="text-[11px] tracking-[0.15em] text-[#31353A]/35"
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
         4-7-8 呼吸法 · 點擊開始/停止
       </p>
@@ -255,16 +255,16 @@ function ProductCard({ product }: { product: typeof PRODUCTS[0] }) {
         <div className="flex items-start justify-between gap-2 mb-1">
           <div>
             {product.tag && (
-              <span className="text-[8px] tracking-[0.15em] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/20 text-[#A38D6B] mr-1.5"
+              <span className="text-[10px] tracking-[0.15em] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/20 text-[#A38D6B] mr-1.5"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {product.tag}
               </span>
             )}
-            <p className="text-[11px] tracking-[0.12em] text-[#31353A]/80 mt-0.5"
+            <p className="text-[12px] tracking-[0.12em] text-[#31353A]/80 mt-0.5"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
               {product.name}
             </p>
-            <p className="text-[9px] text-[#31353A]/35 tracking-wider italic"
+            <p className="text-[11px] text-[#31353A]/35 tracking-wider italic"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               {product.subtitle}
             </p>
@@ -276,14 +276,14 @@ function ProductCard({ product }: { product: typeof PRODUCTS[0] }) {
         </div>
         <div className="flex flex-wrap gap-1 mb-2">
           {product.properties.slice(0, 3).map(p => (
-            <span key={p} className="text-[8px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#F0EBE3]/70 text-[#31353A]/50 border border-[#D1BE9B]/15"
+            <span key={p} className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#F0EBE3]/70 text-[#31353A]/50 border border-[#D1BE9B]/15"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               {p}
             </span>
           ))}
         </div>
         <Link href="/shop">
-          <button className="text-[9px] tracking-[0.15em] px-3 py-1.5 border border-[#D1BE9B]/40 rounded-full text-[#A38D6B] hover:bg-[#D1BE9B]/15 transition-colors duration-200"
+          <button className="text-[11px] tracking-[0.15em] px-3 py-1.5 border border-[#D1BE9B]/40 rounded-full text-[#A38D6B] hover:bg-[#D1BE9B]/15 transition-colors duration-200"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             查看商品 →
           </button>
@@ -364,7 +364,7 @@ export default function TreeholePage() {
 
           {/* Header */}
           <div className="text-center mb-12 animate-fade-in-up">
-            <span className="text-[9px] tracking-[0.4em] text-[#D1BE9B] uppercase"
+            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               Soul Comfort
             </span>
@@ -383,7 +383,7 @@ export default function TreeholePage() {
             <div className="animate-fade-in-up">
               {/* Mood selection */}
               <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-5">
-                <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-4"
+                <p className="text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-4"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   你現在的心情是？（選填）
                 </p>
@@ -399,7 +399,7 @@ export default function TreeholePage() {
                       }`}
                       style={{ background: selectedMood === mood.id ? mood.color + '20' : 'rgba(250,247,244,0.5)' }}>
                       <span className="text-lg">{mood.icon}</span>
-                      <span className="text-[9px] tracking-[0.1em] text-[#31353A]/65"
+                      <span className="text-[11px] tracking-[0.1em] text-[#31353A]/65"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         {mood.label}
                       </span>
@@ -415,7 +415,7 @@ export default function TreeholePage() {
                 ) : (
                   <CatListening className="w-20 h-14 flex-shrink-0" style={{ opacity: 0.6 }} />
                 )}
-                <p className="text-[10px] leading-[1.9] text-[#31353A]/45 tracking-wider italic"
+                <p className="text-[11px] leading-[1.9] text-[#31353A]/45 tracking-wider italic"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, fontSize: '14px' }}>
                   {text.length > 0
                     ? 'Mochi 正在認真聽你說… ♡'
@@ -425,7 +425,7 @@ export default function TreeholePage() {
 
               {/* Text input */}
               <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-5">
-                <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-3"
+                <p className="text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-3"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   說說你的心事
                 </p>
@@ -438,11 +438,11 @@ export default function TreeholePage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 />
                 <div className="flex items-center justify-between mt-2">
-                  <p className="text-[9px] text-[#31353A]/30 tracking-wider"
+                  <p className="text-[11px] text-[#31353A]/30 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, borderColor: '#5f4949', fontSize: '14px' }}>
                     ✦ 你的心事只有你和這個空間知道
                   </p>
-                  <span className="text-[9px] text-[#31353A]/30"
+                  <span className="text-[11px] text-[#31353A]/30"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                     {text.length} 字
                   </span>
@@ -451,7 +451,7 @@ export default function TreeholePage() {
 
               {/* Breathing exercise */}
               <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 mb-5">
-                <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-4 text-center"
+                <p className="text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-4 text-center"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   先讓自己靜下來
                 </p>
@@ -479,12 +479,12 @@ export default function TreeholePage() {
               <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 mb-5">
                 <div className="flex items-center gap-2 mb-3">
                   {moodData && <span className="text-base">{moodData.icon}</span>}
-                  <p className="text-[9px] tracking-[0.2em] text-[#31353A]/40"
+                  <p className="text-[11px] tracking-[0.2em] text-[#31353A]/40"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     你說的話
                   </p>
                 </div>
-                <p className="text-[11px] leading-[2] text-[#31353A]/55 tracking-wider italic"
+                <p className="text-[12px] leading-[2] text-[#31353A]/55 tracking-wider italic"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   「{text}」
                 </p>
@@ -502,13 +502,13 @@ export default function TreeholePage() {
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       SOUL EASE 回應你
                     </p>
-                    <p className="text-[8px] text-[#D1BE9B] tracking-wider"
+                    <p className="text-[10px] text-[#D1BE9B] tracking-wider"
                       style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic' }}>
                       with love & crystal energy
                     </p>
                   </div>
                 </div>
-                <div className="text-[12px] leading-[2.1] text-[#31353A]/65 tracking-wider"
+                <div className="text-[13px] leading-[2.1] text-[#31353A]/65 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   <Streamdown>{response}</Streamdown>
                 </div>
@@ -519,11 +519,11 @@ export default function TreeholePage() {
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/25 mb-5">
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-[#D1BE9B] text-sm">◆</span>
-                    <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B]"
+                    <p className="text-[11px] tracking-[0.25em] text-[#D1BE9B]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       為你推薦的療癒商品
                     </p>
-                    <span className="text-[8px] tracking-[0.1em] text-[#31353A]/30 ml-1"
+                    <span className="text-[10px] tracking-[0.1em] text-[#31353A]/30 ml-1"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                       根據你的心情與心事挑選
                     </span>
@@ -535,7 +535,7 @@ export default function TreeholePage() {
                   </div>
                   <div className="mt-4 text-center">
                     <Link href="/shop">
-                      <button className="text-[10px] tracking-[0.2em] text-[#31353A]/50 hover:text-[#D1BE9B] transition-colors duration-200 underline underline-offset-4"
+                      <button className="text-[11px] tracking-[0.2em] text-[#31353A]/50 hover:text-[#D1BE9B] transition-colors duration-200 underline underline-offset-4"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         查看全部療癒商品
                       </button>
@@ -553,7 +553,7 @@ export default function TreeholePage() {
                       <span className="text-xl opacity-60">◆</span>
                     </div>
                     <div className="flex-1">
-                      <p className="text-[9px] tracking-[0.25em] text-[#D1BE9B] mb-1"
+                      <p className="text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-1"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                         為你推薦的能量水晶
                       </p>
@@ -561,12 +561,12 @@ export default function TreeholePage() {
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         {llmCrystal?.name || moodData?.crystal}
                       </p>
-                      <p className="text-[10px] text-[#D1BE9B]/70 italic"
+                      <p className="text-[11px] text-[#D1BE9B]/70 italic"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                         {llmCrystal?.hz || moodData?.hz} · 對應能量頻率
                       </p>
                       {llmCrystal?.reason && (
-                        <p className="text-[10px] leading-[1.8] text-[#31353A]/55 tracking-wider mt-2"
+                        <p className="text-[11px] leading-[1.8] text-[#31353A]/55 tracking-wider mt-2"
                           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                           {llmCrystal.reason}
                         </p>
@@ -578,7 +578,7 @@ export default function TreeholePage() {
 
               {/* Additional suggestions */}
               <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 mb-6">
-                <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-4"
+                <p className="text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-4"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   也許你也需要
                 </p>
@@ -592,11 +592,11 @@ export default function TreeholePage() {
                       <div className="flex items-center gap-3 p-3 rounded-xl border border-[#D1BE9B]/15 hover:border-[#D1BE9B]/30 transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
                         <span className="text-base opacity-60">{item.icon}</span>
                         <div>
-                          <p className="text-[10px] tracking-[0.1em] text-[#31353A]/70"
+                          <p className="text-[11px] tracking-[0.1em] text-[#31353A]/70"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             {item.label}
                           </p>
-                          <p className="text-[9px] text-[#31353A]/40 tracking-wider"
+                          <p className="text-[11px] text-[#31353A]/40 tracking-wider"
                             style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                             {item.desc}
                           </p>

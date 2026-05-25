@@ -10,7 +10,7 @@ export default function NotFound() {
   return (
     <PageLayout>
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
-        <p className="text-[9px] tracking-[0.4em] text-[#D1BE9B] mb-6 uppercase"
+        <p className="text-[11px] tracking-[0.4em] text-[#D1BE9B] mb-6 uppercase"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
           404 · Page Not Found
         </p>
@@ -28,7 +28,7 @@ export default function NotFound() {
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
           你所尋找的頁面不存在，或許它正在宇宙的另一個角落等待你。
         </p>
-        <p className="text-[10px] text-[#D1BE9B]/60 tracking-[0.1em] mb-8 italic"
+        <p className="text-[11px] text-[#D1BE9B]/60 tracking-[0.1em] mb-8 italic"
           style={{ fontFamily: 'Cormorant Garamond, serif' }}>
           "Even the cat is confused, but the crystals know the way."
         </p>

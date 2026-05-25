@@ -94,7 +94,7 @@ export default function HistoryPage() {
 
           {/* Header */}
           <div className="text-center mb-10 animate-fade-in-up">
-            <span className="text-[9px] tracking-[0.4em] text-[#D1BE9B] uppercase"
+            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               My Records
             </span>
@@ -124,7 +124,7 @@ export default function HistoryPage() {
                 }`}
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {tab.label}
-                <span className={`ml-1.5 text-[9px] ${activeTab === tab.id ? 'opacity-60' : 'text-[#D1BE9B]'}`}>
+                <span className={`ml-1.5 text-[11px] ${activeTab === tab.id ? 'opacity-60' : 'text-[#D1BE9B]'}`}>
                   {tab.count}
                 </span>
               </button>
@@ -159,7 +159,7 @@ export default function HistoryPage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     還沒有占卜紀錄
                   </p>
-                  <p className="text-[10px] tracking-[0.15em] text-[#31353A]/25 mt-2 mb-6"
+                  <p className="text-[11px] tracking-[0.15em] text-[#31353A]/25 mt-2 mb-6"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     開始你的第一次占卜吧！
                   </p>
@@ -187,14 +187,14 @@ export default function HistoryPage() {
                               {TYPE_LABELS[r.type] ?? r.type}
                             </p>
                             {r.question && (
-                              <p className="text-[10px] tracking-[0.1em] text-[#D1BE9B] mt-0.5 italic"
+                              <p className="text-[11px] tracking-[0.1em] text-[#D1BE9B] mt-0.5 italic"
                                 style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                                 「{r.question}」
                               </p>
                             )}
                           </div>
                         </div>
-                        <p className="text-[9px] tracking-[0.1em] text-[#31353A]/30 flex-shrink-0 ml-2"
+                        <p className="text-[11px] tracking-[0.1em] text-[#31353A]/30 flex-shrink-0 ml-2"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                           {new Date(r.createdAt).toLocaleDateString('zh-TW', {
                             year: 'numeric', month: 'long', day: 'numeric',
@@ -204,13 +204,13 @@ export default function HistoryPage() {
 
                       {r.interpretation && (
                         <details className="group">
-                          <summary className="cursor-pointer text-[10px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors list-none flex items-center gap-1"
+                          <summary className="cursor-pointer text-[11px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors list-none flex items-center gap-1"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             <span className="group-open:rotate-90 transition-transform duration-200 inline-block">▶</span>
                             查看解讀內容
                           </summary>
                           <div className="mt-3 pt-3 border-t border-[#D1BE9B]/15">
-                            <div className="text-[11px] leading-[2] text-[#31353A]/60 tracking-wider prose-sm max-w-none"
+                            <div className="text-[12px] leading-[2] text-[#31353A]/60 tracking-wider prose-sm max-w-none"
                               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                               <Streamdown>{r.interpretation}</Streamdown>
                             </div>
@@ -252,7 +252,7 @@ export default function HistoryPage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     還沒有心靈樹洞紀錄
                   </p>
-                  <p className="text-[10px] tracking-[0.15em] text-[#31353A]/25 mt-2 mb-6"
+                  <p className="text-[11px] tracking-[0.15em] text-[#31353A]/25 mt-2 mb-6"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     有話想說嗎？跟 Mochi 說說吧。
                   </p>
@@ -276,18 +276,18 @@ export default function HistoryPage() {
                           <span className="text-lg">🌿</span>
                           <div>
                             {s.mood && (
-                              <p className="text-[9px] tracking-[0.15em] text-[#D1BE9B]"
+                              <p className="text-[11px] tracking-[0.15em] text-[#D1BE9B]"
                                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                                 心情：{s.mood}
                               </p>
                             )}
-                            <p className="text-[10px] tracking-[0.1em] text-[#31353A]/60 mt-0.5 italic line-clamp-1"
+                            <p className="text-[11px] tracking-[0.1em] text-[#31353A]/60 mt-0.5 italic line-clamp-1"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                               「{s.userText.slice(0, 50)}{s.userText.length > 50 ? '⋯' : ''}」
                             </p>
                           </div>
                         </div>
-                        <p className="text-[9px] tracking-[0.1em] text-[#31353A]/30 flex-shrink-0 ml-2"
+                        <p className="text-[11px] tracking-[0.1em] text-[#31353A]/30 flex-shrink-0 ml-2"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                           {new Date(s.createdAt).toLocaleDateString('zh-TW', {
                             year: 'numeric', month: 'long', day: 'numeric',
@@ -296,7 +296,7 @@ export default function HistoryPage() {
                       </div>
 
                       {s.crystalName && (
-                        <p className="text-[9px] tracking-[0.1em] text-[#D1BE9B]/70 mb-2"
+                        <p className="text-[11px] tracking-[0.1em] text-[#D1BE9B]/70 mb-2"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                           推薦水晶：{s.crystalName}
                         </p>
@@ -304,13 +304,13 @@ export default function HistoryPage() {
 
                       {s.aiResponse && (
                         <details className="group">
-                          <summary className="cursor-pointer text-[10px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors list-none flex items-center gap-1"
+                          <summary className="cursor-pointer text-[11px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors list-none flex items-center gap-1"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             <span className="group-open:rotate-90 transition-transform duration-200 inline-block">▶</span>
                             查看 Mochi 的回應
                           </summary>
                           <div className="mt-3 pt-3 border-t border-[#D1BE9B]/15">
-                            <div className="text-[11px] leading-[2] text-[#31353A]/60 tracking-wider prose-sm max-w-none"
+                            <div className="text-[12px] leading-[2] text-[#31353A]/60 tracking-wider prose-sm max-w-none"
                               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                               <Streamdown>{s.aiResponse}</Streamdown>
                             </div>
