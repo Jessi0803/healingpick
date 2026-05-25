@@ -114,19 +114,12 @@ const CardFace = ({ card, reversed = false }: { card: typeof MAJOR_ARCANA[0]; re
 // Card back — soft linen texture with golden mandala
 const CardBack = () => (
   <svg viewBox="0 0 120 200" fill="none" className="w-full h-full">
-    <defs>
-      <linearGradient id="cbBg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#CDBC9C" />
-        <stop offset="52%" stopColor="#C1AD89" />
-        <stop offset="100%" stopColor="#B29C74" />
-      </linearGradient>
-      <radialGradient id="cbGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#F8F0DC" stopOpacity="0.55" />
-        <stop offset="100%" stopColor="#F8F0DC" stopOpacity="0" />
-      </radialGradient>
-    </defs>
-    <rect width="120" height="200" rx="8" fill="url(#cbBg)" />
-    <circle cx="60" cy="100" r="48" fill="url(#cbGlow)" />
+    {/* Solid fills only — no gradient/defs, which can render transparent
+        inside the 3D flip container (preserve-3d + backface-visibility). */}
+    <rect width="120" height="200" rx="8" fill="#C1AD89" />
+    {/* Soft centre halo, layered translucent discs instead of a gradient */}
+    <circle cx="60" cy="100" r="46" fill="#EFE3C6" fillOpacity="0.16" />
+    <circle cx="60" cy="100" r="34" fill="#F3E9CF" fillOpacity="0.18" />
     {/* Frames */}
     <rect x="5" y="5" width="110" height="190" rx="6" stroke="#F3E7CC" strokeWidth="1" opacity="0.9" />
     <rect x="9" y="9" width="102" height="182" rx="4" stroke="#F3E7CC" strokeWidth="0.5" strokeDasharray="2 2.5" opacity="0.65" />
