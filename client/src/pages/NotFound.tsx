@@ -20,11 +20,11 @@ export default function NotFound() {
           <CatConfused className="w-32 h-40 mx-auto opacity-75" />
         </div>
 
-        <h2 className="text-xl tracking-[0.2em] text-[#31353A]/60 mb-3"
+        <h2 className="text-xl tracking-[0.2em] text-[#31353A]/72 mb-3"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
           這隻貓咪也找不到你要的頁面⋯⋯
         </h2>
-        <p className="text-xs text-[#31353A]/35 tracking-[0.15em] mb-2 max-w-xs leading-[2]"
+        <p className="text-xs text-[#31353A]/50 tracking-[0.15em] mb-2 max-w-xs leading-[2]"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
           你所尋找的頁面不存在，或許它正在宇宙的另一個角落等待你。
         </p>

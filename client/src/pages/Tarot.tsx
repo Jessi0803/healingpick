@@ -98,7 +98,7 @@ const CardFace = ({ card, reversed = false }: { card: typeof MAJOR_ARCANA[0]; re
         // Fallback SVG if image fails
         <div className="w-full h-full flex flex-col items-center justify-center bg-[#F0E8DC]">
           <span className="text-2xl opacity-50" style={{ fontFamily: 'serif' }}>{card.symbol}</span>
-          <span className="text-[10px] tracking-widest text-[#31353A]/60 mt-1" style={{ fontFamily: 'Noto Serif TC, serif' }}>{card.name}</span>
+          <span className="text-[10px] tracking-widest text-[#31353A]/72 mt-1" style={{ fontFamily: 'Noto Serif TC, serif' }}>{card.name}</span>
         </div>
       )}
       {reversed && (
@@ -285,7 +285,7 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   塔羅牌占卜
                 </h1>
-                <p className="text-sm italic text-[#31353A]/40 tracking-[0.15em]"
+                <p className="text-sm italic text-[#31353A]/54 tracking-[0.15em]"
                   style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                   "The cards don't predict the future — they illuminate the present."
                 </p>
@@ -324,11 +324,11 @@ export default function TarotPage() {
 
               {/* Spread info */}
               <div className="glass-panel rounded-2xl p-8 max-w-2xl mx-auto border border-[#D1BE9B]/20 mb-8">
-                <h3 className="text-sm tracking-[0.2em] text-[#31353A]/80 mb-4"
+                <h3 className="text-sm tracking-[0.2em] text-[#31353A]/86 mb-4"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   五牌陣星形牌陣
                 </h3>
-                <p className="text-[12px] leading-[2.1] text-[#31353A]/55 tracking-wider mb-6"
+                <p className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                   五牌陣星形牌陣以五張牌排列成五角星形，中心一張代表核心能量，
                   四角分別展示過去、現在、未來與建議，簡潔而清晰地為你描繪當前處境的完整能量圖景。
@@ -340,7 +340,7 @@ export default function TarotPage() {
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         {p.id + 1}
                       </div>
-                      <div className="text-[11px] tracking-[0.1em] text-[#31353A]/70"
+                      <div className="text-[11px] tracking-[0.1em] text-[#31353A]/80"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         {p.label}
                       </div>
@@ -376,7 +376,7 @@ export default function TarotPage() {
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             {step.label}
                           </p>
-                          <p className="text-[12px] leading-[1.7] text-[#31353A]/50 tracking-wide"
+                          <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
                             style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                             {step.desc}
                           </p>
@@ -408,7 +408,7 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   設定你的問題
                 </h2>
-                <p className="mt-2 text-[12px] text-[#31353A]/45 tracking-wider leading-[1.9]"
+                <p className="mt-2 text-[12px] text-[#31353A]/58 tracking-wider leading-[1.9]"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   心中帶著問題，讓宇宙為你指引
                 </p>
@@ -436,7 +436,7 @@ export default function TarotPage() {
                         className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all duration-200 text-xs tracking-[0.15em] ${
                           questionType === t.id
                             ? 'border-[#D1BE9B] bg-[#D1BE9B]/15 text-[#A38D6B]'
-                            : 'border-[#D1BE9B]/20 hover:border-[#D1BE9B]/40 text-[#31353A]/60'
+                            : 'border-[#D1BE9B]/20 hover:border-[#D1BE9B]/40 text-[#31353A]/72'
                         }`}
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         <span className="text-lg opacity-70">{t.icon}</span>
@@ -457,10 +457,10 @@ export default function TarotPage() {
                     onChange={e => setQuestion(e.target.value)}
                     placeholder="例如：我與他的感情未來會如何發展？"
                     rows={3}
-                    className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-3 text-xs text-[#31353A]/70 tracking-wider leading-[1.9] resize-none focus:outline-none focus:border-[#D1BE9B]/50 placeholder:text-[#31353A]/30"
+                    className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-3 text-xs text-[#31353A]/80 tracking-wider leading-[1.9] resize-none focus:outline-none focus:border-[#D1BE9B]/50 placeholder:text-[#31353A]/46"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
-                  <p className="mt-2 text-[11px] text-[#31353A]/35 tracking-wider"
+                  <p className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     ✦ 問題越具體，解讀越精準。也可以不填，讓牌自由說話。
                   </p>
@@ -488,7 +488,7 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   洗牌
                 </h2>
-                <p className="mt-2 text-[12px] text-[#31353A]/45 tracking-wider"
+                <p className="mt-2 text-[12px] text-[#31353A]/58 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, fontSize: '15px' }}>
                   {isShufflingActive ? '牌正在洗動中⋯⋯心中默想問題，按下停止' : '深呼吸，讓心靜下來，準備好後按下開始洗牌'}
                 </p>
@@ -567,7 +567,7 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   選出你的五張牌
                 </h2>
-                <p className="mt-3 text-[12px] text-[#31353A]/45 tracking-wider"
+                <p className="mt-3 text-[12px] text-[#31353A]/58 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   跟隨直覺，點選讓你感應到的牌
                 </p>
@@ -585,12 +585,12 @@ export default function TarotPage() {
                             ? 'border-[#D1BE9B] bg-[#D1BE9B]/15 text-[#A38D6B]'
                             : current
                             ? 'border-[#D1BE9B] bg-[#D1BE9B]/10 text-[#A38D6B] scale-110 shadow-[0_4px_14px_rgba(209,190,155,0.35)]'
-                            : 'border-[#D1BE9B]/20 text-[#31353A]/35'
+                            : 'border-[#D1BE9B]/20 text-[#31353A]/50'
                         }`}
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                       >
                         <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${
-                          done ? 'bg-[#D1BE9B] text-white' : current ? 'bg-[#D1BE9B]/50 text-white' : 'bg-[#D1BE9B]/15 text-[#31353A]/40'
+                          done ? 'bg-[#D1BE9B] text-white' : current ? 'bg-[#D1BE9B]/50 text-white' : 'bg-[#D1BE9B]/15 text-[#31353A]/54'
                         }`}>
                           {done ? '✓' : i + 1}
                         </span>
@@ -605,9 +605,9 @@ export default function TarotPage() {
                   <div className="mt-4 inline-block px-5 py-2.5 rounded-2xl bg-[#D1BE9B]/8 border border-[#D1BE9B]/20">
                     <p className="text-[12px] tracking-[0.15em] text-[#A38D6B]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      🐾 第 {pickedIndices.length + 1} 張 · <span className="text-[#31353A]/80">{SPREAD_POSITIONS[pickedIndices.length].label}</span>
+                      🐾 第 {pickedIndices.length + 1} 張 · <span className="text-[#31353A]/86">{SPREAD_POSITIONS[pickedIndices.length].label}</span>
                     </p>
-                    <p className="mt-1 text-[11px] leading-[1.7] text-[#31353A]/45 tracking-wider"
+                    <p className="mt-1 text-[11px] leading-[1.7] text-[#31353A]/58 tracking-wider"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       {SPREAD_POSITIONS[pickedIndices.length].desc}
                     </p>
@@ -673,7 +673,7 @@ export default function TarotPage() {
               </div>
 
               {pickedIndices.length > 0 && pickedIndices.length < 5 && (
-                <p className="text-center mt-2 text-[11px] text-[#31353A]/35 tracking-wider animate-pulse"
+                <p className="text-center mt-2 text-[11px] text-[#31353A]/50 tracking-wider animate-pulse"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   還需選 {5 - pickedIndices.length} 張牌
                 </p>
@@ -694,12 +694,12 @@ export default function TarotPage() {
                   點擊牌面，逐一揭示
                 </h2>
                 {question && (
-                  <p className="mt-2 text-xs italic text-[#31353A]/50 tracking-wider"
+                  <p className="mt-2 text-xs italic text-[#31353A]/62 tracking-wider"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                     「{question}」
                   </p>
                 )}
-                <p className="mt-2 text-[11px] text-[#31353A]/40 tracking-wider"
+                <p className="mt-2 text-[11px] text-[#31353A]/54 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   已揭示 {revealedCards.size} / 5
                 </p>
@@ -725,7 +725,7 @@ export default function TarotPage() {
                         </div>
                       ))}
                     </div>
-                    <p className="text-center mt-1 text-[11px] text-[#31353A]/30 tracking-wider"
+                    <p className="text-center mt-1 text-[11px] text-[#31353A]/46 tracking-wider"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                       ← 左右滑動查看全部牌面 →
                     </p>
@@ -787,7 +787,7 @@ export default function TarotPage() {
                   ) : (
                     <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 text-center">
                       <div className="text-2xl mb-3 opacity-30">✦</div>
-                      <p className="text-xs tracking-[0.15em] text-[#31353A]/35"
+                      <p className="text-xs tracking-[0.15em] text-[#31353A]/50"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                         點擊牌面<br />查看解讀
                       </p>
@@ -847,7 +847,7 @@ export default function TarotPage() {
                       {SPREAD_POSITIONS[idx].label}
                     </div>
                     <div className="text-xl mb-1 opacity-60">{drawn.card.symbol}</div>
-                    <div className="text-[11px] tracking-[0.1em] text-[#31353A]/75"
+                    <div className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {drawn.card.name}
                     </div>
@@ -865,7 +865,7 @@ export default function TarotPage() {
               <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20 mb-8">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="text-[#D1BE9B]">✦</span>
-                  <h3 className="text-sm tracking-[0.2em] text-[#31353A]/80"
+                  <h3 className="text-sm tracking-[0.2em] text-[#31353A]/86"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     五牌陣星形解讀
                   </h3>
@@ -873,7 +873,7 @@ export default function TarotPage() {
                 {interpretMutation.isPending && (
                   <div className="flex flex-col items-center justify-center py-12 gap-4">
                     <div className="text-[#D1BE9B] text-3xl animate-spin">✦</div>
-                    <p className="text-xs tracking-[0.2em] text-[#31353A]/45"
+                    <p className="text-xs tracking-[0.2em] text-[#31353A]/58"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       Mochi 正在為你解讀牌陣能量...
                     </p>
@@ -885,11 +885,11 @@ export default function TarotPage() {
                   </div>
                 )}
                 {llmInterpretation && (
-                  <div className="prose prose-sm max-w-none text-[13px] leading-[2.1] text-[#31353A]/70 tracking-wider
+                  <div className="prose prose-sm max-w-none text-[13px] leading-[2.1] text-[#31353A]/80 tracking-wider
                     prose-headings:font-normal prose-headings:tracking-[0.18em] prose-headings:text-[#A38D6B]
                     prose-h3:text-[13px] prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
-                    prose-p:my-1.5 prose-p:text-[#31353A]/70
-                    prose-strong:text-[#31353A]/85 prose-strong:font-medium
+                    prose-p:my-1.5 prose-p:text-[#31353A]/80
+                    prose-strong:text-[#31353A]/90 prose-strong:font-medium
                     prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                     <Streamdown>{llmInterpretation}</Streamdown>
@@ -909,13 +909,13 @@ export default function TarotPage() {
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                       本次占卜推薦水晶
                     </p>
-                    <p className="text-sm tracking-[0.15em] text-[#31353A]/80"
+                    <p className="text-sm tracking-[0.15em] text-[#31353A]/86"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {rec.name}
                     </p>
                   </div>
                 </div>
-                <p className="text-[12px] leading-[1.9] text-[#31353A]/55 tracking-wider mb-4"
+                <p className="text-[12px] leading-[1.9] text-[#31353A]/68 tracking-wider mb-4"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                   根據你的牌陣能量，{rec.name}能幫助你{rec.reason}，
                   在這段時間給予你最需要的支持與指引。
@@ -1026,7 +1026,7 @@ function CardDetailPanel({
         </div>
         <div>
           <div className="text-xl mb-1 opacity-60">{drawn.card.symbol}</div>
-          <h4 className="text-sm tracking-[0.15em] text-[#31353A]/80 mb-0.5"
+          <h4 className="text-sm tracking-[0.15em] text-[#31353A]/86 mb-0.5"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             {drawn.card.name}
           </h4>
@@ -1037,13 +1037,13 @@ function CardDetailPanel({
         </div>
       </div>
 
-      <p className="text-[11px] text-[#31353A]/45 tracking-wider mb-3 leading-[1.8]"
+      <p className="text-[11px] text-[#31353A]/58 tracking-wider mb-3 leading-[1.8]"
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
         {position.desc}
       </p>
 
       <div className="border-t border-[#D1BE9B]/15 pt-3">
-        <p className="text-[12px] leading-[1.9] text-[#31353A]/60 tracking-wider"
+        <p className="text-[12px] leading-[1.9] text-[#31353A]/72 tracking-wider"
           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
           {drawn.reversed ? drawn.card.reversed : drawn.card.meaning}
         </p>

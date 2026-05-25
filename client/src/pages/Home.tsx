@@ -387,14 +387,14 @@ export default function Home() {
             <p className="text-[10px] tracking-[0.3em] text-[#D1BE9B] mb-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>今日療癒話語</p>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-sm">{todayEnergy.moon === '盈凸月' ? '🌔' : todayEnergy.moon === '滿月' ? '🌕' : todayEnergy.moon === '眉月' ? '🌒' : todayEnergy.moon === '殘月' ? '🌘' : '🌓'}</span>
-              <span className="text-[11px] tracking-[0.15em] text-[#31353A]/60" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{todayEnergy.moon}</span>
+              <span className="text-[11px] tracking-[0.15em] text-[#31353A]/72" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{todayEnergy.moon}</span>
             </div>
             <div className="w-full h-px bg-[#D1BE9B]/20 mb-2" />
             <p className="text-[11px] tracking-[0.15em] mb-1" style={{ color: todayEnergy.color, fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{todayEnergy.keyword}</p>
-            <p className="text-[11px] text-[#31353A]/60 leading-[1.8] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>「{todayEnergy.quote}」</p>
+            <p className="text-[11px] text-[#31353A]/72 leading-[1.8] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>「{todayEnergy.quote}」</p>
             <div className="mt-2 flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full" style={{ background: todayEnergy.color, opacity: 0.7 }} />
-              <span className="text-[10px] tracking-[0.1em] text-[#31353A]/40" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>推薦 {todayEnergy.crystal}</span>
+              <span className="text-[10px] tracking-[0.1em] text-[#31353A]/54" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>推薦 {todayEnergy.crystal}</span>
             </div>
           </div>
         </div>
@@ -405,7 +405,7 @@ export default function Home() {
             <svg className="w-4 h-4" viewBox="0 0 100 100" fill="none">
               <path d="M50 10 L53 43 L86 46 L53 49 L50 82 L47 49 L14 46 L47 43 Z" fill="currentColor" />
             </svg>
-            <span className="text-[11px] tracking-[0.4em] text-[#31353A]/40 font-light"
+            <span className="text-[11px] tracking-[0.4em] text-[#31353A]/54 font-light"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               SACRED CRYSTAL ALTAR
             </span>
@@ -420,13 +420,13 @@ export default function Home() {
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
           >
             有些心事
-            <span className="block text-2xl md:text-3xl font-light text-[#31353A]/50 mt-2 tracking-[0.25em]">
+            <span className="block text-2xl md:text-3xl font-light text-[#31353A]/62 mt-2 tracking-[0.25em]">
               只需要一個溫柔的出口
             </span>
           </h1>
 
           <p
-            className="text-base md:text-lg text-[#31353A]/40 tracking-[0.15em] max-w-lg mx-auto mb-8 italic"
+            className="text-base md:text-lg text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8 italic"
             style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}
           >
             "Some feelings only need a gentle place to rest."
@@ -495,7 +495,7 @@ export default function Home() {
                 >
                   <div className="text-3xl mb-4 opacity-80">{f.icon}</div>
                   <h3
-                    className="text-sm tracking-[0.15em] text-[#31353A]/85 mb-1"
+                    className="text-sm tracking-[0.15em] text-[#31353A]/90 mb-1"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     {f.title}
@@ -507,7 +507,7 @@ export default function Home() {
                     {f.subtitle}
                   </p>
                   <p
-                    className="text-[12px] leading-[1.8] text-[#31353A]/55 tracking-wider"
+                    className="text-[12px] leading-[1.8] text-[#31353A]/68 tracking-wider"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
                   >
                     {f.desc}
@@ -562,7 +562,7 @@ export default function Home() {
               能量水晶
             </h2>
             <p
-              className="mt-3 text-xs tracking-[0.15em] text-[#31353A]/45 max-w-sm mx-auto leading-[1.9]"
+              className="mt-3 text-xs tracking-[0.15em] text-[#31353A]/58 max-w-sm mx-auto leading-[1.9]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
             >
               點擊水晶，感受它的頻率與能量
@@ -605,7 +605,7 @@ export default function Home() {
                   </div>
                   <span
                     className={`text-[11px] tracking-[0.2em] transition-colors duration-300 mt-1 ${
-                      activeCrystal === id ? 'text-[#D1BE9B]' : 'text-[#31353A]/50'
+                      activeCrystal === id ? 'text-[#D1BE9B]' : 'text-[#31353A]/62'
                     }`}
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
                   >
@@ -634,13 +634,13 @@ export default function Home() {
                     </span>
                   </div>
                   <h3
-                    className="text-sm tracking-[0.15em] text-[#31353A]/85 mb-3"
+                    className="text-sm tracking-[0.15em] text-[#31353A]/90 mb-3"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     {activeData.title}
                   </h3>
                   <p
-                    className="text-[12px] leading-[2] text-[#31353A]/60 tracking-wider"
+                    className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
                   >
                     {activeData.description}
@@ -658,7 +658,7 @@ export default function Home() {
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 flex flex-col items-center justify-center min-h-[160px]">
                   <div className="text-2xl mb-3 opacity-30">✦</div>
                   <p
-                    className="text-xs tracking-[0.2em] text-[#31353A]/35 text-center"
+                    className="text-xs tracking-[0.2em] text-[#31353A]/50 text-center"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
                   >
                     點擊水晶<br />感受它的能量頻率
@@ -690,7 +690,7 @@ export default function Home() {
                 塔羅牌占卜
               </h2>
               <p
-                className="text-[12px] leading-[2.1] text-[#31353A]/55 tracking-wider mb-6 max-w-sm"
+                className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6 max-w-sm"
                 style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300, fontSize: '12px' }}
               >
                 採用凱爾特十字完整牌陣，十張牌從不同維度解析你的問題——
@@ -700,7 +700,7 @@ export default function Home() {
                 {['過去', '現在', '未來', '潛意識', '建議'].map((tag) => (
                   <span
                     key={tag}
-                    className="text-[11px] tracking-[0.15em] px-2.5 py-1 rounded-full bg-[#E5DFEE]/60 text-[#31353A]/60 border border-[#D1BE9B]/20"
+                    className="text-[11px] tracking-[0.15em] px-2.5 py-1 rounded-full bg-[#E5DFEE]/60 text-[#31353A]/72 border border-[#D1BE9B]/20"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     {tag}
@@ -806,7 +806,7 @@ export default function Home() {
                 紫微斗數命盤
               </h2>
               <p
-                className="text-[12px] leading-[2.1] text-[#31353A]/55 tracking-wider mb-6 max-w-sm"
+                className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6 max-w-sm"
                 style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
               >
                 輸入出生年月日時，系統自動排出傳統十二宮位命盤。
@@ -854,7 +854,7 @@ export default function Home() {
                 心靈樹洞
               </h2>
               <p
-                className="text-[12px] leading-[2.2] text-[#31353A]/60 tracking-wider mb-6"
+                className="text-[12px] leading-[2.2] text-[#31353A]/72 tracking-wider mb-6"
                 style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300, fontSize: '12px' }}
               >
                 有些話，說出來就輕了。<br />
@@ -921,7 +921,7 @@ export default function Home() {
                       className={`absolute top-3 left-3 text-[10px] tracking-[0.15em] px-2 py-0.5 rounded-full ${
                         p.badge === '自營'
                           ? 'bg-[#D1BE9B]/90 text-[#31353A]'
-                          : 'bg-white/80 text-[#31353A]/70'
+                          : 'bg-white/80 text-[#31353A]/80'
                       }`}
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
@@ -936,7 +936,7 @@ export default function Home() {
                       {p.tag}
                     </p>
                     <h3
-                      className="text-xs tracking-[0.12em] text-[#31353A]/80 mb-0.5"
+                      className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
                       {p.name}
@@ -961,7 +961,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>Daily Guidance</span>
             <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>今日塔羅指引</h2>
-            <p className="mt-2 text-[11px] tracking-[0.2em] text-[#31353A]/40" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>點擊牌面，接收今日宇宙的訊息</p>
+            <p className="mt-2 text-[11px] tracking-[0.2em] text-[#31353A]/54" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>點擊牌面，接收今日宇宙的訊息</p>
             <div className="divider-gold mt-4 max-w-xs mx-auto">
               <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none"><path d="M50 10 L53 43 L86 46 L53 49 L50 82 L47 49 L14 46 L47 43 Z" fill="currentColor" /></svg>
             </div>
@@ -1036,7 +1036,7 @@ export default function Home() {
                 >
                   <div className="absolute inset-[6px] rounded border border-[#D1BE9B]/25" />
                   <div className="text-4xl mb-2 text-[#D1BE9B]" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{todayTarot.symbol}</div>
-                  <p className="text-[11px] tracking-[0.2em] text-[#31353A]/70 mb-0.5" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{todayTarot.name}</p>
+                  <p className="text-[11px] tracking-[0.2em] text-[#31353A]/80 mb-0.5" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{todayTarot.name}</p>
                   <p className="text-[10px] tracking-[0.15em] text-[#D1BE9B] italic" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{todayTarot.en}</p>
                 </div>
               </div>
@@ -1046,9 +1046,9 @@ export default function Home() {
             <div className="flex-1 text-left">
               <div style={{ opacity: tarotFlipped ? 1 : 0, transform: tarotFlipped ? 'translateY(0)' : 'translateY(8px)', transition: 'all 0.5s ease' }}>
                 <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>TODAY · {new Date().toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}</p>
-                <h3 className="text-xl md:text-2xl tracking-[0.2em] text-[#31353A]/85 mb-4" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{todayTarot.name}</h3>
+                <h3 className="text-xl md:text-2xl tracking-[0.2em] text-[#31353A]/90 mb-4" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{todayTarot.name}</h3>
                 <div className="w-8 h-px bg-[#D1BE9B]/40 mb-4" />
-                <p className="text-[13px] leading-[2.2] text-[#31353A]/60 tracking-wider" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>{todayTarot.meaning}</p>
+                <p className="text-[13px] leading-[2.2] text-[#31353A]/72 tracking-wider" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>{todayTarot.meaning}</p>
                 <Link href="/tarot">
                   <button className="mt-6 px-6 py-2 text-[11px] tracking-[0.25em] border border-[#D1BE9B]/40 text-[#D1BE9B] rounded-full hover:bg-[#D1BE9B]/10 transition-all duration-300 active:scale-95" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     進行完整占卜
@@ -1056,7 +1056,7 @@ export default function Home() {
                 </Link>
               </div>
               {!tarotFlipped && (
-                <p className="text-[12px] leading-[2] text-[#31353A]/40 tracking-wider" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>宇宙正在為你準備一張屬於今日的塔羅。<br />當你準備好了，點擊牌面接收它的訊息。</p>
+                <p className="text-[12px] leading-[2] text-[#31353A]/54 tracking-wider" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>宇宙正在為你準備一張屬於今日的塔羅。<br />當你準備好了，點擊牌面接收它的訊息。</p>
               )}
             </div>
           </div>
@@ -1085,8 +1085,8 @@ export default function Home() {
                         {crystalIconMap[t.crystal] ?? <div className="w-8 h-10 rounded-full bg-[#D1BE9B]/20" />}
                       </div>
                     </div>
-                    <p className="text-[13px] leading-[2.2] text-[#31353A]/60 tracking-wider mb-6 italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>「{t.text}」</p>
-                    <p className="text-xs tracking-[0.15em] text-[#31353A]/75" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{t.name}</p>
+                    <p className="text-[13px] leading-[2.2] text-[#31353A]/72 tracking-wider mb-6 italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>「{t.text}」</p>
+                    <p className="text-xs tracking-[0.15em] text-[#31353A]/82" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{t.name}</p>
                     <p className="text-[11px] tracking-[0.15em] text-[#D1BE9B] mt-0.5" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{t.tag}</p>
                   </div>
                 </div>

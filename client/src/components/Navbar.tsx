@@ -61,13 +61,13 @@ export default function Navbar() {
             <CatSitting className="w-7 h-9 opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex-shrink-0" />
             <div className="flex flex-col items-start">
               <span
-                className="font-en-serif text-xl md:text-2xl tracking-[0.25em] font-light text-[#31353A]/90 group-hover:text-[#D1BE9B] transition-colors duration-300"
+                className="font-en-serif text-xl md:text-2xl tracking-[0.25em] font-light text-[#31353A]/92 group-hover:text-[#D1BE9B] transition-colors duration-300"
                 style={{ fontFamily: 'Cormorant Garamond, serif' }}
               >
                 Healing Pick
               </span>
               <span
-                className="text-[11px] tracking-[0.3em] text-[#31353A]/45 mt-0.5"
+                className="text-[11px] tracking-[0.3em] text-[#31353A]/58 mt-0.5"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, fontSize: '12px' }}
               >
                 癒見好物
@@ -84,7 +84,7 @@ export default function Navbar() {
                 className={`text-xs tracking-[0.2em] transition-colors duration-300 ${
                   isActive(link.href)
                     ? 'text-[#D1BE9B]'
-                    : 'text-[#31353A]/75 hover:text-[#D1BE9B]'
+                    : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
                 }`}
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
@@ -104,7 +104,7 @@ export default function Navbar() {
                   className={`text-xs tracking-[0.2em] transition-colors duration-300 ${
                     isActive('/history')
                       ? 'text-[#D1BE9B]'
-                      : 'text-[#31353A]/75 hover:text-[#D1BE9B]'
+                      : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
                   }`}
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
@@ -112,7 +112,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={() => logoutMutation.mutate()}
-                  className="text-xs tracking-[0.2em] text-[#31353A]/50 hover:text-[#D1BE9B] transition-colors duration-300"
+                  className="text-xs tracking-[0.2em] text-[#31353A]/62 hover:text-[#D1BE9B] transition-colors duration-300"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
                   登出
@@ -121,7 +121,7 @@ export default function Navbar() {
             ) : (
               <a
                 href={getLoginUrl()}
-                className="hidden lg:block text-xs tracking-[0.2em] text-[#31353A]/75 hover:text-[#D1BE9B] transition-colors duration-300"
+                className="hidden lg:block text-xs tracking-[0.2em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors duration-300"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 登入
@@ -130,7 +130,7 @@ export default function Navbar() {
 
             {/* Hamburger */}
             <button
-              className="lg:hidden p-2 text-[#31353A]/70 hover:text-[#D1BE9B] transition-colors"
+              className="lg:hidden p-2 text-[#31353A]/80 hover:text-[#D1BE9B] transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
@@ -156,7 +156,7 @@ export default function Navbar() {
                   className={`text-xs tracking-[0.25em] py-3 border-b border-[#D1BE9B]/15 transition-colors ${
                     isActive(link.href)
                       ? 'text-[#D1BE9B]'
-                      : 'text-[#31353A]/75 hover:text-[#D1BE9B]'
+                      : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
                   }`}
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
@@ -169,14 +169,14 @@ export default function Navbar() {
                   <>
                     <Link
                       href="/history"
-                      className="text-xs tracking-[0.25em] text-[#31353A]/75 hover:text-[#D1BE9B] transition-colors py-2"
+                      className="text-xs tracking-[0.25em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors py-2"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
                       ✦ 我的紀錄
                     </Link>
                     <button
                       onClick={() => logoutMutation.mutate()}
-                      className="text-left text-xs tracking-[0.25em] text-[#31353A]/50 hover:text-[#D1BE9B] transition-colors py-2"
+                      className="text-left text-xs tracking-[0.25em] text-[#31353A]/62 hover:text-[#D1BE9B] transition-colors py-2"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
                       登出
@@ -185,7 +185,7 @@ export default function Navbar() {
                 ) : (
                   <a
                     href={getLoginUrl()}
-                    className="text-xs tracking-[0.25em] text-[#31353A]/75 hover:text-[#D1BE9B] transition-colors py-2"
+                    className="text-xs tracking-[0.25em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors py-2"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     登入

@@ -219,7 +219,7 @@ export default function ShopPage() {
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               能量商品
             </h1>
-            <p className="text-sm italic text-[#31353A]/40 tracking-[0.15em]"
+            <p className="text-sm italic text-[#31353A]/54 tracking-[0.15em]"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               "Each crystal carries a story, a frequency, a healing."
             </p>
@@ -244,7 +244,7 @@ export default function ShopPage() {
                   className={`flex-shrink-0 px-4 py-2 rounded-full text-xs tracking-[0.15em] border transition-all duration-200 ${
                     activeCategory === cat.id
                       ? 'bg-[#3D4144] text-[#FAF7F4] border-[#3D4144]'
-                      : 'border-[#D1BE9B]/25 text-[#31353A]/60 hover:border-[#D1BE9B]/50 bg-white/30'
+                      : 'border-[#D1BE9B]/25 text-[#31353A]/72 hover:border-[#D1BE9B]/50 bg-white/30'
                   }`}
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   {cat.label}
@@ -269,7 +269,7 @@ export default function ShopPage() {
                     className={`px-3 py-1.5 rounded-full text-[11px] tracking-[0.15em] border transition-all duration-200 ${
                       typeFilter === t.id
                         ? 'border-[#D1BE9B] bg-[#D1BE9B]/15 text-[#A38D6B]'
-                        : 'border-[#D1BE9B]/20 text-[#31353A]/50 hover:border-[#D1BE9B]/35'
+                        : 'border-[#D1BE9B]/20 text-[#31353A]/62 hover:border-[#D1BE9B]/35'
                     }`}
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     {t.label}
@@ -279,7 +279,7 @@ export default function ShopPage() {
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                className="bg-white/40 border border-[#D1BE9B]/20 rounded-full px-4 py-1.5 text-[11px] text-[#31353A]/60 tracking-wider focus:outline-none appearance-none"
+                className="bg-white/40 border border-[#D1BE9B]/20 rounded-full px-4 py-1.5 text-[11px] text-[#31353A]/72 tracking-wider focus:outline-none appearance-none"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {SORT_OPTIONS.map(opt => (
                   <option key={opt.id} value={opt.id}>{opt.label}</option>
@@ -312,7 +312,7 @@ export default function ShopPage() {
                       className={`text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full ${
                         product.type === 'self'
                           ? 'bg-[#D1BE9B]/90 text-[#31353A]'
-                          : 'bg-white/80 text-[#31353A]/70'
+                          : 'bg-white/80 text-[#31353A]/80'
                       }`}
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {product.type === 'self' ? '自營' : '合作'}
@@ -340,11 +340,11 @@ export default function ShopPage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     {product.chakra} · {product.hz}
                   </p>
-                  <h3 className="text-xs tracking-[0.12em] text-[#31353A]/80 mb-0.5"
+                  <h3 className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     {product.name}
                   </h3>
-                  <p className="text-[11px] italic text-[#31353A]/40 mb-1.5"
+                  <p className="text-[11px] italic text-[#31353A]/54 mb-1.5"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                     {product.subtitle}
                   </p>
@@ -354,7 +354,7 @@ export default function ShopPage() {
                       NT$ {product.price.toLocaleString()}
                     </span>
                     {product.originalPrice && (
-                      <span className="text-[11px] text-[#31353A]/30 line-through"
+                      <span className="text-[11px] text-[#31353A]/46 line-through"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                         {product.originalPrice.toLocaleString()}
                       </span>
@@ -369,7 +369,7 @@ export default function ShopPage() {
           <div className="flex justify-center mb-8">
             <div className="flex items-center gap-4">
               <CatPeeking className="w-12 h-14" side="right" />
-              <p className="text-[11px] text-[#31353A]/40 tracking-wider italic"
+              <p className="text-[11px] text-[#31353A]/54 tracking-wider italic"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                 每顆水晶都經過 Mochi 的篩選 ✦
               </p>
@@ -383,11 +383,11 @@ export default function ShopPage() {
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               合作商家
             </p>
-            <h3 className="text-lg tracking-[0.15em] text-[#31353A]/75 mb-3"
+            <h3 className="text-lg tracking-[0.15em] text-[#31353A]/82 mb-3"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
               你有水晶或靈性商品想上架嗎？
             </h3>
-            <p className="text-[12px] leading-[2] text-[#31353A]/50 tracking-wider mb-5 max-w-md mx-auto"
+            <p className="text-[12px] leading-[2] text-[#31353A]/62 tracking-wider mb-5 max-w-md mx-auto"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               我們歡迎與優質的水晶商家合作，共同為使用者提供最好的療癒商品。
               合作採抽成制，無需庫存壓力。
@@ -420,7 +420,7 @@ export default function ShopPage() {
           >
             {/* Close */}
             <button
-              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/70 flex items-center justify-center text-[#31353A]/50 hover:text-[#31353A] transition-colors"
+              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/70 flex items-center justify-center text-[#31353A]/62 hover:text-[#31353A] transition-colors"
               onClick={() => setSelectedProduct(null)}>
               ✕
             </button>
@@ -440,12 +440,12 @@ export default function ShopPage() {
                 {/* Badges */}
                 <div className="flex gap-2 mb-3">
                   <span className={`text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full ${
-                    selectedProduct.type === 'self' ? 'bg-[#D1BE9B]/30 text-[#A38D6B]' : 'bg-[#E8EDE5] text-[#31353A]/60'
+                    selectedProduct.type === 'self' ? 'bg-[#D1BE9B]/30 text-[#A38D6B]' : 'bg-[#E8EDE5] text-[#31353A]/72'
                   }`} style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     {selectedProduct.type === 'self' ? '自營商品' : '合作商品'}
                   </span>
                   {selectedProduct.tag && (
-                    <span className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#3D4144]/10 text-[#31353A]/60"
+                    <span className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#3D4144]/10 text-[#31353A]/72"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {selectedProduct.tag}
                     </span>
@@ -456,7 +456,7 @@ export default function ShopPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   {selectedProduct.chakra} · {selectedProduct.hz} · {selectedProduct.element}象
                 </p>
-                <h2 className="text-lg tracking-[0.15em] text-[#31353A]/80 mb-0.5"
+                <h2 className="text-lg tracking-[0.15em] text-[#31353A]/86 mb-0.5"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   {selectedProduct.name}
                 </h2>
@@ -472,7 +472,7 @@ export default function ShopPage() {
                     NT$ {selectedProduct.price.toLocaleString()}
                   </span>
                   {selectedProduct.originalPrice && (
-                    <span className="text-sm text-[#31353A]/30 line-through"
+                    <span className="text-sm text-[#31353A]/46 line-through"
                       style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                       {selectedProduct.originalPrice.toLocaleString()}
                     </span>
@@ -491,7 +491,7 @@ export default function ShopPage() {
                 </div>
 
                 {/* Description */}
-                <p className="text-[11px] leading-[2] text-[#31353A]/55 tracking-wider mb-4"
+                <p className="text-[11px] leading-[2] text-[#31353A]/68 tracking-wider mb-4"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                   {selectedProduct.description}
                 </p>
@@ -509,7 +509,7 @@ export default function ShopPage() {
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                         {spec.label}
                       </p>
-                      <p className="text-[11px] tracking-[0.1em] text-[#31353A]/65"
+                      <p className="text-[11px] tracking-[0.1em] text-[#31353A]/75"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         {spec.value}
                       </p>
@@ -529,7 +529,7 @@ export default function ShopPage() {
                   }}>
                   加入購物車
                 </button>
-                <p className="text-center mt-2 text-[11px] text-[#31353A]/30 tracking-wider"
+                <p className="text-center mt-2 text-[11px] text-[#31353A]/46 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   ✦ 每顆水晶皆附能量淨化說明書
                 </p>
