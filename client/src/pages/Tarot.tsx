@@ -731,55 +731,47 @@ export default function TarotPage() {
                     </p>
                   </div>
 
-                  {/* Desktop (≥ xl): star / pentagon layout */}
+                  {/* Desktop (≥ xl): tidy diamond layout — centre + 上下左右 */}
                   <div className="hidden xl:block">
-                    <div className="relative w-full max-w-md mx-auto" style={{ height: '480px' }}>
-                      {/* Position 0 - Centre */}
-                      <div className="absolute" style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
-                        <div className="flex flex-col items-center gap-1">
-                          <span className="text-[9px] tracking-[0.15em] text-[#D1BE9B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{SPREAD_POSITIONS[0].label}</span>
-                          <CardSlot idx={0} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
-                        </div>
+                    <div className="grid grid-cols-3 gap-x-8 gap-y-6 w-fit mx-auto place-items-center">
+                      {/* 過去 — top centre */}
+                      <div className="col-start-2 row-start-1 flex flex-col items-center gap-1.5">
+                        <span className="text-[10px] tracking-[0.2em] text-[#A38D6B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{SPREAD_POSITIONS[1].label}</span>
+                        <CardSlot idx={1} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
-                      {/* Position 1 - Top (Past) */}
-                      <div className="absolute" style={{ left: '50%', top: '2%', transform: 'translateX(-50%)' }}>
-                        <div className="flex flex-col items-center gap-1">
-                          <span className="text-[9px] tracking-[0.15em] text-[#D1BE9B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{SPREAD_POSITIONS[1].label}</span>
-                          <CardSlot idx={1} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
-                        </div>
+                      {/* 建議 — left */}
+                      <div className="col-start-1 row-start-2 flex flex-col items-center gap-1.5">
+                        <span className="text-[10px] tracking-[0.2em] text-[#A38D6B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{SPREAD_POSITIONS[4].label}</span>
+                        <CardSlot idx={4} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
-                      {/* Position 2 - Right (Present) */}
-                      <div className="absolute" style={{ right: '2%', top: '30%', transform: 'translateY(-50%)' }}>
-                        <div className="flex flex-col items-center gap-1">
-                          <span className="text-[9px] tracking-[0.15em] text-[#D1BE9B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{SPREAD_POSITIONS[2].label}</span>
-                          <CardSlot idx={2} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
-                        </div>
+                      {/* 中心能量 — centre */}
+                      <div className="col-start-2 row-start-2 flex flex-col items-center gap-1.5">
+                        <span className="text-[10px] tracking-[0.2em] text-[#D1BE9B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>{SPREAD_POSITIONS[0].label}</span>
+                        <CardSlot idx={0} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
-                      {/* Position 3 - Bottom-right (Future) */}
-                      <div className="absolute" style={{ right: '8%', bottom: '2%' }}>
-                        <div className="flex flex-col items-center gap-1">
-                          <span className="text-[9px] tracking-[0.15em] text-[#D1BE9B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{SPREAD_POSITIONS[3].label}</span>
-                          <CardSlot idx={3} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
-                        </div>
+                      {/* 現在 — right */}
+                      <div className="col-start-3 row-start-2 flex flex-col items-center gap-1.5">
+                        <span className="text-[10px] tracking-[0.2em] text-[#A38D6B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{SPREAD_POSITIONS[2].label}</span>
+                        <CardSlot idx={2} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
-                      {/* Position 4 - Bottom-left (Advice) */}
-                      <div className="absolute" style={{ left: '8%', bottom: '2%' }}>
-                        <div className="flex flex-col items-center gap-1">
-                          <span className="text-[9px] tracking-[0.15em] text-[#D1BE9B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{SPREAD_POSITIONS[4].label}</span>
-                          <CardSlot idx={4} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
-                        </div>
+                      {/* 未來 — bottom centre */}
+                      <div className="col-start-2 row-start-3 flex flex-col items-center gap-1.5">
+                        <span className="text-[10px] tracking-[0.2em] text-[#A38D6B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{SPREAD_POSITIONS[3].label}</span>
+                        <CardSlot idx={3} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
                     </div>
                   </div>
 
                   {/* Reveal all button */}
                   {revealedCards.size < 5 && (
-                    <div className="text-center mt-5">
+                    <div className="text-center mt-7">
                       <button
                         onClick={handleRevealAll}
-                        className="text-xs tracking-[0.2em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        className="group inline-flex items-center gap-2 text-[15px] tracking-[0.28em] text-[#8A7250] hover:text-[#5C4A2E] transition-colors duration-300 border-b border-[#A38D6B]/50 hover:border-[#8A7250]/80 pb-1.5"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                        <span className="text-[#C9A86A] group-hover:text-[#A38D6B] transition-colors">✦</span>
                         一次揭示全部牌面
+                        <span className="text-[#C9A86A] group-hover:text-[#A38D6B] transition-colors">✦</span>
                       </button>
                     </div>
                   )}
