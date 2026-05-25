@@ -114,33 +114,57 @@ const CardFace = ({ card, reversed = false }: { card: typeof MAJOR_ARCANA[0]; re
 // Card back — soft linen texture with golden mandala
 const CardBack = () => (
   <svg viewBox="0 0 120 200" fill="none" className="w-full h-full">
-    <rect width="120" height="200" rx="8" fill="#C8B89A" />
-    <rect x="5" y="5" width="110" height="190" rx="6" stroke="#F0E4CC" strokeWidth="1" />
-    <rect x="10" y="10" width="100" height="180" rx="4" stroke="#F0E4CC" strokeWidth="0.5" strokeDasharray="3 2" />
-    {/* Central mandala */}
-    <circle cx="60" cy="100" r="30" stroke="#F5EAD5" strokeWidth="0.8" fill="none" />
-    <circle cx="60" cy="100" r="22" stroke="#F5EAD5" strokeWidth="0.5" fill="none" />
-    <circle cx="60" cy="100" r="12" stroke="#F5EAD5" strokeWidth="0.8" fill="#F5EAD5" fillOpacity="0.15" />
-    <circle cx="60" cy="100" r="4" fill="#F5EAD5" fillOpacity="0.5" />
-    {/* Petal pattern */}
+    <defs>
+      <linearGradient id="cbBg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#CDBC9C" />
+        <stop offset="52%" stopColor="#C1AD89" />
+        <stop offset="100%" stopColor="#B29C74" />
+      </linearGradient>
+      <radialGradient id="cbGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#F8F0DC" stopOpacity="0.55" />
+        <stop offset="100%" stopColor="#F8F0DC" stopOpacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="120" height="200" rx="8" fill="url(#cbBg)" />
+    <circle cx="60" cy="100" r="48" fill="url(#cbGlow)" />
+    {/* Frames */}
+    <rect x="5" y="5" width="110" height="190" rx="6" stroke="#F3E7CC" strokeWidth="1" opacity="0.9" />
+    <rect x="9" y="9" width="102" height="182" rx="4" stroke="#F3E7CC" strokeWidth="0.5" strokeDasharray="2 2.5" opacity="0.65" />
+    {/* Sunburst rays */}
+    {Array.from({ length: 24 }).map((_, i) => {
+      const a = (i * 15 * Math.PI) / 180;
+      return (
+        <line key={`r${i}`}
+          x1={60 + 19 * Math.cos(a)} y1={100 + 19 * Math.sin(a)}
+          x2={60 + 41 * Math.cos(a)} y2={100 + 41 * Math.sin(a)}
+          stroke="#F3E7CC" strokeWidth={i % 2 ? 0.3 : 0.6} strokeOpacity="0.5" />
+      );
+    })}
+    {/* Concentric rings */}
+    <circle cx="60" cy="100" r="41" stroke="#F3E7CC" strokeWidth="0.8" opacity="0.8" fill="none" />
+    <circle cx="60" cy="100" r="31" stroke="#F3E7CC" strokeWidth="0.5" opacity="0.65" fill="none" />
+    <circle cx="60" cy="100" r="17" stroke="#F5EAD5" strokeWidth="0.8" fill="#F8F0DC" fillOpacity="0.18" />
+    {/* Inner petals */}
     {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
       const rad = (deg * Math.PI) / 180;
-      const x1 = 60 + 12 * Math.cos(rad);
-      const y1 = 100 + 12 * Math.sin(rad);
-      const x2 = 60 + 30 * Math.cos(rad);
-      const y2 = 100 + 30 * Math.sin(rad);
-      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F5EAD5" strokeWidth="0.6" strokeOpacity="0.7" />;
+      return (
+        <line key={`p${i}`}
+          x1={60 + 6 * Math.cos(rad)} y1={100 + 6 * Math.sin(rad)}
+          x2={60 + 17 * Math.cos(rad)} y2={100 + 17 * Math.sin(rad)}
+          stroke="#F8F0DC" strokeWidth="0.7" strokeOpacity="0.8" />
+      );
     })}
-    {/* Corner stars */}
-    {[[20, 25], [100, 25], [20, 175], [100, 175]].map(([cx, cy], i) => (
-      <path key={i}
-        d={`M${cx} ${cy-4} L${cx+1} ${cy-1} L${cx+4} ${cy} L${cx+1} ${cy+1} L${cx} ${cy+4} L${cx-1} ${cy+1} L${cx-4} ${cy} L${cx-1} ${cy-1} Z`}
-        fill="#F5EAD5" fillOpacity="0.6"
-      />
+    {/* Centre moon disc */}
+    <circle cx="60" cy="100" r="5.5" fill="#F8F0DC" fillOpacity="0.85" />
+    {/* Scattered stars */}
+    {[[60, 64], [60, 136], [37, 100], [83, 100], [44, 78], [76, 122], [76, 78], [44, 122]].map(([x, y], i) => (
+      <path key={`s${i}`}
+        d={`M${x} ${y - 2.4} L${x + 0.7} ${y - 0.7} L${x + 2.4} ${y} L${x + 0.7} ${y + 0.7} L${x} ${y + 2.4} L${x - 0.7} ${y + 0.7} L${x - 2.4} ${y} L${x - 0.7} ${y - 0.7} Z`}
+        fill="#F8F1DE" fillOpacity="0.9" />
     ))}
     {/* Brand text */}
-    <text x="60" y="185" textAnchor="middle" fontSize="5.5" fill="#F5EAD5" fillOpacity="0.5"
-      fontFamily="Cormorant Garamond, serif" letterSpacing="2" fontStyle="italic">
+    <text x="60" y="187" textAnchor="middle" fontSize="6" fill="#F3E7CC" fillOpacity="0.7"
+      fontFamily="Cormorant Garamond, serif" letterSpacing="2.5" fontStyle="italic">
       Healing Pick
     </text>
   </svg>
@@ -846,7 +870,9 @@ export default function TarotPage() {
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                       {SPREAD_POSITIONS[idx].label}
                     </div>
-                    <div className="text-xl mb-1 opacity-60">{drawn.card.symbol}</div>
+                    <div className="mx-auto mb-2 w-14 sm:w-16 aspect-[2/3]">
+                      <CardFace card={drawn.card} reversed={drawn.reversed} />
+                    </div>
                     <div className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {drawn.card.name}
@@ -887,7 +913,7 @@ export default function TarotPage() {
                 {llmInterpretation && (
                   <div className="prose prose-sm max-w-none text-[13px] leading-[2.1] text-[#31353A]/80 tracking-wider
                     prose-headings:font-normal prose-headings:tracking-[0.18em] prose-headings:text-[#A38D6B]
-                    prose-h3:text-[13px] prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
+                    prose-h3:text-[11px] prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
                     prose-p:my-1.5 prose-p:text-[#31353A]/80
                     prose-strong:text-[#31353A]/90 prose-strong:font-medium
                     prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
