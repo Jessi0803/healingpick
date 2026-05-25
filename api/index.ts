@@ -1,6 +1,7 @@
-// Vercel serverless entry: lazily builds the Express app and forwards the
-// request to it. Boot/import errors are surfaced in the response so they are
-// visible instead of an opaque FUNCTION_INVOCATION_FAILED.
+// Vercel serverless entry. The Express app is pre-bundled by the build step
+// (see package.json "build:vercel") into ./_app.mjs — a self-contained ESM
+// file with all server source transpiled and inlined, so Vercel's function
+// bundler never has to resolve the TypeScript server/ tree at runtime.
 import type { IncomingMessage, ServerResponse } from "http";
 
 let appPromise: Promise<(req: IncomingMessage, res: ServerResponse) => void> | null =
@@ -8,7 +9,8 @@ let appPromise: Promise<(req: IncomingMessage, res: ServerResponse) => void> | n
 
 function getApp() {
   if (!appPromise) {
-    appPromise = import("../server/_core/app").then((m) => m.createApp());
+    // @ts-expect-error generated at build time
+    appPromise = import("./_app.mjs").then((m) => m.createApp());
   }
   return appPromise;
 }

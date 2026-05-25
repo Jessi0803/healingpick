@@ -9,6 +9,7 @@ build/
 
 # Vercel
 .vercel/
+api/_app.mjs
 
 # Environment variables
 .env
