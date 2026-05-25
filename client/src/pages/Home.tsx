@@ -731,7 +731,7 @@ export default function Home() {
                 }}
               >
                 <img
-                  src="/manus-storage/tarot-moon-rws_a86331fb.jpg"
+                  src="/tarot/18.jpg"
                   alt="THE MOON"
                   style={{ width: '80px', height: '130px', objectFit: 'cover', borderRadius: '8px', border: '1.5px solid rgba(209,190,155,0.5)' }}
                 />
@@ -749,7 +749,7 @@ export default function Home() {
                 }}
               >
                 <img
-                  src="/manus-storage/tarot-star-rws_0c35b332.png"
+                  src="/tarot/17.jpg"
                   alt="THE STAR"
                   style={{ width: '90px', height: '148px', objectFit: 'cover', borderRadius: '9px', border: '1.5px solid rgba(209,190,155,0.6)' }}
                 />
@@ -766,7 +766,7 @@ export default function Home() {
                 }}
               >
                 <img
-                  src="/manus-storage/tarot-sun-rws_642f2d8c.png"
+                  src="/tarot/19.jpg"
                   alt="THE SUN"
                   style={{ width: '80px', height: '130px', objectFit: 'cover', borderRadius: '8px', border: '1.5px solid rgba(209,190,155,0.5)' }}
                 />
@@ -988,11 +988,33 @@ export default function Home() {
                     border: '1.5px solid rgba(209,190,155,0.4)',
                   }}
                 >
-                  <img
-                    src="/manus-storage/tarot-back-rws_e6931e58.jpg"
-                    alt="塔羅牌背"
-                    className="w-full h-full object-cover"
-                  />
+                  <svg viewBox="0 0 120 200" fill="none" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+                    <rect width="120" height="200" fill="#C8B89A" />
+                    <rect x="5" y="5" width="110" height="190" rx="6" stroke="#F0E4CC" strokeWidth="1" />
+                    <rect x="10" y="10" width="100" height="180" rx="4" stroke="#F0E4CC" strokeWidth="0.5" strokeDasharray="3 2" />
+                    <circle cx="60" cy="100" r="30" stroke="#F5EAD5" strokeWidth="0.8" fill="none" />
+                    <circle cx="60" cy="100" r="22" stroke="#F5EAD5" strokeWidth="0.5" fill="none" />
+                    <circle cx="60" cy="100" r="12" stroke="#F5EAD5" strokeWidth="0.8" fill="#F5EAD5" fillOpacity="0.15" />
+                    <circle cx="60" cy="100" r="4" fill="#F5EAD5" fillOpacity="0.5" />
+                    {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
+                      const rad = (deg * Math.PI) / 180;
+                      const x1 = 60 + 12 * Math.cos(rad);
+                      const y1 = 100 + 12 * Math.sin(rad);
+                      const x2 = 60 + 30 * Math.cos(rad);
+                      const y2 = 100 + 30 * Math.sin(rad);
+                      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F5EAD5" strokeWidth="0.6" strokeOpacity="0.7" />;
+                    })}
+                    {[[20, 25], [100, 25], [20, 175], [100, 175]].map(([cx, cy], i) => (
+                      <path key={i}
+                        d={`M${cx} ${cy - 4} L${cx + 1} ${cy - 1} L${cx + 4} ${cy} L${cx + 1} ${cy + 1} L${cx} ${cy + 4} L${cx - 1} ${cy + 1} L${cx - 4} ${cy} L${cx - 1} ${cy - 1} Z`}
+                        fill="#F5EAD5" fillOpacity="0.6"
+                      />
+                    ))}
+                    <text x="60" y="160" textAnchor="middle" fontSize="6" fill="#F5EAD5" fillOpacity="0.5"
+                      fontFamily="Cormorant Garamond, serif" letterSpacing="2" fontStyle="italic">
+                      Healing Pick
+                    </text>
+                  </svg>
                   <div className="absolute inset-0 flex items-end justify-center pb-3" style={{ background: 'linear-gradient(to top, rgba(44,36,32,0.5) 0%, transparent 50%)' }}>
                     <span
                       className="text-[7px] tracking-[0.3em] text-white/80"
