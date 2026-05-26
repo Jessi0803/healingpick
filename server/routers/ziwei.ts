@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
+import { chargeReading } from "../_core/credits";
 import { invokeLLM, extractTextContent } from "../_core/llm";
 import { astro } from "iztro";
 import { t, translateChineseDate } from "./ziwei-locale";
@@ -91,7 +92,9 @@ export const ziweiRouter = router({
         focusArea: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await chargeReading(ctx, "ziwei");
+
       const { solarDate, timeIndex, gender, focusArea } = input;
 
       const astrolabe = astro.bySolar(solarDate, timeIndex, gender, true, "zh_TW");

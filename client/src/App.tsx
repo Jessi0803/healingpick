@@ -12,6 +12,7 @@ import Fortune from "./pages/Fortune";
 import Treehole from "./pages/Treehole";
 import Shop from "./pages/Shop";
 import History from "./pages/History";
+import Buy from "./pages/Buy";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/treehole" component={Treehole} />
       <Route path="/shop" component={Shop} />
       <Route path="/history" component={History} />
+      <Route path="/buy" component={Buy} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

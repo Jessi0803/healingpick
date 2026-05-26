@@ -1,43 +1,65 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { integer, pgEnum, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+
+export const roleEnum = pgEnum("role", ["user", "admin"]);
+export const readingTypeEnum = pgEnum("reading_type", ["tarot", "ziwei", "fortune"]);
 
 /**
- * Core user table backing auth flow.
- * Extend this file with additional tables as your product grows.
- * Columns use camelCase to match both database fields and generated types.
+ * Core user table backing auth + credits.
+ * `openId` stores the Supabase Auth user id (uuid) of the signed-in user.
  */
-export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
-  id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  /** Supabase Auth user id (uuid). Unique per user. */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: roleEnum("role").default("user").notNull(),
+  /** Purchasable point balance. Each paid reading consumes from here. */
+  credits: integer("credits").default(0).notNull(),
+  /** Free readings already used in the current day. */
+  freeUsedToday: integer("freeUsedToday").default(0).notNull(),
+  /** When the daily free quota was last reset. */
+  lastFreeReset: timestamp("lastFreeReset").defaultNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Ledger of every credit change (signup bonus, purchase, per-reading spend,
+ * admin top-up). Lets us audit balances.
+ */
+export const creditTransactions = pgTable("credit_transactions", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId").notNull(),
+  /** Positive = added, negative = spent. */
+  amount: integer("amount").notNull(),
+  /** e.g. "signup_bonus", "tarot", "ziwei", "admin_topup", "purchase". */
+  reason: varchar("reason", { length: 64 }).notNull(),
+  balanceAfter: integer("balanceAfter").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CreditTransaction = typeof creditTransactions.$inferSelect;
+export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
 
 /**
- * Tarot and Ziwei reading records.
- * Stores user divination history for future reference.
+ * Tarot / Ziwei / Fortune reading records (user divination history).
  */
-export const readings = mysqlTable("readings", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("userId"),
-  type: mysqlEnum("type", ["tarot", "ziwei", "fortune"]).notNull(),
+export const readings = pgTable("readings", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId"),
+  type: readingTypeEnum("type").notNull(),
   question: text("question"),
-  inputData: text("inputData"), // JSON string of cards drawn / birth info
-  interpretation: text("interpretation"), // LLM response
+  inputData: text("inputData"),
+  interpretation: text("interpretation"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -45,12 +67,11 @@ export type Reading = typeof readings.$inferSelect;
 export type InsertReading = typeof readings.$inferInsert;
 
 /**
- * Treehole session records.
- * Stores comfort conversations for user reference.
+ * Treehole session records (comfort conversations).
  */
-export const treeholeSessions = mysqlTable("treehole_sessions", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("userId"),
+export const treeholeSessions = pgTable("treehole_sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId"),
   mood: varchar("mood", { length: 32 }),
   userText: text("userText").notNull(),
   aiResponse: text("aiResponse"),

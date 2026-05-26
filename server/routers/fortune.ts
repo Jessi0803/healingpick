@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
+import { chargeReading } from "../_core/credits";
 import { invokeLLM, extractTextContent } from "../_core/llm";
 
 // ─── 月相計算 ──────────────────────────────────────────────────────────────────
@@ -91,7 +92,9 @@ export const fortuneRouter = router({
         date: z.string(), // YYYY-MM-DD
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      await chargeReading(ctx, "fortune");
+
       // 計算月相
       const dateObj = new Date(input.date + 'T12:00:00Z');
       const moonPhase = getMoonPhase(dateObj);

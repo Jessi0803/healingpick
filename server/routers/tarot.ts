@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { invokeLLM, extractTextContent } from "../_core/llm";
+import { chargeReading } from "../_core/credits";
 
 const cardSchema = z.object({
   name: z.string(),
@@ -24,7 +25,9 @@ export const tarotRouter = router({
         cards: z.array(cardSchema).max(5),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await chargeReading(ctx, "tarot");
+
       const cardsSummary = input.cards
         .map(
           (c, i) =>
