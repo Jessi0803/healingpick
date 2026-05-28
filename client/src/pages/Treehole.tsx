@@ -431,7 +431,8 @@ export default function TreeholePage() {
                 </p>
                 <textarea
                   value={text}
-                  onChange={e => setText(e.target.value)}
+                  onChange={e => setText(e.target.value.slice(0, 500))}
+                  maxLength={500}
                   placeholder="跟 Mochi 說說吧，不管什麼都可以。可以是最近發生的事、一直壓在心裡的感受，或者只是一句「我好累」… Mochi 都會認真聽。"
                   rows={6}
                   className="w-full bg-white/40 border border-[#D1BE9B]/20 rounded-xl px-4 py-3 text-xs text-[#31353A]/80 tracking-wider leading-[2] resize-none focus:outline-none focus:border-[#D1BE9B]/40 placeholder:text-[#31353A]/42"
@@ -442,9 +443,9 @@ export default function TreeholePage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, borderColor: '#5f4949', fontSize: '14px' }}>
                     ✦ 你的心事只有你和這個空間知道
                   </p>
-                  <span className="text-[11px] text-[#31353A]/46"
-                    style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                    {text.length} 字
+                  <span className="text-[11px]"
+                    style={{ fontFamily: 'Cormorant Garamond, serif', color: text.length >= 500 ? '#C9837A' : text.length >= 430 ? '#A38D6B' : '#31353A66' }}>
+                    {text.length} / 500
                   </span>
                 </div>
               </div>

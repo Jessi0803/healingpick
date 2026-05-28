@@ -11,7 +11,6 @@ import { Link, useLocation } from 'wouter';
 import { Menu, X } from 'lucide-react';
 import { CatSitting } from './CatElements';
 import { useAuth } from '@/_core/hooks/useAuth';
-import { getLoginUrl } from '@/const';
 import { trpc } from '@/lib/trpc';
 
 // Navbar links – flat structure, all items at top level
@@ -24,10 +23,11 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { user, isAuthenticated } = useAuth();
-  const logoutMutation = trpc.auth.logout.useMutation({
-    onSuccess: () => { window.location.href = '/'; },
+  const { isAuthenticated, login, logout } = useAuth();
+  const creditsQuery = trpc.credits.state.useQuery(undefined, {
+    enabled: isAuthenticated,
   });
+  const credits = creditsQuery.data;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
@@ -99,6 +99,16 @@ export default function Navbar() {
             {/* Desktop auth */}
             {isAuthenticated ? (
               <div className="hidden lg:flex items-center gap-3">
+                {credits?.enabled && (
+                  <Link
+                    href="/buy"
+                    className="text-xs tracking-[0.15em] text-[#A38D6B] hover:text-[#D1BE9B] transition-colors duration-300"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    🐾 {credits.credits} 點
+                    {credits.freeRemaining > 0 ? ` · 今日免費 ${credits.freeRemaining}` : ''}
+                  </Link>
+                )}
                 <Link
                   href="/history"
                   className={`text-xs tracking-[0.2em] transition-colors duration-300 ${
@@ -111,7 +121,7 @@ export default function Navbar() {
                   ✦ 我的紀錄
                 </Link>
                 <button
-                  onClick={() => logoutMutation.mutate()}
+                  onClick={() => logout()}
                   className="text-xs tracking-[0.2em] text-[#31353A]/62 hover:text-[#D1BE9B] transition-colors duration-300"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
@@ -119,13 +129,13 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <a
-                href={getLoginUrl()}
+              <button
+                onClick={() => login()}
                 className="hidden lg:block text-xs tracking-[0.2em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors duration-300"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 登入
-              </a>
+              </button>
             )}
 
             {/* Hamburger */}
@@ -167,6 +177,16 @@ export default function Navbar() {
               <div className="mt-4 pt-4 border-t border-[#D1BE9B]/20 flex flex-col gap-2">
                 {isAuthenticated ? (
                   <>
+                    {credits?.enabled && (
+                      <Link
+                        href="/buy"
+                        className="text-xs tracking-[0.2em] text-[#A38D6B] hover:text-[#D1BE9B] transition-colors py-2"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        🐾 {credits.credits} 點
+                        {credits.freeRemaining > 0 ? ` · 今日免費 ${credits.freeRemaining}` : ''}
+                      </Link>
+                    )}
                     <Link
                       href="/history"
                       className="text-xs tracking-[0.25em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors py-2"
@@ -175,7 +195,7 @@ export default function Navbar() {
                       ✦ 我的紀錄
                     </Link>
                     <button
-                      onClick={() => logoutMutation.mutate()}
+                      onClick={() => logout()}
                       className="text-left text-xs tracking-[0.25em] text-[#31353A]/62 hover:text-[#D1BE9B] transition-colors py-2"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
@@ -183,13 +203,13 @@ export default function Navbar() {
                     </button>
                   </>
                 ) : (
-                  <a
-                    href={getLoginUrl()}
-                    className="text-xs tracking-[0.25em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors py-2"
+                  <button
+                    onClick={() => login()}
+                    className="text-left text-xs tracking-[0.25em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors py-2"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     登入
-                  </a>
+                  </button>
                 )}
               </div>
             </div>

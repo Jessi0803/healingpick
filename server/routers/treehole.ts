@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { invokeLLM, extractTextContent } from "../_core/llm";
+import { chargeReading } from "../_core/credits";
 
 export const treeholeRouter = router({
   /**
@@ -11,10 +12,12 @@ export const treeholeRouter = router({
       z.object({
         mood: z.string(),
         moodLabel: z.string(),
-        text: z.string().min(1).max(2000),
+        text: z.string().min(1).max(500),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await chargeReading(ctx, "treehole");
+
       const systemPrompt = `你是「Mochi」，一隻溫柔療癒的貓咪，正窩在對方身邊，靜靜聽他說心事。
 你的特質：
 - 充滿同理心，善於傾聽，不評判任何感受

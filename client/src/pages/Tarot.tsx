@@ -9,7 +9,7 @@
  *   - Crystal recommendation based on reading
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
@@ -244,6 +244,10 @@ export default function TarotPage() {
     };
   }, []);
 
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [step]);
+
   // 使用者選牌
   function handlePickCard(deckIdx: number) {
     if (pickedIndices.includes(deckIdx)) return;
@@ -471,12 +475,17 @@ export default function TarotPage() {
                   </label>
                   <textarea
                     value={question}
-                    onChange={e => setQuestion(e.target.value)}
+                    onChange={e => setQuestion(e.target.value.slice(0, 120))}
+                    maxLength={120}
                     placeholder="例如：我與他的感情未來會如何發展？"
                     rows={3}
                     className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-3 text-xs text-[#31353A]/80 tracking-wider leading-[1.9] resize-none focus:outline-none focus:border-[#D1BE9B]/50 placeholder:text-[#31353A]/46"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
+                  <div className="mt-1 text-right text-[10px] tracking-wider"
+                    style={{ fontFamily: 'Cormorant Garamond, serif', color: question.length >= 120 ? '#C9837A' : question.length >= 100 ? '#A38D6B' : '#31353A66' }}>
+                    {question.length} / 120
+                  </div>
                   <p className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     ✦ 問題越具體，解讀越精準。也可以不填，讓牌自由說話。
@@ -849,7 +858,7 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   Your Reading
                 </span>
-                <h2 className="text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-2"
+                <h2 className="text-[15px] tracking-[0.14em] font-extralight text-[#31353A] mt-2"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   完整解讀
                 </h2>
@@ -884,7 +893,7 @@ export default function TarotPage() {
               <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20 mb-8">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="text-[#D1BE9B]">✦</span>
-                  <h3 className="text-sm tracking-[0.2em] text-[#31353A]/86"
+                  <h3 className="text-[14px] tracking-[0.14em] text-[#31353A]/86"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     五牌陣星形解讀
                   </h3>
@@ -905,8 +914,8 @@ export default function TarotPage() {
                 )}
                 {llmInterpretation && (
                   <div className="prose prose-sm max-w-none text-[13px] leading-[2.1] text-[#31353A]/80 tracking-wider
-                    prose-headings:font-normal prose-headings:tracking-[0.18em] prose-headings:text-[#A38D6B]
-                    prose-h3:text-[9px] prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
+                    prose-headings:font-normal prose-headings:tracking-[0.08em] prose-headings:text-[#A38D6B]
+                    prose-h3:text-[14px] prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
                     prose-p:my-1.5 prose-p:text-[#31353A]/80
                     prose-strong:text-[#31353A]/90 prose-strong:font-medium
                     prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
