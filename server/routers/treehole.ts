@@ -12,7 +12,7 @@ export const treeholeRouter = router({
       z.object({
         mood: z.string(),
         moodLabel: z.string(),
-        text: z.string().min(1).max(2000),
+        text: z.string().min(1).max(500),
       })
     )
     .mutation(async ({ input, ctx }) => {

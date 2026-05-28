@@ -20,7 +20,7 @@ export const tarotRouter = router({
   interpret: publicProcedure
     .input(
       z.object({
-        question: z.string().max(500),
+        question: z.string().max(120),
         questionType: z.string(),
         cards: z.array(cardSchema).max(5),
       })

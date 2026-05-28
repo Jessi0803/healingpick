@@ -295,12 +295,17 @@ export default function ZiweiPage() {
                   </label>
                   <textarea
                     value={focusArea}
-                    onChange={e => setFocusArea(e.target.value)}
+                    onChange={e => setFocusArea(e.target.value.slice(0, 100))}
+                    maxLength={100}
                     placeholder="例如：事業發展、感情婚姻、財富運勢…"
                     rows={2}
                     className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-2.5 text-xs text-[#31353A]/80 tracking-wider focus:outline-none focus:border-[#D1BE9B]/50 resize-none placeholder:text-[#31353A]/42"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
+                  <div className="mt-1 text-right text-[10px] tracking-wider"
+                    style={{ fontFamily: 'Cormorant Garamond, serif', color: focusArea.length >= 100 ? '#C9837A' : focusArea.length >= 85 ? '#A38D6B' : '#31353A66' }}>
+                    {focusArea.length} / 100
+                  </div>
                 </div>
 
                 <button
