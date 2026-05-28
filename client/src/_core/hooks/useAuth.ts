@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { signInWithGoogle, signOut, supabase, supabaseEnabled } from "@/lib/supabase";
+import { signOut, supabase, supabaseEnabled } from "@/lib/supabase";
 import { useCallback, useEffect, useMemo } from "react";
 
 type UseAuthOptions = {
@@ -24,8 +24,11 @@ export function useAuth(options?: UseAuthOptions) {
     return () => sub.subscription.unsubscribe();
   }, [utils]);
 
+  // Open the global LoginDialog so the user can pick Google or Email.
   const login = useCallback(async () => {
-    await signInWithGoogle();
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("open-login"));
+    }
   }, []);
 
   const logout = useCallback(async () => {
@@ -49,7 +52,7 @@ export function useAuth(options?: UseAuthOptions) {
     if (meQuery.isLoading) return;
     if (state.user) return;
     if (!supabaseEnabled) return;
-    void signInWithGoogle();
+    window.dispatchEvent(new Event("open-login"));
   }, [redirectOnUnauthenticated, meQuery.isLoading, state.user]);
 
   return {

@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
-import { getAccessToken, signInWithGoogle, supabaseEnabled } from "./lib/supabase";
+import { getAccessToken, supabaseEnabled } from "./lib/supabase";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -24,7 +24,7 @@ const handleApiError = (error: unknown) => {
 
   if (msg === "NOT_SIGNED_IN" || msg === UNAUTHED_ERR_MSG) {
     if (supabaseEnabled) {
-      void signInWithGoogle();
+      window.dispatchEvent(new Event("open-login"));
     } else {
       window.location.href = getLoginUrl();
     }

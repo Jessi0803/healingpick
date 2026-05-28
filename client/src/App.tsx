@@ -13,6 +13,7 @@ import Treehole from "./pages/Treehole";
 import Shop from "./pages/Shop";
 import History from "./pages/History";
 import Buy from "./pages/Buy";
+import LoginDialog from "./components/LoginDialog";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -40,6 +41,7 @@ function App() {
           <Toaster />
           <Router />
           <CatCompanion />
+          <LoginDialog />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

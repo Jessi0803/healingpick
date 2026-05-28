@@ -26,6 +26,20 @@ export async function signInWithGoogle(): Promise<void> {
   });
 }
 
+/**
+ * Send a passwordless magic-link login email. Returns true if Supabase
+ * accepted the request (doesn't guarantee delivery).
+ */
+export async function signInWithEmail(email: string): Promise<{ ok: boolean; error?: string }> {
+  if (!supabase) return { ok: false, error: "Auth not configured" };
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.origin },
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
 export async function signOut(): Promise<void> {
   if (supabase) await supabase.auth.signOut();
 }
