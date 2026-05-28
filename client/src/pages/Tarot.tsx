@@ -292,6 +292,69 @@ export default function TarotPage() {
 
   return (
     <PageLayout>
+      {/* Floating Envelope for Tarot Secrets */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <button className="fixed bottom-6 right-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-[#D1BE9B] text-white shadow-lg hover:bg-[#A38D6B] hover:scale-110 transition-all duration-300 group">
+            <Mail className="w-5 h-5" />
+            <span className="absolute right-14 bg-[#31353A]/80 text-[#FAF7F4] text-[11px] tracking-[0.1em] px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              Mochi 的塔羅小秘密
+            </span>
+          </button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-[#FDFBF7] border-[#D1BE9B]/30" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg tracking-[0.2em] font-extralight text-[#31353A] mb-2 mt-2">
+              ✦ Mochi 的塔羅小秘密 ✦
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            <p>
+              你有沒有過這種感覺？有時候遇到煩惱，其實心裡隱約已經有答案了，只是腦袋一團亂，需要有人幫你理清楚。<br/><br/>
+              塔羅牌，其實就是一面<strong className="font-medium text-[#A38D6B]">「照出你內心真實模樣的鏡子」</strong>。
+            </p>
+
+            <div>
+              <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🃏 為什麼 Mochi 只用這 22 張牌？</h4>
+              <p>
+                塔羅牌裡有 22 張最重要的牌，我們叫它「大阿爾卡納」。<br/>
+                想像這 22 張牌，是一部名為<strong className="font-medium">「愚者的旅行」</strong>的電影，主角就是你。<br/><br/>
+                從第 0 張牌《愚者》（代表天真無畏的開始），一路經歷《戀人》（面臨選擇）、《高塔》（突如其來的改變），最後走到第 21 張牌《世界》（達成圓滿）。<br/><br/>
+                <strong className="font-medium">這 22 張牌，包含了我們這一生中「所有可能遇到的重大關卡與情緒」</strong>。因為它涵蓋了人生的所有縮影，所以當你遇到困惑時，這 22 個故事裡，總有一個能完美對應你此刻的處境。這就是為什麼它總是那麼準確。
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🤔 所以，抽出來的牌為什麼會準？</h4>
+              <p>其實，這是一種很奇妙的「直覺共鳴」，背後有兩個簡單的邏輯：</p>
+              <ul className="list-disc pl-5 mt-2 space-y-2">
+                <li><strong className="font-medium">你的心，會引導你選牌：</strong>當你閉上眼睛、專心想著問題洗牌時，你當下的情緒和直覺，會不自覺地牽引你，選出那張最能反映你目前狀態的牌。</li>
+                <li><strong className="font-medium">看圖，找出藏在心裡的答案：</strong>當你看到牌面的那一刻，腦海中第一個浮現的感覺，往往就是你潛意識裡「最真實的聲音」。</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🧭 塔羅牌不是「算命」，而是「導航」</h4>
+              <p>
+                如果人生是一趟旅行，塔羅牌<strong className="font-medium">不是寫好的劇本</strong>，不會告訴你「明天一定會發生什麼壞事」。<br/><br/>
+                它比較像是一台<strong className="font-medium">導航儀</strong>，溫柔地提醒你：「嘿，前面這條路好像有點塞車喔，要不要換個心態走走看？」<br/><br/>
+                真正握著方向盤、決定要怎麼走的，永遠都是你自己。
+              </p>
+            </div>
+
+            <div className="bg-[#D1BE9B]/10 p-5 rounded-2xl border border-[#D1BE9B]/20 text-[#31353A]/80 mt-8 shadow-sm">
+              <div className="font-medium text-[#A38D6B] mb-2 flex items-center gap-2 text-[14px]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                <CatListening className="w-7 h-7" /> Mochi 的悄悄話：
+              </div>
+              <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                「不用害怕抽到看起來黑黑暗暗的牌，每一張牌，都是來提醒你、保護你的小提示。<br/>
+                深呼吸，把心靜下來，讓我陪你一起聽聽你心底的聲音吧 🐾」
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="min-h-screen py-12 px-4 md:px-8">
         <div className="max-w-5xl mx-auto">
 
