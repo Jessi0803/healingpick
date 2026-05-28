@@ -854,7 +854,7 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   Your Reading
                 </span>
-                <h2 className="text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-2"
+                <h2 className="text-[15px] tracking-[0.14em] font-extralight text-[#31353A] mt-2"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   完整解讀
                 </h2>
@@ -889,7 +889,7 @@ export default function TarotPage() {
               <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20 mb-8">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="text-[#D1BE9B]">✦</span>
-                  <h3 className="text-sm tracking-[0.2em] text-[#31353A]/86"
+                  <h3 className="text-[14px] tracking-[0.14em] text-[#31353A]/86"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     五牌陣星形解讀
                   </h3>
@@ -910,8 +910,8 @@ export default function TarotPage() {
                 )}
                 {llmInterpretation && (
                   <div className="prose prose-sm max-w-none text-[13px] leading-[2.1] text-[#31353A]/80 tracking-wider
-                    prose-headings:font-normal prose-headings:tracking-[0.18em] prose-headings:text-[#A38D6B]
-                    prose-h3:text-[9px] prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
+                    prose-headings:font-normal prose-headings:tracking-[0.08em] prose-headings:text-[#A38D6B]
+                    prose-h3:text-[14px] prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
                     prose-p:my-1.5 prose-p:text-[#31353A]/80
                     prose-strong:text-[#31353A]/90 prose-strong:font-medium
                     prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
