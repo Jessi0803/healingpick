@@ -5,6 +5,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
+import { handleGumroadPing } from "./gumroad";
 
 // Builds the API-only Express app (no Vite, no static, no listen).
 // Reused by the local dev server (server/_core/index.ts) and the Vercel
@@ -15,6 +16,7 @@ export function createApp(): Express {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
+  app.post("/api/gumroad-webhook", handleGumroadPing);
   app.use(
     "/api/trpc",
     createExpressMiddleware({

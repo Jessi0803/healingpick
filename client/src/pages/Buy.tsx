@@ -1,18 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 
+const GUMROAD_PRODUCT_URL = 'https://bubbly572.gumroad.com/l/healingpick-credits';
+
 const PACKAGES = [
-  { credits: 30, price: 'NT$60', tag: '輕巧' },
-  { credits: 100, price: 'NT$180', tag: '最受歡迎' },
-  { credits: 300, price: 'NT$480', tag: '超值' },
+  { variant: 'Starter Pack', credits: 30, price: 'NT$70', tag: '輕巧' },
+  { variant: 'Standard Pack', credits: 100, price: 'NT$180', tag: '最受歡迎' },
+  { variant: 'Premium Pack', credits: 300, price: 'NT$450', tag: '超值' },
 ];
 
 export default function BuyPage() {
   const { user, isAuthenticated, login } = useAuth();
-  const creditsQuery = trpc.credits.state.useQuery(undefined, { enabled: isAuthenticated });
+  // Refetch credits whenever the user comes back to the page (e.g. after
+  // the Gumroad overlay closes), so newly-bought points show up automatically.
+  const creditsQuery = trpc.credits.state.useQuery(undefined, {
+    enabled: isAuthenticated,
+    refetchOnWindowFocus: true,
+  });
   const credits = creditsQuery.data;
   const isAdmin = user?.role === 'admin';
 
@@ -25,6 +32,23 @@ export default function BuyPage() {
     },
     onError: (e) => toast.error(e.message),
   });
+
+  // Load Gumroad's overlay script once when this page mounts.
+  useEffect(() => {
+    if (document.querySelector('script[src*="gumroad.com/js/gumroad.js"]')) return;
+    const s = document.createElement('script');
+    s.src = 'https://gumroad.com/js/gumroad.js';
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
+
+  // Build the Gumroad checkout URL — prefill the buyer's email so the
+  // webhook can match the purchase back to this account.
+  const checkoutUrl = (() => {
+    const params = new URLSearchParams({ wanted: 'true' });
+    if (user?.email) params.set('email', user.email);
+    return `${GUMROAD_PRODUCT_URL}?${params.toString()}`;
+  })();
 
   return (
     <PageLayout>
@@ -68,28 +92,33 @@ export default function BuyPage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 {PACKAGES.map((p) => (
-                  <div key={p.credits}
-                    className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 text-center flex flex-col items-center gap-3">
+                  <a
+                    key={p.credits}
+                    href={checkoutUrl}
+                    className="gumroad-button glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 text-center flex flex-col items-center gap-3 hover:border-[#D1BE9B]/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer no-underline"
+                  >
                     <span className="text-[10px] tracking-[0.2em] text-[#D1BE9B]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{p.tag}</span>
                     <div className="text-2xl font-extralight text-[#31353A]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{p.credits} 點</div>
                     <div className="text-[13px] text-[#31353A]/70" style={{ fontFamily: 'Noto Serif TC, serif' }}>{p.price}</div>
-                    <button
-                      disabled
-                      className="mt-2 px-6 py-2 text-[11px] tracking-[0.2em] border border-[#D1BE9B]/40 text-[#31353A]/40 rounded-full cursor-not-allowed"
+                    <span className="mt-2 px-6 py-2 text-[11px] tracking-[0.2em] bg-[#31353A] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      金流整合中
-                    </button>
-                  </div>
+                      購買
+                    </span>
+                  </a>
                 ))}
               </div>
 
-              <p className="text-center text-[11px] text-[#31353A]/45 tracking-wider"
+              <p className="text-center text-[11px] text-[#31353A]/45 tracking-wider mb-2"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                線上付款功能即將開放，敬請期待 🐾
+                結帳會在浮窗中進行，付款完成後點數會自動加到你的帳號 🐾
+              </p>
+              <p className="text-center text-[10px] text-[#31353A]/35 tracking-wider"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                請在結帳頁面選擇上面對應的方案
               </p>
 
               {isAdmin && (
