@@ -56,8 +56,16 @@ export const creditsRouter = router({
           const ping = await db.execute(sql`select 1 as ok`);
           out.simplePing = JSON.stringify(ping).slice(0, 200);
         } catch (e) {
-          const err = e as { message?: string; code?: string; detail?: string; hint?: string };
-          out.simpleError = { message: err?.message, code: err?.code, detail: err?.detail, hint: err?.hint };
+          const err = e as { name?: string; message?: string; code?: string; detail?: string; hint?: string; cause?: unknown };
+          const cause = err?.cause as { name?: string; message?: string; code?: string } | undefined;
+          out.simpleError = {
+            name: err?.name,
+            message: err?.message,
+            code: err?.code,
+            detail: err?.detail,
+            hint: err?.hint,
+            cause: cause ? { name: cause.name, message: cause.message, code: cause.code } : undefined,
+          };
         }
         // 2) Then the actual users query
         try {

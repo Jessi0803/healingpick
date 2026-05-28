@@ -21,7 +21,10 @@ let _db: Db | null = null;
 export async function getDb(): Promise<Db | null> {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      const client = postgres(process.env.DATABASE_URL, { prepare: false });
+      const client = postgres(process.env.DATABASE_URL, {
+        prepare: false,
+        ssl: "require",
+      });
       _db = drizzle(client);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
