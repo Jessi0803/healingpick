@@ -35,7 +35,7 @@ export async function getDb(): Promise<Db | null> {
 }
 
 /** Number of free readings granted per day. */
-export const DAILY_FREE_QUOTA = 5;
+export const DAILY_FREE_QUOTA = 2;
 /** Credits granted once when a user first signs up. */
 export const SIGNUP_BONUS_CREDITS = 5;
 
