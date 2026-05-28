@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../_core/trpc";
+import { sql } from "drizzle-orm";
 import { addCredits, getCreditState, getDb, getUserByEmail } from "../db";
 import { isCreditsEnabled } from "../_core/credits";
 import { verifyAccessToken } from "../_core/supabase";
@@ -50,9 +51,23 @@ export const creditsRouter = router({
       const db = await getDb();
       out.dbConnected = Boolean(db);
       if (db) {
-        const rows = await db.select().from(users).limit(1);
-        out.userQueryOk = true;
-        out.usersCount = rows.length;
+        // 1) Simplest possible query first
+        try {
+          const ping = await db.execute(sql`select 1 as ok`);
+          out.simplePing = JSON.stringify(ping).slice(0, 200);
+        } catch (e) {
+          const err = e as { message?: string; code?: string; detail?: string; hint?: string };
+          out.simpleError = { message: err?.message, code: err?.code, detail: err?.detail, hint: err?.hint };
+        }
+        // 2) Then the actual users query
+        try {
+          const rows = await db.select().from(users).limit(1);
+          out.userQueryOk = true;
+          out.usersCount = rows.length;
+        } catch (e) {
+          const err = e as { message?: string; code?: string; detail?: string; hint?: string };
+          out.userQueryError = { message: err?.message, code: err?.code, detail: err?.detail, hint: err?.hint };
+        }
       }
     } catch (e) {
       out.dbError = String((e as Error)?.message ?? e);
