@@ -16,6 +16,8 @@ import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Streamdown } from 'streamdown';
 import { CatWaving, CatListening } from '@/components/CatElements';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Mail } from 'lucide-react';
 
 // ─── Tarot Card Data ──────────────────────────────────────────────────────────
 const MAJOR_ARCANA = [
