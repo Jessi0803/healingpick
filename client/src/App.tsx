@@ -11,6 +11,7 @@ import Ziwei from "./pages/Ziwei";
 import Fortune from "./pages/Fortune";
 import Treehole from "./pages/Treehole";
 import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
 import History from "./pages/History";
 import Buy from "./pages/Buy";
 import ResetPassword from "./pages/ResetPassword";
@@ -26,6 +27,7 @@ function Router() {
       <Route path="/fortune/daily" component={Fortune} />
       <Route path="/treehole" component={Treehole} />
       <Route path="/shop" component={Shop} />
+      <Route path="/shop/:id" component={ProductDetail} />
       <Route path="/history" component={History} />
       <Route path="/buy" component={Buy} />
       <Route path="/reset-password" component={ResetPassword} />
