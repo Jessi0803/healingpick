@@ -15,12 +15,12 @@ import { trpc } from '@/lib/trpc';
 
 // Navbar links – flat structure, all items at top level
 const navLinks = [
-  { label: '關於我們', href: '/about' },
   { label: '塔羅占卜', href: '/tarot' },
   { label: '紫微斗數', href: '/ziwei' },
   { label: '每日運勢', href: '/fortune/daily' },
   { label: '心靈樹洞', href: '/treehole' },
   { label: '能量商品', href: '/shop' },
+  { label: '關於我們', href: '/about' },
 ];
 
 export default function Navbar() {
