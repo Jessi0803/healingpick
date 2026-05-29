@@ -11,6 +11,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'wouter';
+import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import { CatListening, CatLoading } from '@/components/CatElements';
 import { trpc } from '@/lib/trpc';
@@ -304,7 +305,10 @@ export default function TreeholePage() {
   const [loading, setLoading] = useState(false);
   const responseRef = useRef<HTMLDivElement>(null);
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
+  const creditsQuery = trpc.credits.state.useQuery(undefined, {
+    refetchOnWindowFocus: true,
+  });
   const saveSessionMutation = trpc.history.saveTreeholeSession.useMutation();
 
   const comfortMutation = trpc.treehole.comfort.useMutation({
@@ -335,6 +339,26 @@ export default function TreeholePage() {
 
   function handleSubmit() {
     if (!text.trim()) return;
+    const c = creditsQuery.data;
+    if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
+      toast.error('今日免費額度已用完 🐾', {
+        description: isAuthenticated
+          ? '可購買點數繼續說,或等明天的免費額度回來'
+          : '註冊登入就能購買點數繼續說,或等明天的免費額度回來',
+        action: {
+          label: isAuthenticated ? '購買點數' : '註冊登入',
+          onClick: () => {
+            if (isAuthenticated) {
+              window.location.href = '/buy';
+            } else {
+              void login();
+            }
+          },
+        },
+        duration: 6000,
+      });
+      return;
+    }
     setLoading(true);
     const mood = selectedMood || 'general';
     const moodInfo = MOODS.find(m => m.id === mood);

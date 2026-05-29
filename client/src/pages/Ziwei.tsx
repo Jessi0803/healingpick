@@ -146,7 +146,10 @@ type AstrolabeData = {
 };
 
 export default function ZiweiPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
+  const creditsQuery = trpc.credits.state.useQuery(undefined, {
+    refetchOnWindowFocus: true,
+  });
   const [birthDate, setBirthDate] = useState('');
   const [hourValue, setHourValue] = useState('0');
   const [gender, setGender] = useState<'男' | '女'>('女');
@@ -177,6 +180,26 @@ export default function ZiweiPage() {
   function handleGenerate() {
     if (!birthDate) {
       toast.error('請輸入出生日期');
+      return;
+    }
+    const c = creditsQuery.data;
+    if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
+      toast.error('今日免費額度已用完 🐾', {
+        description: isAuthenticated
+          ? '可購買點數繼續看,或等明天的免費額度回來'
+          : '註冊登入就能購買點數繼續看,或等明天的免費額度回來',
+        action: {
+          label: isAuthenticated ? '購買點數' : '註冊登入',
+          onClick: () => {
+            if (isAuthenticated) {
+              window.location.href = '/buy';
+            } else {
+              void login();
+            }
+          },
+        },
+        duration: 6000,
+      });
       return;
     }
     setAstrolabe(null);
