@@ -95,12 +95,14 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               {[
-                { label: 'Instagram', href: '#' },
-                { label: 'LINE 官方帳號', href: '#' },
+                { label: 'Instagram', href: 'https://www.instagram.com/healing.pick_?igsh=MWQwOWViNXB2MTg5cA%3D%3D&utm_source=qr' },
+                { label: 'LINE 官方帳號', href: 'https://line.me/R/ti/p/%40180itfru' },
               ].map((item) => (
                 <li key={item.label}>
                   <a
                     href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-[12px] tracking-[0.15em] text-[#31353A]/68 hover:text-[#D1BE9B] transition-colors duration-300"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
