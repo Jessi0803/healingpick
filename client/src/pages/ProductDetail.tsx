@@ -167,15 +167,6 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Section: 商品特色 */}
-          <Section title="商品特色" subtitle="Features">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {product.features.map((f) => (
-                <BulletCard key={f.title} {...f} />
-              ))}
-            </div>
-          </Section>
-
           {/* Section: 能量寓意 */}
           <Section title="能量寓意" subtitle="Meanings">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
