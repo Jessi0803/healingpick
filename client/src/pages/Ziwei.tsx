@@ -236,7 +236,7 @@ export default function ZiweiPage() {
               </h1>
 
               {/* Envelope next to title, referencing Tarot layout */}
-              <div className="absolute right-0 top-[calc(50%+0.5rem)] -translate-y-1/2 animate-float-envelope">
+              <div className="absolute right-4 md:right-12 top-[calc(50%+0.5rem)] -translate-y-1/2 animate-float-envelope">
                 <Dialog>
                   <DialogTrigger asChild>
                     <button className="relative flex flex-col items-center justify-center group bg-transparent focus:outline-none border-none hover:scale-105 active:scale-[0.92] transition-transform duration-150 ease-out">
