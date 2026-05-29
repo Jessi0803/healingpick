@@ -169,6 +169,55 @@ const PRODUCTS = [
     properties: ['財富顯化', '事業助力', '心輪療癒', '豐盛能量'],
     description: '巴西天然綠幽靈水晶球，內含天然綠色幻影，每一顆都是獨一無二的藝術品。綠幽靈被稱為「財富之石」，能強力吸引財富與事業機遇，同時療癒心輪，帶來豐盛感。',
   },
+  {
+    id: 9,
+    name: '心願九尾狐',
+    subtitle: '幻彩靈狐・九尾守護琉璃',
+    price: 980,
+    originalPrice: 1280,
+    category: 'glass',
+    type: 'self',
+    chakra: '全脈輪',
+    hz: '528Hz',
+    element: '光',
+    origin: '幻彩琉璃工藝',
+    size: '高約 5–6cm',
+    weight: '約 90–120g',
+    tag: '熱銷',
+    img: '/shop-3258.jpg',
+    properties: ['桃花能量', '愛自己', '好人緣', '願願顯化'],
+    description: `在光影流轉之間，收藏一份屬於自己的溫柔能量。
+
+九尾狐自古象徵智慧、魅力、幸運與守護。這款《幻彩靈狐・九尾守護琉璃》以夢幻彩虹琉璃打造，隨著光線變化折射出不同色彩，彷彿將美好的祝福悄悄封存其中。
+
+九條尾巴象徵圓滿與豐盛，也提醒著我們：真正吸引美好事物的開始，不是追逐，而是先看見自己的光。
+
+無論擺放在書桌、床頭櫃、工作空間或療癒角落，都能為日常增添一份溫柔而療癒的儀式感。
+
+─── ♡ 商品特色 ♡ ───
+🌈 幻彩琉璃工藝：不同角度呈現迷人的彩虹光澤，每一眼都能發現新的細節與美感。
+🦊 九尾狐守護意象：象徵智慧、自信、魅力、好運與願望顯化。
+🌷 療癒空間擺飾：為生活空間注入柔和氛圍，成為陪伴日常的小小能量夥伴。
+🎀 精緻送禮首選：適合作為生日禮物、紀念禮物，或送給努力生活的自己。
+
+─── ♡ 能量寓意 ♡ ───
+🤍 愛自己：把溫柔留給自己，也把愛留給自己。
+♡ 桃花能量：願你遇見喜歡的人，也願你成為自己喜歡的樣子。
+🌸 好人緣：吸引讓你感到舒服、自在的人事物。
+🦋 幸運陪伴：在重要時刻提醒你相信自己、勇敢前進。
+☁️ 自我療癒：在忙碌與壓力之中，找回內心的平靜與力量。
+🫧 願望顯化：陪伴你專注於想完成的目標與夢想。
+
+─── ♡ 適合這樣的你 ♡ ───
+🌷 希望提升自信與個人魅力
+🌷 正在期待新的緣分與人際關係
+🌷 喜歡療癒系居家擺飾
+🌷 想為自己準備一份充滿儀式感的小禮禮物
+🌷 相信美好能量與內在成長
+
+─── ♡ HealingPick 想對你說 ♡ ───
+「你不需要變成別人喜歡的樣子。九尾狐的能量，不是追逐愛，而是找回自己的光。當你開始喜歡自己，適合的人、關係與機會，也會慢慢被吸引而來。願這隻幻彩靈狐陪伴你，在每一次迷惘與期待之間，依然相信自己的美好。」`,
+  },
 ];
 
 const CATEGORIES = [
@@ -181,6 +230,7 @@ const CATEGORIES = [
   { id: 'moonstone', label: '月光石',   count: PRODUCTS.filter(p => p.category === 'moonstone').length },
   { id: 'lapis',     label: '青金石',   count: PRODUCTS.filter(p => p.category === 'lapis').length },
   { id: 'phantom',   label: '幽靈水晶', count: PRODUCTS.filter(p => p.category === 'phantom').length },
+  { id: 'glass',     label: '幻彩琉璃', count: PRODUCTS.filter(p => p.category === 'glass').length },
 ];
 
 const SORT_OPTIONS = [
@@ -491,7 +541,7 @@ export default function ShopPage() {
                 </div>
 
                 {/* Description */}
-                <p className="text-[11px] leading-[2] text-[#31353A]/68 tracking-wider mb-4"
+                <p className="text-[11px] leading-[2] text-[#31353A]/68 tracking-wider mb-4 whitespace-pre-line"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                   {selectedProduct.description}
                 </p>
