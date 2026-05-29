@@ -258,7 +258,7 @@ export default function CatCompanion() {
           transform: isOpen ? 'translateY(0) scale(1)' : 'translateY(8px) scale(0.95)',
           transition: 'opacity 0.3s cubic-bezier(0.23,1,0.32,1), transform 0.3s cubic-bezier(0.23,1,0.32,1)',
           pointerEvents: isOpen ? 'auto' : 'none',
-          width: '260px',
+          width: '232px',
           position: 'relative',
           zIndex: 1,
         }}
@@ -273,16 +273,16 @@ export default function CatCompanion() {
           }}
         >
           {/* 頂部 */}
-          <div className="flex items-center justify-between px-4 pt-3 pb-1">
+          <div className="flex items-center justify-between px-3.5 pt-2.5 pb-0.5">
             <span
-              className="text-[11px] tracking-[0.3em] uppercase"
+              className="text-[10px] tracking-[0.3em] uppercase"
               style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', color: '#A38D6B' }}
             >
               ✦ Mochi
             </span>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-[12px] text-[#31353A]/40 hover:text-[#31353A]/72 transition-colors"
+              className="text-[11px] text-[#31353A]/40 hover:text-[#31353A]/72 transition-colors"
               aria-label="關閉"
             >
               ✕
@@ -291,12 +291,12 @@ export default function CatCompanion() {
 
           {/* 內容 */}
           <div
-            className="px-4 pt-2 pb-3"
+            className="px-3.5 pt-1.5 pb-2.5"
             onClick={handleBubbleClick}
             style={{ cursor: 'pointer' }}
           >
             <p
-              className="text-[13px] leading-[2] text-[#31353A]/85 tracking-wider"
+              className="text-[11.5px] leading-[1.9] text-[#31353A]/85 tracking-wider"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
             >
               {pearl.text}
@@ -305,10 +305,10 @@ export default function CatCompanion() {
 
           {/* CTA(只在那則有附連結時顯示) */}
           {pearl.cta && (
-            <div className="px-4 pb-3">
+            <div className="px-3.5 pb-2.5">
               <button
                 onClick={() => goTo(pearl.cta!.href)}
-                className="w-full text-[12px] tracking-[0.2em] py-2 rounded-full border border-[#D1BE9B]/50 text-[#A38D6B] hover:bg-[#D1BE9B]/15 hover:text-[#8A7250] transition-colors"
+                className="w-full text-[11px] tracking-[0.2em] py-1.5 rounded-full border border-[#D1BE9B]/50 text-[#A38D6B] hover:bg-[#D1BE9B]/15 hover:text-[#8A7250] transition-colors"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
               >
                 {pearl.cta.label}
@@ -317,9 +317,9 @@ export default function CatCompanion() {
           )}
 
           {/* 自動輪播提示 */}
-          <div className="px-4 pb-3">
+          <div className="px-3.5 pb-2.5">
             <p
-              className="text-[10px] text-[#D1BE9B]/70 tracking-wider text-center"
+              className="text-[9px] text-[#D1BE9B]/70 tracking-wider text-center"
               style={{ fontFamily: 'Noto Serif TC, serif' }}
             >
               ✦ 每幾秒自動換一則(也可以點卡片換)
