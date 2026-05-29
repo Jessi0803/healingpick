@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { spendAnonFree, spendForReading } from "../db";
+import { spendForReading, spendVisitorFree } from "../db";
 import type { TrpcContext } from "./context";
 import { isSupabaseConfigured } from "./supabase";
 
@@ -29,9 +29,10 @@ export async function chargeReading(ctx: TrpcContext, reason: string): Promise<v
     return;
   }
 
-  // Anonymous visitor — allow the daily free quota off their browser id.
-  if (ctx.anonId) {
-    const result = await spendAnonFree(ctx.anonId);
+  // Anonymous visitor — gated by BOTH browser-id and IP-hash quotas so the
+  // limit can't be reset by clearing cookies / going incognito.
+  if (ctx.anonId || ctx.ipHash) {
+    const result = await spendVisitorFree(ctx.anonId, ctx.ipHash);
     if (!result.ok) {
       if (result.reason === "no_db") return;
       throw new TRPCError({ code: "FORBIDDEN", message: "ANON_QUOTA_EXHAUSTED" });

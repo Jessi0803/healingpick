@@ -7,6 +7,7 @@ import {
   InsertUser,
   anonymousSessions,
   creditTransactions,
+  ipQuotas,
   readings,
   treeholeSessions,
   users,
@@ -284,6 +285,114 @@ export async function spendAnonFree(anonId: string): Promise<SpendResult> {
   }
 
   return { ok: false, reason: "insufficient" };
+}
+
+// ─── IP-based free quota (extra anti-abuse layer for anonymous visitors) ────
+
+async function ensureFreshDayIp(ipHash: string) {
+  const db = await getDb();
+  if (!db) return;
+  const rows = await db.select().from(ipQuotas).where(eq(ipQuotas.ipHash, ipHash)).limit(1);
+  const row = rows[0];
+  if (!row) return;
+  if (isNewDay(row.lastFreeReset)) {
+    await db
+      .update(ipQuotas)
+      .set({ freeUsedToday: 0, lastFreeReset: new Date() })
+      .where(eq(ipQuotas.ipHash, ipHash));
+  }
+}
+
+async function getIpUsed(ipHash: string): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  await ensureFreshDayIp(ipHash);
+  const rows = await db.select().from(ipQuotas).where(eq(ipQuotas.ipHash, ipHash)).limit(1);
+  return rows[0]?.freeUsedToday ?? 0;
+}
+
+/**
+ * Spend one free read for an anonymous visitor. Charges BOTH the browser-id
+ * quota and the per-IP quota — a request is blocked if either is exhausted,
+ * so clearing cookies or switching to incognito doesn't reset the limit.
+ */
+export async function spendVisitorFree(
+  anonId: string | null,
+  ipHash: string | null
+): Promise<SpendResult> {
+  const db = await getDb();
+  if (!db) return { ok: false, reason: "no_db" };
+
+  // Upsert + refresh both rows so we can read current counts.
+  if (anonId) {
+    await db
+      .insert(anonymousSessions)
+      .values({ anonId })
+      .onConflictDoUpdate({ target: anonymousSessions.anonId, set: { lastSeen: new Date() } });
+    await ensureFreshDayAnon(anonId);
+  }
+  if (ipHash) {
+    await db
+      .insert(ipQuotas)
+      .values({ ipHash })
+      .onConflictDoUpdate({ target: ipQuotas.ipHash, set: { lastSeen: new Date() } });
+    await ensureFreshDayIp(ipHash);
+  }
+
+  const anonUsed = anonId
+    ? (await db.select().from(anonymousSessions).where(eq(anonymousSessions.anonId, anonId)).limit(1))[0]
+        ?.freeUsedToday ?? 0
+    : 0;
+  const ipUsed = ipHash ? await getIpUsed(ipHash) : 0;
+
+  if ((anonId && anonUsed >= DAILY_FREE_QUOTA) || (ipHash && ipUsed >= DAILY_FREE_QUOTA)) {
+    return { ok: false, reason: "insufficient" };
+  }
+
+  if (anonId) {
+    await db
+      .update(anonymousSessions)
+      .set({ freeUsedToday: anonUsed + 1 })
+      .where(eq(anonymousSessions.anonId, anonId));
+  }
+  if (ipHash) {
+    await db
+      .update(ipQuotas)
+      .set({ freeUsedToday: ipUsed + 1 })
+      .where(eq(ipQuotas.ipHash, ipHash));
+  }
+
+  return {
+    ok: true,
+    usedFree: true,
+    state: {
+      credits: 0,
+      freeRemaining: Math.max(0, DAILY_FREE_QUOTA - Math.max(anonUsed + 1, ipUsed + 1)),
+      dailyFreeQuota: DAILY_FREE_QUOTA,
+    },
+  };
+}
+
+/** Combined "what's my remaining free?" for the navbar — min of anon and IP. */
+export async function getVisitorCreditState(
+  anonId: string | null,
+  ipHash: string | null
+): Promise<CreditState | null> {
+  const db = await getDb();
+  if (!db) return null;
+  if (anonId) await ensureFreshDayAnon(anonId);
+  if (ipHash) await ensureFreshDayIp(ipHash);
+  const anonUsed = anonId
+    ? (await db.select().from(anonymousSessions).where(eq(anonymousSessions.anonId, anonId)).limit(1))[0]
+        ?.freeUsedToday ?? 0
+    : 0;
+  const ipUsed = ipHash ? await getIpUsed(ipHash) : 0;
+  const used = Math.max(anonUsed, ipUsed);
+  return {
+    credits: 0,
+    freeRemaining: Math.max(0, DAILY_FREE_QUOTA - used),
+    dailyFreeQuota: DAILY_FREE_QUOTA,
+  };
 }
 
 // ─── Readings (Tarot / Ziwei / Fortune) ──────────────────────────────────────

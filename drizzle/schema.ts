@@ -67,6 +67,22 @@ export type AnonymousSession = typeof anonymousSessions.$inferSelect;
 export type InsertAnonymousSession = typeof anonymousSessions.$inferInsert;
 
 /**
+ * Per-IP free-quota tracking. Keyed by a hash of the visitor IP so the same
+ * machine can't bypass the daily limit by clearing cookies / going incognito
+ * / switching browsers.
+ */
+export const ipQuotas = pgTable("ip_quotas", {
+  ipHash: varchar("ipHash", { length: 64 }).primaryKey(),
+  freeUsedToday: integer("freeUsedToday").default(0).notNull(),
+  lastFreeReset: timestamp("lastFreeReset").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastSeen: timestamp("lastSeen").defaultNow().notNull(),
+});
+
+export type IpQuota = typeof ipQuotas.$inferSelect;
+export type InsertIpQuota = typeof ipQuotas.$inferInsert;
+
+/**
  * Tarot / Ziwei / Fortune reading records (user divination history).
  */
 export const readings = pgTable("readings", {

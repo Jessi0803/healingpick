@@ -52,6 +52,12 @@ export async function signUpWithPassword(
     options: { emailRedirectTo: window.location.origin },
   });
   if (error) return { ok: false, error: error.message };
+  // Supabase's "Prevent email enumeration" protection returns a fake user
+  // object with empty `identities` when the email is already registered.
+  const identities = (data.user as { identities?: unknown[] } | null)?.identities;
+  if (Array.isArray(identities) && identities.length === 0) {
+    return { ok: false, error: "這個 email 已經註冊過了,請直接登入或點忘記密碼" };
+  }
   // session is null when email confirmation is required
   return { ok: true, needsVerification: !data.session };
 }

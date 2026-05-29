@@ -1,7 +1,20 @@
+import { createHash } from "node:crypto";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
 import { getUserByOpenId, upsertUser } from "../db";
 import { verifyAccessToken } from "./supabase";
+
+const IP_SALT = process.env.IP_HASH_SALT ?? "hp-anon-salt";
+function hashIp(ip: string | null | undefined): string | null {
+  if (!ip) return null;
+  return createHash("sha256").update(ip + IP_SALT).digest("hex").slice(0, 32);
+}
+function clientIp(req: CreateExpressContextOptions["req"]): string | null {
+  const xff = req.headers["x-forwarded-for"];
+  if (typeof xff === "string") return xff.split(",")[0].trim() || null;
+  if (Array.isArray(xff) && xff[0]) return xff[0].split(",")[0].trim() || null;
+  return req.socket?.remoteAddress ?? null;
+}
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -9,6 +22,8 @@ export type TrpcContext = {
   user: User | null;
   /** Browser-scoped id for visitors that haven't signed up yet. */
   anonId: string | null;
+  /** Hashed visitor IP; used together with anonId to gate the free quota. */
+  ipHash: string | null;
 };
 
 function bearerToken(req: CreateExpressContextOptions["req"]): string | null {
@@ -54,5 +69,7 @@ export async function createContext(
       ? anonHeader
       : null;
 
-  return { req: opts.req, res: opts.res, user, anonId };
+  const ipHash = hashIp(clientIp(opts.req));
+
+  return { req: opts.req, res: opts.res, user, anonId, ipHash };
 }
