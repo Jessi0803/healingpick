@@ -11,6 +11,11 @@ build/
 .vercel/
 api/_app.mjs
 
+# Local-only assets (large product photos, archive zips, etc.)
+*.zip
+商品照片/
+AI導購平台商品照片/
+
 # Environment variables
 .env
 .env.local
