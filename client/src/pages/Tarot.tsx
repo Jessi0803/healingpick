@@ -299,45 +299,47 @@ export default function TarotPage() {
           {step === 'intro' && (
             <div className="text-center animate-fade-in-up">
               {/* Header */}
-              <div className="mb-10 text-center w-full flex flex-col items-center">
+              <div className="mb-10 text-center w-full">
                 <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase block"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   Tarot Reading
                 </span>
                 
-                <div className="flex flex-row items-center justify-center gap-4 mt-3 mb-5">
+                {/* 加上 mb-10 讓下方文字不會被信封的標籤蓋到，同時 inline-block 保證 h1 完美置中不動 */}
+                <div className="relative inline-block mt-3 mb-10 md:mb-8">
                   <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] m-0"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     塔羅牌占卜
                   </h1>
                   
-                  {/* Floating Envelope inline with title */}
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <button className="flex flex-col items-center justify-center animate-float-envelope group bg-transparent focus:outline-none border-none hover:scale-105 transition-transform duration-300">
-                        <div className="relative flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#FDFBF7] to-[#F0E8DC] border border-[#D1BE9B]/60 shadow-[0_4px_16px_rgba(209,190,155,0.25)] hover:shadow-[0_8px_24px_rgba(163,141,107,0.35)] transition-shadow duration-500 overflow-visible">
-                          {/* Decorative spinning inner ring */}
-                          <div className="absolute inset-0.5 md:inset-1 rounded-full border border-[#D1BE9B]/40 border-dashed animate-[spin_30s_linear_infinite] pointer-events-none" />
-                          
-                          {/* Wax seal style envelope icon */}
-                          <div className="relative z-10 flex items-center justify-center text-[#A38D6B] group-hover:text-[#8A7250] transition-colors drop-shadow-sm scale-75 md:scale-90">
-                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M3 8L10.8906 13.2604C11.5624 13.7083 12.4376 13.7083 13.1094 13.2604L21 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.2"/>
-                              {/* Gold wax seal */}
-                              <circle cx="12" cy="13.2" r="3" fill="#D1BE9B" className="group-hover:fill-[#C9A86A] transition-colors" />
-                              <path d="M11 13.2H13M12 12.2V14.2" stroke="#FDFBF7" strokeWidth="0.8" strokeLinecap="round"/>
-                            </svg>
+                  {/* Floating Envelope absolute positioned so it doesn't affect title centering */}
+                  <div className="absolute top-1/2 -translate-y-1/2 -right-16 md:-right-24">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="flex flex-col items-center justify-center animate-float-envelope group bg-transparent focus:outline-none border-none hover:scale-105 transition-transform duration-300">
+                          <div className="relative flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#FDFBF7] to-[#F0E8DC] border border-[#D1BE9B]/60 shadow-[0_4px_16px_rgba(209,190,155,0.25)] hover:shadow-[0_8px_24px_rgba(163,141,107,0.35)] transition-shadow duration-500 overflow-visible">
+                            {/* Decorative spinning inner ring */}
+                            <div className="absolute inset-0.5 md:inset-1 rounded-full border border-[#D1BE9B]/40 border-dashed animate-[spin_30s_linear_infinite] pointer-events-none" />
+                            
+                            {/* Wax seal style envelope icon */}
+                            <div className="relative z-10 flex items-center justify-center text-[#A38D6B] group-hover:text-[#8A7250] transition-colors drop-shadow-sm scale-75 md:scale-90">
+                              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 8L10.8906 13.2604C11.5624 13.7083 12.4376 13.7083 13.1094 13.2604L21 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.2"/>
+                                {/* Gold wax seal */}
+                                <circle cx="12" cy="13.2" r="3" fill="#D1BE9B" className="group-hover:fill-[#C9A86A] transition-colors" />
+                                <path d="M11 13.2H13M12 12.2V14.2" stroke="#FDFBF7" strokeWidth="0.8" strokeLinecap="round"/>
+                              </svg>
+                            </div>
                           </div>
-                        </div>
-                        
-                        {/* Always visible tooltip */}
-                        <span className="mt-2 bg-[#FDFBF7]/80 backdrop-blur-sm border border-[#D1BE9B]/20 text-[#8A7250] text-[9px] md:text-[10px] tracking-[0.1em] px-2 py-1 rounded-md shadow-sm whitespace-nowrap pointer-events-none flex items-center gap-1" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          Mochi 的秘密
-                        </span>
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-[#FDFBF7] border-[#D1BE9B]/30" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                          
+                          {/* Always visible tooltip positioned absolutely to avoid layout shift */}
+                          <span className="absolute top-[110%] bg-[#FDFBF7]/80 backdrop-blur-sm border border-[#D1BE9B]/20 text-[#8A7250] text-[9px] md:text-[10px] tracking-[0.1em] px-2 py-1 rounded-md shadow-sm whitespace-nowrap pointer-events-none flex items-center gap-1" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                            Mochi 的秘密
+                          </span>
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-[#FDFBF7] border-[#D1BE9B]/30" style={{ fontFamily: 'Noto Serif TC, serif' }}>
                       <DialogHeader>
                         <DialogTitle className="text-center text-lg tracking-[0.2em] font-extralight text-[#31353A] mb-2 mt-2">
                           ✦ Mochi 的塔羅小秘密 ✦
