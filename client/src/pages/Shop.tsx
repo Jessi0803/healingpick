@@ -222,33 +222,6 @@ export default function ShopPage() {
             </div>
           </div>
 
-          {/* Partner CTA */}
-          <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20 text-center">
-            <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-2"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-              合作商家
-            </p>
-            <h3 className="text-lg tracking-[0.15em] text-[#31353A]/82 mb-3"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              你有水晶或靈性商品想上架嗎？
-            </h3>
-            <p className="text-[12px] leading-[2] text-[#31353A]/62 tracking-wider mb-5 max-w-md mx-auto"
-              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-              我們歡迎與優質的水晶商家合作，共同為使用者提供最好的療癒商品。
-              合作採抽成制，無需庫存壓力。
-            </p>
-            <button
-              className="px-8 py-2.5 text-xs tracking-[0.2em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              onClick={() => {
-                toast.info('合作洽詢功能即將開放！', {
-                  description: '請透過 Instagram 或 LINE 官方帳號聯繫我們，感謝您的支持。',
-                  duration: 5000,
-                });
-              }}>
-              申請合作上架
-            </button>
-          </div>
         </div>
       </div>
 

@@ -97,8 +97,6 @@ export default function Footer() {
               {[
                 { label: 'Instagram', href: '#' },
                 { label: 'LINE 官方帳號', href: '#' },
-                { label: '合作洽詢', href: '#' },
-                { label: '商品上架申請', href: '#' },
               ].map((item) => (
                 <li key={item.label}>
                   <a
