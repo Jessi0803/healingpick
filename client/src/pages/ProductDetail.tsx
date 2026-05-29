@@ -131,13 +131,6 @@ export default function ProductDetailPage() {
                   </span>
                 ))}
               </div>
-
-              {/* Multiline description with whitespace pre-line to capture formatted segments */}
-              <p className="text-xs md:text-[13px] leading-[2.1] text-[#31353A]/75 tracking-wider mb-8 whitespace-pre-line bg-white/20 p-5 rounded-2xl border border-[#D1BE9B]/10 shadow-[0_4px_16px_rgba(209,190,155,0.03)]"
-                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                {product.description}
-              </p>
-
               {/* Specs Grid */}
               <div className="grid grid-cols-2 gap-3 mb-8">
                 {[
@@ -173,6 +166,35 @@ export default function ProductDetailPage() {
 
             </div>
           </div>
+
+          {/* Elegant Divider */}
+          <div className="flex items-center justify-center gap-4 my-12 animate-fade-in-up">
+            <div className="h-[1px] w-16 bg-[#D1BE9B]/20" />
+            <span className="text-[#D1BE9B]/60 text-xs tracking-[0.3em]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+              ✦ 能量故事 ✦
+            </span>
+            <div className="h-[1px] w-16 bg-[#D1BE9B]/20" />
+          </div>
+
+          {/* Expanded Bottom Story Panel (Spacious Reading Layout) */}
+          <div className="w-full max-w-3xl mx-auto mb-16 animate-fade-in-up">
+            <div className="glass-panel bg-white/40 backdrop-blur-sm border border-[#D1BE9B]/15 p-8 md:p-12 rounded-3xl shadow-[0_12px_40px_rgba(209,190,155,0.06)] relative overflow-hidden">
+              {/* Corner soft gold decorations */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#D1BE9B]/5 to-transparent pointer-events-none rounded-tr-3xl" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-[#D1BE9B]/5 to-transparent pointer-events-none rounded-bl-3xl" />
+              
+              <h2 className="text-base tracking-[0.25em] text-[#A38D6B] mb-8 text-center"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                ❖ 能量故事與意象 ❖
+              </h2>
+
+              <p className="text-xs md:text-[14px] leading-[2.3] text-[#31353A]/80 tracking-wider whitespace-pre-line"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                {product.description}
+              </p>
+            </div>
+          </div>
+
 
           {/* Mochi cozy companions bottom section */}
           <div className="flex justify-center mb-6 py-6 border-t border-[#D1BE9B]/15">
