@@ -14,6 +14,7 @@ export default function ProductDetailPage() {
   const { id } = useParams();
   const product = findProduct(id ?? '');
   const [activeImage, setActiveImage] = useState(0);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   if (!product) {
     return (
@@ -39,10 +40,7 @@ export default function ProductDetailPage() {
   }
 
   const handleBuy = () => {
-    toast.success(`已收到您對「${product.name}」的結緣意願 ♡`, {
-      description: '結帳功能即將開放,目前請加入官方 LINE 或私訊 Instagram 訂購',
-      duration: 6000,
-    });
+    setShowContactModal(true);
   };
 
   return (
@@ -293,6 +291,63 @@ export default function ProductDetailPage() {
 
         </div>
       </div>
+
+      {/* ── CUSTOM CONTACT DIALOG ─────────────────────────────────────────── */}
+      {showContactModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Frosted backdrop */}
+          <div className="absolute inset-0 bg-[#3D4144]/25 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setShowContactModal(false)} />
+          
+          {/* Dialog Container */}
+          <div className="bg-[#FAF7F4] border border-[#D1BE9B]/25 rounded-[32px] p-8 max-w-sm w-full shadow-[0_20px_50px_rgba(209,190,155,0.15)] z-10 text-center relative overflow-hidden animate-fade-in">
+            {/* Cute sleeping cat ornament on top */}
+            <div className="absolute -top-1 -right-1 opacity-20 pointer-events-none text-[60px]">☁︎</div>
+            <div className="absolute -bottom-6 -left-6 opacity-20 pointer-events-none text-[80px]">♡</div>
+            
+            <button className="absolute top-4 right-4 text-xs text-[#31353A]/50 hover:text-[#31353A] transition-colors border-none bg-transparent cursor-pointer"
+              onClick={() => setShowContactModal(false)}>✕</button>
+
+            <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase font-light">Contact Us</span>
+            <h3 className="text-base md:text-lg tracking-[0.18em] text-[#31353A] mt-2 mb-1"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              選擇您的諮詢方式
+            </h3>
+            <p className="text-[11.5px] text-[#31353A]/62 tracking-wider mb-6"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+              Mochi 小幫手將於 24 小時內親自為您服務 ⊹ ࣪ ˖
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <a
+                href="https://line.me/R/ti/p/%40180itfru"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setShowContactModal(false)}
+                className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] hover:bg-[#D1BE9B] hover:text-[#31353A] rounded-full transition-all duration-500 flex items-center justify-center gap-2 shadow-sm font-light active:scale-95 cursor-pointer text-center"
+                style={{ fontFamily: 'Noto Serif TC, serif' }}
+              >
+                <span>💚</span> 官方 LINE 諮詢 ♡
+              </a>
+              
+              <a
+                href="https://www.instagram.com/healing.pick_?igsh=MWQwOWViNXB2MTg5cA%3D%3D&utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setShowContactModal(false)}
+                className="w-full py-3.5 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/40 hover:bg-[#3D4144] hover:text-[#FAF7F4] hover:border-[#3D4144] rounded-full transition-all duration-500 flex items-center justify-center gap-2 shadow-sm font-light active:scale-95 text-[#31353A] cursor-pointer text-center"
+                style={{ fontFamily: 'Noto Serif TC, serif' }}
+              >
+                <span>📸</span> Instagram 私訊 ⟡
+              </a>
+            </div>
+            
+            <div className="text-center text-[9px] text-[#D1BE9B]/80 tracking-widest mt-6 select-none">
+              ୨୧ ───────── ୨୧
+            </div>
+          </div>
+        </div>
+      )}
     </PageLayout>
   );
 }
