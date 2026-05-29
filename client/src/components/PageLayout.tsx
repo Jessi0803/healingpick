@@ -16,6 +16,11 @@ interface PageLayoutProps {
 export default function PageLayout({ children, className = '', noFooter = false }: PageLayoutProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Scroll to top on page mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Ethereal particle canvas
   useEffect(() => {
     const canvas = canvasRef.current;
