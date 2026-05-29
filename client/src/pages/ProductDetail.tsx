@@ -3,19 +3,18 @@
  * Design: Wabi-Sabi Luxe × Morandi Oat Milk — Premium Independent Product Detail
  */
 
+import { useState } from 'react';
 import { useParams, Link } from 'wouter';
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
-import { PRODUCTS } from '@/data/products';
+import { findProduct } from '@/data/products';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  
-  // Find product by ID
-  const product = PRODUCTS.find(p => p.id === Number(id));
+  const product = findProduct(id ?? '');
+  const [activeImage, setActiveImage] = useState(0);
 
-  // Handle case where product is not found
   if (!product) {
     return (
       <PageLayout>
@@ -26,7 +25,7 @@ export default function ProductDetailPage() {
             找不到該商品
           </h2>
           <p className="text-sm text-[#31353A]/60 mb-6" style={{ fontFamily: 'Noto Sans TC, sans-serif' }}>
-            抱歉，您所尋找的能量商品可能已下架或網址不正確。
+            抱歉,您所尋找的能量商品可能已下架或網址不正確。
           </p>
           <Link href="/shop">
             <button className="px-6 py-2.5 text-xs tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500"
@@ -40,8 +39,8 @@ export default function ProductDetailPage() {
   }
 
   const handleBuy = () => {
-    toast.success(`已收到您對「${product.name}」的結緣意願！`, {
-      description: '結帳與購物車功能即將開放，目前請加入官方 LINE 或私訊 Instagram 訂購 🐾',
+    toast.success(`已收到您對「${product.name}」的結緣意願 🐾`, {
+      description: '結帳功能即將開放,目前請加入官方 LINE 或私訊 Instagram 訂購',
       duration: 6000,
     });
   };
@@ -49,9 +48,9 @@ export default function ProductDetailPage() {
   return (
     <PageLayout>
       <div className="min-h-screen py-12 px-4 md:px-8 bg-[#FAF7F4]">
-        <div className="max-w-4xl mx-auto">
-          
-          {/* Back button */}
+        <div className="max-w-5xl mx-auto">
+
+          {/* Back */}
           <div className="mb-8 animate-fade-in-up">
             <Link href="/shop">
               <button className="inline-flex items-center gap-2 group text-xs tracking-[0.2em] text-[#31353A]/62 hover:text-[#31353A] transition-all duration-300 bg-transparent border-none focus:outline-none"
@@ -62,54 +61,66 @@ export default function ProductDetailPage() {
             </Link>
           </div>
 
-          {/* Main Content Layout */}
+          {/* Hero: gallery + summary */}
           <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start mb-12 animate-fade-in-up">
-            
-            {/* Left Column: Product Image with Premium Frame */}
-            <div className="w-full md:w-1/2 aspect-square relative group overflow-hidden rounded-3xl border border-[#D1BE9B]/20 shadow-[0_8px_32px_rgba(209,190,155,0.15)] bg-white/40">
-              <img
-                src={product.img}
-                alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-[1000ms] group-hover:scale-105"
-              />
-              {/* Soft gold gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/10 to-transparent pointer-events-none" />
-              {/* Self-owned / Partner Badge */}
-              <span className={`absolute top-4 left-4 text-[10px] tracking-[0.15em] px-3 py-1 rounded-full shadow-sm ${
-                product.type === 'self' ? 'bg-[#D1BE9B]/90 text-[#31353A]' : 'bg-[#FAF7F4]/90 backdrop-blur-sm text-[#31353A]/70'
-              }`} style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                {product.type === 'self' ? '自營能量商品' : '合作工坊商品'}
-              </span>
-              {product.tag && (
-                <span className="absolute top-4 right-4 text-[10px] tracking-[0.15em] px-3 py-1 rounded-full bg-[#3D4144]/80 backdrop-blur-sm text-[#FAF7F4] shadow-sm"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                  {product.tag}
-                </span>
+
+            {/* Left: image gallery */}
+            <div className="w-full md:w-1/2">
+              <div className="aspect-square relative overflow-hidden rounded-3xl border border-[#D1BE9B]/20 shadow-[0_8px_32px_rgba(209,190,155,0.15)] bg-white/40">
+                <img
+                  src={product.images[activeImage] ?? product.img}
+                  alt={product.name}
+                  className="w-full h-full object-cover transition-all duration-500"
+                />
+                {product.tag && (
+                  <span className="absolute top-4 left-4 text-[10px] tracking-[0.15em] px-3 py-1 rounded-full bg-[#D1BE9B]/90 text-[#31353A] shadow-sm"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    {product.tag}
+                  </span>
+                )}
+              </div>
+              {product.images.length > 1 && (
+                <div className="mt-3 grid grid-cols-5 gap-2">
+                  {product.images.map((src, i) => (
+                    <button
+                      key={src}
+                      onClick={() => setActiveImage(i)}
+                      className={`aspect-square overflow-hidden rounded-xl border transition-all ${
+                        activeImage === i
+                          ? 'border-[#A38D6B] ring-1 ring-[#A38D6B]/30'
+                          : 'border-[#D1BE9B]/25 opacity-75 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={src} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
 
-            {/* Right Column: Detailed info & specifications */}
+            {/* Right: summary */}
             <div className="w-full md:w-1/2">
-              
-              {/* Energy Tag */}
               <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-2 uppercase"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                {product.chakra} · {product.hz} · {product.element}能量
+                {product.material}
               </p>
 
-              {/* Title & Subtitle */}
               <h1 className="text-2xl md:text-3xl tracking-[0.18em] text-[#31353A] font-extralight mb-1"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                 {product.name}
               </h1>
-              <p className="text-xs md:text-sm italic text-[#D1BE9B] mb-6"
+              <p className="text-xs md:text-sm italic text-[#A38D6B] mb-5"
                 style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                 {product.subtitle}
               </p>
 
-              {/* Pricing Panel */}
+              <p className="text-[13px] leading-[2] text-[#31353A]/72 tracking-wider whitespace-pre-line mb-6"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {product.tagline}
+              </p>
+
               <div className="flex items-baseline gap-4 mb-6 border-b border-[#D1BE9B]/15 pb-5">
-                <span className="text-3xl text-[#D1BE9B]"
+                <span className="text-3xl text-[#A38D6B]"
                   style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                   NT$ {product.price.toLocaleString()}
                 </span>
@@ -121,97 +132,74 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {/* Properties List (Product Features) */}
-              <div className="space-y-2.5 mb-8 animate-fade-in-up">
-                <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] uppercase font-light"
-                  style={{ fontFamily: 'Noto Serif TC, serif' }}>
-                  ✦ 商品特色與能量特性
-                </p>
-                <div className="grid grid-cols-1 gap-2.5">
-                  {product.properties.map(prop => (
-                    <div key={prop} 
-                      className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/40 border border-[#D1BE9B]/15 shadow-[0_2px_8px_rgba(209,190,155,0.03)]"
-                      style={{ fontFamily: 'Noto Serif TC, serif' }}>
-                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#D1BE9B]/15 flex items-center justify-center text-[10px] text-[#A38D6B]">
-                        ✦
-                      </span>
-                      <span className="text-[12px] tracking-[0.1em] text-[#31353A]/85 font-light">
-                        {prop}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {/* Specs Grid (Only for natural crystals, hidden for crafts like Nine-Tailed Fox) */}
-              {product.category !== 'glass' && (
-                <div className="grid grid-cols-2 gap-3 mb-8">
-                  {[
-                    { label: '產地來源', value: product.origin },
-                    { label: '規格尺寸', value: product.size },
-                    { label: '商品重量', value: product.weight },
-                    { label: '對應脈輪', value: product.chakra },
-                  ].map(spec => (
-                    <div key={spec.label} className="bg-[#D1BE9B]/8 rounded-xl p-3 border border-[#D1BE9B]/15 text-left">
-                      <p className="text-[10px] tracking-[0.15em] text-[#D1BE9B] mb-1"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                        {spec.label}
-                      </p>
-                      <p className="text-[11px] tracking-[0.08em] text-[#31353A]/80 font-normal"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        {spec.value}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Purchase Button CTA */}
               <button
                 onClick={handleBuy}
                 className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95 shadow-md shadow-[#3D4144]/10 hover:shadow-[#D1BE9B]/20"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 立即諮詢購買 🐾
               </button>
-
             </div>
           </div>
 
-          {/* Elegant Divider */}
-          <div className="flex items-center justify-center gap-4 my-12 animate-fade-in-up">
-            <div className="h-[1px] w-16 bg-[#D1BE9B]/20" />
-            <span className="text-[#D1BE9B]/60 text-xs tracking-[0.3em]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
-              ✦ 能量故事 ✦
-            </span>
-            <div className="h-[1px] w-16 bg-[#D1BE9B]/20" />
-          </div>
+          {/* Section: 商品特色 */}
+          <Section title="商品特色" subtitle="Features">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {product.features.map((f) => (
+                <BulletCard key={f.title} {...f} />
+              ))}
+            </div>
+          </Section>
 
-          {/* Expanded Bottom Story Panel (Spacious Reading Layout) */}
-          <div className="w-full max-w-3xl mx-auto mb-16 animate-fade-in-up">
-            <div className="glass-panel bg-white/40 backdrop-blur-sm border border-[#D1BE9B]/15 p-8 md:p-12 rounded-3xl shadow-[0_12px_40px_rgba(209,190,155,0.06)] relative overflow-hidden">
-              {/* Corner soft gold decorations */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#D1BE9B]/5 to-transparent pointer-events-none rounded-tr-3xl" />
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-[#D1BE9B]/5 to-transparent pointer-events-none rounded-bl-3xl" />
-              
-              <h2 className="text-base tracking-[0.25em] text-[#A38D6B] mb-8 text-center"
+          {/* Section: 能量寓意 */}
+          <Section title="能量寓意" subtitle="Meanings">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {product.meanings.map((m) => (
+                <BulletCard key={m.title} {...m} />
+              ))}
+            </div>
+          </Section>
+
+          {/* Section: 適合這樣的你 */}
+          <Section title="適合這樣的你" subtitle="Suited For">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              {product.suitedFor.map((s) => (
+                <div key={s}
+                  className="flex items-start gap-3 px-4 py-2.5 rounded-2xl bg-[#D1BE9B]/10 border border-[#D1BE9B]/20">
+                  <span className="text-[#A38D6B] mt-0.5">🌷</span>
+                  <span className="text-[12px] tracking-[0.08em] text-[#31353A]/85 leading-[1.9]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    {s}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* HealingPick 想對你說 */}
+          <div className="w-full max-w-3xl mx-auto mt-8 mb-16 animate-fade-in-up">
+            <div className="glass-panel bg-white/45 backdrop-blur-sm border border-[#D1BE9B]/20 p-8 md:p-12 rounded-3xl shadow-[0_12px_40px_rgba(209,190,155,0.08)] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#D1BE9B]/8 to-transparent pointer-events-none rounded-tr-3xl" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-[#D1BE9B]/8 to-transparent pointer-events-none rounded-bl-3xl" />
+
+              <p className="text-[10px] tracking-[0.35em] text-[#D1BE9B] text-center mb-2 uppercase"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                Healing Pick 想對你說
+              </p>
+              <div className="mx-auto w-12 h-px bg-[#D1BE9B]/40 mb-6" />
+
+              <p className="text-[13.5px] md:text-[14px] leading-[2.2] text-[#31353A]/80 tracking-wider whitespace-pre-line text-center"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                ❖ 能量故事與意象 ❖
-              </h2>
-
-              <p className="text-xs md:text-[14px] leading-[2.3] text-[#31353A]/80 tracking-wider whitespace-pre-line"
-                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                {product.description}
+                {product.closing}
               </p>
             </div>
           </div>
 
-
-          {/* Mochi cozy companions bottom section */}
           <div className="flex justify-center mb-6 py-6 border-t border-[#D1BE9B]/15">
             <div className="flex items-center gap-4 animate-fade-in-up">
               <CatPeeking className="w-12 h-14" side="right" />
               <p className="text-[11px] text-[#31353A]/54 tracking-wider italic"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                Mochi 說：每一份相遇的能量，都是宇宙最美好的安排。
+                Mochi 說:每一份相遇的能量,都是宇宙最美好的安排。
               </p>
               <CatSitting className="w-10 h-14" />
             </div>
@@ -220,5 +208,42 @@ export default function ProductDetailPage() {
         </div>
       </div>
     </PageLayout>
+  );
+}
+
+function Section({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-10 animate-fade-in-up">
+      <div className="flex items-center gap-4 mb-5">
+        <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase"
+          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+          ♡ {subtitle}
+        </span>
+        <h2 className="text-base md:text-lg tracking-[0.2em] text-[#31353A]/85"
+          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+          {title}
+        </h2>
+        <div className="flex-1 h-px bg-[#D1BE9B]/20" />
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function BulletCard({ emoji, title, desc }: { emoji: string; title: string; desc: string }) {
+  return (
+    <div className="flex items-start gap-3 px-4 py-3 rounded-2xl bg-white/40 border border-[#D1BE9B]/15 shadow-[0_2px_8px_rgba(209,190,155,0.05)]">
+      <span className="flex-shrink-0 text-lg leading-tight">{emoji}</span>
+      <div>
+        <p className="text-[12.5px] tracking-[0.08em] text-[#A38D6B] mb-1"
+          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+          {title}
+        </p>
+        <p className="text-[12px] leading-[1.95] text-[#31353A]/72 tracking-wider"
+          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+          {desc}
+        </p>
+      </div>
+    </div>
   );
 }
