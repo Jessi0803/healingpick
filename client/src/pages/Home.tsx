@@ -382,7 +382,7 @@ export default function Home() {
         ))}
 
         {/* ── 給今天的你 · floating note (right side) ── */}
-        <div className="hidden lg:flex absolute right-8 top-1/2 -translate-y-1/2 flex-col items-end gap-1 pointer-events-none animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
+        <div className="hidden lg:flex absolute right-8 top-28 flex-col items-end gap-1 pointer-events-none animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
           <div className="glass-panel rounded-2xl px-5 py-4 border border-[#D1BE9B]/20 shadow-[0_4px_20px_rgba(209,190,155,0.1)] w-48 text-left">
             <p className="text-center text-[11px] tracking-[0.25em] text-[#A38D6B] mb-3"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
