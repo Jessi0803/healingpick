@@ -112,15 +112,21 @@ function MoonPhaseBadge({ symbol, name }: { symbol: string; name: string }) {
 export default function FortunePage() {
   const { isAuthenticated } = useAuth();
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
+  const [hasClickedGenerate, setHasClickedGenerate] = useState(false);
   const [today] = useState(new Date());
   const savedFortuneRef = useRef<string>('');
+
+  const creditsQuery = trpc.credits.state.useQuery();
+  const credits = creditsQuery.data;
 
   function handleSignSelect(signId: string) {
     if (selectedSign === signId) {
       setSelectedSign(null);
+      setHasClickedGenerate(false);
       return;
     }
     setSelectedSign(signId);
+    setHasClickedGenerate(false);
   }
 
   const selectedSignData = ZODIAC_SIGNS.find(s => s.id === selectedSign);
@@ -138,7 +144,7 @@ export default function FortunePage() {
       date: apiDateStr,
     },
     {
-      enabled: !!selectedSign,
+      enabled: !!selectedSign && hasClickedGenerate,
       staleTime: 1000 * 60 * 60 * 6, // 6 小時快取，同一天同一星座只呼叫一次
       retry: 1,
     }
@@ -283,118 +289,161 @@ export default function FortunePage() {
                       </div>
                     </div>
 
-                    {/* Loading state */}
-                    {dailyFortuneQuery.isLoading && (
-                      <div className="flex flex-col items-center gap-4 py-12">
-                        <div className="text-3xl animate-pulse">🌙</div>
-                        <p className="text-[12px] tracking-[0.2em] text-[#31353A]/54"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          Mochi 正在觀察今日月相與星象能量...
+                    {/* Check if user has clicked generate button */}
+                    {!hasClickedGenerate ? (
+                      <div className="py-8 text-center max-w-md mx-auto animate-fade-in">
+                        <div className="text-3xl mb-4 select-none animate-bounce-slow">🔮</div>
+                        <h4 className="text-sm tracking-[0.2em] text-[#31353A]/80 mb-2.5" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          星座已選擇：{selectedSignData.name}
+                        </h4>
+                        <p className="text-[12px] leading-[2] text-[#31353A]/54 tracking-wider mb-6" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                          選定星座後，點擊下方按鈕，<br />
+                          Mochi 將結合今日月相能量為你解讀運勢。
                         </p>
-                      </div>
-                    )}
 
-                    {/* Error state */}
-                    {dailyFortuneQuery.isError && (
-                      <div className="text-center py-8">
-                        <p className="text-[12px] text-[#31353A]/54 tracking-wider mb-3"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          運勢解讀暫時無法取得，請稍後再試
-                        </p>
-                        <button
-                          onClick={() => dailyFortuneQuery.refetch()}
-                          className="text-[11px] tracking-[0.15em] text-[#D1BE9B] border-b border-[#D1BE9B]/40 pb-0.5"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          重新嘗試
-                        </button>
-                      </div>
-                    )}
-
-                    {/* AI Fortune content */}
-                    {aiData && (
-                      <>
-                        {/* Scores */}
-                        <div className="space-y-3 mb-6">
-                          <ScoreBar label="整體" score={aiData.overallScore}  color={selectedSignData.color} />
-                          <ScoreBar label="感情" score={aiData.loveScore}     color="#EAA8AC" />
-                          <ScoreBar label="事業" score={aiData.careerScore}   color="#A0B898" />
-                          <ScoreBar label="健康" score={aiData.healthScore}   color="#A8C0A8" />
-                        </div>
-
-                        {/* Lucky info */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-                          {[
-                            { label: '幸運顏色', value: aiData.luckyColor },
-                            { label: '幸運數字', value: aiData.luckyNumber.toString() },
-                            { label: '能量水晶', value: aiData.crystal },
-                          ].map(item => (
-                            <div key={item.label} className="text-center p-3 rounded-xl bg-[#D1BE9B]/8">
-                              <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-1"
-                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                                {item.label}
-                              </p>
-                              <p className="text-xs tracking-[0.1em] text-[#31353A]/80"
-                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                                {item.value}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Fortune messages */}
-                        <div className="space-y-4 mb-6">
-                          {[
-                            { icon: '✦', label: '整體運勢', text: aiData.overall },
-                            { icon: '♥', label: '感情運勢', text: aiData.love },
-                            { icon: '◈', label: '事業財運', text: aiData.career },
-                            { icon: '◉', label: '健康提醒', text: aiData.health },
-                          ].map(item => (
-                            <div key={item.label} className="flex gap-3">
-                              <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">{item.icon}</span>
-                              <div>
-                                <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-1"
-                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                                  {item.label}
-                                </p>
-                                <p className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider"
-                                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                                  {item.text}
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Today's advice */}
-                        <div className="pt-4 border-t border-[#D1BE9B]/15">
-                          <div className="flex gap-3">
-                            <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">☽</span>
-                            <div>
-                              <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-1"
-                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                                今日月相指引
-                              </p>
-                              <p className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider italic"
-                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                                {aiData.advice}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Crystal CTA */}
-                        <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15 flex items-center justify-between">
-                          <p className="text-[12px] text-[#31353A]/62 tracking-wider"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                            今日推薦攜帶：<span className="text-[#D1BE9B]">{aiData.crystal}</span>
-                          </p>
-                          <Link href="/shop">
-                            <button className="text-[11px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
-                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                              選購水晶 →
+                        {credits?.enabled && credits.freeRemaining <= 0 && credits.credits <= 0 ? (
+                          <Link href="/buy" className="w-full inline-block">
+                            <button
+                              className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#D1BE9B]/15 text-[#A38D6B] hover:bg-[#D1BE9B]/25 rounded-full transition-all duration-300 font-medium active:scale-95 cursor-pointer text-center"
+                              style={{ fontFamily: 'Noto Serif TC, serif' }}
+                            >
+                              🐾 點數與免費額度不足，點此前往加值 ↗
                             </button>
                           </Link>
+                        ) : (
+                          <button
+                            onClick={() => setHasClickedGenerate(true)}
+                            className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] hover:bg-[#D1BE9B] hover:text-[#31353A] rounded-full transition-all duration-500 font-medium active:scale-95 cursor-pointer shadow-sm text-center"
+                            style={{ fontFamily: 'Noto Serif TC, serif' }}
+                          >
+                            {credits?.enabled
+                              ? credits.freeRemaining > 0
+                                ? `✨ 消耗 1 次免費額度 · 解鎖今日運勢 🐾`
+                                : `✨ 消耗 1 點餘額 · 解鎖今日運勢 🐾`
+                              : `✨ 開啟 Mochi 今日星象解讀 ✦`}
+                          </button>
+                        )}
+
+                        <div className="text-center text-[8px] text-[#D1BE9B]/60 tracking-widest mt-6 select-none">
+                          ୨୧ ───────── ୨୧
                         </div>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Loading state */}
+                        {dailyFortuneQuery.isLoading && (
+                          <div className="flex flex-col items-center gap-4 py-12">
+                            <div className="text-3xl animate-pulse">🌙</div>
+                            <p className="text-[12px] tracking-[0.2em] text-[#31353A]/54"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                              Mochi 正在觀察今日月相與星象能量...
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Error state */}
+                        {dailyFortuneQuery.isError && (
+                          <div className="text-center py-8">
+                            <p className="text-[12px] text-[#31353A]/54 tracking-wider mb-3"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                              運勢解讀暫時無法取得，請稍後再試
+                            </p>
+                            <button
+                              onClick={() => dailyFortuneQuery.refetch()}
+                              className="text-[11px] tracking-[0.15em] text-[#D1BE9B] border-b border-[#D1BE9B]/40 pb-0.5"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                              重新嘗試
+                            </button>
+                          </div>
+                        )}
+
+                        {/* AI Fortune content */}
+                        {aiData && (
+                          <>
+                            {/* Scores */}
+                            <div className="space-y-3 mb-6">
+                              <ScoreBar label="整體" score={aiData.overallScore}  color={selectedSignData.color} />
+                              <ScoreBar label="感情" score={aiData.loveScore}     color="#EAA8AC" />
+                              <ScoreBar label="事業" score={aiData.careerScore}   color="#A0B898" />
+                              <ScoreBar label="健康" score={aiData.healthScore}   color="#A8C0A8" />
+                            </div>
+
+                            {/* Lucky info */}
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                              {[
+                                { label: '幸運顏色', value: aiData.luckyColor },
+                                { label: '幸運數字', value: aiData.luckyNumber.toString() },
+                                { label: '能量水晶', value: aiData.crystal },
+                              ].map(item => (
+                                <div key={item.label} className="text-center p-3 rounded-xl bg-[#D1BE9B]/8">
+                                  <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-1"
+                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                                    {item.label}
+                                  </p>
+                                  <p className="text-xs tracking-[0.1em] text-[#31353A]/80"
+                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                                    {item.value}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Fortune messages */}
+                            <div className="space-y-4 mb-6">
+                              {[
+                                { icon: '✦', label: '整體運勢', text: aiData.overall },
+                                { icon: '♥', label: '感情運勢', text: aiData.love },
+                                { icon: '◈', label: '事業財運', text: aiData.career },
+                                { icon: '◉', label: '健康提醒', text: aiData.health },
+                              ].map(item => (
+                                <div key={item.label} className="flex gap-3">
+                                  <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">{item.icon}</span>
+                                  <div>
+                                    <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-1"
+                                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                                      {item.label}
+                                    </p>
+                                    <p className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider"
+                                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                      {item.text}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Today's advice */}
+                            <div className="pt-4 border-t border-[#D1BE9B]/15">
+                              <div className="flex gap-3">
+                                <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">☽</span>
+                                <div>
+                                  <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-1"
+                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                                    今日月相指引
+                                  </p>
+                                  <p className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider italic"
+                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                                    {aiData.advice}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Crystal CTA */}
+                            <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15 flex items-center justify-between">
+                              <p className="text-[12px] text-[#31353A]/62 tracking-wider"
+                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                                今日推薦攜帶：<span className="text-[#D1BE9B]">{aiData.crystal}</span>
+                              </p>
+                              <Link href="/shop">
+                                <button className="text-[11px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
+                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                                  選購水晶 →
+                                </button>
+                              </Link>
+                            </div>
+                          </>
+                        )}
                       </>
                     )}
                   </div>
