@@ -7,6 +7,7 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import { PRODUCTS, CATEGORY_OPTIONS } from '@/data/products';
+import ContactDialog from '@/components/ContactDialog';
 
 const SORT_OPTIONS = [
   { id: 'default',    label: '預設排序' },
@@ -17,6 +18,13 @@ const SORT_OPTIONS = [
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
+  const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
+  const [isContactOpen, setIsContactOpen] = useState(false);
+
+  const handleBuyProduct = (productName: string) => {
+    setSelectedProduct(productName);
+    setIsContactOpen(true);
+  };
 
   const filtered = PRODUCTS
     .filter((p) => activeCategory === 'all' || p.category === activeCategory)
@@ -92,65 +100,76 @@ export default function ShopPage() {
           </div>
 
           {/* Product grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8 mb-12">
             {filtered.map((product, i) => (
-              <Link href={`/shop/${product.slug}`} key={product.slug}>
-                <div
-                  className="group cursor-pointer animate-fade-in-up"
-                  style={{ animationDelay: `${i * 0.08}s` }}
-                >
-                  <div className="relative overflow-hidden rounded-2xl mb-3 aspect-square bg-[#F0E8DC]">
-                    <img
-                      src={product.img}
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    {product.tag && (
-                      <div className="absolute top-3 left-3">
-                        <span
-                          className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#D1BE9B]/90 text-[#31353A]"
+              <div
+                key={product.slug}
+                className="group flex flex-col justify-between h-full animate-fade-in-up"
+                style={{ animationDelay: `${i * 0.08}s` }}
+              >
+                <Link href={`/shop/${product.slug}`}>
+                  <div className="cursor-pointer">
+                    <div className="relative overflow-hidden rounded-2xl mb-3 aspect-square bg-[#F0E8DC]">
+                      <img
+                        src={product.img}
+                        alt={product.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      {product.tag && (
+                        <div className="absolute top-3 left-3">
+                          <span
+                            className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#D1BE9B]/90 text-[#31353A]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                            {product.tag}
+                          </span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-[11px] tracking-[0.2em] text-white/95 bg-[#3D4144]/55 backdrop-blur-sm px-3 py-1.5 rounded-full"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          {product.tag}
+                          查看詳情
                         </span>
                       </div>
-                    )}
-                    <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span className="text-[11px] tracking-[0.2em] text-white/95 bg-[#3D4144]/55 backdrop-blur-sm px-3 py-1.5 rounded-full"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        查看詳情
-                      </span>
                     </div>
-                  </div>
 
-                  <div>
-                    <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                      {product.material}
-                    </p>
-                    <h3 className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {product.name}
-                    </h3>
-                    <p className="text-[11px] italic text-[#31353A]/54 mb-1.5"
-                      style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                      {product.subtitle}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-[#A38D6B]"
+                    <div>
+                      <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                        {product.material}
+                      </p>
+                      <h3 className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        {product.name}
+                      </h3>
+                      <p className="text-[11px] italic text-[#31353A]/54 mb-2"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                        NT$ {product.price.toLocaleString()}
-                      </span>
-                      {product.originalPrice && (
-                        <span className="text-[11px] text-[#31353A]/46 line-through"
+                        {product.subtitle}
+                      </p>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-sm text-[#A38D6B]"
                           style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                          {product.originalPrice.toLocaleString()}
+                          NT$ {product.price.toLocaleString()}
                         </span>
-                      )}
+                        {product.originalPrice && (
+                          <span className="text-[11px] text-[#31353A]/46 line-through"
+                            style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                            {product.originalPrice.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+
+                <button
+                  onClick={() => handleBuyProduct(product.name)}
+                  className="w-full py-2 text-[10px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light mt-auto"
+                  style={{ fontFamily: 'Noto Serif TC, serif' }}
+                >
+                  立即諮詢購買 ♡
+                </button>
+              </div>
             ))}
           </div>
 
@@ -167,6 +186,12 @@ export default function ShopPage() {
 
         </div>
       </div>
+
+      <ContactDialog
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+        productName={selectedProduct}
+      />
     </PageLayout>
   );
 }

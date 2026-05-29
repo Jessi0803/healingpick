@@ -16,6 +16,8 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatPeeking } from '@/components/CatElements';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { PRODUCTS } from '@/data/products';
+import ContactDialog from '@/components/ContactDialog';
 
 // ─── Tarot Card Back SVG ────────────────────────────────────────────────────
 const TarotCardBack = ({ className = '' }: { className?: string }) => (
@@ -187,40 +189,7 @@ const testimonials = [
 ];
 
 // ─── Products Preview ─────────────────────────────────────────────────────────
-const products = [
-  {
-    name: '薰衣草紫水晶簇',
-    subtitle: 'Amethyst Cluster',
-    price: 'NT$ 1,280',
-    tag: '頂輪淨化 · 432Hz',
-    img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&q=80',
-    badge: '自營',
-  },
-  {
-    name: '馬達加斯加粉晶球',
-    subtitle: 'Rose Quartz Sphere',
-    price: 'NT$ 980',
-    tag: '心輪療癒 · 528Hz',
-    img: 'https://images.unsplash.com/photo-1567225557594-88d73e55f2cb?w=400&q=80',
-    badge: '合作',
-  },
-  {
-    name: '天然黃水晶原礦',
-    subtitle: 'Citrine Raw Crystal',
-    price: 'NT$ 760',
-    tag: '豐盛顯化 · 396Hz',
-    img: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&q=80',
-    badge: '合作',
-  },
-  {
-    name: '白水晶能量棒',
-    subtitle: 'Clear Quartz Wand',
-    price: 'NT$ 1,580',
-    tag: '全脈輪淨化',
-    img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80',
-    badge: '自營',
-  },
-];
+// Real products are loaded dynamically from PRODUCTS data.
 
 // ─── Daily Energy Data ───────────────────────────────────────────────────────
 const dailyEnergyPool = [
@@ -254,6 +223,13 @@ export default function Home() {
   const [bodyBg, setBodyBg] = useState('');
   const [tarotFlipped, setTarotFlipped] = useState(false);
   const [testimonialsIdx, setTestimonialsIdx] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
+  const [isContactOpen, setIsContactOpen] = useState(false);
+
+  const handleBuyProduct = (productName: string) => {
+    setSelectedProduct(productName);
+    setIsContactOpen(true);
+  };
 
   const audioCtxRef = useRef<AudioContext | null>(null);
 
@@ -907,53 +883,62 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {products.map((p, i) => (
-              <Link key={p.name} href="/shop">
-                <div
-                  className="group cursor-pointer animate-fade-in-up"
-                  style={{ animationDelay: `${i * 0.1}s` }}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6">
+            {PRODUCTS.slice(0, 4).map((p, i) => (
+              <div
+                key={p.slug}
+                className="group flex flex-col justify-between h-full animate-fade-in-up"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                <Link href={`/shop/${p.slug}`}>
+                  <div className="cursor-pointer">
+                    <div className="relative overflow-hidden rounded-xl mb-3 aspect-square bg-[#F0E8DC]">
+                      <img
+                        src={p.img}
+                        alt={p.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      {p.tag && (
+                        <span
+                          className="absolute top-3 left-3 text-[10px] tracking-[0.15em] px-2 py-0.5 rounded-full bg-[#D1BE9B]/90 text-[#31353A]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        >
+                          {p.tag}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <p
+                        className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
+                      >
+                        {p.material}
+                      </p>
+                      <h3
+                        className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        {p.name}
+                      </h3>
+                      <p
+                        className="text-[11px] tracking-[0.1em] text-[#A38D6B] mb-2.5"
+                        style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                      >
+                        NT$ {p.price.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+
+                <button
+                  onClick={() => handleBuyProduct(p.name)}
+                  className="w-full py-2 text-[10px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light mt-auto"
+                  style={{ fontFamily: 'Noto Serif TC, serif' }}
                 >
-                  <div className="relative overflow-hidden rounded-xl mb-3 aspect-square">
-                    <img
-                      src={p.img}
-                      alt={p.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <span
-                      className={`absolute top-3 left-3 text-[10px] tracking-[0.15em] px-2 py-0.5 rounded-full ${
-                        p.badge === '自營'
-                          ? 'bg-[#D1BE9B]/90 text-[#31353A]'
-                          : 'bg-white/80 text-[#31353A]/80'
-                      }`}
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {p.badge}
-                    </span>
-                  </div>
-                  <div>
-                    <p
-                      className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
-                    >
-                      {p.tag}
-                    </p>
-                    <h3
-                      className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {p.name}
-                    </h3>
-                    <p
-                      className="text-[11px] tracking-[0.1em] text-[#D1BE9B]"
-                      style={{ fontFamily: 'Cormorant Garamond, serif' }}
-                    >
-                      {p.price}
-                    </p>
-                  </div>
-                </div>
-              </Link>
+                  立即諮詢購買 ♡
+                </button>
+              </div>
             ))}
           </div>
         </div>
@@ -1113,6 +1098,12 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ContactDialog
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+        productName={selectedProduct}
+      />
     </PageLayout>
   );
 }
