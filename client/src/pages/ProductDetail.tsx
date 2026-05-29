@@ -121,15 +121,26 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {/* Properties Badges */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                {product.properties.map(prop => (
-                  <span key={prop}
-                    className="text-[11px] tracking-[0.15em] px-3 py-1 rounded-full bg-[#D1BE9B]/12 text-[#A38D6B] border border-[#D1BE9B]/20"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    ✦ {prop}
-                  </span>
-                ))}
+              {/* Properties List (Product Features) */}
+              <div className="space-y-2.5 mb-8 animate-fade-in-up">
+                <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] uppercase font-light"
+                  style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                  ✦ 商品特色與能量特性
+                </p>
+                <div className="grid grid-cols-1 gap-2.5">
+                  {product.properties.map(prop => (
+                    <div key={prop} 
+                      className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/40 border border-[#D1BE9B]/15 shadow-[0_2px_8px_rgba(209,190,155,0.03)]"
+                      style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#D1BE9B]/15 flex items-center justify-center text-[10px] text-[#A38D6B]">
+                        ✦
+                      </span>
+                      <span className="text-[12px] tracking-[0.1em] text-[#31353A]/85 font-light">
+                        {prop}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
               {/* Specs Grid (Only for natural crystals, hidden for crafts like Nine-Tailed Fox) */}
               {product.category !== 'glass' && (
