@@ -181,7 +181,7 @@ function drawCards(): Array<{ card: typeof MAJOR_ARCANA[0]; reversed: boolean }>
 function ProductCard({ product }: { product: Product }) {
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
   return (
-    <Link href={`/product/${product.slug}`}>
+    <Link href={`/shop/${product.slug}`}>
       <div className="flex gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
         <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
           <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
