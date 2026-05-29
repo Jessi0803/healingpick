@@ -19,37 +19,6 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { PRODUCTS } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
-// ─── Tarot Card Back SVG ────────────────────────────────────────────────────
-const TarotCardBack = ({ className = '' }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="120" height="200" rx="8" fill="#EDE8E2" />
-    <rect x="6" y="6" width="108" height="188" rx="6" stroke="#D1BE9B" strokeWidth="0.8" />
-    <rect x="12" y="12" width="96" height="176" rx="4" stroke="#D1BE9B" strokeWidth="0.4" strokeDasharray="3 2" />
-    {/* Center diamond */}
-    <path d="M60 50 L90 100 L60 150 L30 100 Z" stroke="#D1BE9B" strokeWidth="0.8" fill="none" />
-    {/* Sun circle */}
-    <circle cx="60" cy="100" r="18" stroke="#D1BE9B" strokeWidth="0.8" fill="none" />
-    <circle cx="60" cy="100" r="8" fill="#D1BE9B" fillOpacity="0.25" stroke="#D1BE9B" strokeWidth="0.6" />
-    {/* Rays */}
-    {[0,30,60,90,120,150,180,210,240,270,300,330].map((deg, i) => {
-      const rad = (deg * Math.PI) / 180;
-      const x1 = 60 + 20 * Math.cos(rad);
-      const y1 = 100 + 20 * Math.sin(rad);
-      const x2 = 60 + 26 * Math.cos(rad);
-      const y2 = 100 + 26 * Math.sin(rad);
-      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#D1BE9B" strokeWidth="0.6" strokeOpacity="0.7" />;
-    })}
-    {/* Corner stars */}
-    {[[22,28],[98,28],[22,172],[98,172]].map(([cx,cy], i) => (
-      <path key={i} d={`M${cx} ${cy-5} L${cx+1.5} ${cy-1.5} L${cx+5} ${cy} L${cx+1.5} ${cy+1.5} L${cx} ${cy+5} L${cx-1.5} ${cy+1.5} L${cx-5} ${cy} L${cx-1.5} ${cy-1.5} Z`}
-        fill="#D1BE9B" fillOpacity="0.6" />
-    ))}
-    {/* Top/bottom small moons */}
-    <path d="M60 22 C56 22 54 26 56 29 C58 26 62 26 60 22 Z" fill="#D1BE9B" fillOpacity="0.5" />
-    <path d="M60 178 C64 178 66 174 64 171 C62 174 58 174 60 178 Z" fill="#D1BE9B" fillOpacity="0.5" />
-  </svg>
-);
-
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
   <svg viewBox="0 0 80 100" fill="none" className="w-full h-full drop-shadow-[0_4px_16px_rgba(160,142,195,0.5)]">
@@ -201,17 +170,7 @@ const dailyEnergyPool = [
 ];
 const todayEnergy = dailyEnergyPool[new Date().getDay() % dailyEnergyPool.length];
 
-// ─── Today's Tarot Card ───────────────────────────────────────────────────────
-const dailyTarotPool = [
-  { name: '愚者', en: 'The Fool', symbol: '☽', meaning: '新旅程的開始，帶著純真與勇氣踏出第一步。' },
-  { name: '女祭司', en: 'The High Priestess', symbol: '✦', meaning: '傾聽內心深處的聲音，智慧藏於靜默之中。' },
-  { name: '星星', en: 'The Star', symbol: '★', meaning: '希望正在前方閃爍，相信宇宙的安排。' },
-  { name: '月亮', en: 'The Moon', symbol: '☾', meaning: '潛意識在說話，留意夢境與直覺的訊息。' },
-  { name: '太陽', en: 'The Sun', symbol: '☀', meaning: '光明與喜悅充滿今日，盡情展現你的光芒。' },
-  { name: '世界', en: 'The World', symbol: '◎', meaning: '一個循環圓滿完成，新的篇章即將展開。' },
-  { name: '命運之輪', en: 'Wheel of Fortune', symbol: '⊕', meaning: '轉機正在到來，保持開放的心迎接變化。' },
-];
-const todayTarot = dailyTarotPool[new Date().getDate() % dailyTarotPool.length];
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function Home() {
@@ -221,7 +180,6 @@ export default function Home() {
 
   const [activeCrystal, setActiveCrystal] = useState<string | null>(null);
   const [bodyBg, setBodyBg] = useState('');
-  const [tarotFlipped, setTarotFlipped] = useState(false);
   const [testimonialsIdx, setTestimonialsIdx] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -944,112 +902,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TODAY'S TAROT CARD ─────────────────────────────────────────────── */}
-      <section className="py-20 px-6 md:px-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>Daily Guidance</span>
-            <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>今日塔羅指引</h2>
-            <div className="divider-gold mt-4 max-w-xs mx-auto">
-              <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none"><path d="M50 10 L53 43 L86 46 L53 49 L50 82 L47 49 L14 46 L47 43 Z" fill="currentColor" /></svg>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
-            {/* Flip card */}
-            <div className="flex-shrink-0" style={{ perspective: '800px' }}>
-              <div
-                className="relative w-36 h-56 cursor-pointer"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  transition: 'transform 0.7s cubic-bezier(0.23,1,0.32,1)',
-                  transform: tarotFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                }}
-                onClick={() => setTarotFlipped(f => !f)}
-              >
-                {/* Card back – RWS card back image */}
-                <div
-                  className="absolute inset-0 rounded-lg overflow-hidden"
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    animation: 'floatCard2 4.5s ease-in-out infinite',
-                    border: '1.5px solid rgba(209,190,155,0.4)',
-                  }}
-                >
-                  <svg viewBox="0 0 120 200" fill="none" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
-                    <rect width="120" height="200" fill="#C8B89A" />
-                    <rect x="5" y="5" width="110" height="190" rx="6" stroke="#F0E4CC" strokeWidth="1" />
-                    <rect x="10" y="10" width="100" height="180" rx="4" stroke="#F0E4CC" strokeWidth="0.5" strokeDasharray="3 2" />
-                    <circle cx="60" cy="100" r="30" stroke="#F5EAD5" strokeWidth="0.8" fill="none" />
-                    <circle cx="60" cy="100" r="22" stroke="#F5EAD5" strokeWidth="0.5" fill="none" />
-                    <circle cx="60" cy="100" r="12" stroke="#F5EAD5" strokeWidth="0.8" fill="#F5EAD5" fillOpacity="0.15" />
-                    <circle cx="60" cy="100" r="4" fill="#F5EAD5" fillOpacity="0.5" />
-                    {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
-                      const rad = (deg * Math.PI) / 180;
-                      const x1 = 60 + 12 * Math.cos(rad);
-                      const y1 = 100 + 12 * Math.sin(rad);
-                      const x2 = 60 + 30 * Math.cos(rad);
-                      const y2 = 100 + 30 * Math.sin(rad);
-                      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F5EAD5" strokeWidth="0.6" strokeOpacity="0.7" />;
-                    })}
-                    {[[20, 25], [100, 25], [20, 175], [100, 175]].map(([cx, cy], i) => (
-                      <path key={i}
-                        d={`M${cx} ${cy - 4} L${cx + 1} ${cy - 1} L${cx + 4} ${cy} L${cx + 1} ${cy + 1} L${cx} ${cy + 4} L${cx - 1} ${cy + 1} L${cx - 4} ${cy} L${cx - 1} ${cy - 1} Z`}
-                        fill="#F5EAD5" fillOpacity="0.6"
-                      />
-                    ))}
-                    <text x="60" y="160" textAnchor="middle" fontSize="6" fill="#F5EAD5" fillOpacity="0.5"
-                      fontFamily="Cormorant Garamond, serif" letterSpacing="2" fontStyle="italic">
-                      Healing Pick
-                    </text>
-                  </svg>
-                  <div className="absolute inset-0 flex items-end justify-center pb-3" style={{ background: 'linear-gradient(to top, rgba(44,36,32,0.5) 0%, transparent 50%)' }}>
-                    <span
-                      className="text-[9px] tracking-[0.3em] text-white/80"
-                      style={{ fontFamily: 'Cormorant Garamond, serif' }}
-                    >
-                      點擊翻牌
-                    </span>
-                  </div>
-                </div>
-                {/* Card front */}
-                <div
-                  className="absolute inset-0 rounded-lg flex flex-col items-center justify-center"
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    transform: 'rotateY(180deg)',
-                    background: 'linear-gradient(145deg, #EDE8E2, #F5F0EB)',
-                    border: '1px solid rgba(209,190,155,0.4)',
-                  }}
-                >
-                  <div className="absolute inset-[6px] rounded border border-[#D1BE9B]/25" />
-                  <div className="text-4xl mb-2 text-[#D1BE9B]" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{todayTarot.symbol}</div>
-                  <p className="text-[11px] tracking-[0.2em] text-[#31353A]/80 mb-0.5" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{todayTarot.name}</p>
-                  <p className="text-[10px] tracking-[0.15em] text-[#D1BE9B] italic" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{todayTarot.en}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Card meaning */}
-            <div className="flex-1 text-left">
-              <div style={{ opacity: tarotFlipped ? 1 : 0, transform: tarotFlipped ? 'translateY(0)' : 'translateY(8px)', transition: 'all 0.5s ease' }}>
-                <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>TODAY · {new Date().toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}</p>
-                <h3 className="text-xl md:text-2xl tracking-[0.2em] text-[#31353A]/90 mb-4" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{todayTarot.name}</h3>
-                <div className="w-8 h-px bg-[#D1BE9B]/40 mb-4" />
-                <p className="text-[13px] leading-[2.2] text-[#31353A]/72 tracking-wider" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>{todayTarot.meaning}</p>
-                <Link href="/tarot">
-                  <button className="mt-6 px-6 py-2 text-[11px] tracking-[0.25em] border border-[#D1BE9B]/40 text-[#D1BE9B] rounded-full hover:bg-[#D1BE9B]/10 transition-all duration-300 active:scale-95" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    進行完整占卜
-                  </button>
-                </Link>
-              </div>
-              {!tarotFlipped && (
-                <p className="text-[12px] leading-[2] text-[#31353A]/54 tracking-wider" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>宇宙正在為你準備一張屬於今日的塔羅。<br />當你準備好了，點擊牌面接收它的訊息。</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── TESTIMONIALS ──────────────────────────────────────────────────── */}
       <section className="py-20 px-6 md:px-10 bg-[#F2EDE8]/30">
