@@ -381,20 +381,25 @@ export default function Home() {
           <div key={i} className="absolute w-1 h-1 rounded-full bg-[#D1BE9B]/30 pointer-events-none" style={{ top: pos.t, left: pos.l }} />
         ))}
 
-        {/* ── Today's energy floating card (right side) ── */}
+        {/* ── 給今天的你 · floating note (right side) ── */}
         <div className="hidden lg:flex absolute right-8 top-1/2 -translate-y-1/2 flex-col items-end gap-1 pointer-events-none animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
-          <div className="glass-panel rounded-2xl px-4 py-3.5 border border-[#D1BE9B]/20 shadow-[0_4px_20px_rgba(209,190,155,0.1)] w-44 text-left">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-sm">{todayEnergy.moon === '盈凸月' ? '🌔' : todayEnergy.moon === '滿月' ? '🌕' : todayEnergy.moon === '眉月' ? '🌒' : todayEnergy.moon === '殘月' ? '🌘' : '🌓'}</span>
-              <span className="text-[11px] tracking-[0.15em] text-[#31353A]/72" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{todayEnergy.moon}</span>
-            </div>
-            <div className="w-full h-px bg-[#D1BE9B]/20 mb-2" />
-            <p className="text-[11px] tracking-[0.15em] mb-1" style={{ color: todayEnergy.color, fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{todayEnergy.keyword}</p>
-            <p className="text-[11px] text-[#31353A]/72 leading-[1.8] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>「{todayEnergy.quote}」</p>
-            <div className="mt-2 flex items-center gap-1">
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: todayEnergy.color, opacity: 0.7 }} />
-              <span className="text-[10px] tracking-[0.1em] text-[#31353A]/54" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>推薦 {todayEnergy.crystal}</span>
-            </div>
+          <div className="glass-panel rounded-2xl px-5 py-4 border border-[#D1BE9B]/20 shadow-[0_4px_20px_rgba(209,190,155,0.1)] w-48 text-left">
+            <p className="text-center text-[11px] tracking-[0.25em] text-[#A38D6B] mb-3"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              ♡ 給今天的你 ♡
+            </p>
+            <div className="w-full h-px bg-[#D1BE9B]/25 mb-3" />
+            <ul className="space-y-2.5 text-[11.5px] leading-[1.6] text-[#31353A]/76 tracking-wider"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              <li><span className="text-[#A38D6B] mr-1.5">☁︎</span>抽張牌</li>
+              <li><span className="text-[#A38D6B] mr-1.5">♡</span>看看運勢</li>
+              <li><span className="text-[#A38D6B] mr-1.5">𓇢𓆸</span>聊聊心事</li>
+              <li><span className="text-[#A38D6B] mr-1.5">⟡</span>找到屬於你的療癒小物</li>
+            </ul>
+            <p className="text-center text-[12px] text-[#A38D6B]/70 mt-3"
+              style={{ fontFamily: 'Noto Serif TC, serif' }}>
+              ♡
+            </p>
           </div>
         </div>
 
