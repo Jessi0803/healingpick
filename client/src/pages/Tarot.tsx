@@ -1125,7 +1125,7 @@ export default function TarotPage() {
                 <Link href="/quiz">
                   <button className="px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    進行能量測驗 ✦
+                    進行心理測驗 ✦
                   </button>
                 </Link>
               </div>

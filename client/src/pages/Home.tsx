@@ -6,7 +6,7 @@
  *   2. Crystal Altar (水晶祭壇)
  *   3. Features Overview (四大功能入口)
  *   4. Divination Preview (占卜聖殿入口)
- *   5. Quiz Teaser (能量測驗)
+ *   5. Quiz Teaser (心理測驗)
  *   6. Shop Preview (能量商品)
  *   7. Testimonials (使用者心聲)
  */
@@ -97,8 +97,8 @@ const features = [
   },
   {
     icon: '✨',
-    title: '能量測驗',
-    subtitle: 'Energy Quiz',
+    title: '心理測驗',
+    subtitle: 'Personality Quiz',
     desc: '你是別人的什麼香味？前世忙什麼？零預算趣味心理測驗，測出你的專屬水晶。',
     href: '/quiz',
     color: '#D4C9B8',  // 精選暖灰，比背景深一階
@@ -384,7 +384,7 @@ export default function Home() {
                 className="px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/30 backdrop-blur-sm rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                能量測驗
+                心理測驗
               </button>
             </Link>
           </div>
@@ -779,13 +779,13 @@ export default function Home() {
                 className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
-                Spiritual Resonance
+                Psychological Resonance
               </span>
               <h2
                 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
-                能量共鳴測驗
+                互動心理測驗
               </h2>
               <p
                 className="text-[12px] leading-[2.2] text-[#31353A]/72 tracking-wider mb-6"

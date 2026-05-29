@@ -69,7 +69,7 @@ export default function Footer() {
                 { label: '塔羅牌占卜', href: '/tarot' },
                 { label: '紫微斗數', href: '/ziwei' },
                 { label: '每日運勢', href: '/fortune/daily' },
-                { label: '能量測驗', href: '/quiz' },
+                { label: '心理測驗', href: '/quiz' },
                 { label: '能量商品', href: '/shop' },
                 { label: '關於我們', href: '/about' },
               ].map((item) => (

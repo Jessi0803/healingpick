@@ -95,15 +95,90 @@ export default function QuizPage() {
   };
 
   // Retrieve recommended product details
+  // Dynamic background themes based on active quiz for premium visual texture & animations
+  const getQuizTheme = () => {
+    if (!activeQuiz) {
+      return {
+        bg: 'bg-[#FAF7F4]',
+        blob1: 'bg-[#E5DFEE]/35',
+        blob2: 'bg-[#FAF0EC]/40',
+        particles: ['✧', '✦', '⋆', '☁︎', '✨', '🐾'],
+      };
+    }
+
+    switch (activeQuiz.slug) {
+      case 'scent':
+        return {
+          bg: 'bg-[#FAF6F4]',
+          blob1: 'bg-[#FBECE6]/45', // warm peach
+          blob2: 'bg-[#EADED6]/40', // Morandi taupe
+          particles: ['✿', '❀', '🌷', '✦', '𓂃', '🍃'],
+        };
+      case 'soul-home':
+        return {
+          bg: 'bg-[#F6F5F8]',
+          blob1: 'bg-[#E2DCEE]/45', // misty violet
+          blob2: 'bg-[#D3C7E4]/35', // soft purple
+          particles: ['☁︎', '☾', '⋆', '✧', '𓆩♡𓆪', '🌌'],
+        };
+      case 'past-life':
+        return {
+          bg: 'bg-[#F4F6F2]',
+          blob1: 'bg-[#DFEAD9]/45', // sage green
+          blob2: 'bg-[#EAE0CD]/35', // antique bronze
+          particles: ['🔮', '📜', '🧭', '✦', '𓇢𓆸', '⚜'],
+        };
+      case 'love-magnet':
+        return {
+          bg: 'bg-[#F8F5F0]',
+          blob1: 'bg-[#EFE7D8]/50', // champagne
+          blob2: 'bg-[#F5DEC9]/40', // warm apricot
+          particles: ['🦋', '🌸', '♡', '୨୧', '✦', '✨'],
+        };
+      default:
+        return {
+          bg: 'bg-[#FAF7F4]',
+          blob1: 'bg-[#E5DFEE]/35',
+          blob2: 'bg-[#FAF0EC]/40',
+          particles: ['✧', '✦', '⋆', '☁︎', '✨', '🐾'],
+        };
+    }
+  };
+
+  const theme = getQuizTheme();
   const recommendedProduct = quizResult ? findProduct(quizResult.crystalSlug) : undefined;
 
   return (
     <PageLayout>
-      <div className="min-h-screen py-12 px-4 md:px-8 bg-[#FAF7F4] relative overflow-hidden">
+      <div className={`min-h-screen py-12 px-4 md:px-8 ${theme.bg} relative overflow-hidden transition-colors duration-1000`}>
         
-        {/* Dreamy flowing pastel background blobs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-[#E5DFEE]/35 blur-[120px] pointer-events-none animate-glow-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-[#FAF0EC]/40 blur-[130px] pointer-events-none animate-glow-pulse" style={{ animationDelay: '-2s' }} />
+        {/* Grain Noise Texture for high-end luxury feel */}
+        <div className="absolute inset-0 bg-noise opacity-[0.4] pointer-events-none mix-blend-overlay z-10" />
+
+        {/* Dynamic moving Morandi blobs */}
+        <div className={`absolute top-1/6 left-1/6 w-[450px] h-[450px] rounded-full ${theme.blob1} blur-[120px] pointer-events-none animate-blob-1 z-0 transition-colors duration-1000`} />
+        <div className={`absolute bottom-1/6 right-1/6 w-[500px] h-[500px] rounded-full ${theme.blob2} blur-[130px] pointer-events-none animate-blob-2 z-0 transition-colors duration-1000`} />
+
+        {/* Shifting floating background particles */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
+          {theme.particles.map((char, index) => {
+            const delay = index * 2.5;
+            const left = 5 + (index * 15) + (index % 2 === 0 ? 5 : -5);
+            return (
+              <span
+                key={index}
+                className="absolute text-[#A38D6B]/20 font-light animate-drift-particle text-sm md:text-base"
+                style={{
+                  left: `${left}%`,
+                  animationDelay: `${delay}s`,
+                  animationDuration: `${16 + (index * 2)}s`,
+                }}
+              >
+                {char}
+              </span>
+            );
+          })}
+        </div>
 
         <div className="max-w-4xl mx-auto relative z-10">
           
@@ -114,11 +189,11 @@ export default function QuizPage() {
               <div className="text-center mb-12">
                 <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  Energy Resonance Quizzes
+                  Psychological Resonance Quizzes
                 </span>
                 <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] mt-3 mb-3"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  宇宙共鳴測驗
+                  宇宙心理測驗
                 </h1>
                 <p className="text-xs md:text-sm italic text-[#31353A]/54 tracking-[0.15em] mb-4"
                   style={{ fontFamily: 'Cormorant Garamond, serif' }}>

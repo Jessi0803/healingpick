@@ -25,10 +25,10 @@ const PEARLS: Pearl[] = [
   { text: '你不需要完美,只需要真實 ♡' },
   { text: '深呼吸三秒,當下就會溫柔一點 ☽' },
 
-  // Mochi 能量測驗入口卡片 (作為輪播項目之一顯示)
+  // Mochi 心理測驗入口卡片 (作為輪播項目之一顯示)
   {
     text: '🔮 最近有些疲憊或迷茫嗎？讓 Mochi 幫你感應一下，測測現在最適合你狀態的水晶與療癒小物吧 🐾',
-    cta: { label: '開始能量測驗 ✦', href: 'quiz-trigger' }
+    cta: { label: '開始心理測驗 ✦', href: 'quiz-trigger' }
   },
 
   // 塔羅小知識(配連結到 /tarot)
@@ -435,7 +435,7 @@ export default function CatCompanion() {
                 className="text-[10px] tracking-[0.3em] uppercase"
                 style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', color: '#A38D6B' }}
               >
-                {quizActive ? '✦ Mochi 能量測驗' : '✦ Mochi'}
+                {quizActive ? '✦ Mochi 心理測驗' : '✦ Mochi'}
               </span>
               <button
                 onClick={handleClose}

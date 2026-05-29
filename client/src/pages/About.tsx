@@ -39,7 +39,7 @@ export default function AboutPage() {
         </div>
         <div className="hidden xl:block absolute right-8 top-1/2 -translate-y-1/2 font-light text-[10px] tracking-[0.6em] text-[#A38D6B]/35 pointer-events-none select-none uppercase"
           style={{ writingMode: 'vertical-rl', textTransform: 'uppercase', fontFamily: 'Cormorant Garamond, serif' }}>
-          Tarot · Daily Fortune · Energy Quiz · Crystal Energy
+          Tarot · Daily Fortune · Psychological Quiz · Crystal Energy
         </div>
 
         {/* Brand large backdrop watermark */}
