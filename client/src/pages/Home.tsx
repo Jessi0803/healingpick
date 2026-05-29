@@ -384,7 +384,6 @@ export default function Home() {
         {/* ── Today's energy floating card (right side) ── */}
         <div className="hidden lg:flex absolute right-8 top-1/2 -translate-y-1/2 flex-col items-end gap-1 pointer-events-none animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
           <div className="glass-panel rounded-2xl px-4 py-3.5 border border-[#D1BE9B]/20 shadow-[0_4px_20px_rgba(209,190,155,0.1)] w-44 text-left">
-            <p className="text-[10px] tracking-[0.3em] text-[#D1BE9B] mb-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>今日療癒話語</p>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-sm">{todayEnergy.moon === '盈凸月' ? '🌔' : todayEnergy.moon === '滿月' ? '🌕' : todayEnergy.moon === '眉月' ? '🌒' : todayEnergy.moon === '殘月' ? '🌘' : '🌓'}</span>
               <span className="text-[11px] tracking-[0.15em] text-[#31353A]/72" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{todayEnergy.moon}</span>
