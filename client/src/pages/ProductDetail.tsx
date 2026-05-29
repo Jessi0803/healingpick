@@ -100,6 +100,9 @@ export default function ProductDetailPage() {
 
             {/* Right: summary */}
             <div className="w-full md:w-1/2">
+              <div className="flex items-center gap-1.5 mb-2.5 select-none">
+                <span className="text-[10px] text-[#D1BE9B]/80 font-light select-none tracking-wider">✦ ⋆ ˚｡𖦹 ⋆｡°✩</span>
+              </div>
               <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-2 uppercase"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {product.material}
@@ -119,7 +122,7 @@ export default function ProductDetailPage() {
                 {product.tagline}
               </p>
 
-              <div className="flex items-baseline gap-4 mb-6 border-b border-[#D1BE9B]/15 pb-5">
+              <div className="flex items-baseline gap-4 mb-3">
                 <span className="text-3xl text-[#A38D6B]"
                   style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                   NT$ {product.price.toLocaleString()}
@@ -130,6 +133,9 @@ export default function ProductDetailPage() {
                     NT$ {product.originalPrice.toLocaleString()}
                   </span>
                 )}
+              </div>
+              <div className="text-center text-[10px] text-[#D1BE9B]/60 tracking-[0.25em] mb-6 py-1 select-none">
+                ୨୧ ───────── ୨୧
               </div>
 
               <button
@@ -188,15 +194,16 @@ export default function ProductDetailPage() {
           <Section title="適合這樣的你" subtitle="Suited For" icon="☁︎">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               {product.suitedFor.map((s, idx) => {
-                const cuteIcons = ['♡', '☁︎', '𓇢𓆸', '⟡', '𓂃 ࣪˖', 'ִֶָ𐀔'];
-                const icon = cuteIcons[idx % cuteIcons.length];
+                const cuteHearts = ['ෆ', 'ღ', 'ᰔ', '𓆩♡𓆪', '𓆩❤︎𓆪', '❦', '❧', '♥︎', '❤︎', '❥', '❣︎'];
+                const icon = cuteHearts[idx % cuteHearts.length];
+                const tail = idx % 2 === 0 ? '𓂃𓈒𓏸' : '⊹ ࣪ ˖';
                 return (
                   <div key={s}
-                    className="flex items-start gap-3 px-4 py-2.5 rounded-2xl bg-[#D1BE9B]/10 border border-[#D1BE9B]/20 shadow-sm">
-                    <span className="text-[#A38D6B] text-[13px] leading-none mt-0.5">{icon}</span>
+                    className="flex items-start gap-3 px-4 py-2.5 rounded-2xl bg-[#D1BE9B]/10 border border-[#D1BE9B]/20 shadow-sm hover:scale-[1.01] transition-transform duration-300">
+                    <span className="text-[#A38D6B] text-[13px] leading-none mt-0.5 select-none">{icon}</span>
                     <span className="text-[12px] tracking-[0.08em] text-[#31353A]/85 leading-[1.9]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {s}
+                      {s} <span className="text-[9px] text-[#D1BE9B]/70 ml-0.5 select-none">{tail}</span>
                     </span>
                   </div>
                 );
@@ -210,11 +217,15 @@ export default function ProductDetailPage() {
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#D1BE9B]/8 to-transparent pointer-events-none rounded-tr-3xl" />
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-[#D1BE9B]/8 to-transparent pointer-events-none rounded-bl-3xl" />
 
-              <p className="text-[10px] tracking-[0.35em] text-[#D1BE9B] text-center mb-2 uppercase"
+              <p className="text-[10px] tracking-[0.35em] text-[#D1BE9B] text-center mb-2 uppercase flex items-center justify-center gap-2"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                <span className="text-[#D1BE9B]/80 text-[11px] select-none">𓆩♡𓆪</span>
                 Healing Pick 想對你說
+                <span className="text-[#D1BE9B]/80 text-[11px] select-none">𓆩♡𓆪</span>
               </p>
-              <div className="mx-auto w-12 h-px bg-[#D1BE9B]/40 mb-6" />
+              <div className="text-center text-[10px] text-[#D1BE9B]/55 tracking-[0.25em] mb-6 select-none">
+                ☁︎ ─────── ☁︎
+              </div>
 
               <p className="text-[13.5px] md:text-[14px] leading-[2.2] text-[#31353A]/80 tracking-wider whitespace-pre-line text-center"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
@@ -223,7 +234,10 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          <div className="flex justify-center mb-6 py-6 border-t border-[#D1BE9B]/15">
+          <div className="flex flex-col items-center gap-4 mb-6 py-6 border-t border-[#D1BE9B]/15">
+            <span className="text-[10px] text-[#D1BE9B]/60 tracking-widest select-none font-light animate-pulse">
+              ⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆
+            </span>
             <div className="flex items-center gap-4 animate-fade-in-up">
               <CatPeeking className="w-12 h-14" side="right" />
               <p className="text-[11px] text-[#31353A]/54 tracking-wider italic"
@@ -243,16 +257,20 @@ export default function ProductDetailPage() {
 function Section({ title, subtitle, icon = '♡', children }: { title: string; subtitle: string; icon?: string; children: React.ReactNode }) {
   return (
     <div className="mb-10 animate-fade-in-up">
-      <div className="flex items-center gap-4 mb-5">
-        <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase"
-          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-          {icon} {subtitle}
+      <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            {icon} {subtitle}
+          </span>
+          <h2 className="text-base md:text-lg tracking-[0.2em] text-[#31353A]/85"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            {title}
+          </h2>
+        </div>
+        <span className="text-[9px] text-[#D1BE9B]/60 select-none tracking-widest hidden sm:inline">
+          ✧･ﾟ: *✧･ﾟ:* *:･ﾟ✧*:･ﾟ✧
         </span>
-        <h2 className="text-base md:text-lg tracking-[0.2em] text-[#31353A]/85"
-          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-          {title}
-        </h2>
-        <div className="flex-1 h-px bg-[#D1BE9B]/20" />
       </div>
       {children}
     </div>
