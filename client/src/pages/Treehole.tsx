@@ -17,6 +17,8 @@ import { CatListening, CatLoading } from '@/components/CatElements';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Streamdown } from 'streamdown';
+import { recommendForMood } from '@/data/recommend';
+import type { Product } from '@/data/products';
 
 // ─── Mood categories ──────────────────────────────────────────────────────────
 const MOODS = [

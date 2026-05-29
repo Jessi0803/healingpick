@@ -504,7 +504,7 @@ export default function CatCompanion() {
                       立即諮詢購買 ♡
                     </button>
                     <button
-                      onClick={() => goTo(`/products/${recommendedProduct.slug}`)}
+                      onClick={() => goTo(`/shop/${recommendedProduct.slug}`)}
                       className="w-full text-[10.5px] tracking-[0.2em] py-2 rounded-full border border-[#D1BE9B]/40 text-[#A38D6B] hover:bg-[#D1BE9B]/10 transition-all duration-300 active:scale-95 cursor-pointer text-center"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
                     >
