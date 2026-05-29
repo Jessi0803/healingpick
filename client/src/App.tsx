@@ -10,7 +10,6 @@ import About from "./pages/About";
 import Tarot from "./pages/Tarot";
 import Ziwei from "./pages/Ziwei";
 import Fortune from "./pages/Fortune";
-import Treehole from "./pages/Treehole";
 import Quiz from "./pages/Quiz";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
@@ -28,7 +27,6 @@ function Router() {
       <Route path="/ziwei" component={Ziwei} />
       <Route path="/fortune" component={Fortune} />
       <Route path="/fortune/daily" component={Fortune} />
-      <Route path="/treehole" component={Treehole} />
       <Route path="/quiz" component={Quiz} />
       <Route path="/shop" component={Shop} />
       <Route path="/shop/:id" component={ProductDetail} />

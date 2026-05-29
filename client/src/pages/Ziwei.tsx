@@ -18,7 +18,46 @@ import { Streamdown } from 'streamdown';
 import { toast } from 'sonner';
 import { CatListening, CatPeeking } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { recommendForZiwei } from '@/data/recommend';
+import type { Product } from '@/data/products';
 
+// ─── Product Card ─────────────────────────────────────────────────────────────
+function ProductCard({ product }: { product: Product }) {
+  const meanings = product.meanings.slice(0, 3).map((m) => m.title);
+  return (
+    <Link href={`/product/${product.slug}`}>
+      <div className="flex gap-3 p-3 rounded-xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
+        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
+          <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-1 mb-1">
+            <p className="text-[11px] tracking-[0.12em] text-[#31353A]/86 truncate"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              {product.name}
+            </p>
+            <p className="text-[11px] font-light text-[#D1BE9B] flex-shrink-0"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              NT$ {product.price.toLocaleString()}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-1 mb-1.5">
+            {meanings.map((m) => (
+              <span key={m} className="text-[9px] tracking-[0.08em] px-1.5 py-0.5 rounded-full bg-[#F0EBE3]/70 text-[#31353A]/62 border border-[#D1BE9B]/15"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                {m}
+              </span>
+            ))}
+          </div>
+          <span className="text-[10px] tracking-[0.12em] text-[#A38D6B]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            查看商品 →
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 // ─── Time options ──────────────────────────────────────────────────────────────
 const HOURS = [
@@ -752,28 +791,17 @@ export default function ZiweiPage() {
                     </div>
                   )}
 
-                  {/* Crystal recommendation */}
+                  {/* Product recommendation */}
                   <div className="mt-4 glass-panel rounded-xl p-4 border border-[#D1BE9B]/15">
-                    <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-2"
+                    <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-3"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      命盤推薦水晶
+                      ◎ 命盤能量推薦
                     </p>
-                    <p className="text-xs tracking-[0.1em] text-[#31353A]/80 mb-1"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {gender === '女' ? '紫水晶 × 月光石' : '黃水晶 × 黑碧璽'}
-                    </p>
-                    <p className="text-[11px] leading-[1.8] text-[#31353A]/62 tracking-wider mb-3"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      {gender === '女'
-                        ? '增強直覺力，平衡陰性能量，提升靈性感知'
-                        : '強化行動力，穩定根輪能量，防護負面磁場'}
-                    </p>
-                    <Link href="/shop">
-                      <button className="text-[11px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        查看推薦商品 →
-                      </button>
-                    </Link>
+                    <div className="flex flex-col gap-2">
+                      {recommendForZiwei(selectedPalaceName, gender).map(product => (
+                        <ProductCard key={product.slug} product={product} />
+                      ))}
+                    </div>
                   </div>
 
                   {/* Actions */}
@@ -784,10 +812,10 @@ export default function ZiweiPage() {
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       重新排盤
                     </button>
-                    <Link href="/treehole">
+                    <Link href="/quiz">
                       <button className="w-full py-2.5 text-xs tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        與 AI 深入探討命盤
+                        進行能量測驗 ✦
                       </button>
                     </Link>
                   </div>

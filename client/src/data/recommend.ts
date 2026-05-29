@@ -1,6 +1,6 @@
 /**
  * Shared product recommender.
- * Maps signals from Tarot / Ziwei / Treehole to the real 7-product catalogue.
+ * Maps signals from Tarot / Ziwei to the real 7-product catalogue.
  *
  * Scoring:
  *  - direct category match  → +5
@@ -68,58 +68,6 @@ function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product
   return picks;
 }
 
-// ─── Treehole ────────────────────────────────────────────────────────────────
-const MOOD_SIGNAL: Record<string, Signal> = {
-  anxious: {
-    categories: ['calm', 'protect'],
-    keywords: ['焦慮', '不安', '睡', '想太多', '緊張', '靜不下來', '喘息'],
-    preferSlugs: ['calm-light', 'glimmer-fox'],
-  },
-  sad: {
-    categories: ['calm', 'wish'],
-    keywords: ['難過', '低落', '哭', '想哭', '溫柔', '療癒'],
-    preferSlugs: ['calm-light', 'wish-bunny'],
-  },
-  lonely: {
-    categories: ['wish', 'protect'],
-    keywords: ['孤單', '寂寞', '一個人', '陪伴', '愛'],
-    preferSlugs: ['wish-fox', 'glimmer-fox'],
-  },
-  angry: {
-    categories: ['protect', 'calm'],
-    keywords: ['委屈', '生氣', '不公平', '界線', '受傷'],
-    preferSlugs: ['glimmer-fox', 'calm-light'],
-  },
-  confused: {
-    categories: ['protect', 'calm'],
-    keywords: ['迷茫', '迷惘', '方向', '直覺', '不知道', '猶豫'],
-    preferSlugs: ['moonlight-wings', 'calm-light'],
-  },
-  stressed: {
-    categories: ['calm', 'courage'],
-    keywords: ['壓力', '加班', '太累', '撐不住', '喘息', '慢下來'],
-    preferSlugs: ['calm-light', 'courage-cat'],
-  },
-  heartbroken: {
-    categories: ['wish', 'calm'],
-    keywords: ['心碎', '失戀', '分手', '愛', '想念', '溫柔'],
-    preferSlugs: ['wish-fox', 'calm-light'],
-  },
-  lost: {
-    categories: ['protect', 'courage'],
-    keywords: ['方向', '迷惘', '直覺', '不知道要幹嘛', '勇氣'],
-    preferSlugs: ['moonlight-wings', 'courage-cat'],
-  },
-};
-
-export function recommendForMood(mood: string | null, text: string): Product[] {
-  const base = (mood && MOOD_SIGNAL[mood]) || { categories: ['calm', 'protect'], keywords: [] };
-  return pickTop(
-    { ...base, keywords: [...(base.keywords ?? []), ...extractKeywords(text)] },
-    2,
-    base.categories?.[0],
-  );
-}
 
 // ─── Tarot ──────────────────────────────────────────────────────────────────
 const TAROT_SIGNAL: Record<string, Signal> = {
@@ -193,6 +141,20 @@ export function recommendForZiwei(palaceName: string | null, gender?: string): P
     { categories: ['courage', 'wealth'], preferSlugs: ['courage-cat', 'wealth-stone'] },
     2,
   );
+}
+
+// ─── Fortune ────────────────────────────────────────────────────────────────
+// 四象元素 → 商品方向
+const ELEMENT_SIGNAL: Record<string, Signal> = {
+  火: { categories: ['courage', 'wealth'], preferSlugs: ['courage-cat', 'wealth-stone'] },
+  土: { categories: ['protect', 'calm'],   preferSlugs: ['glimmer-fox', 'calm-light'] },
+  風: { categories: ['wish', 'protect'],   preferSlugs: ['moonlight-wings', 'wish-fox'] },
+  水: { categories: ['wish', 'calm'],      preferSlugs: ['wish-bunny', 'calm-light'] },
+};
+
+export function recommendForFortune(element: string): Product[] {
+  const sig = ELEMENT_SIGNAL[element] ?? ELEMENT_SIGNAL['土'];
+  return pickTop(sig, 2);
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

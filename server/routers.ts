@@ -5,7 +5,6 @@ import { publicProcedure, router } from "./_core/trpc";
 import { tarotRouter } from "./routers/tarot";
 import { ziweiRouter } from "./routers/ziwei";
 import { fortuneRouter } from "./routers/fortune";
-import { treeholeRouter } from "./routers/treehole";
 import { historyRouter } from "./routers/history";
 import { mochiRouter } from "./routers/mochi";
 import { creditsRouter } from "./routers/credits";
@@ -27,7 +26,6 @@ export const appRouter = router({
   tarot: tarotRouter,
   ziwei: ziweiRouter,
   fortune: fortuneRouter,
-  treehole: treeholeRouter,
   history: historyRouter,
   mochi: mochiRouter,
   credits: creditsRouter,

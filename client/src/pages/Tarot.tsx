@@ -19,6 +19,8 @@ import { Streamdown } from 'streamdown';
 import { CatWaving, CatListening } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Mail } from 'lucide-react';
+import { recommendForTarot } from '@/data/recommend';
+import type { Product } from '@/data/products';
 
 // ─── Tarot Card Data ──────────────────────────────────────────────────────────
 const MAJOR_ARCANA = [
@@ -175,14 +177,55 @@ function drawCards(): Array<{ card: typeof MAJOR_ARCANA[0]; reversed: boolean }>
   }));
 }
 
-// Crystal recommendations
-const crystalRecs: Record<string, { name: string; reason: string; color: string }> = {
-  love: { name: '粉晶', reason: '開啟心輪，吸引愛的能量', color: '#EAA8AC' },
-  career: { name: '黃水晶', reason: '提振自信，顯化豐盛', color: '#DEC180' },
-  clarity: { name: '白水晶', reason: '淨化思緒，增強直覺', color: '#E8E3DD' },
-  protection: { name: '紫水晶', reason: '淨化能量，保護心靈', color: '#A08EC3' },
-  change: { name: '月光石', reason: '接納轉變，順應流動', color: '#D4D0E8' },
-};
+// ─── Product Card ─────────────────────────────────────────────────────────────
+function ProductCard({ product }: { product: Product }) {
+  const meanings = product.meanings.slice(0, 3).map((m) => m.title);
+  return (
+    <Link href={`/product/${product.slug}`}>
+      <div className="flex gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
+        <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
+          <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="min-w-0">
+              {product.tag && (
+                <span className="text-[10px] tracking-[0.15em] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/20 text-[#A38D6B] mr-1.5"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  {product.tag}
+                </span>
+              )}
+              <p className="text-[12px] tracking-[0.12em] text-[#31353A]/86 mt-0.5 truncate"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {product.name}
+              </p>
+              <p className="text-[11px] text-[#31353A]/50 tracking-wider italic truncate"
+                style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                {product.subtitle}
+              </p>
+            </div>
+            <p className="text-sm font-light text-[#D1BE9B] flex-shrink-0"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              NT$ {product.price.toLocaleString()}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-1 mb-2">
+            {meanings.map((m) => (
+              <span key={m} className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#F0EBE3]/70 text-[#31353A]/62 border border-[#D1BE9B]/15"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                {m}
+              </span>
+            ))}
+          </div>
+          <span className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            查看商品 →
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 type Step = 'intro' | 'question' | 'shuffle' | 'pick' | 'spread' | 'reading';
 
@@ -319,7 +362,7 @@ export default function TarotPage() {
     setRevealedCards(new Set([0, 1, 2, 3, 4]));
   }
 
-  const rec = crystalRecs[questionType] || crystalRecs.clarity;
+  const recommendedProducts = step === 'reading' ? recommendForTarot(questionType, question) : [];
 
   return (
     <PageLayout>
@@ -1050,36 +1093,20 @@ export default function TarotPage() {
                 )}
               </div>
 
-              {/* Crystal recommendation */}
-              <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center"
-                    style={{ background: rec.color + '40' }}>
-                    <span className="text-sm">◆</span>
-                  </div>
-                  <div>
-                    <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                      本次占卜推薦水晶
-                    </p>
-                    <p className="text-sm tracking-[0.15em] text-[#31353A]/86"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {rec.name}
-                    </p>
+              {/* Product recommendation */}
+              {recommendedProducts.length > 0 && (
+                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
+                  <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-4 text-center"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                    ◎ 根據牌陣能量，為你推薦
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    {recommendedProducts.map(product => (
+                      <ProductCard key={product.slug} product={product} />
+                    ))}
                   </div>
                 </div>
-                <p className="text-[12px] leading-[1.9] text-[#31353A]/68 tracking-wider mb-4"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  根據你的牌陣能量，{rec.name}能幫助你{rec.reason}，
-                  在這段時間給予你最需要的支持與指引。
-                </p>
-                <Link href="/shop">
-                  <button className="text-xs tracking-[0.2em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    查看 {rec.name} 相關商品 →
-                  </button>
-                </Link>
-              </div>
+              )}
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -1095,10 +1122,10 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   重新占卜
                 </button>
-                <Link href="/treehole">
+                <Link href="/quiz">
                   <button className="px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    與 AI 深入探討
+                    進行能量測驗 ✦
                   </button>
                 </Link>
               </div>

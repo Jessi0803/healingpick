@@ -63,16 +63,3 @@ describe("Fortune router input validation", () => {
   });
 });
 
-describe("Treehole mood mapping", () => {
-  it("maps mood IDs to crystal recommendations", () => {
-    const crystalMap: Record<string, { name: string; reason: string; hz: string }> = {
-      anxious: { name: "紫水晶", reason: "淨化焦慮能量，帶來平靜", hz: "432Hz" },
-      sad: { name: "月光石", reason: "撫慰悲傷，帶來溫柔的光", hz: "528Hz" },
-      lonely: { name: "粉晶", reason: "開啟心輪，吸引溫暖連結", hz: "528Hz" },
-    };
-
-    expect(crystalMap["anxious"].name).toBe("紫水晶");
-    expect(crystalMap["sad"].hz).toBe("528Hz");
-    expect(crystalMap["lonely"].reason).toContain("心輪");
-  });
-});

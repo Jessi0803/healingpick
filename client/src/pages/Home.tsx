@@ -96,12 +96,12 @@ const features = [
     color: '#EAD9B0',  // 金黃奶茶，比背景深一階
   },
   {
-    icon: '🌿',
-    title: '心靈樹洞',
-    subtitle: 'Soul Comfort',
-    desc: '有話想說卻無處傾訴？這裡是你最安全的出口，AI 溫柔傾聽。',
-    href: '/treehole',
-    color: '#D4E0CE',  // 鼠尾草綠，比背景深一階
+    icon: '✨',
+    title: '能量測驗',
+    subtitle: 'Energy Quiz',
+    desc: '你是別人的什麼香味？前世忙什麼？零預算趣味心理測驗，測出你的專屬水晶。',
+    href: '/quiz',
+    color: '#D4C9B8',  // 精選暖灰，比背景深一階
   },
 ];
 
@@ -379,12 +379,12 @@ export default function Home() {
                 開始占卜
               </button>
             </Link>
-            <Link href="/treehole">
+            <Link href="/quiz">
               <button
                 className="px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/30 backdrop-blur-sm rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                傾訴心事
+                能量測驗
               </button>
             </Link>
           </div>
@@ -764,18 +764,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TREEHOLE TEASER ───────────────────────────────────────────────── */}
+      {/* ── QUIZ TEASER ─────────────────────────────────────────────────── */}
       <section className="py-20 px-6 md:px-10 relative overflow-hidden">
         <div className="max-w-4xl mx-auto">
-          <div className="relative rounded-3xl p-10 md:p-14 border border-[#D1BE9B]/30 overflow-hidden" style={{ background: 'rgba(235,228,218,0.55)', backdropFilter: 'blur(16px)', boxShadow: '0 8px 40px rgba(180,160,130,0.12)' }}>
-            {/* BG image */}
-            <div className="absolute inset-0 rounded-3xl overflow-hidden">
-              <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663525376407/gAsTZ8KCRUAuJ8Jah3ZYFq/soul-comfort-LcBLcAob9NkTKDhetNopqA.webp"
-                alt="心靈療癒"
-                className="w-full h-full object-cover opacity-20"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#EDE4D8]/85 via-[#EDE4D8]/65 to-[#EDE4D8]/40" />
+          <div className="relative rounded-3xl p-10 md:p-14 border border-[#D1BE9B]/30 overflow-hidden" style={{ background: 'rgba(242,237,232,0.65)', backdropFilter: 'blur(16px)', boxShadow: '0 8px 40px rgba(180,160,130,0.1)' }}>
+            {/* BG decorative elements */}
+            <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none opacity-20">
+              <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-[#D1BE9B]/20 blur-2xl" />
+              <div className="absolute -bottom-16 -left-16 w-80 h-80 rounded-full bg-[#EAD9B0]/25 blur-3xl" />
             </div>
 
             <div className="relative z-10 max-w-lg">
@@ -783,29 +779,29 @@ export default function Home() {
                 className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
-                Soul Comfort
+                Spiritual Resonance
               </span>
               <h2
                 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
-                心靈樹洞
+                能量共鳴測驗
               </h2>
               <p
                 className="text-[12px] leading-[2.2] text-[#31353A]/72 tracking-wider mb-6"
-                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300, fontSize: '12px' }}
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
               >
-                有些話，說出來就輕了。<br />
-                不需要完美的措辭，不需要擔心被評判——<br />
-                只要把你的心事告訴我，<br />
-                我會用最溫柔的方式陪你一起看見它。
+                你在別人眼中是什麼香味？你的靈魂住在哪裡？<br />
+                有些特質，你自己或許也未曾察覺 ——<br />
+                探索你的潛在靈魂氣場，<br />
+                測出專屬於你目前的守護能量水晶。
               </p>
-              <Link href="/treehole">
+              <Link href="/quiz">
                 <button
-                  className="px-7 py-2.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                  className="px-7 py-2.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95 cursor-pointer"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
-                  說說你的心事
+                  開始探索靈魂 ✦
                 </button>
               </Link>
             </div>

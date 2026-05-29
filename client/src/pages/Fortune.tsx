@@ -12,6 +12,8 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { recommendForFortune } from '@/data/recommend';
+import type { Product } from '@/data/products';
 
 // ─── Zodiac Signs ─────────────────────────────────────────────────────────────
 const ZODIAC_SIGNS = [
@@ -28,6 +30,56 @@ const ZODIAC_SIGNS = [
   { id: 'aquarius',    name: '水瓶座', en: 'Aquarius',    symbol: '♒', dates: '1/20–2/18',  element: '風', color: '#98B8C8' },
   { id: 'pisces',      name: '雙魚座', en: 'Pisces',      symbol: '♓', dates: '2/19–3/20',  element: '水', color: '#B8A8C8' },
 ];
+
+// ─── Product Card ─────────────────────────────────────────────────────────────
+function ProductCard({ product }: { product: Product }) {
+  const meanings = product.meanings.slice(0, 3).map((m) => m.title);
+  return (
+    <Link href={`/product/${product.slug}`}>
+      <div className="flex gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
+        <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
+          <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="min-w-0">
+              {product.tag && (
+                <span className="text-[10px] tracking-[0.15em] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/20 text-[#A38D6B] mr-1.5"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  {product.tag}
+                </span>
+              )}
+              <p className="text-[12px] tracking-[0.12em] text-[#31353A]/86 mt-0.5 truncate"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {product.name}
+              </p>
+              <p className="text-[11px] text-[#31353A]/50 tracking-wider italic truncate"
+                style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                {product.subtitle}
+              </p>
+            </div>
+            <p className="text-sm font-light text-[#D1BE9B] flex-shrink-0"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              NT$ {product.price.toLocaleString()}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-1 mb-2">
+            {meanings.map((m) => (
+              <span key={m} className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#F0EBE3]/70 text-[#31353A]/62 border border-[#D1BE9B]/15"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                {m}
+              </span>
+            ))}
+          </div>
+          <span className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            查看商品 →
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 // ─── How It Works Panel ─────────────────────────────────────────────────────
 function HowItWorksPanel() {
@@ -429,19 +481,20 @@ export default function FortunePage() {
                               </div>
                             </div>
 
-                            {/* Crystal CTA */}
-                            <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15 flex items-center justify-between">
-                              <p className="text-[12px] text-[#31353A]/62 tracking-wider"
-                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                                今日推薦攜帶：<span className="text-[#D1BE9B]">{aiData.crystal}</span>
-                              </p>
-                              <Link href="/shop">
-                                <button className="text-[11px] tracking-[0.15em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
-                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                                  選購水晶 →
-                                </button>
-                              </Link>
-                            </div>
+                            {/* Product recommendation */}
+                            {selectedSignData && (
+                              <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
+                                <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-3"
+                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                                  ◎ 今日星象能量推薦
+                                </p>
+                                <div className="flex flex-col gap-3">
+                                  {recommendForFortune(selectedSignData.element).map(product => (
+                                    <ProductCard key={product.slug} product={product} />
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </>
                         )}
                       </>

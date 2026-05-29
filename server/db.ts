@@ -3,13 +3,11 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import {
   InsertReading,
-  InsertTreeholeSession,
   InsertUser,
   anonymousSessions,
   creditTransactions,
   ipQuotas,
   readings,
-  treeholeSessions,
   users,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
@@ -414,21 +412,3 @@ export async function getReadingsByUser(userId: number, limit = 20) {
     .limit(limit);
 }
 
-// ─── Treehole Sessions ────────────────────────────────────────────────────────
-
-export async function saveTreeholeSession(data: InsertTreeholeSession): Promise<void> {
-  const db = await getDb();
-  if (!db) return;
-  await db.insert(treeholeSessions).values(data);
-}
-
-export async function getTreeholeSessionsByUser(userId: number, limit = 20) {
-  const db = await getDb();
-  if (!db) return [];
-  return db
-    .select()
-    .from(treeholeSessions)
-    .where(eq(treeholeSessions.userId, userId))
-    .orderBy(desc(treeholeSessions.createdAt))
-    .limit(limit);
-}
