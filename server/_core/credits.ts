@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { spendForReading } from "../db";
+import { spendAnonFree, spendForReading } from "../db";
 import type { TrpcContext } from "./context";
 import { isSupabaseConfigured } from "./supabase";
 
@@ -20,13 +20,24 @@ export function isCreditsEnabled(): boolean {
 export async function chargeReading(ctx: TrpcContext, reason: string): Promise<void> {
   if (!isCreditsEnabled()) return;
 
-  if (!ctx.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+  if (ctx.user) {
+    const result = await spendForReading(ctx.user.id, reason);
+    if (!result.ok) {
+      if (result.reason === "no_db") return; // fail open
+      throw new TRPCError({ code: "FORBIDDEN", message: "INSUFFICIENT_CREDITS" });
+    }
+    return;
   }
 
-  const result = await spendForReading(ctx.user.id, reason);
-  if (!result.ok) {
-    if (result.reason === "no_db") return; // configured but DB unreachable: fail open
-    throw new TRPCError({ code: "FORBIDDEN", message: "INSUFFICIENT_CREDITS" });
+  // Anonymous visitor — allow the daily free quota off their browser id.
+  if (ctx.anonId) {
+    const result = await spendAnonFree(ctx.anonId);
+    if (!result.ok) {
+      if (result.reason === "no_db") return;
+      throw new TRPCError({ code: "FORBIDDEN", message: "ANON_QUOTA_EXHAUSTED" });
+    }
+    return;
   }
+
+  throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
 }

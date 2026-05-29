@@ -7,6 +7,8 @@ export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
   res: CreateExpressContextOptions["res"];
   user: User | null;
+  /** Browser-scoped id for visitors that haven't signed up yet. */
+  anonId: string | null;
 };
 
 function bearerToken(req: CreateExpressContextOptions["req"]): string | null {
@@ -46,5 +48,11 @@ export async function createContext(
     user = null;
   }
 
-  return { req: opts.req, res: opts.res, user };
+  const anonHeader = opts.req.headers["x-anon-id"];
+  const anonId =
+    typeof anonHeader === "string" && /^[A-Za-z0-9_-]{8,64}$/.test(anonHeader)
+      ? anonHeader
+      : null;
+
+  return { req: opts.req, res: opts.res, user, anonId };
 }

@@ -7,6 +7,7 @@ import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
 import { getAccessToken, supabaseEnabled } from "./lib/supabase";
+import { getAnonId } from "./lib/anon";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -22,7 +23,7 @@ const handleApiError = (error: unknown) => {
     return;
   }
 
-  if (msg === "NOT_SIGNED_IN" || msg === UNAUTHED_ERR_MSG) {
+  if (msg === "ANON_QUOTA_EXHAUSTED" || msg === "NOT_SIGNED_IN" || msg === UNAUTHED_ERR_MSG) {
     if (supabaseEnabled) {
       window.dispatchEvent(new Event("open-login"));
     } else {
@@ -54,7 +55,11 @@ const trpcClient = trpc.createClient({
       transformer: superjson,
       async headers() {
         const token = await getAccessToken();
-        return token ? { Authorization: `Bearer ${token}` } : {};
+        const anonId = getAnonId();
+        const h: Record<string, string> = {};
+        if (token) h.Authorization = `Bearer ${token}`;
+        if (anonId) h["x-anon-id"] = anonId;
+        return h;
       },
       fetch(input, init) {
         return globalThis.fetch(input, {

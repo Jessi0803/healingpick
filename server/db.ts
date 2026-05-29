@@ -5,6 +5,7 @@ import {
   InsertReading,
   InsertTreeholeSession,
   InsertUser,
+  anonymousSessions,
   creditTransactions,
   readings,
   treeholeSessions,
@@ -222,6 +223,67 @@ export async function addCredits(userId: number, amount: number, reason: string)
     return updated[0];
   }
   return undefined;
+}
+
+// ─── Anonymous (per-browser) free quota ──────────────────────────────────────
+
+async function ensureFreshDayAnon(anonId: string) {
+  const db = await getDb();
+  if (!db) return;
+  const rows = await db.select().from(anonymousSessions).where(eq(anonymousSessions.anonId, anonId)).limit(1);
+  const row = rows[0];
+  if (!row) return;
+  if (isNewDay(row.lastFreeReset)) {
+    await db
+      .update(anonymousSessions)
+      .set({ freeUsedToday: 0, lastFreeReset: new Date() })
+      .where(eq(anonymousSessions.anonId, anonId));
+  }
+}
+
+export async function getAnonCreditState(anonId: string): Promise<CreditState | null> {
+  const db = await getDb();
+  if (!db) return null;
+  await ensureFreshDayAnon(anonId);
+  const rows = await db.select().from(anonymousSessions).where(eq(anonymousSessions.anonId, anonId)).limit(1);
+  const row = rows[0];
+  const used = row?.freeUsedToday ?? 0;
+  return {
+    credits: 0,
+    freeRemaining: Math.max(0, DAILY_FREE_QUOTA - used),
+    dailyFreeQuota: DAILY_FREE_QUOTA,
+  };
+}
+
+/** Spend one free read for an anonymous browser. */
+export async function spendAnonFree(anonId: string): Promise<SpendResult> {
+  const db = await getDb();
+  if (!db) return { ok: false, reason: "no_db" };
+
+  // Upsert the session row (create on first use).
+  await db
+    .insert(anonymousSessions)
+    .values({ anonId })
+    .onConflictDoUpdate({
+      target: anonymousSessions.anonId,
+      set: { lastSeen: new Date() },
+    });
+
+  await ensureFreshDayAnon(anonId);
+  const rows = await db.select().from(anonymousSessions).where(eq(anonymousSessions.anonId, anonId)).limit(1);
+  const row = rows[0];
+  if (!row) return { ok: false, reason: "no_db" };
+
+  if (row.freeUsedToday < DAILY_FREE_QUOTA) {
+    await db
+      .update(anonymousSessions)
+      .set({ freeUsedToday: row.freeUsedToday + 1 })
+      .where(eq(anonymousSessions.anonId, anonId));
+    const state = await getAnonCreditState(anonId);
+    return { ok: true, usedFree: true, state: state! };
+  }
+
+  return { ok: false, reason: "insufficient" };
 }
 
 // ─── Readings (Tarot / Ziwei / Fortune) ──────────────────────────────────────

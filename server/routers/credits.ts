@@ -2,32 +2,39 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../_core/trpc";
 import { sql } from "drizzle-orm";
-import { addCredits, getCreditState, getDb, getUserByEmail } from "../db";
+import { addCredits, getAnonCreditState, getCreditState, getDb, getUserByEmail } from "../db";
 import { isCreditsEnabled } from "../_core/credits";
 import { verifyAccessToken } from "../_core/supabase";
 import { users } from "../../drizzle/schema";
 
 export const creditsRouter = router({
-  /** Current balance + remaining daily free quota for the signed-in user. */
+  /** Current balance + remaining daily free quota for the visitor / user. */
   state: publicProcedure.query(async ({ ctx }) => {
     const enabled = isCreditsEnabled();
-    if (!enabled || !ctx.user) {
+    if (!enabled) {
+      return { enabled, signedIn: false, credits: 0, freeRemaining: 0, dailyFreeQuota: 0 };
+    }
+    if (ctx.user) {
+      const s = await getCreditState(ctx.user.id);
       return {
-        enabled,
-        signedIn: Boolean(ctx.user),
-        credits: 0,
-        freeRemaining: 0,
-        dailyFreeQuota: 0,
+        enabled: true,
+        signedIn: true,
+        credits: s?.credits ?? 0,
+        freeRemaining: s?.freeRemaining ?? 0,
+        dailyFreeQuota: s?.dailyFreeQuota ?? 0,
       };
     }
-    const s = await getCreditState(ctx.user.id);
-    return {
-      enabled: true,
-      signedIn: true,
-      credits: s?.credits ?? 0,
-      freeRemaining: s?.freeRemaining ?? 0,
-      dailyFreeQuota: s?.dailyFreeQuota ?? 0,
-    };
+    if (ctx.anonId) {
+      const s = await getAnonCreditState(ctx.anonId);
+      return {
+        enabled: true,
+        signedIn: false,
+        credits: 0,
+        freeRemaining: s?.freeRemaining ?? 0,
+        dailyFreeQuota: s?.dailyFreeQuota ?? 0,
+      };
+    }
+    return { enabled: true, signedIn: false, credits: 0, freeRemaining: 0, dailyFreeQuota: 0 };
   }),
 
   /** Temporary diagnostic: surfaces token-verify and DB errors. */

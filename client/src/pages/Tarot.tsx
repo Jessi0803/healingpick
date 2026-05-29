@@ -313,7 +313,7 @@ export default function TarotPage() {
                   </h1>
 
                   {/* Envelope anchored at a fixed distance from centre — absolute so h1 centering is never disturbed */}
-                  <div className="absolute left-[calc(50%+5.5rem)] md:left-[calc(50%+7.5rem)] top-[calc(50%+0.5rem)] -translate-y-1/2">
+                  <div className="absolute right-0 top-[calc(50%+0.5rem)] -translate-y-1/2">
                     <Dialog>
                       <DialogTrigger asChild>
                         <button className="relative flex flex-col items-center justify-center animate-float-envelope group bg-transparent focus:outline-none border-none hover:scale-105 transition-transform duration-300">

@@ -51,6 +51,22 @@ export type CreditTransaction = typeof creditTransactions.$inferSelect;
 export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
 
 /**
+ * Per-browser free-quota tracking for visitors who haven't signed up yet.
+ * The id is a UUID generated client-side and stored in localStorage + a
+ * cookie header so the same browser is recognised across requests.
+ */
+export const anonymousSessions = pgTable("anonymous_sessions", {
+  anonId: varchar("anonId", { length: 64 }).primaryKey(),
+  freeUsedToday: integer("freeUsedToday").default(0).notNull(),
+  lastFreeReset: timestamp("lastFreeReset").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastSeen: timestamp("lastSeen").defaultNow().notNull(),
+});
+
+export type AnonymousSession = typeof anonymousSessions.$inferSelect;
+export type InsertAnonymousSession = typeof anonymousSessions.$inferInsert;
+
+/**
  * Tarot / Ziwei / Fortune reading records (user divination history).
  */
 export const readings = pgTable("readings", {

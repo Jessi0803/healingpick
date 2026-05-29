@@ -25,7 +25,7 @@ const navLinks = [
 export default function Navbar() {
   const { isAuthenticated, login, logout } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
-    enabled: isAuthenticated,
+    refetchOnWindowFocus: true,
   });
   const credits = creditsQuery.data;
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -129,13 +129,21 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => login()}
-                className="hidden lg:block text-xs tracking-[0.2em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors duration-300"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              >
-                登入
-              </button>
+              <div className="hidden lg:flex items-center gap-3">
+                {credits?.enabled && credits.freeRemaining > 0 && (
+                  <span className="text-xs tracking-[0.15em] text-[#A38D6B]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    🐾 今日免費 {credits.freeRemaining}
+                  </span>
+                )}
+                <button
+                  onClick={() => login()}
+                  className="text-xs tracking-[0.2em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors duration-300"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  登入
+                </button>
+              </div>
             )}
 
             {/* Hamburger */}
