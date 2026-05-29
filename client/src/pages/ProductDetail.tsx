@@ -138,6 +138,32 @@ export default function ProductDetailPage() {
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 立即諮詢購買 🐾
               </button>
+
+              {/* Quick feature highlights — keeps the right column visually
+                  balanced with the tall hero image on the left. */}
+              <div className="mt-6 pt-5 border-t border-[#D1BE9B]/15">
+                <p className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase mb-3"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  ✦ 商品特色快覽
+                </p>
+                <ul className="space-y-2">
+                  {product.features.map((f) => (
+                    <li key={f.title} className="flex items-start gap-2.5 text-left">
+                      <span className="flex-shrink-0 text-[14px] leading-tight mt-0.5">{f.emoji}</span>
+                      <span className="leading-[1.7]">
+                        <span className="text-[12.5px] tracking-[0.06em] text-[#A38D6B]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                          {f.title}
+                        </span>
+                        <span className="text-[11.5px] tracking-wider text-[#31353A]/68 ml-1.5"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          {f.desc}
+                        </span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
 

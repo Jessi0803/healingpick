@@ -54,10 +54,10 @@ export default function Navbar() {
   const renderNavLink = (link: { label: string; href: string }, isMobile = false) => {
     const isHash = link.href.startsWith('/#') || link.href.startsWith('#');
     const baseClass = isMobile 
-      ? `text-xs tracking-[0.25em] py-3 border-b border-[#D1BE9B]/15 transition-colors ${
+      ? `text-xs tracking-[0.25em] py-3 border-b border-[#D1BE9B]/15 transition-colors whitespace-nowrap ${
           isActive(link.href) ? 'text-[#D1BE9B]' : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
         }`
-      : `text-xs tracking-[0.2em] transition-colors duration-300 ${
+      : `text-xs tracking-[0.2em] transition-colors duration-300 whitespace-nowrap ${
           isActive(link.href) ? 'text-[#D1BE9B]' : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
         }`;
 
@@ -113,7 +113,7 @@ export default function Navbar() {
             : 'py-5 bg-white/10 backdrop-blur-md border-b border-white/20'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-3 items-center">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between gap-4">
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
