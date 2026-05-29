@@ -305,18 +305,18 @@ export default function TarotPage() {
                   Tarot Reading
                 </span>
                 
-                {/* 加上 mb-10 讓下方文字不會被信封的標籤蓋到，同時 inline-block 保證 h1 完美置中不動 */}
-                <div className="relative inline-block mt-3 mb-10 md:mb-8">
+                {/* flex justify-center keeps h1 perfectly centred; envelope is absolute so it never shifts the title */}
+                <div className="relative mt-3 mb-10 md:mb-8 flex justify-center items-center">
                   <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] m-0"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     塔羅牌占卜
                   </h1>
-                  
-                  {/* Floating Envelope absolute positioned so it doesn't affect title centering */}
-                  <div className="absolute top-1/2 -translate-y-1/2 -right-16 md:-right-24">
+
+                  {/* Envelope anchored at a fixed distance from centre — absolute so h1 centering is never disturbed */}
+                  <div className="absolute left-[calc(50%+5.5rem)] md:left-[calc(50%+7.5rem)] top-1/2 -translate-y-1/2">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button className="flex flex-col items-center justify-center animate-float-envelope group bg-transparent focus:outline-none border-none hover:scale-105 transition-transform duration-300">
+                        <button className="relative flex flex-col items-center justify-center animate-float-envelope group bg-transparent focus:outline-none border-none hover:scale-105 transition-transform duration-300">
                           <div className="relative flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#FDFBF7] to-[#F0E8DC] border border-[#D1BE9B]/60 shadow-[0_4px_16px_rgba(209,190,155,0.25)] hover:shadow-[0_8px_24px_rgba(163,141,107,0.35)] transition-shadow duration-500 overflow-visible">
                             {/* Decorative spinning inner ring */}
                             <div className="absolute inset-0.5 md:inset-1 rounded-full border border-[#D1BE9B]/40 border-dashed animate-[spin_30s_linear_infinite] pointer-events-none" />
@@ -391,6 +391,7 @@ export default function TarotPage() {
                       </div>
                     </DialogContent>
                   </Dialog>
+                  </div>
                 </div>
                 <p className="text-sm italic text-[#31353A]/54 tracking-[0.15em]"
                   style={{ fontFamily: 'Cormorant Garamond, serif' }}>

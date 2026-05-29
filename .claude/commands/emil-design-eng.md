@@ -1,0 +1,1 @@
+/Users/jc/Desktop/jc/soul-ease/.agents/skills/emil-design-eng/SKILL.md
