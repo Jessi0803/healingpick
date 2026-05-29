@@ -4,7 +4,7 @@
  * 點擊貓咪 → 顯示一則內容:
  *   - 療癒語錄(無連結),或
  *   - 塔羅 / 紫微小知識(配一個對應的「去算算看」連結)
- *   - 心靈療癒小物專屬微型小測驗 🐾 (根據情緒與直覺，推薦適合的水晶商品並可一鍵諮詢官方LINE/IG)
+ *   - 心靈療癒小物專屬微型小測驗 🐾 (作為輪播卡片之一，根據情緒與直覺推薦水晶商品並一鍵諮詢官方LINE/IG)
  * 點一下卡片可以換下一則。
  */
 
@@ -20,14 +20,16 @@ type Pearl = {
 
 // ─── 卡片內容池 ──────────────────────────────────────────────────────────────
 const PEARLS: Pearl[] = [
-  // 純療癒語錄(不配連結)
+  // 三種純療癒語錄 (僅保留 3 種最溫柔的語錄)
   { text: '每一個感受都值得被聽見 ✦' },
   { text: '你不需要完美,只需要真實 ♡' },
   { text: '深呼吸三秒,當下就會溫柔一點 ☽' },
-  { text: '宇宙的節奏,跟你的呼吸是一樣的 ✦' },
-  { text: '你已經比昨天的自己更勇敢一點了 ♡' },
-  { text: '慢下來,光才照得進來 ☽' },
-  { text: '不必急著好起來,也不必假裝沒事 ♡' },
+
+  // Mochi 能量測驗入口卡片 (作為輪播項目之一顯示)
+  {
+    text: '🔮 最近有些疲憊或迷茫嗎？讓 Mochi 幫你感應一下，測測現在最適合你狀態的水晶與療癒小物吧 🐾',
+    cta: { label: '開始能量測驗 ✦', href: 'quiz-trigger' }
+  },
 
   // 塔羅小知識(配連結到 /tarot)
   {
@@ -313,22 +315,21 @@ export default function CatCompanion() {
     setTimeout(() => setMood('idle'), 1000);
   };
 
-  const goTo = (href: string) => {
+  const goTo = (href: string, e?: React.MouseEvent) => {
+    if (href === 'quiz-trigger') {
+      if (e) e.stopPropagation();
+      setQuizActive(true);
+      setQuizStep(0);
+      setScores(INITIAL_SCORES);
+      setRecommendedProduct(null);
+      setLoadingResult(false);
+      setMood('curious');
+      setTimeout(() => setMood('idle'), 1000);
+      return;
+    }
     setIsOpen(false);
     resetQuiz();
     setLocation(href);
-  };
-
-  // ── 測驗邏輯 ──
-  const startMiniQuiz = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setQuizActive(true);
-    setQuizStep(0);
-    setScores(INITIAL_SCORES);
-    setRecommendedProduct(null);
-    setLoadingResult(false);
-    setMood('curious');
-    setTimeout(() => setMood('idle'), 1000);
   };
 
   const handleOptionClick = (optionScores: Record<string, number>) => {
@@ -551,20 +552,9 @@ export default function CatCompanion() {
             ) : (
               // ── 正常語錄/知識輪播模式 ──
               <>
-                {/* 專屬測驗入口 */}
-                <div className="px-3.5 pt-2 pb-1.5 border-b border-[#D1BE9B]/15">
-                  <button
-                    onClick={startMiniQuiz}
-                    className="w-full text-[10.5px] tracking-[0.15em] py-1.5 rounded-full bg-[#EADECE]/40 border border-[#D1BE9B]/30 text-[#8A7250] hover:bg-[#D1BE9B]/25 transition-all duration-300 font-medium flex items-center justify-center gap-1 active:scale-95 cursor-pointer"
-                    style={{ fontFamily: 'Noto Serif TC, serif' }}
-                  >
-                    🔮 測我適合什麼療癒小物？ 🐾
-                  </button>
-                </div>
-
                 {/* 內容 */}
                 <div
-                  className="px-3.5 pt-1.5 pb-2.5"
+                  className="px-3.5 pt-2.5 pb-2.5"
                   onClick={handleBubbleClick}
                   style={{ cursor: 'pointer' }}
                 >
@@ -580,7 +570,7 @@ export default function CatCompanion() {
                 {pearl.cta && (
                   <div className="px-3.5 pb-2.5">
                     <button
-                      onClick={() => goTo(pearl.cta!.href)}
+                      onClick={(e) => goTo(pearl.cta!.href, e)}
                       className="w-full text-[11px] tracking-[0.2em] py-1.5 rounded-full border border-[#D1BE9B]/50 text-[#A38D6B] hover:bg-[#D1BE9B]/15 hover:text-[#8A7250] transition-colors cursor-pointer"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
                     >

@@ -32,95 +32,7 @@ const MOODS = [
   { id: 'lost',        label: '失去方向',  icon: '🧭', color: '#A8B8A8', crystal: '青金石',  hz: '432Hz' },
 ];
 
-// ─── Product catalog (mirrors Shop.tsx) ──────────────────────────────────────
-const PRODUCTS = [
-  {
-    id: 1, name: '薰衣草紫水晶簇', subtitle: 'Amethyst Cluster', price: 1280,
-    category: 'amethyst', tag: '熱銷',
-    img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80',
-    properties: ['淨化空間能量', '改善睡眠品質', '增強直覺力', '緩解焦慮'],
-    keywords: ['焦慮', '睡不著', '睡眠', '緊張', '不安', '壓力', '煩躁', '靜不下來'],
-    moods: ['anxious', 'stressed'],
-  },
-  {
-    id: 2, name: '馬達加斯加粉晶球', subtitle: 'Rose Quartz Sphere', price: 980,
-    category: 'rose', tag: '新品',
-    img: 'https://images.unsplash.com/photo-1567225557594-88d73e55f2cb?w=600&q=80',
-    properties: ['開啟心輪', '吸引愛情', '療癒情傷', '增進人際關係'],
-    keywords: ['感情', '失戀', '分手', '愛情', '孤單', '寂寞', '被拋棄', '不被愛', '渴望愛'],
-    moods: ['lonely', 'heartbroken', 'sad'],
-  },
-  {
-    id: 3, name: '天然黃水晶原礦', subtitle: 'Citrine Raw Crystal', price: 760,
-    category: 'citrine', tag: null,
-    img: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&q=80',
-    properties: ['顯化豐盛', '提升自信', '增強行動力', '財富磁場'],
-    keywords: ['工作', '事業', '錢', '財富', '自信', '目標', '行動', '機會', '升職', '創業'],
-    moods: ['lost', 'confused', 'stressed'],
-  },
-  {
-    id: 4, name: '白水晶能量棒', subtitle: 'Clear Quartz Wand', price: 1580,
-    category: 'clear', tag: '精選',
-    img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80',
-    properties: ['淨化全脈輪', '放大意圖', '增強冥想效果', '萬用療癒'],
-    keywords: ['迷茫', '不知道', '方向', '冥想', '淨化', '清理', '重新開始'],
-    moods: ['confused', 'lost', 'general'],
-  },
-  {
-    id: 5, name: '黑碧璽原礦', subtitle: 'Black Tourmaline Raw', price: 680,
-    category: 'tourmaline', tag: null,
-    img: 'https://images.unsplash.com/photo-1567225557594-88d73e55f2cb?w=600&q=80',
-    properties: ['防護負能量', '接地氣', '消除電磁波', '穩定情緒'],
-    keywords: ['憤怒', '委屈', '被傷害', '負能量', '防護', '保護', '情緒不穩', '暴躁'],
-    moods: ['angry', 'stressed', 'anxious'],
-  },
-  {
-    id: 6, name: '月光石橢圓裸石', subtitle: 'Moonstone Cabochon', price: 1180,
-    category: 'moonstone', tag: '熱銷',
-    img: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80',
-    properties: ['增強直覺', '平衡情緒', '促進轉變', '女性能量'],
-    keywords: ['難過', '低落', '憂鬱', '情緒', '轉變', '改變', '直覺', '女性'],
-    moods: ['sad', 'confused', 'heartbroken'],
-  },
-  {
-    id: 7, name: '青金石圓珠手串', subtitle: 'Lapis Lazuli Bracelet', price: 880,
-    category: 'lapis', tag: '特價',
-    img: 'https://images.unsplash.com/photo-1524673450801-b5aa9b621b76?w=600&q=80',
-    properties: ['增強溝通力', '提升智慧', '開啟第三眼', '真誠表達'],
-    keywords: ['說不出口', '溝通', '表達', '誤解', '被誤會', '找不到方向', '智慧'],
-    moods: ['lost', 'confused', 'angry'],
-  },
-  {
-    id: 8, name: '綠幽靈水晶球', subtitle: 'Phantom Quartz Sphere', price: 2280,
-    category: 'phantom', tag: '限量',
-    img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80',
-    properties: ['財富顯化', '事業助力', '心輪療癒', '豐盛能量'],
-    keywords: ['壓力', '工作壓力', '事業', '財富', '豐盛', '心輪', '療癒'],
-    moods: ['stressed', 'lost'],
-  },
-];
-
-// ─── Smart product recommendation ────────────────────────────────────────────
-function recommendProducts(mood: string, text: string) {
-  const scores: Record<number, number> = {};
-
-  PRODUCTS.forEach(p => {
-    let score = 0;
-    // Mood match
-    if (p.moods.includes(mood)) score += 3;
-    if (p.moods.includes('general')) score += 1;
-    // Keyword match in text
-    p.keywords.forEach(kw => {
-      if (text.includes(kw)) score += 2;
-    });
-    scores[p.id] = score;
-  });
-
-  return PRODUCTS
-    .filter(p => scores[p.id] > 0)
-    .sort((a, b) => scores[b.id] - scores[a.id])
-    .slice(0, 2);
-}
+// Product catalogue + recommender now come from @/data — see recommend.ts
 
 // ─── AI response templates ────────────────────────────────────────────────────
 const AI_RESPONSES: Record<string, string[]> = {
@@ -248,51 +160,52 @@ function BreathingExercise() {
 }
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
-function ProductCard({ product }: { product: typeof PRODUCTS[0] }) {
+function ProductCard({ product }: { product: Product }) {
+  const meanings = product.meanings.slice(0, 3).map((m) => m.title);
   return (
-    <div className="flex gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5">
-      <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-        <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <div>
-            {product.tag && (
-              <span className="text-[10px] tracking-[0.15em] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/20 text-[#A38D6B] mr-1.5"
+    <Link href={`/product/${product.slug}`}>
+      <div className="flex gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
+        <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
+          <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="min-w-0">
+              {product.tag && (
+                <span className="text-[10px] tracking-[0.15em] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/20 text-[#A38D6B] mr-1.5"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  {product.tag}
+                </span>
+              )}
+              <p className="text-[12px] tracking-[0.12em] text-[#31353A]/86 mt-0.5 truncate"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                {product.tag}
-              </span>
-            )}
-            <p className="text-[12px] tracking-[0.12em] text-[#31353A]/86 mt-0.5"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              {product.name}
-            </p>
-            <p className="text-[11px] text-[#31353A]/50 tracking-wider italic"
+                {product.name}
+              </p>
+              <p className="text-[11px] text-[#31353A]/50 tracking-wider italic truncate"
+                style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                {product.subtitle}
+              </p>
+            </div>
+            <p className="text-sm font-light text-[#D1BE9B] flex-shrink-0"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-              {product.subtitle}
+              NT$ {product.price.toLocaleString()}
             </p>
           </div>
-          <p className="text-sm font-light text-[#D1BE9B] flex-shrink-0"
-            style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-            NT$ {product.price.toLocaleString()}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-1 mb-2">
-          {product.properties.slice(0, 3).map(p => (
-            <span key={p} className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#F0EBE3]/70 text-[#31353A]/62 border border-[#D1BE9B]/15"
-              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-              {p}
-            </span>
-          ))}
-        </div>
-        <Link href="/shop">
-          <button className="text-[11px] tracking-[0.15em] px-3 py-1.5 border border-[#D1BE9B]/40 rounded-full text-[#A38D6B] hover:bg-[#D1BE9B]/15 transition-colors duration-200"
+          <div className="flex flex-wrap gap-1 mb-2">
+            {meanings.map((m) => (
+              <span key={m} className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#F0EBE3]/70 text-[#31353A]/62 border border-[#D1BE9B]/15"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                {m}
+              </span>
+            ))}
+          </div>
+          <span className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             查看商品 →
-          </button>
-        </Link>
+          </span>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -303,7 +216,7 @@ export default function TreeholePage() {
   const [submitted, setSubmitted] = useState(false);
   const [response, setResponse] = useState('');
   const [llmCrystal, setLlmCrystal] = useState<{ name: string; reason: string; hz: string } | null>(null);
-  const [recommendedProducts, setRecommendedProducts] = useState<typeof PRODUCTS>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const responseRef = useRef<HTMLDivElement>(null);
 
@@ -364,7 +277,7 @@ export default function TreeholePage() {
     setLoading(true);
     const mood = selectedMood || 'general';
     const moodInfo = MOODS.find(m => m.id === mood);
-    setRecommendedProducts(recommendProducts(mood, text));
+    setRecommendedProducts(recommendForMood(selectedMood, text));
     comfortMutation.mutate({
       mood,
       moodLabel: moodInfo?.label || '一般',
@@ -557,7 +470,7 @@ export default function TreeholePage() {
                   </div>
                   <div className="space-y-3">
                     {recommendedProducts.map(product => (
-                      <ProductCard key={product.id} product={product} />
+                      <ProductCard key={product.slug} product={product} />
                     ))}
                   </div>
                   <div className="mt-4 text-center">
