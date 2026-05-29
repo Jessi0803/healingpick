@@ -313,14 +313,21 @@ export default function TarotPage() {
                   </h1>
 
                   {/* Envelope anchored at a fixed distance from centre — absolute so h1 centering is never disturbed */}
-                  <div className="absolute right-0 top-[calc(50%+0.5rem)] -translate-y-1/2">
+                  {/* Float lives on the outer div so hover:scale / active:scale on the button don't fight the animation */}
+                  <div className="absolute right-0 top-[calc(50%+0.5rem)] -translate-y-1/2 animate-float-envelope">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button className="relative flex flex-col items-center justify-center animate-float-envelope group bg-transparent focus:outline-none border-none hover:scale-105 transition-transform duration-300">
+                        <button className="relative flex flex-col items-center justify-center group bg-transparent focus:outline-none border-none hover:scale-105 active:scale-[0.92] transition-transform duration-150 ease-out">
                           <div className="relative flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#FDFBF7] to-[#F0E8DC] border border-[#D1BE9B]/60 shadow-[0_4px_16px_rgba(209,190,155,0.25)] hover:shadow-[0_8px_24px_rgba(163,141,107,0.35)] transition-shadow duration-500 overflow-visible">
+                            {/* Ping ripple — plays once on page load */}
+                            <div className="absolute inset-0 rounded-full border border-[#D1BE9B]/50 animate-envelope-ping pointer-events-none" />
                             {/* Decorative spinning inner ring */}
                             <div className="absolute inset-0.5 md:inset-1 rounded-full border border-[#D1BE9B]/40 border-dashed animate-[spin_30s_linear_infinite] pointer-events-none" />
-                            
+                            {/* Glint — clips to the circle, sweeps every 8 s */}
+                            <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none z-20">
+                              <div className="absolute top-0 left-0 h-full w-1/2 animate-wax-glint"
+                                style={{ background: 'linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.5) 50%, transparent 80%)' }} />
+                            </div>
                             {/* Wax seal style envelope icon */}
                             <div className="relative z-10 flex items-center justify-center text-[#A38D6B] group-hover:text-[#8A7250] transition-colors drop-shadow-sm scale-75 md:scale-90">
                               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -335,7 +342,7 @@ export default function TarotPage() {
                           
                           {/* Always visible tooltip positioned absolutely to avoid layout shift */}
                           <span className="absolute top-[110%] bg-[#FDFBF7]/80 backdrop-blur-sm border border-[#D1BE9B]/20 text-[#8A7250] text-[9px] md:text-[10px] tracking-[0.1em] px-2 py-1 rounded-md shadow-sm whitespace-nowrap pointer-events-none flex items-center gap-1" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                            Mochi 的秘密
+                            塔羅小教室
                           </span>
                         </button>
                       </DialogTrigger>

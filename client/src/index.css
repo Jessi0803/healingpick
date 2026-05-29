@@ -364,15 +364,31 @@
   }
 }
 
-/* Tarot Envelope Float Animation */
+/* Tarot Envelope Float Animation — subtle rotation makes it feel wind-caught, not mechanical */
 @keyframes float-envelope {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50%       { transform: translateY(-8px) rotate(1.5deg); }
 }
 .animate-float-envelope {
   animation: float-envelope 4s ease-in-out infinite;
+}
+
+/* Ping ripple — fires once on load to draw attention */
+@keyframes envelope-ping {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.animate-envelope-ping {
+  animation: envelope-ping 1.4s cubic-bezier(0.23, 1, 0.32, 1) 1s 1 forwards;
+}
+
+/* Wax-seal glint — a light streak sweeps across every 8 s */
+@keyframes wax-glint {
+  0%, 80% { transform: translateX(-200%); opacity: 0; }
+  83%      { opacity: 1; }
+  90%      { transform: translateX(400%); opacity: 0; }
+  100%     { transform: translateX(400%); opacity: 0; }
+}
+.animate-wax-glint {
+  animation: wax-glint 8s ease-in-out 3s infinite;
 }
