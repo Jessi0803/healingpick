@@ -1,81 +1,77 @@
 /**
  * CatCompanion.tsx
  * 全站浮動貓咪助理 Mochi — 右下角固定
- * 點擊貓咪 → 顯示「今日語錄」+ 各個算命服務的捷徑
+ * 點擊貓咪 → 顯示一則內容:
+ *   - 療癒語錄(無連結),或
+ *   - 塔羅 / 紫微小知識(配一個對應的「去算算看」連結)
+ * 點一下卡片可以換下一則。
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'wouter';
 
-// ─── 各頁面情境語錄 ──────────────────────────────────────────────────────────
-const PAGE_MESSAGES: Record<string, string[]> = {
-  '/': [
-    '歡迎來到療癒聖所 ✦',
-    '今天的你,有什麼煩惱嗎?',
-    '讓星光指引你前行的方向 ☽',
-    '水晶在等待與你共振的那個人 ✦',
-    '有什麼心事,輕輕放下來就好 ♡',
-  ],
-  '/tarot': [
-    '洗牌前,先讓心靜下來 ✦',
-    '每一張牌都是宇宙給你的訊息 ☽',
-    '相信你的直覺,它從不說謊 ♡',
-    '牌面只是鏡子,真相在你心中 ✦',
-  ],
-  '/ziwei': [
-    '星盤記錄了你靈魂的旅程 ☽',
-    '命盤是地圖,但你才是旅人 ✦',
-    '每個宮位都藏著一段故事 ♡',
-    '紫微星在守護著你呢 ✦',
-  ],
-  '/fortune': [
-    '今天的宇宙能量正在向你傾訴 ☽',
-    '運勢只是參考,你的選擇才是關鍵 ✦',
-    '讓今天的星光為你充電 ♡',
-    '每一天都是全新的開始 ✦',
-  ],
-  '/treehole': [
-    '說出來,心會輕一點的 ♡',
-    '你的感受,都是真實且重要的 ✦',
-    '不需要堅強,放心說吧 ☽',
-    'Mochi 會一直在這裡陪著你 ♡',
-  ],
-  '/shop': [
-    '每顆水晶都有它想找的主人 ✦',
-    '讓能量商品為你帶來好運 ☽',
-    '水晶的振動頻率與你的心共鳴 ♡',
-    '今天適合帶一顆新水晶回家 ✦',
-  ],
-  '/history': [
-    '你的每一次占卜都是一段旅程 ✦',
-    '回顧過去,看見成長 ☽',
-    '每一次探索都讓你更了解自己 ♡',
-  ],
+type Pearl = {
+  text: string;
+  cta?: { label: string; href: string };
 };
 
-const DEFAULT_MESSAGES = [
-  '宇宙正在聆聽你的心聲 ✦',
-  '你來了,太好了 ♡',
-  '一切都會慢慢變好的 ☽',
-];
+// ─── 卡片內容池 ──────────────────────────────────────────────────────────────
+const PEARLS: Pearl[] = [
+  // 純療癒語錄(不配連結)
+  { text: '每一個感受都值得被聽見 ✦' },
+  { text: '你不需要完美,只需要真實 ♡' },
+  { text: '深呼吸三秒,當下就會溫柔一點 ☽' },
+  { text: '宇宙的節奏,跟你的呼吸是一樣的 ✦' },
+  { text: '你已經比昨天的自己更勇敢一點了 ♡' },
+  { text: '慢下來,光才照得進來 ☽' },
+  { text: '不必急著好起來,也不必假裝沒事 ♡' },
 
-// ─── 服務捷徑(會顯示在語錄下方的小按鈕) ────────────────────────────────────
-const SERVICE_LINKS: { label: string; href: string; emoji: string; desc: string }[] = [
-  { label: '塔羅占卜', href: '/tarot', emoji: '🃏', desc: '抽 5 張牌,看看現在的能量流向' },
-  { label: '紫微斗數', href: '/ziwei', emoji: '✦', desc: '一張命盤,讀你這一生的格局' },
-  { label: '每日運勢', href: '/fortune/daily', emoji: '☽', desc: '今天的星象 + 月相給你的建議' },
-  { label: '心靈樹洞', href: '/treehole', emoji: '♡', desc: '說說心事,Mochi 在這裡聽' },
-];
+  // 塔羅小知識(配連結到 /tarot)
+  {
+    text: '塔羅 22 張大牌,是「愚者的旅程」—— 從天真的出發,一路走到圓滿。',
+    cta: { label: '抽一張看看 →', href: '/tarot' },
+  },
+  {
+    text: '逆位不等於壞事,只是同一張牌「另一面」的能量提醒。',
+    cta: { label: '去試塔羅 →', href: '/tarot' },
+  },
+  {
+    text: '塔羅不是預言,是一面照出你內心真實樣子的鏡子。',
+    cta: { label: '照照看 →', href: '/tarot' },
+  },
+  {
+    text: '抽牌時心裡想著問題,你的直覺會引導你選到「最該看見」的那張。',
+    cta: { label: '現在來抽 →', href: '/tarot' },
+  },
 
-type CatMood = 'idle' | 'happy' | 'curious';
+  // 紫微小知識(配連結到 /ziwei)
+  {
+    text: '紫微斗數有 12 宮,每一宮對應你人生不同的領域:財帛、感情、事業、健康……',
+    cta: { label: '看看你的命盤 →', href: '/ziwei' },
+  },
+  {
+    text: '命宮不是「決定你是誰」,而是「你會用什麼方式去面對人生」。',
+    cta: { label: '排盤試試 →', href: '/ziwei' },
+  },
+  {
+    text: '紫微星是星盤裡的「主帥」,看你天生帶著什麼樣的氣場。',
+    cta: { label: '查你的紫微 →', href: '/ziwei' },
+  },
+  {
+    text: '命盤是地圖,但你才是旅人 —— 怎麼走,還是你決定。',
+    cta: { label: '看地圖 →', href: '/ziwei' },
+  },
+];
 
 // ─── 貓咪 SVG ─────────────────────────────────────────────────────────────────
+type CatMood = 'idle' | 'happy' | 'curious';
+
 function CompanionCatSVG({ mood, onClick }: { mood: CatMood; onClick: () => void }) {
   const [tailSway, setTailSway] = useState(false);
   const [blink, setBlink] = useState(false);
 
   useEffect(() => {
-    const t = setInterval(() => setTailSway(p => !p), 1400);
+    const t = setInterval(() => setTailSway((p) => !p), 1400);
     return () => clearInterval(t);
   }, []);
 
@@ -172,26 +168,28 @@ function CompanionCatSVG({ mood, onClick }: { mood: CatMood; onClick: () => void
   );
 }
 
+// 給定隨機種子般的順序,確保不會連續抽到同一則
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 // ─── 主元件 ──────────────────────────────────────────────────────────────────
 export default function CatCompanion() {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState('');
   const [mood, setMood] = useState<CatMood>('idle');
-  const [messageIdx, setMessageIdx] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [order, setOrder] = useState<number[]>(() =>
+    shuffle(Array.from({ length: PEARLS.length }, (_, i) => i))
+  );
+  const [cursor, setCursor] = useState(0);
 
-  const getMessages = useCallback(() => {
-    return PAGE_MESSAGES[location] ?? DEFAULT_MESSAGES;
-  }, [location]);
-
-  // 頁面切換時更換語錄
-  useEffect(() => {
-    const msgs = getMessages();
-    setMessageIdx(0);
-    setMessage(msgs[0]);
-    setMood('curious');
-  }, [location]); // eslint-disable-line react-hooks/exhaustive-deps
+  const pearl = useMemo(() => PEARLS[order[cursor] ?? 0], [order, cursor]);
 
   // 元件掛載時淡入
   useEffect(() => {
@@ -200,19 +198,22 @@ export default function CatCompanion() {
   }, []);
 
   const handleCatClick = () => {
-    setIsOpen(o => !o);
-    setMood('happy');
-    setTimeout(() => setMood('idle'), 1800);
-  };
-
-  // 點面板裡的語錄可以換下一句
-  const handleBubbleClick = () => {
-    const msgs = getMessages();
-    const nextIdx = (messageIdx + 1) % msgs.length;
-    setMessageIdx(nextIdx);
-    setMessage(msgs[nextIdx]);
+    setIsOpen((o) => !o);
     setMood('happy');
     setTimeout(() => setMood('idle'), 1500);
+  };
+
+  // 點卡片 → 下一則(走完一輪就重新洗牌)
+  const handleBubbleClick = () => {
+    const next = cursor + 1;
+    if (next >= order.length) {
+      setOrder(shuffle(Array.from({ length: PEARLS.length }, (_, i) => i)));
+      setCursor(0);
+    } else {
+      setCursor(next);
+    }
+    setMood('curious');
+    setTimeout(() => setMood('idle'), 1000);
   };
 
   const goTo = (href: string) => {
@@ -230,7 +231,7 @@ export default function CatCompanion() {
         pointerEvents: 'none',
       }}
     >
-      {/* 面板 */}
+      {/* 卡片 */}
       <div
         style={{
           opacity: isOpen ? 1 : 0,
@@ -251,13 +252,13 @@ export default function CatCompanion() {
             boxShadow: '0 4px 24px rgba(209,190,155,0.2)',
           }}
         >
-          {/* 頂部標題列 */}
-          <div className="flex items-center justify-between px-4 pt-3 pb-2">
+          {/* 頂部 */}
+          <div className="flex items-center justify-between px-4 pt-3 pb-1">
             <span
-              className="text-[11px] tracking-[0.25em] uppercase"
+              className="text-[11px] tracking-[0.3em] uppercase"
               style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', color: '#A38D6B' }}
             >
-              Today
+              ✦ Mochi
             </span>
             <button
               onClick={() => setIsOpen(false)}
@@ -268,61 +269,41 @@ export default function CatCompanion() {
             </button>
           </div>
 
-          {/* 今日語錄 */}
-          <div className="px-4 pb-3" onClick={handleBubbleClick} style={{ cursor: 'pointer' }}>
+          {/* 內容 */}
+          <div
+            className="px-4 pt-2 pb-3"
+            onClick={handleBubbleClick}
+            style={{ cursor: 'pointer' }}
+          >
             <p
-              className="text-[13px] leading-[1.95] text-[#31353A]/82 tracking-wider"
+              className="text-[13px] leading-[2] text-[#31353A]/85 tracking-wider"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
             >
-              {message}
-            </p>
-            <p
-              className="text-[10px] text-[#D1BE9B]/70 tracking-wider mt-1.5"
-              style={{ fontFamily: 'Noto Serif TC, serif' }}
-            >
-              點一下換下一句 ✦
+              {pearl.text}
             </p>
           </div>
 
-          {/* 分隔線 */}
-          <div className="mx-4 h-px bg-[#D1BE9B]/20" />
-
-          {/* 服務捷徑 */}
-          <div className="px-3 py-3">
-            <p
-              className="px-1 mb-2 text-[10px] tracking-[0.2em] text-[#A38D6B]"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-            >
-              想算什麼?
-            </p>
-            <div className="flex flex-col gap-1">
-              {SERVICE_LINKS.map((s) => (
-                <button
-                  key={s.href}
-                  onClick={() => goTo(s.href)}
-                  className="group flex items-start gap-2.5 text-left px-2 py-2 rounded-lg hover:bg-[#D1BE9B]/12 transition-colors"
-                >
-                  <span className="text-[14px] mt-0.5 flex-shrink-0">{s.emoji}</span>
-                  <span className="flex-1 min-w-0">
-                    <span
-                      className="block text-[12px] tracking-[0.12em] text-[#31353A]/85 group-hover:text-[#A38D6B] transition-colors"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
-                    >
-                      {s.label}
-                    </span>
-                    <span
-                      className="block text-[10px] leading-[1.6] text-[#31353A]/50 tracking-wider mt-0.5"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {s.desc}
-                    </span>
-                  </span>
-                  <span className="text-[#D1BE9B]/60 group-hover:text-[#A38D6B] transition-colors text-[11px] mt-1 flex-shrink-0">
-                    →
-                  </span>
-                </button>
-              ))}
+          {/* CTA(只在那則有附連結時顯示) */}
+          {pearl.cta && (
+            <div className="px-4 pb-3">
+              <button
+                onClick={() => goTo(pearl.cta!.href)}
+                className="w-full text-[12px] tracking-[0.2em] py-2 rounded-full border border-[#D1BE9B]/50 text-[#A38D6B] hover:bg-[#D1BE9B]/15 hover:text-[#8A7250] transition-colors"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+              >
+                {pearl.cta.label}
+              </button>
             </div>
+          )}
+
+          {/* 下一則提示 */}
+          <div className="px-4 pb-3">
+            <p
+              className="text-[10px] text-[#D1BE9B]/70 tracking-wider text-center"
+              style={{ fontFamily: 'Noto Serif TC, serif' }}
+            >
+              點一下卡片換下一則 ♡
+            </p>
           </div>
 
           {/* 泡泡尾巴 */}
@@ -353,10 +334,10 @@ export default function CatCompanion() {
         <CompanionCatSVG mood={mood} onClick={handleCatClick} />
         <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap">
           <span
-            className="text-[10px] tracking-[0.15em] text-[#D1BE9B]/60"
+            className="text-[10px] tracking-[0.15em]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, color: '#918888', fontSize: '10px' }}
           >
-            點擊看今日語錄
+            點擊看 Mochi 的話
           </span>
         </div>
       </div>
