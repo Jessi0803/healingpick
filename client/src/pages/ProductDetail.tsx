@@ -177,6 +177,33 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
+          {/* Section: Mochi 的小故事 */}
+          {product.story && (
+            <div className="mb-12 animate-fade-in-up">
+              <div className="flex items-center gap-4 mb-5">
+                <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  ♡ A Little Story
+                </span>
+                <h2 className="text-base md:text-lg tracking-[0.2em] text-[#31353A]/85"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  Mochi 想跟你說的小故事
+                </h2>
+                <div className="flex-1 h-px bg-[#D1BE9B]/20" />
+              </div>
+              <div className="relative max-w-3xl rounded-3xl border border-[#D1BE9B]/25 bg-gradient-to-br from-white/60 to-[#FAF0EC]/40 px-6 py-7 md:px-10 md:py-9 shadow-[0_6px_24px_rgba(209,190,155,0.10)]">
+                <span className="absolute top-3 left-4 text-[24px] text-[#D1BE9B]/55 leading-none select-none"
+                  style={{ fontFamily: 'Cormorant Garamond, serif' }}>"</span>
+                <span className="absolute bottom-3 right-5 text-[24px] text-[#D1BE9B]/55 leading-none select-none"
+                  style={{ fontFamily: 'Cormorant Garamond, serif' }}>"</span>
+                <p className="text-[13.5px] md:text-[14px] leading-[2.2] text-[#31353A]/80 tracking-wider whitespace-pre-line"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  {product.story}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Section: 能量寓意 */}
           <Section title="能量寓意" subtitle="Meanings" icon="𓇢𓆸">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
