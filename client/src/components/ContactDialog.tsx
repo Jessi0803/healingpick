@@ -3,6 +3,7 @@
  * Design: Wabi-Sabi Luxe × Morandi Oat Milk — Premium Contact Portal
  */
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ContactDialogProps {
   isOpen: boolean;
@@ -25,23 +26,23 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Frosted backdrop */}
       <div 
-        className="absolute inset-0 bg-[#3D4144]/25 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 bg-[#3D4144]/35 backdrop-blur-md transition-opacity duration-300 z-0"
         onClick={onClose} 
       />
       
       {/* Dialog Container */}
-      <div className="bg-[#FAF7F4] border border-[#D1BE9B]/25 rounded-[32px] p-8 max-w-sm w-full shadow-[0_20px_50px_rgba(209,190,155,0.15)] z-10 text-center relative overflow-hidden animate-fade-in">
+      <div className="bg-[#FAF7F4] border border-[#D1BE9B]/25 rounded-[32px] p-8 max-w-sm w-full shadow-[0_20px_50px_rgba(209,190,155,0.22)] z-10 text-center relative overflow-hidden animate-fade-in-up">
         {/* Cute decorative elements */}
         <div className="absolute -top-1 -right-1 opacity-20 pointer-events-none text-[60px] select-none">☁︎</div>
         <div className="absolute -bottom-6 -left-6 opacity-20 pointer-events-none text-[80px] select-none">♡</div>
         
         {/* Close Button */}
         <button 
-          className="absolute top-4 right-4 text-xs text-[#31353A]/50 hover:text-[#31353A] transition-colors border-none bg-transparent cursor-pointer p-1"
+          className="absolute top-4 right-4 text-xs text-[#31353A]/50 hover:text-[#31353A] transition-colors border-none bg-transparent cursor-pointer p-1 z-20"
           onClick={onClose}
         >
           ✕
@@ -61,7 +62,7 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
 
         {/* Dynamic Product Indicator */}
         {productName && (
-          <div className="mb-6 px-4 py-2 rounded-2xl bg-[#D1BE9B]/10 border border-[#D1BE9B]/20 inline-block animate-fade-in-up">
+          <div className="mb-6 px-4 py-2 rounded-2xl bg-[#D1BE9B]/10 border border-[#D1BE9B]/20 inline-block">
             <span className="text-[11.5px] tracking-[0.12em] text-[#A38D6B] font-light flex items-center justify-center gap-1.5"
               style={{ fontFamily: 'Noto Serif TC, serif' }}>
               <span>𓇢𓆸</span> 諮詢商品：{productName}
@@ -69,7 +70,7 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
           </div>
         )}
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 relative z-10">
           <a
             href="https://line.me/R/ti/p/%40180itfru"
             target="_blank"
@@ -97,6 +98,7 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
           ୨୧ ───────── ୨୧
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
