@@ -363,3 +363,16 @@
     animation: none !important;
   }
 }
+
+/* Tarot Envelope Float Animation */
+@keyframes float-envelope {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.animate-float-envelope {
+  animation: float-envelope 4s ease-in-out infinite;
+}
