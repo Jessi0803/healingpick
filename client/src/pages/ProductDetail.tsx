@@ -39,7 +39,7 @@ export default function ProductDetailPage() {
   }
 
   const handleBuy = () => {
-    toast.success(`已收到您對「${product.name}」的結緣意願 🐾`, {
+    toast.success(`已收到您對「${product.name}」的結緣意願 ♡`, {
       description: '結帳功能即將開放,目前請加入官方 LINE 或私訊 Instagram 訂購',
       duration: 6000,
     });
@@ -136,7 +136,7 @@ export default function ProductDetailPage() {
                 onClick={handleBuy}
                 className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95 shadow-md shadow-[#3D4144]/10 hover:shadow-[#D1BE9B]/20"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                立即諮詢購買 🐾
+                立即諮詢購買 ♡
               </button>
 
               {/* Quick feature highlights — keeps the right column visually
@@ -144,51 +144,63 @@ export default function ProductDetailPage() {
               <div className="mt-6 pt-5 border-t border-[#D1BE9B]/15">
                 <p className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase mb-3"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                  ✦ 商品特色快覽
+                  𓂃 ࣪˖ ִֶָ𐀔 商品特色快覽
                 </p>
                 <ul className="space-y-2">
-                  {product.features.map((f) => (
-                    <li key={f.title} className="flex items-start gap-2.5 text-left">
-                      <span className="flex-shrink-0 text-[14px] leading-tight mt-0.5">{f.emoji}</span>
-                      <span className="leading-[1.7]">
-                        <span className="text-[12.5px] tracking-[0.06em] text-[#A38D6B]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                          {f.title}
+                  {product.features.map((f, idx) => {
+                    const cuteIcons = ['♡', '𓇢𓆸', '☁︎', '⟡', '𓂃 ࣪˖', 'ִֶָ𐀔'];
+                    const icon = cuteIcons[idx % cuteIcons.length];
+                    return (
+                      <li key={f.title} className="flex items-start gap-2.5 text-left">
+                        <span className="flex-shrink-0 text-[13px] text-[#A38D6B] leading-none mt-0.5">{icon}</span>
+                        <span className="leading-[1.7]">
+                          <span className="text-[12.5px] tracking-[0.06em] text-[#A38D6B]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                            {f.title}
+                          </span>
+                          <span className="text-[11.5px] tracking-wider text-[#31353A]/68 ml-1.5"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                            {f.desc}
+                          </span>
                         </span>
-                        <span className="text-[11.5px] tracking-wider text-[#31353A]/68 ml-1.5"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          {f.desc}
-                        </span>
-                      </span>
-                    </li>
-                  ))}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>
           </div>
 
           {/* Section: 能量寓意 */}
-          <Section title="能量寓意" subtitle="Meanings">
+          <Section title="能量寓意" subtitle="Meanings" icon="𓇢𓆸">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {product.meanings.map((m) => (
-                <BulletCard key={m.title} {...m} />
-              ))}
+              {product.meanings.map((m, idx) => {
+                const cuteIcons = ['⟡', '♡', '𓇢𓆸', '☁︎', '𓂃 ࣪˖', 'ִֶָ𐀔'];
+                const icon = cuteIcons[idx % cuteIcons.length];
+                return (
+                  <BulletCard key={m.title} emoji={icon} title={m.title} desc={m.desc} />
+                );
+              })}
             </div>
           </Section>
 
           {/* Section: 適合這樣的你 */}
-          <Section title="適合這樣的你" subtitle="Suited For">
+          <Section title="適合這樣的你" subtitle="Suited For" icon="☁︎">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-              {product.suitedFor.map((s) => (
-                <div key={s}
-                  className="flex items-start gap-3 px-4 py-2.5 rounded-2xl bg-[#D1BE9B]/10 border border-[#D1BE9B]/20">
-                  <span className="text-[#A38D6B] mt-0.5">🌷</span>
-                  <span className="text-[12px] tracking-[0.08em] text-[#31353A]/85 leading-[1.9]"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    {s}
-                  </span>
-                </div>
-              ))}
+              {product.suitedFor.map((s, idx) => {
+                const cuteIcons = ['♡', '☁︎', '𓇢𓆸', '⟡', '𓂃 ࣪˖', 'ִֶָ𐀔'];
+                const icon = cuteIcons[idx % cuteIcons.length];
+                return (
+                  <div key={s}
+                    className="flex items-start gap-3 px-4 py-2.5 rounded-2xl bg-[#D1BE9B]/10 border border-[#D1BE9B]/20 shadow-sm">
+                    <span className="text-[#A38D6B] text-[13px] leading-none mt-0.5">{icon}</span>
+                    <span className="text-[12px] tracking-[0.08em] text-[#31353A]/85 leading-[1.9]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      {s}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </Section>
 
@@ -228,13 +240,13 @@ export default function ProductDetailPage() {
   );
 }
 
-function Section({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+function Section({ title, subtitle, icon = '♡', children }: { title: string; subtitle: string; icon?: string; children: React.ReactNode }) {
   return (
     <div className="mb-10 animate-fade-in-up">
       <div className="flex items-center gap-4 mb-5">
         <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-          ♡ {subtitle}
+          {icon} {subtitle}
         </span>
         <h2 className="text-base md:text-lg tracking-[0.2em] text-[#31353A]/85"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
@@ -250,7 +262,7 @@ function Section({ title, subtitle, children }: { title: string; subtitle: strin
 function BulletCard({ emoji, title, desc }: { emoji: string; title: string; desc: string }) {
   return (
     <div className="flex items-start gap-3 px-4 py-3 rounded-2xl bg-white/40 border border-[#D1BE9B]/15 shadow-[0_2px_8px_rgba(209,190,155,0.05)]">
-      <span className="flex-shrink-0 text-lg leading-tight">{emoji}</span>
+      <span className="flex-shrink-0 text-[13px] text-[#A38D6B] leading-none mt-1">{emoji}</span>
       <div>
         <p className="text-[12.5px] tracking-[0.08em] text-[#A38D6B] mb-1"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
