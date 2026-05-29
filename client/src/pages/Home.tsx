@@ -961,7 +961,6 @@ export default function Home() {
           <div className="text-center mb-12">
             <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>Daily Guidance</span>
             <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>今日塔羅指引</h2>
-            <p className="mt-2 text-[11px] tracking-[0.2em] text-[#31353A]/54" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>點擊牌面，接收今日宇宙的訊息</p>
             <div className="divider-gold mt-4 max-w-xs mx-auto">
               <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none"><path d="M50 10 L53 43 L86 46 L53 49 L50 82 L47 49 L14 46 L47 43 Z" fill="currentColor" /></svg>
             </div>

@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { Link } from 'wouter';
+import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -186,7 +187,37 @@ const crystalRecs: Record<string, { name: string; reason: string; color: string 
 type Step = 'intro' | 'question' | 'shuffle' | 'pick' | 'spread' | 'reading';
 
 export default function TarotPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
+  const creditsQuery = trpc.credits.state.useQuery(undefined, {
+    refetchOnWindowFocus: true,
+  });
+
+  // Pre-check the user's remaining quota before letting them start. Saves them
+  // from walking through the whole flow only to be blocked at the last step.
+  const handleStart = () => {
+    const c = creditsQuery.data;
+    if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
+      toast.error('今日免費額度已用完 🐾', {
+        description: isAuthenticated
+          ? '可購買點數繼續算,或等明天的免費額度回來'
+          : '註冊登入就能購買點數繼續算,或等明天的免費額度回來',
+        action: {
+          label: isAuthenticated ? '購買點數' : '註冊登入',
+          onClick: () => {
+            if (isAuthenticated) {
+              window.location.href = '/buy';
+            } else {
+              void login();
+            }
+          },
+        },
+        duration: 6000,
+      });
+      return;
+    }
+    setStep('question');
+  };
+
   const [step, setStep] = useState<Step>('intro');
   const [question, setQuestion] = useState('');
   const [questionType, setQuestionType] = useState('love');
@@ -503,7 +534,7 @@ export default function TarotPage() {
               </div>
 
               <button
-                onClick={() => setStep('question')}
+                onClick={handleStart}
                 className="px-10 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 開始占卜
