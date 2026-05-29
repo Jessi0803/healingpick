@@ -199,15 +199,123 @@ export default function ZiweiPage() {
         <div className="max-w-5xl mx-auto">
 
           {/* Header */}
-          <div className="text-center mb-12 animate-fade-in-up">
-            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
+          <div className="text-center mb-12 animate-fade-in-up w-full">
+            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase block"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               中國命理學
             </span>
-            <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] mt-3 mb-3"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-              紫微斗數命盤
-            </h1>
+            
+            {/* flex justify-center keeps h1 perfectly centred; envelope is absolute so it never shifts the title */}
+            <div className="relative mt-3 mb-3 flex justify-center items-center">
+              <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] m-0"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                紫微斗數命盤
+              </h1>
+
+              {/* Envelope next to title, referencing Tarot layout */}
+              <div className="absolute right-0 top-[calc(50%+0.5rem)] -translate-y-1/2 animate-float-envelope">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button className="relative flex flex-col items-center justify-center group bg-transparent focus:outline-none border-none hover:scale-105 active:scale-[0.92] transition-transform duration-150 ease-out">
+                      <div className="relative flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#FDFBF7] to-[#F0E8DC] border border-[#D1BE9B]/60 shadow-[0_4px_16px_rgba(209,190,155,0.25)] hover:shadow-[0_8px_24px_rgba(163,141,107,0.35)] transition-shadow duration-500 overflow-visible">
+                        {/* Ping ripple — plays once on page load */}
+                        <div className="absolute inset-0 rounded-full border border-[#D1BE9B]/50 animate-envelope-ping pointer-events-none" />
+                        {/* Decorative spinning inner ring */}
+                        <div className="absolute inset-0.5 md:inset-1 rounded-full border border-[#D1BE9B]/40 border-dashed animate-[spin_30s_linear_infinite] pointer-events-none" />
+                        {/* Glint — clips to the circle, sweeps every 8 s */}
+                        <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none z-20">
+                          <div className="absolute top-0 left-0 h-full w-1/2 animate-wax-glint"
+                            style={{ background: 'linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.5) 50%, transparent 80%)' }} />
+                        </div>
+                        {/* Wax seal style envelope icon */}
+                        <div className="relative z-10 flex items-center justify-center text-[#A38D6B] group-hover:text-[#8A7250] transition-colors drop-shadow-sm scale-75 md:scale-90">
+                          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 8L10.8906 13.2604C11.5624 13.7083 12.4376 13.7083 13.1094 13.2604L21 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.2"/>
+                            {/* Gold wax seal */}
+                            <circle cx="12" cy="13.2" r="3" fill="#D1BE9B" className="group-hover:fill-[#C9A86A] transition-colors" />
+                            {/* Elegant Star in the seal */}
+                            <path d="M12 11.2 L12.4 12.8 L14 13.2 L12.4 13.6 L12 15.2 L11.6 13.6 L10 13.2 L11.6 12.8 Z" fill="#FDFBF7" />
+                          </svg>
+                        </div>
+                      </div>
+                      
+                      {/* Tooltip */}
+                      <span className="absolute top-[110%] bg-[#FDFBF7]/80 backdrop-blur-sm border border-[#D1BE9B]/20 text-[#8A7250] text-[9px] md:text-[10px] tracking-[0.1em] px-2 py-1 rounded-md shadow-sm whitespace-nowrap pointer-events-none flex items-center gap-1" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        紫微小教室
+                      </span>
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-[#FDFBF7] border-[#D1BE9B]/30" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                    <DialogHeader>
+                      <DialogTitle className="text-center text-lg tracking-[0.2em] font-extralight text-[#31353A] mb-2 mt-2">
+                        ✦ Mochi 的紫微小祕密 ✦
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      <p>
+                        你有沒有過這種感覺？有時候看著別人好像都很清楚自己要什麼，自己卻像走在迷霧裡，不知道下一步該往哪去。<br/><br/>
+                        其實，我們每個人在出生的那一刻，宇宙就已經偷偷塞給我們一張專屬的<strong className="font-medium text-[#A38D6B]">「人生冒險地圖」</strong>了——這就是紫微斗數。
+                      </p>
+
+                      <div>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🪐 簡單來說，紫微斗數是什麼？</h4>
+                        <p>
+                          如果把算命說得白話一點，它其實就是古代版的<strong className="font-medium text-[#A38D6B]">「大數據性格統計學」</strong>！<br/>
+                          就像每台新買的手機都有「出廠設定」，紫微斗數就是你這台人生的出廠說明書。<br/><br/>
+                          它根據你出生的年、月、日、還有最關鍵的<strong className="font-medium">時辰</strong>，把你的命盤分成 12 個宮位（就像 12 個不同的生活領域，比如你的個性、感情、工作、財運等），並把各種星曜擺進去。
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 為什麼它真的那麼準？因為它超級個人化！</h4>
+                        <p>
+                          很多通俗星座占卜，把全世界幾十億人只分成 12 種。但紫微斗數的組合高達 <strong className="font-medium">20 多萬種</strong>！加上每個人每十年運勢的變化，幾乎不可能找到另一個跟你命盤一模一樣的人。<br/><br/>
+                          所以，這是一份<strong className="font-medium">專門為你量身打造的性格與命運解讀</strong>。
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🌦 命盤不是判決書，而是你的「天氣預報」</h4>
+                        <p>
+                          「算命」最怕聽到什麼「命中注定會很慘」，但紫微斗數根本不是這樣玩的！請把命盤當成你的<strong className="font-medium text-[#A38D6B]">人生天氣預報</strong>：
+                        </p>
+                        <ul className="list-disc pl-5 mt-2 space-y-2">
+                          <li><strong className="font-medium">它告訴你人生的「天氣」：</strong>如果預報說「明天下午會有暴雨」，這不是要你待在家裡哭，而是溫柔提醒你：「出門記得帶把傘喔！」</li>
+                          <li><strong className="font-medium">掌握時機，順勢而為：</strong>在生活裡也是一樣。如果看到這陣子感情宮位有些摩擦，那你就知道最近說話要多想三秒、多給另一半一點溫柔。這不是認命，而是讓你重新掌握人生的主導權！</li>
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🤍 認清自己的設定，跟自己和解</h4>
+                        <p>
+                          很多人的痛苦，其實都來自於「逼自己成為別人」。<br/>
+                          透過命盤，你可以看清自己的出廠設定：
+                        </p>
+                        <ul className="list-disc pl-5 mt-2 space-y-2">
+                          <li>如果你天生就是個喜歡平穩、溫暖人的<strong className="font-medium">「天同星」</strong>，就不用強迫自己去當一個殺伐決斷的冷酷大總裁，那樣太累了。</li>
+                          <li>如果你天生是個熱愛冒險、閒不下來的<strong className="font-medium">「七殺星」</strong>，你就會恍然大悟：「啊！原來我不是定性不夠，我只是天生適合開疆闢土！」</li>
+                        </ul>
+                        <p className="mt-2">
+                          看懂了命盤，你就不會再跟自己內耗。你會明白自己的優點在哪裡，然後順著自己最舒服的姿勢，發光發熱。
+                        </p>
+                      </div>
+
+                      <div className="bg-[#D1BE9B]/10 p-5 rounded-2xl border border-[#D1BE9B]/20 text-[#31353A]/80 mt-8 shadow-sm">
+                        <div className="font-medium text-[#A38D6B] mb-2 flex items-center gap-2 text-[14px]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                          <CatListening className="w-7 h-7" /> Mochi 悄悄對你說：
+                        </div>
+                        <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          「命盤上的星星，從來不是要來嚇你的，它們只是安靜地在夜空裡閃爍，溫柔地指引著你。<br/>
+                          不用給自己太大壓力，深呼吸，輸入你的生辰，讓 Mochi 陪你一起翻開這封宇宙寫給你的悄悄話吧 🐾 💛」
+                        </p>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
             <p className="text-sm italic text-[#31353A]/54 tracking-[0.15em]"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               「星曜落在哪一宮，便訴說人生的故事。」
@@ -700,31 +808,31 @@ export default function ZiweiPage() {
                 </p>
               </div>
 
-              {/* LLM interpretation — full width below chart */}
+              {/* LLM interpretation â full width below chart */}
               <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="text-[#D1BE9B]" style={{ fontSize: '18px' }}>☯</span>
+                  <span className="text-[#D1BE9B]" style={{ fontSize: '18px' }}>â¯</span>
                   <h4 className="text-[13px] tracking-[0.2em] text-[#31353A]/86"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    命盤整體解讀
+                    å½ç¤æ´é«è§£è®
                   </h4>
                 </div>
                 {interpretMutation.isPending && (
                   <div className="flex flex-col items-center py-8 gap-3">
-                    <div className="text-[#D1BE9B] text-2xl animate-spin">☯</div>
+                    <div className="text-[#D1BE9B] text-2xl animate-spin">â¯</div>
                     <p className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      正在解讀你的命盤...
+                      æ­£å¸è§£è®ä½ çå½ç¤...
                     </p>
                   </div>
                 )}
                 {interpretMutation.isError && (
-                  <p className="text-[11px] text-[#EAA8AC] tracking-wider">解讀暫時無法取得，請稍後再試。</p>
+                  <p className="text-[11px] text-[#EAA8AC] tracking-wider">è§£è®æ«æç¡æ³åå¾ï¼è«ç¨å¾åè©¦ã</p>
                 )}
                 {!interpretMutation.isPending && !interpretMutation.isError && !llmInterpretation && (
                   <p className="text-[12px] text-[#31353A]/50 tracking-wider text-center py-4"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    排盤完成後將自動生成 AI 命盤解讀
+                    æç¤å®æå¾å°èªåçæ AI å½ç¤è§£è®
                   </p>
                 )}
                 {llmInterpretation && (
@@ -738,100 +846,6 @@ export default function ZiweiPage() {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Floating Envelope for Ziwei Explanation */}
-      <div className="fixed bottom-6 right-6 z-50 sm:bottom-8 sm:right-8 animate-float-envelope">
-        <Dialog>
-          <DialogTrigger asChild>
-            <button className="relative flex flex-col items-center justify-center group bg-transparent focus:outline-none border-none hover:scale-105 active:scale-[0.92] transition-transform duration-150 ease-out">
-              <div className="relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-[#FDFBF7] to-[#F0E8DC] border border-[#D1BE9B]/60 shadow-[0_4px_16px_rgba(209,190,155,0.25)] hover:shadow-[0_8px_24px_rgba(163,141,107,0.35)] transition-shadow duration-500 overflow-visible">
-                {/* Ping ripple — plays once on page load */}
-                <div className="absolute inset-0 rounded-full border border-[#D1BE9B]/50 animate-envelope-ping pointer-events-none" />
-                {/* Decorative spinning inner ring */}
-                <div className="absolute inset-0.5 md:inset-1 rounded-full border border-[#D1BE9B]/40 border-dashed animate-[spin_30s_linear_infinite] pointer-events-none" />
-                {/* Glint — clips to the circle, sweeps every 8 s */}
-                <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none z-20">
-                  <div className="absolute top-0 left-0 h-full w-1/2 animate-wax-glint"
-                    style={{ background: 'linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.5) 50%, transparent 80%)' }} />
-                </div>
-                {/* Wax seal style envelope icon */}
-                <div className="relative z-10 flex items-center justify-center text-[#A38D6B] group-hover:text-[#8A7250] transition-colors drop-shadow-sm scale-90 md:scale-100">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 8L10.8906 13.2604C11.5624 13.7083 12.4376 13.7083 13.1094 13.2604L21 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.2"/>
-                    {/* Gold wax seal */}
-                    <circle cx="12" cy="13.2" r="3.5" fill="#D1BE9B" className="group-hover:fill-[#C9A86A] transition-colors" />
-                    {/* Elegant Star in the seal */}
-                    <path d="M12 10.8 L12.5 12.7 L14.4 13.2 L12.5 13.7 L12 15.6 L11.5 13.7 L9.6 13.2 L11.5 12.7 Z" fill="#FDFBF7" />
-                  </svg>
-                </div>
-              </div>
-              
-              {/* Tooltip positioned absolutely to avoid layout shift */}
-              <span className="absolute bottom-[115%] bg-[#FDFBF7]/90 backdrop-blur-sm border border-[#D1BE9B]/25 text-[#8A7250] text-[10px] tracking-[0.15em] px-2.5 py-1 rounded-full shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none flex items-center gap-1" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                ☯ 紫微命理信札
-              </span>
-            </button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-[#FDFBF7] border-[#D1BE9B]/30" style={{ fontFamily: 'Noto Serif TC, serif' }}>
-            <DialogHeader>
-              <DialogTitle className="text-center text-lg tracking-[0.2em] font-extralight text-[#31353A] mb-2 mt-2">
-                ✦ 寫給你的宇宙信札：紫微斗數 ✦
-              </DialogTitle>
-            </DialogHeader>
-            <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-              <p className="text-center italic text-[#A38D6B] border-b border-[#D1BE9B]/20 pb-4 mb-4">
-                「這不是束縛你的命運，而是你出生那一刻，宇宙為你寫下的一封溫柔指引。」
-              </p>
-              
-              <p>
-                你有沒有過某些時刻，覺得生活像一團迷霧？或者想不通：為什麼自己總是有些改不掉的性格脾氣，或是某些特別在乎、卻總是不順心的事情？<br/><br/>
-                其實，我們每個人在出生的那一刻起，就在宇宙間領取了一張屬於自己的<strong className="font-medium text-[#A38D6B]">「心靈地圖」</strong>——這就是<strong className="font-medium text-[#A38D6B]">紫微斗數</strong>。
-              </p>
-
-              <div>
-                <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>📊 這不是玄學魔法，而是古代人的「大數據性格統計」</h4>
-                <p>
-                  如果「算命」聽起來太神祕，我們可以換個科學點的角度：<br/>
-                  紫微斗數是起源於一千多年前，古代無數智者透過觀察天體、統計無數人的出生時辰與命運軌跡，不斷歸納、驗證出來的**「人生統計學」**。<br/><br/>
-                  它用你的出生年、月、日、時，算出數十顆星曜落入十二個不同的宮位。它的排列組合高達<strong className="font-medium">二十多萬種</strong>！這意味著，**你的命盤是專屬於你、無可複製的人生說明書**。就像你的「靈魂 DNA」一樣獨一無二。
-                </p>
-              </div>
-
-              <div>
-                <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🧭 命盤是「天氣預報」，而你是那個「決定帶傘的人」</h4>
-                <p>
-                  很多人害怕算命，是怕聽到「不好」的預言。但紫微斗數真正的意義是引導，而不是限制：
-                </p>
-                <ul className="list-disc pl-5 mt-2 space-y-2">
-                  <li><strong className="font-medium">它告訴你人生的「天氣」：</strong>比如它顯示你最近在事業宮有考驗，這不是說你一定會失敗，而是像天氣預報說「明天會下雨」，提醒你出門記得帶傘、做好準備。</li>
-                  <li><strong className="font-medium">掌握時機，順勢而為：</strong>當你知道風往哪裡吹，你就能在順風時揚帆啟航（適合開拓），在逆風時沉澱學習（適合守成）。這樣做起事來自然事半功倍！</li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🤍 幫助你與自己和解，找回內在力量</h4>
-                <p>
-                  很多時候我們的痛苦，來自於「逼自己成為別人」。<br/>
-                  透過命盤，你能清晰地看到自己的「出廠設定」：<br/><br/>
-                  如果你的命宮是溫柔敦厚的「天同星」，就不用強求自己去當個冷酷的霸道總裁；如果你的命宮是開拓冒險的「七殺星」，你就會明白為什麼自己總是不甘於現狀。<br/><br/>
-                  當你認清了自己的天賦與特質，你就能真正**放下無謂的焦慮與內耗，跟自己和解，順著最舒服的姿勢發光。**
-                </p>
-              </div>
-
-              <div className="bg-[#D1BE9B]/10 p-5 rounded-2xl border border-[#D1BE9B]/20 text-[#31353A]/80 mt-8 shadow-sm">
-                <div className="font-medium text-[#A38D6B] mb-2 flex items-center gap-2 text-[14px]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
-                  <CatListening className="w-7 h-7" /> Mochi 的溫柔提醒：
-                </div>
-                <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                  「星曜在命盤上安靜地閃爍，它們從不說謊，也從不恐嚇。它們只是在溫柔地等待你，重新讀懂自己身上的無限可能。<br/>
-                  深呼吸，輸入你的生辰，讓我陪你一起翻開這封寫給你的宇宙信札吧 🐾」
-                </p>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </PageLayout>
   );
