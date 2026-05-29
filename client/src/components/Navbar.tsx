@@ -15,7 +15,7 @@ import { trpc } from '@/lib/trpc';
 
 // Navbar links – flat structure, all items at top level
 const navLinks = [
-  { label: '關於我們', href: '/#about' },
+  { label: '關於我們', href: '/about' },
   { label: '塔羅占卜', href: '/tarot' },
   { label: '紫微斗數', href: '/ziwei' },
   { label: '每日運勢', href: '/fortune/daily' },
@@ -113,7 +113,7 @@ export default function Navbar() {
             : 'py-5 bg-white/10 backdrop-blur-md border-b border-white/20'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between gap-4 relative">
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -135,7 +135,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav – centred, flat */}
-          <div className="hidden lg:flex items-center justify-center gap-6">
+          <div className="hidden lg:flex items-center justify-center gap-6 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => renderNavLink(link))}
           </div>
 

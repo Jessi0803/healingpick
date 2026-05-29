@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import CatCompanion from "./components/CatCompanion";
 import Home from "./pages/Home";
+import About from "./pages/About";
 import Tarot from "./pages/Tarot";
 import Ziwei from "./pages/Ziwei";
 import Fortune from "./pages/Fortune";
@@ -21,6 +22,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/about" component={About} />
       <Route path="/tarot" component={Tarot} />
       <Route path="/ziwei" component={Ziwei} />
       <Route path="/fortune" component={Fortune} />
