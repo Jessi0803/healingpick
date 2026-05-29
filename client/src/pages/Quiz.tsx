@@ -28,6 +28,7 @@ export default function QuizPage() {
     setSelectedAnswers([]);
     setQuizResult(null);
     setIsAnimatingNext(false);
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   };
 
   // Click option handler
@@ -69,6 +70,7 @@ export default function QuizPage() {
     // Fallback to the first available if not mapped
     const finalResult = activeQuiz.results[maxKey] || Object.values(activeQuiz.results)[0];
     setQuizResult(finalResult);
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   };
 
   // Restart active quiz
@@ -83,6 +85,7 @@ export default function QuizPage() {
     setActiveQuiz(null);
     setQuizResult(null);
     setSelectedAnswers([]);
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   };
 
   // Handle purchase click
