@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 
 // ─── Product data ─────────────────────────────────────────────────────────────
-const PRODUCTS = [
+export const PRODUCTS = [
   {
     id: 1,
     name: '薰衣草紫水晶簇',
@@ -242,7 +242,6 @@ const SORT_OPTIONS = [
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
-  const [selectedProduct, setSelectedProduct] = useState<typeof PRODUCTS[0] | null>(null);
   const [typeFilter, setTypeFilter] = useState<'all' | 'self' | 'partner'>('all');
 
   const filtered = PRODUCTS
@@ -341,77 +340,77 @@ export default function ShopPage() {
           {/* Product grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-12">
             {filtered.map((product, i) => (
-              <div
-                key={product.id}
-                className="group cursor-pointer animate-fade-in-up"
-                style={{ animationDelay: `${i * 0.08}s` }}
-                onClick={() => setSelectedProduct(product)}
-              >
-                {/* Image */}
-                <div className="relative overflow-hidden rounded-2xl mb-3 aspect-square">
-                  <img
-                    src={product.img}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  {/* Badges */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                    <span
-                      className={`text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full ${
-                        product.type === 'self'
-                          ? 'bg-[#D1BE9B]/90 text-[#31353A]'
-                          : 'bg-white/80 text-[#31353A]/80'
-                      }`}
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {product.type === 'self' ? '自營' : '合作'}
-                    </span>
-                    {product.tag && (
+              <Link href={`/shop/${product.id}`} key={product.id}>
+                <div
+                  className="group cursor-pointer animate-fade-in-up"
+                  style={{ animationDelay: `${i * 0.08}s` }}
+                >
+                  {/* Image */}
+                  <div className="relative overflow-hidden rounded-2xl mb-3 aspect-square">
+                    <img
+                      src={product.img}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {/* Badges */}
+                    <div className="absolute top-3 left-3 flex flex-col gap-1.5">
                       <span
-                        className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#3D4144]/70 text-white"
+                        className={`text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full ${
+                          product.type === 'self'
+                            ? 'bg-[#D1BE9B]/90 text-[#31353A]'
+                            : 'bg-white/80 text-[#31353A]/80'
+                        }`}
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        {product.tag}
+                        {product.type === 'self' ? '自營' : '合作'}
                       </span>
-                    )}
+                      {product.tag && (
+                        <span
+                          className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#3D4144]/70 text-white"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          {product.tag}
+                        </span>
+                      )}
+                    </div>
+                    {/* Quick view */}
+                    <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="text-[11px] tracking-[0.2em] text-white/90 bg-[#3D4144]/50 backdrop-blur-sm px-3 py-1.5 rounded-full"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        查看詳情
+                      </span>
+                    </div>
                   </div>
-                  {/* Quick view */}
-                  <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-[11px] tracking-[0.2em] text-white/90 bg-[#3D4144]/50 backdrop-blur-sm px-3 py-1.5 rounded-full"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      查看詳情
-                    </span>
-                  </div>
-                </div>
 
-                {/* Info */}
-                <div>
-                  <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    {product.chakra} · {product.hz}
-                  </p>
-                  <h3 className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    {product.name}
-                  </h3>
-                  <p className="text-[11px] italic text-[#31353A]/54 mb-1.5"
-                    style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                    {product.subtitle}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-[#D1BE9B]"
+                  {/* Info */}
+                  <div>
+                    <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                      {product.chakra} · {product.hz}
+                    </p>
+                    <h3 className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      {product.name}
+                    </h3>
+                    <p className="text-[11px] italic text-[#31353A]/54 mb-1.5"
                       style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                      NT$ {product.price.toLocaleString()}
-                    </span>
-                    {product.originalPrice && (
-                      <span className="text-[11px] text-[#31353A]/46 line-through"
+                      {product.subtitle}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-[#D1BE9B]"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                        {product.originalPrice.toLocaleString()}
+                        NT$ {product.price.toLocaleString()}
                       </span>
-                    )}
+                      {product.originalPrice && (
+                        <span className="text-[11px] text-[#31353A]/46 line-through"
+                          style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                          {product.originalPrice.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -457,137 +456,6 @@ export default function ShopPage() {
         </div>
       </div>
 
-      {/* ── Product Modal ─────────────────────────────────────────────────── */}
-      {selectedProduct && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedProduct(null)}
-        >
-          <div className="absolute inset-0 bg-[#3D4144]/30 backdrop-blur-sm" />
-          <div
-            className="relative bg-[#FAF7F4] rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-fade-in-up"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Close */}
-            <button
-              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/70 flex items-center justify-center text-[#31353A]/62 hover:text-[#31353A] transition-colors"
-              onClick={() => setSelectedProduct(null)}>
-              ✕
-            </button>
-
-            <div className="flex flex-col md:flex-row">
-              {/* Image */}
-              <div className="md:w-1/2 h-64 md:h-auto">
-                <img
-                  src={selectedProduct.img}
-                  alt={selectedProduct.name}
-                  className="w-full h-full object-cover rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none"
-                />
-              </div>
-
-              {/* Info */}
-              <div className="md:w-1/2 p-6 md:p-8">
-                {/* Badges */}
-                <div className="flex gap-2 mb-3">
-                  <span className={`text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full ${
-                    selectedProduct.type === 'self' ? 'bg-[#D1BE9B]/30 text-[#A38D6B]' : 'bg-[#E8EDE5] text-[#31353A]/72'
-                  }`} style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    {selectedProduct.type === 'self' ? '自營商品' : '合作商品'}
-                  </span>
-                  {selectedProduct.tag && (
-                    <span className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#3D4144]/10 text-[#31353A]/72"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {selectedProduct.tag}
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-1"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  {selectedProduct.chakra} · {selectedProduct.hz} · {selectedProduct.element}象
-                </p>
-                <h2 className="text-lg tracking-[0.15em] text-[#31353A]/86 mb-0.5"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                  {selectedProduct.name}
-                </h2>
-                <p className="text-xs italic text-[#D1BE9B] mb-4"
-                  style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                  {selectedProduct.subtitle}
-                </p>
-
-                {/* Price */}
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl text-[#D1BE9B]"
-                    style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                    NT$ {selectedProduct.price.toLocaleString()}
-                  </span>
-                  {selectedProduct.originalPrice && (
-                    <span className="text-sm text-[#31353A]/46 line-through"
-                      style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                      {selectedProduct.originalPrice.toLocaleString()}
-                    </span>
-                  )}
-                </div>
-
-                {/* Properties */}
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {selectedProduct.properties.map(prop => (
-                    <span key={prop}
-                      className="text-[11px] tracking-[0.1em] px-2.5 py-1 rounded-full bg-[#D1BE9B]/12 text-[#A38D6B] border border-[#D1BE9B]/20"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {prop}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Description */}
-                <p className="text-[11px] leading-[2] text-[#31353A]/68 tracking-wider mb-4 whitespace-pre-line"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  {selectedProduct.description}
-                </p>
-
-                {/* Specs */}
-                <div className="grid grid-cols-2 gap-2 mb-5">
-                  {[
-                    { label: '產地', value: selectedProduct.origin },
-                    { label: '尺寸', value: selectedProduct.size },
-                    { label: '重量', value: selectedProduct.weight },
-                    { label: '脈輪', value: selectedProduct.chakra },
-                  ].map(spec => (
-                    <div key={spec.label} className="bg-[#D1BE9B]/8 rounded-lg p-2">
-                      <p className="text-[10px] tracking-[0.15em] text-[#D1BE9B] mb-0.5"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                        {spec.label}
-                      </p>
-                      <p className="text-[11px] tracking-[0.1em] text-[#31353A]/75"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        {spec.value}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* CTA */}
-                <button
-                  className="w-full py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  onClick={() => {
-                    toast.success(`已收到您對「${selectedProduct.name}」的購買意願！`, {
-                      description: '購物車功能即將開放，目前請透過 Instagram 或 LINE 官方帳號訂購。',
-                      duration: 5000,
-                    });
-                  }}>
-                  加入購物車
-                </button>
-                <p className="text-center mt-2 text-[11px] text-[#31353A]/46 tracking-wider"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  ✦ 每顆水晶皆附能量淨化說明書
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </PageLayout>
   );
 }

@@ -191,11 +191,31 @@ export default function CatCompanion() {
 
   const pearl = useMemo(() => PEARLS[order[cursor] ?? 0], [order, cursor]);
 
-  // 元件掛載時淡入
+  // 元件掛載時淡入 + 自動展開卡片
   useEffect(() => {
-    const t = setTimeout(() => setIsVisible(true), 500);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(() => setIsVisible(true), 500);
+    const t2 = setTimeout(() => setIsOpen(true), 1500);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
+
+  // 卡片打開時,每 8 秒自動切下一則
+  useEffect(() => {
+    if (!isOpen) return;
+    const id = setInterval(() => {
+      setCursor((c) => {
+        const next = c + 1;
+        if (next >= order.length) {
+          setOrder(shuffle(Array.from({ length: PEARLS.length }, (_, i) => i)));
+          return 0;
+        }
+        return next;
+      });
+    }, 8000);
+    return () => clearInterval(id);
+  }, [isOpen, order.length]);
 
   const handleCatClick = () => {
     setIsOpen((o) => !o);
@@ -296,13 +316,13 @@ export default function CatCompanion() {
             </div>
           )}
 
-          {/* 下一則提示 */}
+          {/* 自動輪播提示 */}
           <div className="px-4 pb-3">
             <p
               className="text-[10px] text-[#D1BE9B]/70 tracking-wider text-center"
               style={{ fontFamily: 'Noto Serif TC, serif' }}
             >
-              點一下卡片換下一則 ♡
+              ✦ 每幾秒自動換一則(也可以點卡片換)
             </p>
           </div>
 
