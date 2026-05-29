@@ -271,43 +271,15 @@ export default function ZiweiPage() {
                         <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 為什麼它真的那麼準？因為它超級個人化！</h4>
                         <p>
                           很多通俗星座占卜，把全世界幾十億人只分成 12 種。但紫微斗數的組合高達 <strong className="font-medium">20 多萬種</strong>！加上每個人每十年運勢的變化，幾乎不可能找到另一個跟你命盤一模一樣的人。<br/><br/>
-                          所以，這是一份<strong className="font-medium">專門為你量身打造的性格與命運解讀</strong>。
+                          而這份準確度，來自於它三大核心的精密設計：
                         </p>
-                      </div>
-
-                      <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🌦 命盤不是判決書，而是你的「天氣預報」</h4>
-                        <p>
-                          「算命」最怕聽到什麼「命中注定會很慘」，但紫微斗數根本不是這樣玩的！請把命盤當成你的<strong className="font-medium text-[#A38D6B]">人生天氣預報</strong>：
-                        </p>
-                        <ul className="list-disc pl-5 mt-2 space-y-2">
-                          <li><strong className="font-medium">它告訴你人生的「天氣」：</strong>如果預報說「明天下午會有暴雨」，這不是要你待在家裡哭，而是溫柔提醒你：「出門記得帶把傘喔！」</li>
-                          <li><strong className="font-medium">掌握時機，順勢而為：</strong>在生活裡也是一樣。如果看到這陣子感情宮位有些摩擦，那你就知道最近說話要多想三秒、多給另一半一點溫柔。這不是認命，而是讓你重新掌握人生的主導權！</li>
+                        <ul className="list-disc pl-5 mt-2 space-y-3">
+                          <li><strong className="font-medium text-[#A38D6B]">多維度的星系交織：</strong>除了出生的年月，最關鍵的還有出生「時辰」，這決定了你獨一無二的星曜排列。主星與數十顆輔星相互碰撞，細緻地勾勒出每個人性格的極微小紋理。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">十二宮位的生態網絡：</strong>命宮、夫妻宮、事業宮、財帛宮等十二個宮位並非孤立，而是透過「三方四正」的相位交互作用。你的事業可能受到性格（命宮）的牽引，也可能被潛意識（福德宮）所左右，呈現出極其立體且符合現實的複雜人生。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">動態的時間軌跡：</strong>它不僅是一張靜態的性格速寫，更會隨時間流轉。每十年轉換的「大限（大運）」與每年的「流年」，精準捕捉了你在不同生命階段面臨的機遇、心境轉變與內在成長。</li>
                         </ul>
-                      </div>
-
-                      <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🤍 認清自己的設定，跟自己和解</h4>
-                        <p>
-                          很多人的痛苦，其實都來自於「逼自己成為別人」。<br/>
-                          透過命盤，你可以看清自己的出廠設定：
-                        </p>
-                        <ul className="list-disc pl-5 mt-2 space-y-2">
-                          <li>如果你天生就是個喜歡平穩、溫暖人的<strong className="font-medium">「天同星」</strong>，就不用強迫自己去當一個殺伐決斷的冷酷大總裁，那樣太累了。</li>
-                          <li>如果你天生是個熱愛冒險、閒不下來的<strong className="font-medium">「七殺星」</strong>，你就會恍然大悟：「啊！原來我不是定性不夠，我只是天生適合開疆闢土！」</li>
-                        </ul>
-                        <p className="mt-2">
-                          看懂了命盤，你就不會再跟自己內耗。你會明白自己的優點在哪裡，然後順著自己最舒服的姿勢，發光發熱。
-                        </p>
-                      </div>
-
-                      <div className="bg-[#D1BE9B]/10 p-5 rounded-2xl border border-[#D1BE9B]/20 text-[#31353A]/80 mt-8 shadow-sm">
-                        <div className="font-medium text-[#A38D6B] mb-2 flex items-center gap-2 text-[14px]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
-                          <CatListening className="w-7 h-7" /> Mochi 悄悄對你說：
-                        </div>
-                        <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          「命盤上的星星，從來不是要來嚇你的，它們只是安靜地在夜空裡閃爍，溫柔地指引著你。<br/>
-                          不用給自己太大壓力，深呼吸，輸入你的生辰，讓 Mochi 陪你一起翻開這封宇宙寫給你的悄悄話吧 🐾 💛」
+                        <p className="mt-3">
+                          所以，紫微斗數不是空泛的預測，而是一張無比契合你真實生命歷程、指引你順勢而為的<strong className="font-medium text-[#A38D6B]">「靈魂地圖」</strong>。
                         </p>
                       </div>
                     </div>
