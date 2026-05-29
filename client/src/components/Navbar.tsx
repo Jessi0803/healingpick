@@ -21,7 +21,6 @@ const navLinks = [
   { label: '心靈樹洞', href: '/treehole' },
   { label: '能量測驗', href: '/quiz' },
   { label: '能量商品', href: '/shop' },
-  { label: '關於我們', href: '/about' },
 ];
 
 export default function Navbar() {
