@@ -6,7 +6,7 @@
 import { useParams, Link } from 'wouter';
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
-import { PRODUCTS } from './Shop';
+import { PRODUCTS } from '@/data/products';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 
 export default function ProductDetailPage() {
