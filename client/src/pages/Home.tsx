@@ -6,7 +6,7 @@
  *   2. Crystal Altar (水晶祭壇)
  *   3. Features Overview (四大功能入口)
  *   4. Divination Preview (占卜聖殿入口)
- *   5. Treehole Teaser (心靈樹洞)
+ *   5. Quiz Teaser (能量測驗)
  *   6. Shop Preview (能量商品)
  *   7. Testimonials (使用者心聲)
  */
