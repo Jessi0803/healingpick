@@ -126,7 +126,7 @@ export default function Footer() {
             className="text-[11px] tracking-[0.15em] text-[#31353A]/50"
             style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
           >
-            © 2025 SOUL EASE 能量聖所 All rights reserved.
+            © 2025 HealingPick All rights reserved.
           </p>
           <p
             className="text-[11px] tracking-[0.15em] text-[#31353A]/46 italic"

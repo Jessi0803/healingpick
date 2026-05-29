@@ -61,14 +61,10 @@ export default function AboutPage() {
           
           {/* Header */}
           <div className="text-center mb-16 relative">
-            <span className="text-[11px] tracking-[0.45em] text-[#D1BE9B] uppercase font-light"
-              style={{ fontFamily: 'Noto Serif TC, serif' }}>
-              About HealingPick
-            </span>
             <div className="relative inline-block mt-2">
-              <h1 className="text-3xl md:text-4xl tracking-[0.25em] font-extralight bg-gradient-to-r from-[#8C7A5F] via-[#D1BE9B] to-[#B08968] bg-clip-text text-transparent py-1 px-4 drop-shadow-[0_2px_4px_rgba(209,190,155,0.06)]"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                關於 HealingPick
+              <h1 className="text-3xl md:text-4xl tracking-[0.25em] font-extralight bg-gradient-to-r from-[#8C7A5F] via-[#D1BE9B] to-[#B08968] bg-clip-text text-transparent py-1 px-6 drop-shadow-[0_2px_4px_rgba(209,190,155,0.06)]"
+                style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                About HealingPick
               </h1>
               <DreamySparkle className="absolute -top-3 -right-2 w-4 h-4 opacity-75 animate-pulse" />
               <DreamySparkle className="absolute -bottom-1 -left-2 w-3 h-3 opacity-60 animate-pulse" style={{ animationDelay: '1s' }} />
