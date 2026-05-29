@@ -13,6 +13,7 @@ import Treehole from "./pages/Treehole";
 import Shop from "./pages/Shop";
 import History from "./pages/History";
 import Buy from "./pages/Buy";
+import ResetPassword from "./pages/ResetPassword";
 import LoginDialog from "./components/LoginDialog";
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/shop" component={Shop} />
       <Route path="/history" component={History} />
       <Route path="/buy" component={Buy} />
+      <Route path="/reset-password" component={ResetPassword} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

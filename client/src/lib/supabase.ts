@@ -26,16 +26,54 @@ export async function signInWithGoogle(): Promise<void> {
   });
 }
 
-/**
- * Send a passwordless magic-link login email. Returns true if Supabase
- * accepted the request (doesn't guarantee delivery).
- */
-export async function signInWithEmail(email: string): Promise<{ ok: boolean; error?: string }> {
+/** Email + password sign in. */
+export async function signInWithPassword(
+  email: string,
+  password: string
+): Promise<{ ok: boolean; error?: string }> {
   if (!supabase) return { ok: false, error: "Auth not configured" };
-  const { error } = await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/**
+ * Email + password sign up. Supabase will (depending on project settings)
+ * send a verification email; the user must click it before they can log in.
+ */
+export async function signUpWithPassword(
+  email: string,
+  password: string
+): Promise<{ ok: boolean; error?: string; needsVerification?: boolean }> {
+  if (!supabase) return { ok: false, error: "Auth not configured" };
+  const { data, error } = await supabase.auth.signUp({
     email,
+    password,
     options: { emailRedirectTo: window.location.origin },
   });
+  if (error) return { ok: false, error: error.message };
+  // session is null when email confirmation is required
+  return { ok: true, needsVerification: !data.session };
+}
+
+/** Send a password reset email; the link lands on /reset-password. */
+export async function sendPasswordResetEmail(
+  email: string
+): Promise<{ ok: boolean; error?: string }> {
+  if (!supabase) return { ok: false, error: "Auth not configured" };
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/** Update the signed-in user's password (used on /reset-password). */
+export async function updatePassword(
+  newPassword: string
+): Promise<{ ok: boolean; error?: string }> {
+  if (!supabase) return { ok: false, error: "Auth not configured" };
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) return { ok: false, error: error.message };
   return { ok: true };
 }
