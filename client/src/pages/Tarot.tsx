@@ -295,10 +295,24 @@ export default function TarotPage() {
       {/* Floating Envelope for Tarot Secrets */}
       <Dialog>
         <DialogTrigger asChild>
-          <button className="fixed bottom-6 right-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-[#D1BE9B] text-white shadow-lg hover:bg-[#A38D6B] hover:scale-110 transition-all duration-300 group">
-            <Mail className="w-5 h-5" />
-            <span className="absolute right-14 bg-[#31353A]/80 text-[#FAF7F4] text-[11px] tracking-[0.1em] px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              Mochi 的塔羅小秘密
+          <button className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-[#FDFBF7] to-[#F0E8DC] border border-[#D1BE9B]/60 shadow-[0_8px_24px_rgba(209,190,155,0.35)] hover:shadow-[0_12px_32px_rgba(163,141,107,0.4)] hover:-translate-y-1 transition-all duration-500 group overflow-visible focus:outline-none">
+            {/* Decorative spinning inner ring */}
+            <div className="absolute inset-1 rounded-full border border-[#D1BE9B]/40 border-dashed animate-[spin_40s_linear_infinite] pointer-events-none" />
+            
+            {/* Wax seal style envelope icon */}
+            <div className="relative z-10 flex items-center justify-center text-[#A38D6B] group-hover:text-[#8A7250] transition-colors drop-shadow-sm">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 8L10.8906 13.2604C11.5624 13.7083 12.4376 13.7083 13.1094 13.2604L21 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.2"/>
+                {/* Gold wax seal */}
+                <circle cx="12" cy="13.2" r="3" fill="#D1BE9B" className="group-hover:fill-[#C9A86A] transition-colors" />
+                <path d="M11 13.2H13M12 12.2V14.2" stroke="#FDFBF7" strokeWidth="0.8" strokeLinecap="round"/>
+              </svg>
+            </div>
+            
+            {/* Elegant glassmorphic tooltip */}
+            <span className="absolute right-16 top-1/2 -translate-y-1/2 bg-[#FDFBF7]/90 backdrop-blur-md border border-[#D1BE9B]/30 text-[#8A7250] text-[11px] tracking-[0.2em] px-4 py-2.5 rounded-full opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 shadow-[0_4px_12px_rgba(209,190,155,0.15)] whitespace-nowrap pointer-events-none flex items-center gap-1.5" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+              <span className="text-[#C9A86A] text-[10px]">✦</span> Mochi 的塔羅秘密
             </span>
           </button>
         </DialogTrigger>
