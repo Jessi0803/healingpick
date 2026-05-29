@@ -15,6 +15,7 @@ import { trpc } from '@/lib/trpc';
 
 // Navbar links – flat structure, all items at top level
 const navLinks = [
+  { label: '關於我們', href: '/#about' },
   { label: '塔羅占卜', href: '/tarot' },
   { label: '紫微斗數', href: '/ziwei' },
   { label: '每日運勢', href: '/fortune/daily' },
@@ -30,7 +31,7 @@ export default function Navbar() {
   const credits = creditsQuery.data;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -43,7 +44,65 @@ export default function Navbar() {
     setMobileOpen(false);
   }, [location]);
 
-  const isActive = (href: string) => location === href;
+  const isActive = (href: string) => {
+    if (href.startsWith('/#')) {
+      return location === '/' && window.location.hash === href.substring(1);
+    }
+    return location === href;
+  };
+
+  const renderNavLink = (link: { label: string; href: string }, isMobile = false) => {
+    const isHash = link.href.startsWith('/#') || link.href.startsWith('#');
+    const baseClass = isMobile 
+      ? `text-xs tracking-[0.25em] py-3 border-b border-[#D1BE9B]/15 transition-colors ${
+          isActive(link.href) ? 'text-[#D1BE9B]' : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
+        }`
+      : `text-xs tracking-[0.2em] transition-colors duration-300 ${
+          isActive(link.href) ? 'text-[#D1BE9B]' : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
+        }`;
+
+    const style = { fontFamily: 'Noto Serif TC, serif', fontWeight: 300 };
+
+    if (isHash) {
+      const hashId = link.href.split('#')[1];
+      return (
+        <a
+          key={link.label}
+          href={link.href}
+          onClick={(e) => {
+            if (isMobile) setMobileOpen(false);
+            if (location === '/') {
+              e.preventDefault();
+              document.getElementById(hashId)?.scrollIntoView({ behavior: 'smooth' });
+              window.history.pushState(null, '', link.href);
+            } else {
+              e.preventDefault();
+              setLocation('/');
+              setTimeout(() => {
+                document.getElementById(hashId)?.scrollIntoView({ behavior: 'smooth' });
+                window.history.pushState(null, '', link.href);
+              }, 300);
+            }
+          }}
+          className={baseClass}
+          style={style}
+        >
+          {link.label}
+        </a>
+      );
+    }
+
+    return (
+      <Link
+        key={link.label}
+        href={link.href}
+        className={baseClass}
+        style={style}
+      >
+        {link.label}
+      </Link>
+    );
+  };
 
   return (
     <>
@@ -77,20 +136,7 @@ export default function Navbar() {
 
           {/* Desktop Nav – centred, flat */}
           <div className="hidden lg:flex items-center justify-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={`text-xs tracking-[0.2em] transition-colors duration-300 ${
-                  isActive(link.href)
-                    ? 'text-[#D1BE9B]'
-                    : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
-                }`}
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => renderNavLink(link))}
           </div>
 
 
@@ -167,20 +213,7 @@ export default function Navbar() {
           />
           <div className="absolute top-0 right-0 bottom-0 w-72 bg-[#FAF7F4] shadow-2xl flex flex-col pt-20 pb-8 px-6">
             <div className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className={`text-xs tracking-[0.25em] py-3 border-b border-[#D1BE9B]/15 transition-colors ${
-                    isActive(link.href)
-                      ? 'text-[#D1BE9B]'
-                      : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
-                  }`}
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => renderNavLink(link, true))}
               {/* Mobile auth links */}
               <div className="mt-4 pt-4 border-t border-[#D1BE9B]/20 flex flex-col gap-2">
                 {isAuthenticated ? (
