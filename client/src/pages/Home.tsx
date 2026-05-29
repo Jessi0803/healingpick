@@ -381,20 +381,20 @@ export default function Home() {
           <div key={i} className="absolute w-1 h-1 rounded-full bg-[#D1BE9B]/30 pointer-events-none" style={{ top: pos.t, left: pos.l }} />
         ))}
 
-        {/* ── 給今天的你 · floating note (left side) ── */}
+        {/* ── 給正在思考的你 · floating note (left side) ── */}
         <div className="hidden lg:flex absolute left-8 top-28 flex-col items-start gap-1 pointer-events-none animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
           <div className="glass-panel rounded-2xl px-5 py-4 border border-[#D1BE9B]/20 shadow-[0_4px_20px_rgba(209,190,155,0.1)] w-48 text-left">
-            <p className="text-center text-[11px] tracking-[0.25em] text-[#A38D6B] mb-3"
+            <p className="text-center text-[11.5px] tracking-[0.2em] text-[#A38D6B] mb-3"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              ♡ 給今天的你 ♡
+              ♡ 給正在思考的你 ♡
             </p>
             <div className="w-full h-px bg-[#D1BE9B]/25 mb-3" />
             <ul className="space-y-2.5 text-[11.5px] leading-[1.6] text-[#31353A]/76 tracking-wider"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              <li><span className="text-[#A38D6B] mr-1.5">☁︎</span>抽張牌</li>
-              <li><span className="text-[#A38D6B] mr-1.5">♡</span>看看運勢</li>
-              <li><span className="text-[#A38D6B] mr-1.5">𓇢𓆸</span>聊聊心事</li>
-              <li><span className="text-[#A38D6B] mr-1.5">⟡</span>找到屬於你的療癒小物</li>
+              <li><span className="text-[#A38D6B] mr-1.5">☁︎</span>愛情該往哪裡走？</li>
+              <li><span className="text-[#A38D6B] mr-1.5">♡</span>工作該不該繼續？</li>
+              <li><span className="text-[#A38D6B] mr-1.5">𓇢𓆸</span>心裡的煩惱該跟誰說？</li>
+              <li><span className="text-[#A38D6B] mr-1.5">⟡</span>來找找屬於你的方向</li>
             </ul>
             <p className="text-center text-[12px] text-[#A38D6B]/70 mt-3"
               style={{ fontFamily: 'Noto Serif TC, serif' }}>
