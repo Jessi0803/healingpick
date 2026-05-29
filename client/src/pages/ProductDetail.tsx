@@ -131,26 +131,28 @@ export default function ProductDetailPage() {
                   </span>
                 ))}
               </div>
-              {/* Specs Grid */}
-              <div className="grid grid-cols-2 gap-3 mb-8">
-                {[
-                  { label: '產地來源', value: product.origin },
-                  { label: '規格尺寸', value: product.size },
-                  { label: '商品重量', value: product.weight },
-                  { label: '對應脈輪', value: product.chakra },
-                ].map(spec => (
-                  <div key={spec.label} className="bg-[#D1BE9B]/8 rounded-xl p-3 border border-[#D1BE9B]/15 text-left">
-                    <p className="text-[10px] tracking-[0.15em] text-[#D1BE9B] mb-1"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                      {spec.label}
-                    </p>
-                    <p className="text-[11px] tracking-[0.08em] text-[#31353A]/80 font-normal"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {spec.value}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              {/* Specs Grid (Only for natural crystals, hidden for crafts like Nine-Tailed Fox) */}
+              {product.category !== 'glass' && (
+                <div className="grid grid-cols-2 gap-3 mb-8">
+                  {[
+                    { label: '產地來源', value: product.origin },
+                    { label: '規格尺寸', value: product.size },
+                    { label: '商品重量', value: product.weight },
+                    { label: '對應脈輪', value: product.chakra },
+                  ].map(spec => (
+                    <div key={spec.label} className="bg-[#D1BE9B]/8 rounded-xl p-3 border border-[#D1BE9B]/15 text-left">
+                      <p className="text-[10px] tracking-[0.15em] text-[#D1BE9B] mb-1"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                        {spec.label}
+                      </p>
+                      <p className="text-[11px] tracking-[0.08em] text-[#31353A]/80 font-normal"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        {spec.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Purchase Button CTA */}
               <button
@@ -159,10 +161,6 @@ export default function ProductDetailPage() {
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 立即諮詢購買 🐾
               </button>
-              <p className="text-center mt-3 text-[10px] text-[#31353A]/46 tracking-wider"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                ✦ 天然水晶琉璃皆附能量淨化指南與專屬淨化包
-              </p>
 
             </div>
           </div>
