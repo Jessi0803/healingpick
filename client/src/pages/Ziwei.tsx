@@ -9,7 +9,7 @@
  *   - AI interpretation
  */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
@@ -250,6 +250,18 @@ export default function ZiweiPage() {
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
+  const formSectionRef = useRef<HTMLDivElement | null>(null);
+  const focusAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const handlePopularQuestionClick = (prompt: string) => {
+    setFocusArea(prompt.slice(0, 100));
+    window.requestAnimationFrame(() => {
+      formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => {
+        focusAreaRef.current?.focus({ preventScroll: true });
+      }, 450);
+    });
+  };
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -527,7 +539,7 @@ export default function ZiweiPage() {
                               <button
                                 key={prompt}
                                 type="button"
-                                onClick={() => setFocusArea(prompt.slice(0, 100))}
+                                  onClick={() => handlePopularQuestionClick(prompt)}
                                 className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
                                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                               >
@@ -542,7 +554,7 @@ export default function ZiweiPage() {
                 </div>
               </div>
 
-              <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20">
+              <div ref={formSectionRef} className="glass-panel scroll-mt-24 rounded-2xl p-8 border border-[#D1BE9B]/20">
                 <h2 className="text-sm tracking-[0.2em] text-[#31353A]/82 mb-6 text-center"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   輸入生辰資料
@@ -621,6 +633,7 @@ export default function ZiweiPage() {
                     想了解的面向（選填）
                   </label>
                   <textarea
+                    ref={focusAreaRef}
                     value={focusArea}
                     onChange={e => setFocusArea(e.target.value.slice(0, 100))}
                     maxLength={100}
