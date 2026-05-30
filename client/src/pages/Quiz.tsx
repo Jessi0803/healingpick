@@ -12,6 +12,48 @@ import ContactDialog from '@/components/ContactDialog';
 
 const ARCHIVE_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
 
+const RESULT_HEALING_IMAGES: Record<string, { keywords: string; lock: number; alt: string }> = {
+  'scent:A': { keywords: 'cute,peach,tea', lock: 1101, alt: '白桃烏龍感的清甜療癒圖片' },
+  'scent:B': { keywords: 'cozy,bedroom,sunlight', lock: 1102, alt: '白麝香感的乾淨療癒圖片' },
+  'scent:C': { keywords: 'forest,rain,peaceful', lock: 1103, alt: '雨後森林感的清新療癒圖片' },
+  'scent:D': { keywords: 'rose,garden,soft', lock: 1104, alt: '玫瑰花園感的浪漫療癒圖片' },
+  'soul-home:A': { keywords: 'moon,night,calm', lock: 1201, alt: '靜謐月球感的安靜療癒圖片' },
+  'soul-home:B': { keywords: 'seaside,sunset,cozy', lock: 1202, alt: '溫柔海邊感的放鬆療癒圖片' },
+  'soul-home:C': { keywords: 'ancient,forest,moss', lock: 1203, alt: '巨木森林感的穩定療癒圖片' },
+  'soul-home:D': { keywords: 'storybook,town,cottage', lock: 1204, alt: '童話小鎮感的溫暖療癒圖片' },
+  'past-life:A': { keywords: 'library,castle,warm', lock: 1301, alt: '王室顧問感的智慧療癒圖片' },
+  'past-life:B': { keywords: 'herbs,cottage,garden', lock: 1302, alt: '神祕草藥師感的自然療癒圖片' },
+  'past-life:C': { keywords: 'stars,telescope,night', lock: 1303, alt: '皇家占星師感的星空療癒圖片' },
+  'past-life:D': { keywords: 'painting,studio,flowers', lock: 1304, alt: '自由藝術家感的創作療癒圖片' },
+  'past-life:E': { keywords: 'travel,map,adventure', lock: 1305, alt: '流浪冒險家感的自由療癒圖片' },
+  'love-magnet:A': { keywords: 'safe,harbor,cozy', lock: 1401, alt: '成熟治癒型的安心療癒圖片' },
+  'love-magnet:B': { keywords: 'sunny,picnic,cute', lock: 1402, alt: '熱烈直球型的明亮療癒圖片' },
+  'love-magnet:C': { keywords: 'romantic,stars,flowers', lock: 1403, alt: '浪漫靈性型的心動療癒圖片' },
+  'love-magnet:D': { keywords: 'coffee,desk,plants', lock: 1404, alt: '專注事業型的穩定療癒圖片' },
+  'stress-style:A': { keywords: 'quiet,room,window', lock: 1501, alt: '安靜充電感的放鬆療癒圖片' },
+  'stress-style:B': { keywords: 'tea,friends,cozy', lock: 1502, alt: '被好好理解感的陪伴療癒圖片' },
+  'stress-style:C': { keywords: 'tidy,desk,plants', lock: 1503, alt: '重新整理生活感的清爽療癒圖片' },
+  'stress-style:D': { keywords: 'walking,park,sunlight', lock: 1504, alt: '行動感休息的輕盈療癒圖片' },
+  'decision-style:A': { keywords: 'heart,journal,soft', lock: 1601, alt: '怕讓人失望時的溫柔療癒圖片' },
+  'decision-style:B': { keywords: 'thinking,cafe,notebook', lock: 1602, alt: '想找到最好答案時的療癒圖片' },
+  'decision-style:C': { keywords: 'home,blanket,warm', lock: 1603, alt: '需要安全感時的療癒圖片' },
+  'decision-style:D': { keywords: 'first,step,path', lock: 1604, alt: '準備開始一小步的療癒圖片' },
+  'heart-weather:A': { keywords: 'misty,morning,sunlight', lock: 1701, alt: '微霧早晨感的療癒圖片' },
+  'heart-weather:B': { keywords: 'soft,rain,window', lock: 1702, alt: '安靜小雨感的療癒圖片' },
+  'heart-weather:C': { keywords: 'clearing,sky,flowers', lock: 1703, alt: '雲後放晴感的療癒圖片' },
+  'heart-weather:D': { keywords: 'moonlight,window,calm', lock: 1704, alt: '深夜月光感的療癒圖片' },
+};
+
+const getResultHealingImage = (quizSlug?: string, resultKey?: string) => {
+  if (!quizSlug || !resultKey) return undefined;
+  const image = RESULT_HEALING_IMAGES[`${quizSlug}:${resultKey}`];
+  if (!image) return undefined;
+  return {
+    src: `https://loremflickr.com/800/600/${image.keywords}?lock=${image.lock}`,
+    alt: image.alt,
+  };
+};
+
 export default function QuizPage() {
   const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState<number>(0);
@@ -175,6 +217,7 @@ export default function QuizPage() {
 
   const theme = getQuizTheme();
   const recommendedProduct = quizResult ? findProduct(quizResult.crystalSlug) : undefined;
+  const resultHealingImage = getResultHealingImage(activeQuiz?.slug, quizResult?.key);
 
   return (
     <PageLayout>
@@ -447,11 +490,11 @@ export default function QuizPage() {
                   ୨୧ ───────── ୨୧
                 </div>
 
-                {recommendedProduct && (
+                {resultHealingImage && (
                   <div className="mx-auto mb-7 w-full max-w-sm overflow-hidden rounded-[28px] border border-[#D1BE9B]/20 bg-white/45 p-2 shadow-[0_14px_40px_rgba(209,190,155,0.14)]">
                     <img
-                      src={recommendedProduct.img}
-                      alt={`${quizResult.title} 的療癒圖片`}
+                      src={resultHealingImage.src}
+                      alt={resultHealingImage.alt}
                       className="aspect-[4/3] w-full rounded-[22px] object-cover"
                     />
                   </div>
