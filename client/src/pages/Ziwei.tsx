@@ -316,7 +316,7 @@ export default function ZiweiPage() {
                     </DialogHeader>
                     <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       <p>
-                        很多人來看紫微斗數，不是真的想知道<strong className="font-medium text-[#A38D6B]">「自己命好不好」</strong>。<br /><br />
+                        當你開始想問<strong className="font-medium text-[#A38D6B]">「為什麼又是這樣」</strong>，其實就很適合看看命盤了。<br /><br />
                         比較像是最近心裡已經卡了一陣子，想知道：為什麼我明明很努力，事情還是一直卡住？為什麼有些關係總是走到差不多的地方？為什麼一有壓力，就會變成自己也不太喜歡的樣子？
                       </p>
 
