@@ -519,7 +519,7 @@ export default function TarotPage() {
                 </h3>
                 <p className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  這副牌不是只替你看現在發生什麼，也會幫你整理出接下來可以怎麼做。五張牌一起看，通常比只抽一張更容易知道問題卡在哪裡，以及下一步可以先往哪個方向走。
+                  這副牌不是只替你看現在發生什麼，也會幫你整理出接下來可以怎麼做。五張牌一起看，通常比只抽一張更容易知道問題卡在哪裡，以及下一步可以先往哪個方向走。Mochi 會隨機抽出 5 張大阿爾卡納，包含正位和逆位，讓每次抽牌都有不同層次。再把你的提問和整個牌陣放在一起看，幫你不只知道牌面在說什麼，也比較清楚自己接下來可以怎麼做。
                 </p>
                 <div className="grid gap-2 mb-6">
                   {[
@@ -544,12 +544,6 @@ export default function TarotPage() {
                       </p>
                     </div>
                   ))}
-                </div>
-                <div className="pt-4 border-t border-[#D1BE9B]/15">
-                  <p className="text-[12px] leading-[1.9] text-[#31353A]/62 tracking-wide"
-                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                    Mochi 會隨機抽出 5 張大阿爾卡納，包含正位和逆位，讓每次抽牌都有不同層次。再把你的提問和整個牌陣放在一起看，幫你不只知道牌面在說什麼，也比較清楚自己接下來可以怎麼做。
-                  </p>
                 </div>
               </div>
 
