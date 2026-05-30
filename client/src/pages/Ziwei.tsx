@@ -75,7 +75,7 @@ const HOURS = [
   { label: '亥時 (21:00–23:00)', value: 11 },
 ];
 
-const POPULAR_QUESTIONS = [
+const QUESTION_PROMPTS = [
   '我最近為什麼一直卡住？',
   '這段關係還適合繼續嗎？',
   '我的工作方向是不是該調整？',
@@ -202,9 +202,12 @@ export default function ZiweiPage() {
   const [hourValue, setHourValue] = useState('0');
   const [gender, setGender] = useState<'男' | '女'>('女');
   const [focusArea, setFocusArea] = useState('');
+  const [questionPromptIndex, setQuestionPromptIndex] = useState(0);
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
+
+  const currentQuestionPrompt = QUESTION_PROMPTS[questionPromptIndex % QUESTION_PROMPTS.length];
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -412,28 +415,39 @@ export default function ZiweiPage() {
               <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60">
                 <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-2 text-center"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  ◎ 你可以帶著這些問題來看命盤
+                  ◎ 不知道怎麼問也沒關係
                 </p>
                 <p className="text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide text-center mb-4"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  問題不需要很完整，寫下最近最在意的事就好。Mochi 會把你的問題和命盤一起解讀。
+                  你可以自由寫下最近最在意的事，下面只是一些提問靈感。
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {POPULAR_QUESTIONS.map((question) => (
+                <div className="rounded-2xl border border-[#D1BE9B]/14 bg-white/45 px-4 py-4 text-center">
+                  <p className="text-[10px] tracking-[0.22em] text-[#A38D6B]/75 mb-2"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    也許你想問
+                  </p>
+                  <p className="min-h-[3.6rem] flex items-center justify-center text-[14px] leading-[1.9] tracking-[0.08em] text-[#31353A]/76"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    「{currentQuestionPrompt}」
+                  </p>
+                  <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
                     <button
-                      key={question}
                       type="button"
-                      onClick={() => setFocusArea(question.slice(0, 100))}
-                      className={`rounded-full border px-3 py-2 text-[11px] tracking-[0.08em] transition-all duration-200 ${
-                        focusArea === question
-                          ? 'border-[#D1BE9B] bg-[#D1BE9B]/16 text-[#8A7250]'
-                          : 'border-[#D1BE9B]/22 bg-white/40 text-[#31353A]/64 hover:border-[#D1BE9B]/55 hover:text-[#8A7250]'
-                      }`}
+                      onClick={() => setFocusArea(currentQuestionPrompt.slice(0, 100))}
+                      className="rounded-full border border-[#D1BE9B]/45 bg-[#31353A] px-4 py-2 text-[11px] tracking-[0.16em] text-[#FAF7F4] transition-all duration-200 hover:bg-[#D1BE9B] hover:text-[#31353A]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
-                      {question}
+                      用這題開始
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => setQuestionPromptIndex((index) => index + 1)}
+                      className="rounded-full border border-[#D1BE9B]/26 bg-white/45 px-4 py-2 text-[11px] tracking-[0.16em] text-[#8A7250] transition-all duration-200 hover:border-[#D1BE9B]/55 hover:bg-white/70"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    >
+                      換一個靈感
+                    </button>
+                  </div>
                 </div>
               </div>
 
