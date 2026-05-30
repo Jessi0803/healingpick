@@ -359,6 +359,9 @@ export default function ZiweiPage() {
                       <div>
                         <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 所以，算一次能幫你看到什麼？</h4>
                         <p>
+                          你可能會想知道：為什麼我明明很努力，事情還是一直卡住？為什麼有些關係總是走到差不多的地方？為什麼一有壓力，就會變成自己也不太喜歡的樣子？
+                        </p>
+                        <p className="mt-3">
                           很多人算完最有感的，通常是下面這幾件事：
                         </p>
                         <ul className="list-disc pl-5 mt-2 space-y-3">
