@@ -10,6 +10,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { CatListening } from '@/components/CatElements';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { recommendForFortune } from '@/data/recommend';
@@ -133,16 +135,86 @@ function HowItWorksPanel() {
           </div>
         ))}
       </div>
-      <div className="mt-5 pt-4 border-t border-[#D1BE9B]/15">
-        <p className="text-[10px] tracking-[0.28em] text-[#8A7250] mb-2 text-center"
-          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-          ◎ 運勢如何計算
-        </p>
-        <p className="text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide text-center"
-          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-          Mochi 會結合今日月相、你的星座元素與星座特性，整理成一份專屬今日提醒。
-        </p>
-      </div>
+    </div>
+  );
+}
+
+function FortuneClassroomEnvelope() {
+  return (
+    <div className="absolute right-4 md:right-12 top-[calc(50%+0.5rem)] -translate-y-1/2 animate-float-envelope">
+      <Dialog>
+        <DialogTrigger asChild>
+          <button className="relative flex flex-col items-center justify-center group bg-transparent focus:outline-none border-none hover:scale-105 active:scale-[0.92] transition-transform duration-150 ease-out">
+            <div className="relative flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-[#FDFBF7] to-[#F0E8DC] border border-[#D1BE9B]/60 shadow-[0_4px_16px_rgba(209,190,155,0.25)] hover:shadow-[0_8px_24px_rgba(163,141,107,0.35)] transition-shadow duration-500 overflow-visible">
+              <div className="absolute inset-0 rounded-full border border-[#D1BE9B]/50 animate-envelope-ping pointer-events-none" />
+              <div className="absolute inset-0.5 md:inset-1 rounded-full border border-[#D1BE9B]/40 border-dashed animate-[spin_30s_linear_infinite] pointer-events-none" />
+              <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none z-20">
+                <div className="absolute top-0 left-0 h-full w-1/2 animate-wax-glint"
+                  style={{ background: 'linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.5) 50%, transparent 80%)' }} />
+              </div>
+              <div className="relative z-10 flex items-center justify-center text-[#A38D6B] group-hover:text-[#8A7250] transition-colors drop-shadow-sm scale-75 md:scale-90">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 8L10.8906 13.2604C11.5624 13.7083 12.4376 13.7083 13.1094 13.2604L21 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.2"/>
+                  <circle cx="12" cy="13.2" r="3" fill="#D1BE9B" className="group-hover:fill-[#C9A86A] transition-colors" />
+                  <path d="M11 13.2H13M12 12.2V14.2" stroke="#FDFBF7" strokeWidth="0.8" strokeLinecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <span className="absolute top-[110%] bg-[#FDFBF7]/80 backdrop-blur-sm border border-[#D1BE9B]/20 text-[#8A7250] text-[9px] md:text-[10px] tracking-[0.1em] px-2 py-1 rounded-md shadow-sm whitespace-nowrap pointer-events-none flex items-center gap-1"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              運勢小教室
+            </span>
+          </button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-[#FDFBF7] border-[#D1BE9B]/30" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg tracking-[0.2em] font-extralight text-[#31353A] mb-2 mt-2">
+              ✦ Mochi 的每日運勢小秘密 ✦
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            <p>
+              你可以把每日運勢想成一份<strong className="font-medium text-[#A38D6B]">「今天的能量天氣預報」</strong>。<br/><br/>
+              天氣預報不會替你決定要不要出門，但它會提醒你：「今天可能會下雨，記得帶傘。」每日運勢也是這樣，不是要替你安排命運，而是幫你先看見今天比較順的節奏。
+            </p>
+
+            <div>
+              <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🌙 第一步：先看今天的月相</h4>
+              <p>
+                Mochi 會先用今天的日期計算月亮走到哪個階段。新月、滿月、上弦月、下弦月的感覺都不一樣：有些日子適合開始，有些日子適合整理，有些日子則比較適合放下。<br/><br/>
+                所以運勢不是每天亂寫一句好聽的話，而是先看今天整體環境的能量底色。
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>♈ 第二步：再放進你的星座特性</h4>
+              <p>
+                同一個滿月，牡羊座和雙魚座感受到的重點不會完全一樣。牡羊可能會被提醒「別急著衝」，雙魚可能會被提醒「先照顧情緒」。<br/><br/>
+                因為每個星座都有自己的元素、性格節奏、優勢和容易卡住的地方，Mochi 會把這些放進解讀裡，讓提醒比較像是寫給你，而不是寫給所有人。
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>☀️ 第三步：翻譯成今天能用的提醒</h4>
+              <p>
+                最後，Mochi 會把「今日月相」和「你的星座特性」整理成幾個生活面向：整體狀態、感情、工作財運、健康與行動建議。<br/><br/>
+                你不需要把它當成絕對答案。更像是早上出門前，有一隻懂你的貓咪輕輕提醒：「今天可以勇敢一點，但也別忘了留一點力氣給自己。」
+              </p>
+            </div>
+
+            <div className="bg-[#D1BE9B]/10 p-5 rounded-2xl border border-[#D1BE9B]/20 text-[#31353A]/80 mt-8 shadow-sm">
+              <div className="font-medium text-[#A38D6B] mb-2 flex items-center gap-2 text-[14px]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                <CatListening className="w-7 h-7" /> Mochi 的悄悄話：
+              </div>
+              <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                「每日運勢不是要限制你，而是幫你更溫柔地使用今天。<br/>
+                如果今天的提醒剛好說中你心裡某個地方，那就把它當成一盞小燈，陪你走過今天就好 🐾」
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -252,10 +324,13 @@ export default function FortunePage() {
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               Celestial Guidance
             </span>
-            <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] mt-3 mb-3"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-              每日運勢
-            </h1>
+            <div className="relative mt-3 mb-10 md:mb-8 flex justify-center items-center">
+              <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] m-0"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                每日運勢
+              </h1>
+              <FortuneClassroomEnvelope />
+            </div>
             <p className="text-xs text-[#31353A]/54 tracking-[0.2em]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               {dateStr}
