@@ -5,6 +5,23 @@ import { invokeLLM, extractTextContent } from "../_core/llm";
 import { astro } from "iztro";
 import { t, translateChineseDate } from "./ziwei-locale";
 
+const ZIWEI_SECTION_START = "**目前問題在哪**";
+
+function cleanZiweiInterpretation(content: string) {
+  const normalized = content.trim();
+  const sectionIndex = normalized.indexOf(ZIWEI_SECTION_START);
+
+  if (sectionIndex > 0) {
+    return normalized.slice(sectionIndex).trim();
+  }
+
+  return normalized
+    .replace(/^#+\s*命盤整體解讀\s*/u, "")
+    .replace(/^(你好|哈囉|嗨)[^。\n]*[。\n]\s*/u, "")
+    .replace(/^Mochi\s*看到你的命盤了[^。\n]*[。\n]\s*/u, "")
+    .trim();
+}
+
 // 時辰選項（供前後端共用）
 export const SHICHEN_OPTIONS = [
   "子時 (23:00-01:00)",
@@ -136,7 +153,9 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
 如果【特別想了解的面向】已經很明確，例如感情、工作、財運、家人相處，請集中回答該主題，不要硬加入無關面向。
 如果沒有特別填寫，或問題很模糊，才用 2-3 個面向整理，例如工作、感情、財務或自我狀態。
 
-請依照以下段落提供解讀（整體控制在 260-320 字，全程使用繁體中文，語氣溫柔但白話）。不要另加寒暄開場，直接完整輸出四個段落：
+請依照以下段落提供解讀（整體控制在 260-320 字，全程使用繁體中文，語氣溫柔但白話）。
+第一行必須直接是「${ZIWEI_SECTION_START}」，禁止加「你好」「哈囉」「嗨」「Mochi 看到你的命盤」或任何寒暄開場。
+請務必完整輸出四個段落；如果接近字數限制，優先保留四段完整，不要寫開場、不要寫總標題。
 每個主要段落都至少放一個簡短、貼近日常的例子，但例子要短，不要讓整體超過字數限制。若使用者問感情，可舉「對方忙時有沒有主動告知、吵架後願不願意修復、你是不是常把不舒服吞下去」；若問工作，可舉「整理作品或履歷、先測試副業、小心把所有事都自己扛」；若問財運，可舉「記錄三天花費、先分清必要支出和情緒性消費」。
 
 **目前問題在哪**：說明命盤反映出的核心狀態，明確說出現在容易卡住的原因，避免只堆星曜名詞。
@@ -152,16 +171,18 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
           {
             role: "system",
             content:
-              "你是「Mochi」，一隻很懂紫微斗數、有靈氣的療癒貓咪。把對方當平輩的好朋友聊，不是在哄小孩：可愛來自細膩優雅、帶點俏皮的口吻，而不是裝幼稚。少用「喔～」「呢～」這類幼稚語尾，也不要一直用第三人稱講「Mochi 怎樣」，更不要說教。可以偶爾用貓掌 🐾 點綴，但不要出現「喵」這個字。全程繁體中文、白話好懂、不文謅謅、不使用任何英文。少用抽象玄學詞，必須具體、可理解、能舉例。不下絕對斷言。",
+              `你是「Mochi」，一隻很懂紫微斗數、有靈氣的療癒貓咪。把對方當平輩的好朋友聊，不是在哄小孩：可愛來自細膩優雅、帶點俏皮的口吻，而不是裝幼稚。少用「喔～」「呢～」這類幼稚語尾，也不要一直用第三人稱講「Mochi 怎樣」，更不要說教。可以偶爾用貓掌 🐾 點綴，但不要出現「喵」這個字。全程繁體中文、白話好懂、不文謅謅、不使用任何英文。少用抽象玄學詞，必須具體、可理解、能舉例。不下絕對斷言。禁止寒暄開場，第一行必須直接是「${ZIWEI_SECTION_START}」。`,
           },
           { role: "user", content: prompt },
         ],
-        maxTokens: 1400,
+        maxTokens: 2200,
       });
 
       const rawContent = response.choices?.[0]?.message?.content;
       const interpretation = rawContent
-        ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+        ? cleanZiweiInterpretation(
+            extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+          )
         : "解讀暫時無法取得，請稍後再試。";
 
       return {
