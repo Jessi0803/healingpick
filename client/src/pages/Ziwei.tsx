@@ -409,7 +409,7 @@ export default function ZiweiPage() {
                     {
                       icon: '◈',
                       label: '不是只給答案',
-                      desc: 'Mochi 會幫你整理成你看得懂的語言，讓你知道下一步可以怎麼走、適合怎麼發揮、怎麼累積資源、什麼時候該衝、什麼時候該穩。',
+                      desc: '讓你知道下一步可以怎麼走、適合怎麼發揮、怎麼累積資源、什麼時候該衝、什麼時候該穩。',
                     },
                   ].map((s) => (
                     <div key={s.label} className="flex items-start gap-3 rounded-xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/55 px-3 py-3">
