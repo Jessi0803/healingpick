@@ -20,6 +20,7 @@ const navLinks = [
   { label: '每日運勢', href: '/fortune/daily' },
   { label: '心理測驗', href: '/quiz' },
   { label: '能量商品', href: '/shop' },
+  { label: '購買點數', href: '/buy' },
 ];
 
 const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、每日運勢用完免費額度後，每次解讀消耗 1 點。';
