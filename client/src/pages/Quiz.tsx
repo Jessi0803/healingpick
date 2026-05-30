@@ -230,6 +230,7 @@ export default function QuizPage() {
                   >
                     <div className="absolute inset-[10px] rounded-[22px] border border-[#B89D68]/18 pointer-events-none" />
                     <div className="absolute -top-16 -right-14 w-36 h-36 rounded-full bg-[#D1BE9B]/12 blur-2xl pointer-events-none transition-opacity duration-300 group-hover:opacity-100 opacity-40" />
+                    <div className="quiz-card-glint pointer-events-none" />
                     
                     <div className="relative z-10 flex items-start justify-between gap-4 mb-8">
                       <div>
@@ -318,9 +319,9 @@ export default function QuizPage() {
                   </span>
                   
                   {/* Progress Line */}
-                  <div className="w-52 h-px bg-[#B89D68]/20 rounded-full relative overflow-hidden">
+                  <div className="quiz-progress-track w-52 h-px bg-[#B89D68]/20 rounded-full relative overflow-hidden">
                     <div 
-                      className="absolute top-0 left-0 h-full bg-[#8A6D45] transition-[width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-full"
+                      className="quiz-progress-fill absolute top-0 left-0 h-full bg-[#8A6D45] transition-[width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-full"
                       style={{ width: `${((currentQuestionIdx + 1) / activeQuiz.questions.length) * 100}%` }}
                     />
                   </div>
@@ -352,7 +353,7 @@ export default function QuizPage() {
                       key={idx}
                       onClick={() => handleSelectOption(opt.scoreKey)}
                       disabled={isAnimatingNext}
-                      className={`quiz-option-button w-full text-left px-6 py-4 text-xs md:text-sm tracking-wide border rounded-2xl font-light disabled:opacity-70 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/70 ${
+                      className={`quiz-option-button relative overflow-hidden w-full text-left px-6 py-4 text-xs md:text-sm tracking-wide border rounded-2xl font-light disabled:opacity-70 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/70 ${
                         selectedOptionKey === opt.scoreKey
                           ? 'bg-[#2F3336] text-[#FAF7F4] border-[#2F3336] shadow-md'
                           : 'bg-[#FFF9EF]/55 border-[#B89D68]/20 text-[#31353A]/80'
@@ -384,7 +385,8 @@ export default function QuizPage() {
             <div className="animate-fade-in-up max-w-2xl mx-auto text-center">
               
               {/* Outer results board */}
-              <div className="glass-panel bg-white/45 backdrop-blur-md border border-[#D1BE9B]/25 rounded-[40px] p-8 md:p-12 shadow-[0_20px_60px_rgba(209,190,155,0.12)] relative overflow-hidden mb-8">
+              <div className="quiz-result-card glass-panel bg-white/45 backdrop-blur-md border border-[#D1BE9B]/25 rounded-[40px] p-8 md:p-12 shadow-[0_20px_60px_rgba(209,190,155,0.12)] relative overflow-hidden mb-8">
+                <div className="quiz-result-reveal pointer-events-none" />
                 
                 {/* Elegant decorative corners */}
                 <div className="absolute top-4 left-6 opacity-30 select-none text-xs">𓆩♡𓆪</div>
