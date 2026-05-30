@@ -13,6 +13,22 @@ const cardSchema = z.object({
   positionDesc: z.string(),
 });
 
+function isTarotInterpretationComplete(content: string, positions: string[]) {
+  const trimmed = content.trim();
+  const hasCardSections = positions.every((position) => trimmed.includes(position));
+  return (
+    hasCardSections &&
+    trimmed.includes("整體訊息") &&
+    trimmed.includes("給你的話") &&
+    /[。！？.!?]$/u.test(trimmed)
+  );
+}
+
+function isLengthLimited(finishReason: string | null | undefined) {
+  if (!finishReason) return false;
+  return ["length", "max_tokens", "MAX_TOKENS"].includes(finishReason);
+}
+
 export const tarotRouter = router({
   /**
    * 根據抽到的牌陣，呼叫 LLM 進行完整解讀
@@ -80,18 +96,49 @@ ${cardsSummary}
 
 最後，根據牌陣能量，給予一句溫柔的鼓勵語。`;
 
-      const response = await invokeLLM({
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
+      const messages = [
+        { role: "system" as const, content: systemPrompt },
+        { role: "user" as const, content: userPrompt },
+      ];
+      const requiredPositions = input.cards.map((card) => card.position);
+
+      let response = await invokeLLM({
+        messages,
         maxTokens: 1000,
       });
 
-      const rawContent = response.choices?.[0]?.message?.content;
-      const interpretation = rawContent
+      let rawContent = response.choices?.[0]?.message?.content;
+      let interpretation = rawContent
         ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
         : '解讀暫時無法取得，請稍後再試。';
+
+      if (
+        rawContent &&
+        (isLengthLimited(response.choices?.[0]?.finish_reason) ||
+          !isTarotInterpretationComplete(interpretation, requiredPositions))
+      ) {
+        response = await invokeLLM({
+          messages: [
+            messages[0],
+            {
+              role: "user",
+              content: `${userPrompt}
+
+上一版塔羅解讀被截斷或段落不完整。請重新輸出完整解讀：
+- 五張牌的位置標題都必須出現
+- 必須包含「# ✦ 整體訊息」與「# 🐾 給你的話」
+- 最後一句必須完整收尾
+- 每段要短，整體仍控制在 320-380 字，不要超過 400 字`,
+            },
+          ],
+          maxTokens: 1600,
+        });
+
+        rawContent = response.choices?.[0]?.message?.content;
+        interpretation = rawContent
+          ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+          : interpretation;
+      }
 
       return { interpretation };
     }),
