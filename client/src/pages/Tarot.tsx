@@ -272,6 +272,17 @@ const QUESTION_PROMPTS: Record<string, string[]> = {
   ],
 };
 
+const QUESTION_CATEGORIES = [
+  { id: 'romance',          label: '感情曖昧', icon: '♥', questions: QUESTION_PROMPTS.romance },
+  { id: 'reconciliation',   label: '復合關係', icon: '♡', questions: QUESTION_PROMPTS.reconciliation },
+  { id: 'careerChoice',     label: '職涯選擇', icon: '✦', questions: QUESTION_PROMPTS.careerChoice },
+  { id: 'moneyOpportunity', label: '財務機會', icon: '◇', questions: QUESTION_PROMPTS.moneyOpportunity },
+  { id: 'stuck',            label: '問題釐清', icon: '☆', questions: QUESTION_PROMPTS.stuck },
+  { id: 'decision',         label: '選項抉擇', icon: '○', questions: QUESTION_PROMPTS.decision },
+  { id: 'boundaries',       label: '人際界線', icon: '◈', questions: QUESTION_PROMPTS.boundaries },
+  { id: 'emotions',         label: '情緒整理', icon: '☽', questions: QUESTION_PROMPTS.emotions },
+];
+
 export default function TarotPage() {
   const { isAuthenticated, login } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
@@ -307,6 +318,7 @@ export default function TarotPage() {
   const [step, setStep] = useState<Step>('intro');
   const [question, setQuestion] = useState('');
   const [questionType, setQuestionType] = useState('romance');
+  const [activeQuestionCategory, setActiveQuestionCategory] = useState('romance');
   const [drawnCards, setDrawnCards] = useState<ReturnType<typeof drawCards>>([]);
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
@@ -406,7 +418,16 @@ export default function TarotPage() {
   }
 
   const recommendedProducts = step === 'reading' ? recommendForTarot(questionType, question) : [];
-  const questionPrompts = QUESTION_PROMPTS[questionType] ?? QUESTION_PROMPTS.stuck;
+  const handleQuestionTypeSelect = (type: string) => {
+    setQuestionType(type);
+    setActiveQuestionCategory(type);
+  };
+
+  const handlePopularQuestionClick = (prompt: string, type: string) => {
+    setQuestion(prompt.slice(0, 120));
+    setQuestionType(type);
+    setActiveQuestionCategory(type);
+  };
 
   return (
     <PageLayout>
@@ -637,14 +658,14 @@ export default function TarotPage() {
                       { id: 'reconciliation',   label: '復合關係', icon: '♡' },
                       { id: 'careerChoice',     label: '職涯選擇', icon: '✦' },
                       { id: 'moneyOpportunity', label: '財務機會', icon: '◇' },
-                      { id: 'stuck',            label: '卡住迷惘', icon: '☆' },
-                      { id: 'decision',         label: '做決定', icon: '○' },
+                      { id: 'stuck',            label: '問題釐清', icon: '☆' },
+                      { id: 'decision',         label: '選項抉擇', icon: '○' },
                       { id: 'boundaries',       label: '人際界線', icon: '◈' },
                       { id: 'emotions',         label: '情緒整理', icon: '☽' },
                     ].map(t => (
                       <button
                         key={t.id}
-                        onClick={() => setQuestionType(t.id)}
+                        onClick={() => handleQuestionTypeSelect(t.id)}
                         className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all duration-200 text-xs tracking-[0.15em] ${
                           questionType === t.id
                             ? 'border-[#D1BE9B] bg-[#D1BE9B]/15 text-[#A38D6B]'
@@ -677,23 +698,61 @@ export default function TarotPage() {
                     style={{ fontFamily: 'Cormorant Garamond, serif', color: question.length >= 120 ? '#C9837A' : question.length >= 100 ? '#A38D6B' : '#31353A66' }}>
                     {question.length} / 120
                   </div>
-                  <div className="mt-3">
-                    <p className="text-[10px] tracking-[0.22em] text-[#D1BE9B] mb-2"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      提問靈感
+                  <div className="mt-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60 px-4 py-4">
+                    <p className="text-[11px] tracking-[0.3em] text-[#8A7250]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                      ◎ 熱門問題
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {questionPrompts.map(prompt => (
-                        <button
-                          key={prompt}
-                          type="button"
-                          onClick={() => setQuestion(prompt.slice(0, 120))}
-                          className="px-3 py-1.5 rounded-full border border-[#D1BE9B]/20 bg-white/35 text-[10.5px] leading-[1.6] tracking-[0.08em] text-[#31353A]/62 hover:border-[#D1BE9B]/45 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] transition-all duration-200 active:scale-[0.98]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                        >
-                          {prompt}
-                        </button>
-                      ))}
+                    <p className="mt-2 mb-3 text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      不知道怎麼問也沒關係，可以先從大家常問的方向開始，點一下再改成自己的情況。
+                    </p>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {QUESTION_CATEGORIES.map((category) => {
+                        const isOpen = activeQuestionCategory === category.id;
+
+                        return (
+                          <div key={category.id} className="overflow-hidden rounded-xl border border-[#D1BE9B]/14 bg-white/38">
+                            <button
+                              type="button"
+                              onClick={() => setActiveQuestionCategory(isOpen ? '' : category.id)}
+                              className={`flex w-full items-center justify-between gap-2 px-3 py-3 text-left transition-all duration-200 ${
+                                isOpen ? 'bg-[#D1BE9B]/10' : 'hover:bg-white/45'
+                              }`}
+                              aria-expanded={isOpen}
+                            >
+                              <span className="flex min-w-0 items-center gap-2">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/12 text-[11px] text-[#A38D6B]">
+                                  {category.icon}
+                                </span>
+                                <span className="text-[11px] tracking-[0.16em] text-[#8A7250]"
+                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                                  {category.label}
+                                </span>
+                              </span>
+                              <span className={`text-[13px] text-[#A38D6B] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                                ˅
+                              </span>
+                            </button>
+
+                            {isOpen && (
+                              <div className="animate-fade-in-up grid gap-2 border-t border-[#D1BE9B]/10 px-2.5 py-2.5">
+                                {category.questions.map(prompt => (
+                                  <button
+                                    key={prompt}
+                                    type="button"
+                                    onClick={() => handlePopularQuestionClick(prompt, category.id)}
+                                    className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
+                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                                  >
+                                    {prompt}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                   <p className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
