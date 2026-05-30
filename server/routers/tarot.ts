@@ -85,7 +85,7 @@ ${cardsSummary}
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        maxTokens: 900,
+        maxTokens: 1000,
       });
 
       const rawContent = response.choices?.[0]?.message?.content;

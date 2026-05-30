@@ -175,7 +175,7 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
           },
           { role: "user", content: prompt },
         ],
-        maxTokens: 2200,
+        maxTokens: 1000,
       });
 
       const rawContent = response.choices?.[0]?.message?.content;
