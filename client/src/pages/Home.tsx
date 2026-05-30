@@ -138,24 +138,128 @@ const altarData: Record<string, {
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 const testimonials = [
   {
-    text: '那陣子工作跟感情剛好都卡在一起，我其實只是想找個地方把腦袋整理一下。抽完牌不是那種很玄的感覺，反而像有人幫我把心裡那團東西慢慢講清楚，看完會比較知道自己下一步想怎麼走。',
-    name: '小雨',
-    tag: '塔羅 × 心靈樹洞',
+    text: '半夜睡不著亂點的，沒想到有一句剛好打到我。它說我不是不知道答案，只是一直在等別人先開口。嗯，好吧，被發現了。',
+    name: 'Lina',
+    tag: '塔羅占卜',
     crystal: '紫水晶',
   },
   {
-    text: '我本來對命盤其實有點半信半疑，但裡面有幾個地方真的很像在講我平常不太會說出口的狀態。不是那種神奇到起雞皮疙瘩的準，比較像你會默默想一下，喔，原來我一直卡著的是這個。',
-    name: 'Mia',
-    tag: '紫微斗數 × 能量商品',
+    text: '我問的是工作。老實說我本來期待它直接跟我說要不要離職，但它沒有，它反而把我現在那種又累、又怕自己是不是太草莓的狀態講出來。看完有比較冷靜。',
+    name: '小孟',
+    tag: '塔羅占卜',
+    crystal: '紫水晶',
+  },
+  {
+    text: '這個塔羅跟我以前玩的不太一樣欸，它不是一直講對方怎樣怎樣，反而會一直問你自己到底想要什麼。剛開始有點煩，後來想想滿有道理的哈哈。',
+    name: '77',
+    tag: '塔羅占卜',
     crystal: '粉晶',
   },
   {
-    text: '我現在出門前都會順手看一下今日運勢，大概一分鐘就能看完。它不會硬跟你說今天一定會怎樣，比較像先提醒我今天節奏放慢一點、哪裡要留意，忙起來之前看一眼，整個人會穩很多。',
-    name: '阿哲',
+    text: '我問題打得超亂，因為我自己也不知道要問什麼。結果解讀看完反而比較知道，原來我其實是在問「我還要不要繼續等」。',
+    name: '匿名使用者',
+    tag: '塔羅占卜',
+    crystal: '紫水晶',
+  },
+  {
+    text: '抽完沒有那種人生突然開悟啦，但心裡有鬆一點。它講話不會很可怕，也不會一直灌雞湯，這點我喜歡。',
+    name: 'Ariel',
+    tag: '塔羅占卜',
+    crystal: '黃水晶',
+  },
+  {
+    text: '紫微我真的完全門外漢，什麼宮什麼星都看不懂。這邊至少看得下去，而且有幾段講到我的個性滿準的，尤其是表面很穩、其實腦袋裡一直想備案那段。',
+    name: '阿庭',
+    tag: '紫微斗數',
+    crystal: '粉晶',
+  },
+  {
+    text: '我本來只是想看事業，結果被安全感那邊戳到。它沒有說我命不好，只是說我可能習慣先抓住確定的東西。這句有停下來想一下。',
+    name: 'Wen',
+    tag: '紫微斗數',
+    crystal: '黃水晶',
+  },
+  {
+    text: '有點意外。以前看命盤都覺得很像在被宣判，這個比較像把你平常的慣性攤開來看。沒有那麼玄，反而比較舒服。',
+    name: 'Kelly',
+    tag: '紫微斗數',
+    crystal: '紫水晶',
+  },
+  {
+    text: '老實說有些名詞我還是不熟，但整體不會難讀。它講關係裡我容易先照顧別人，後面自己爆掉，這個……滿像我的。',
+    name: 'Momo',
+    tag: '紫微斗數',
+    crystal: '粉晶',
+  },
+  {
+    text: '看完紫微沒有覺得「哇命運都決定了」，反而是覺得原來我有些反應模式是有跡可循的。這種講法我比較吃得下去。',
+    name: 'J',
+    tag: '紫微斗數',
+    crystal: '黃水晶',
+  },
+  {
+    text: '早上捷運上看一下剛剛好，不會太長。今天那句「先不要急著把全部想清楚」救到我，因為我真的一早就在焦慮。',
+    name: 'Yuna',
     tag: '每日運勢',
     crystal: '黃水晶',
   },
+  {
+    text: '每日運勢滿像小便條的，不是預言。它有時候講的事情很普通，可是普通到剛好，會讓我今天比較記得照顧自己。',
+    name: 'Pei',
+    tag: '每日運勢',
+    crystal: '紫水晶',
+  },
+  {
+    text: '我不是每天看，但心情很亂的時候會點。看完不會突然變超正能量，就是比較穩一點，這樣其實就夠了。',
+    name: 'Ann',
+    tag: '每日運勢',
+    crystal: '粉晶',
+  },
+  {
+    text: '喜歡它沒有嚇人。很多星座運勢會寫什麼小心破財小心爛桃花，這個比較像：今天慢一點也沒關係。舒服很多。',
+    name: '小方',
+    tag: '每日運勢',
+    crystal: '紫水晶',
+  },
+  {
+    text: '每日運勢的語氣不會太仙，也不會像罐頭文。偶爾會有一句很剛好，然後我就會截圖給朋友看。',
+    name: 'Ning',
+    tag: '每日運勢',
+    crystal: '黃水晶',
+  },
+  {
+    text: '朋友傳測驗給我，我原本只是想打發時間。結果測出來說我表面很 chill 但心裡很多小劇場，笑死，有夠我。',
+    name: '魚魚',
+    tag: '心理測驗',
+    crystal: '粉晶',
+  },
+  {
+    text: '我是先被水晶照片吸引進來的，後來才玩測驗。它推薦的方式不像硬推銷，比較像先問你最近怎麼了，這點滿加分。',
+    name: 'Claire',
+    tag: '水晶推薦',
+    crystal: '紫水晶',
+  },
+  {
+    text: '商品介紹寫得很不像一般購物網站。不是只有「招財、招桃花」那種，它會講一個狀態。看一看會覺得，對，我最近好像真的需要安定一點。',
+    name: '小安',
+    tag: '能量商品',
+    crystal: '黃水晶',
+  },
+  {
+    text: '測驗題目很可愛，不會太正經。結果也不是那種硬要分析你的人格，比較像給一個小提醒。玩完心情有變輕一點。',
+    name: 'Renee',
+    tag: '心理測驗',
+    crystal: '粉晶',
+  },
+  {
+    text: '整個網站節奏很慢，我滿喜歡。不是卡，是它不會一直催你買、催你下一步。適合我這種只是想安靜一下的人。',
+    name: '匿名',
+    tag: '整體體驗',
+    crystal: '紫水晶',
+  },
 ];
+
+const testimonialFilters = ['全部', '塔羅占卜', '紫微斗數', '每日運勢', '心理測驗', '水晶商品'] as const;
 
 // ─── Products Preview ─────────────────────────────────────────────────────────
 // Real products are loaded dynamically from PRODUCTS data.
@@ -182,6 +286,8 @@ export default function Home() {
   const [bodyBg, setBodyBg] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [testimonialFilter, setTestimonialFilter] = useState<(typeof testimonialFilters)[number]>('全部');
+  const [showAllTestimonials, setShowAllTestimonials] = useState(false);
 
   const handleBuyProduct = (productName: string) => {
     setSelectedProduct(productName);
@@ -228,6 +334,15 @@ export default function Home() {
   }
 
   const activeData = activeCrystal ? altarData[activeCrystal] : null;
+
+  const filteredTestimonials = testimonials.filter((item) => {
+    if (testimonialFilter === '全部') return true;
+    if (testimonialFilter === '水晶商品') {
+      return ['水晶推薦', '能量商品', '整體體驗'].includes(item.tag);
+    }
+    return item.tag === testimonialFilter;
+  });
+  const visibleTestimonials = showAllTestimonials ? filteredTestimonials : filteredTestimonials.slice(0, 6);
 
   function scrollToTestimonials() {
     document.getElementById('testimonials-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -914,10 +1029,30 @@ export default function Home() {
             </p>
           </div>
 
+          <div className="mb-8 flex gap-2 overflow-x-auto pb-1 md:justify-center">
+            {testimonialFilters.map((filter) => (
+              <button
+                key={filter}
+                onClick={() => {
+                  setTestimonialFilter(filter);
+                  setShowAllTestimonials(false);
+                }}
+                className={`shrink-0 rounded-full border px-4 py-2 text-[11px] tracking-[0.16em] transition-all duration-300 ${
+                  testimonialFilter === filter
+                    ? 'border-[#D1BE9B]/70 bg-[#31353A] text-[#FAF7F4]'
+                    : 'border-[#D1BE9B]/26 bg-white/35 text-[#A38D6B] hover:border-[#D1BE9B]/55 hover:bg-white/60 hover:text-[#31353A]'
+                }`}
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {testimonials.map((t, i) => (
+            {visibleTestimonials.map((t, i) => (
               <article
-                key={t.tag}
+                key={`${t.tag}-${t.name}-${i}`}
                 className="group relative min-h-[20rem] rounded-xl border border-[#D1BE9B]/18 bg-white/55 px-6 py-7 shadow-[0_14px_45px_rgba(49,53,58,0.05)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#D1BE9B]/42 hover:shadow-[0_18px_55px_rgba(49,53,58,0.08)]"
                 style={{ animationDelay: `${i * 0.1}s` }}
               >
@@ -955,6 +1090,18 @@ export default function Home() {
               </article>
             ))}
           </div>
+
+          {filteredTestimonials.length > 6 && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={() => setShowAllTestimonials((value) => !value)}
+                className="rounded-full border border-[#D1BE9B]/30 bg-white/35 px-6 py-2.5 text-[11px] tracking-[0.18em] text-[#A38D6B] transition-all duration-300 hover:border-[#D1BE9B]/60 hover:bg-white/60 hover:text-[#31353A]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                {showAllTestimonials ? '收起部分回饋' : `看全部 ${filteredTestimonials.length} 則回饋`}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
