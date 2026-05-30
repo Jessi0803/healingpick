@@ -208,7 +208,7 @@ export default function QuizPage() {
                 </h1>
                 <p className="max-w-xl mx-auto text-[12px] md:text-[13px] leading-[2.1] text-[#31353A]/62 tracking-[0.16em] mb-5"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  選一份被你吸引的靈魂檔案。不用想太多，第一眼停留的地方，通常就是心裡正在發光的線索。
+                  先憑感覺選一份吧，你現在最需要看的，常常就是最先吸引你的那個。
                 </p>
                 
                 <div className="flex justify-center items-center gap-2 mt-5">
