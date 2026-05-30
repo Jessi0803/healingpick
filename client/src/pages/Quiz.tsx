@@ -10,7 +10,7 @@ import { QUIZZES, Quiz, QuizQuestion } from '@/data/quizzes';
 import { findProduct } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
-const ARCHIVE_NUMERALS = ['I', 'II', 'III', 'IV'];
+const ARCHIVE_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
 
 export default function QuizPage() {
   const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
@@ -141,6 +141,27 @@ export default function QuizPage() {
           blob1: 'bg-[#EFE7D8]/50', // champagne
           blob2: 'bg-[#F5DEC9]/40', // warm apricot
           particles: ['🦋', '🌸', '♡', '୨୧', '✦', '✨'],
+        };
+      case 'stress-style':
+        return {
+          bg: 'bg-[#F5F7F2]',
+          blob1: 'bg-[#DFEADC]/45',
+          blob2: 'bg-[#EFE1D2]/38',
+          particles: ['🕯️', '☁︎', '✧', '𓂃', '♡', '⋆'],
+        };
+      case 'decision-style':
+        return {
+          bg: 'bg-[#F7F3EC]',
+          blob1: 'bg-[#EFE2CC]/45',
+          blob2: 'bg-[#DCE7EC]/35',
+          particles: ['🗝️', '✦', '⋆', '☽', '𓇢', '♡'],
+        };
+      case 'heart-weather':
+        return {
+          bg: 'bg-[#F3F6F7]',
+          blob1: 'bg-[#DDE9EE]/45',
+          blob2: 'bg-[#F0DDD8]/38',
+          particles: ['🌦️', '☁︎', '☾', '✧', '⋆', '♡'],
         };
       default:
         return {
