@@ -208,7 +208,7 @@ function FortuneClassroomEnvelope() {
                 <CatListening className="w-7 h-7" /> Mochi 的悄悄話：
               </div>
               <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                「每日運勢不是要限制你，而是幫你更溫柔地使用今天。<br/>
+                「每日運勢不是要替你決定今天，而是提醒你今天可以怎麼照顧自己。<br/>
                 如果今天的提醒剛好說中你心裡某個地方，那就把它當成一盞小燈，陪你走過今天就好 🐾」
               </p>
             </div>
