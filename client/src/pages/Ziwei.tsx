@@ -324,7 +324,7 @@ export default function ZiweiPage() {
                         <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🪐 不是算命，是看懂自己的使用說明書</h4>
                         <p>
                           紫微斗數會根據你的出生年、月、日和<strong className="font-medium">時辰</strong>排出一張命盤，把個性、感情、工作、金錢、家庭等面向分開來看。<br /><br />
-                          它不是替你下結論，而是把你的<strong className="font-medium text-[#A38D6B]">慣性、優勢、盲點</strong>和當下的人生節奏攤開來，讓你比較容易看懂自己到底卡在哪裡。
+                          它不是替你下結論，而是把你的<strong className="font-medium text-[#A38D6B]">慣性、優勢、盲點</strong>和當下的人生節奏攤開來，讓你知道怎麼善加利用優勢、改善劣勢，替自己爭取更適合的機會。
                         </p>
                       </div>
 
