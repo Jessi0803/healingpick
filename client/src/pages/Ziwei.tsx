@@ -348,11 +348,6 @@ export default function ZiweiPage() {
                       </DialogTitle>
                     </DialogHeader>
                     <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      <p>
-                        當你開始想問<strong className="font-medium text-[#A38D6B]">「為什麼又是這樣」</strong>，其實就很適合看看命盤了。<br /><br />
-                        比較像是最近心裡已經卡了一陣子，想知道：為什麼我明明很努力，事情還是一直卡住？為什麼有些關係總是走到差不多的地方？為什麼一有壓力，就會變成自己也不太喜歡的樣子？
-                      </p>
-
                       <div>
                         <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🪐 不是算命，是看懂自己的使用說明書</h4>
                         <p>
@@ -364,7 +359,7 @@ export default function ZiweiPage() {
                       <div>
                         <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 所以，算一次能幫你看到什麼？</h4>
                         <p>
-                          你不需要先懂所有星曜，也不用先背名詞。先把命盤當成一份觀察自己的工具就好。很多人算完最有感的，通常是下面這幾件事：
+                          很多人算完最有感的，通常是下面這幾件事：
                         </p>
                         <ul className="list-disc pl-5 mt-2 space-y-3">
                           <li><strong className="font-medium text-[#A38D6B]">為什麼總在同一個地方卡住：</strong>你會更知道自己在壓力下的反應、容易繞進去的模式，還有那些反覆出現的關卡。</li>
