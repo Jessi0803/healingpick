@@ -9,7 +9,7 @@
  *   - AI interpretation
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
@@ -203,6 +203,7 @@ export default function ZiweiPage() {
   const [gender, setGender] = useState<'男' | '女'>('女');
   const [focusArea, setFocusArea] = useState('');
   const [popularQuestionPage, setPopularQuestionPage] = useState(0);
+  const [isPopularQuestionsPaused, setIsPopularQuestionsPaused] = useState(false);
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
@@ -213,6 +214,16 @@ export default function ZiweiPage() {
   );
   const visiblePopularQuestions =
     popularQuestionGroups[popularQuestionPage % popularQuestionGroups.length] ?? [];
+
+  useEffect(() => {
+    if (isPopularQuestionsPaused || popularQuestionGroups.length <= 1) return;
+
+    const interval = window.setInterval(() => {
+      setPopularQuestionPage((page) => page + 1);
+    }, 4500);
+
+    return () => window.clearInterval(interval);
+  }, [isPopularQuestionsPaused, popularQuestionGroups.length]);
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -417,7 +428,13 @@ export default function ZiweiPage() {
                 </div>
               </div>
 
-              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60">
+              <div
+                className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60"
+                onMouseEnter={() => setIsPopularQuestionsPaused(true)}
+                onMouseLeave={() => setIsPopularQuestionsPaused(false)}
+                onFocus={() => setIsPopularQuestionsPaused(true)}
+                onBlur={() => setIsPopularQuestionsPaused(false)}
+              >
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <p className="text-[11px] tracking-[0.3em] text-[#8A7250]"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
