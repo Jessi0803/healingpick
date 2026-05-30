@@ -642,7 +642,8 @@ export default function TarotPage() {
                 </h3>
                 <p className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  如果你最近一直反覆想同一件事，卻怎麼想都想不清楚，這副牌不是只替你看現在發生的問題點，也會幫你整理出接下來可以怎麼做。Mochi 會隨機抽出 5 張大阿爾卡納，包含正位和逆位，讓每次抽牌都有不同層次。
+                  如果你最近一直反覆想同一件事，卻怎麼想都想不出答案，很適合抽一次塔羅。<br/><br/>
+                  它會幫你看見現在卡住的原因、你忽略的盲點，以及這件事接下來可以怎麼面對。
                 </p>
                 <div className="grid gap-2 mb-6">
                   {[
