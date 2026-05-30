@@ -162,6 +162,12 @@ export default function QuizPage() {
         {/* Grain Noise Texture for high-end luxury feel */}
         <div className="absolute inset-0 bg-noise opacity-[0.4] pointer-events-none mix-blend-overlay z-10" />
         <div className="absolute inset-0 quiz-archive-vignette pointer-events-none z-[1]" />
+        <div className="quiz-archive-stardust pointer-events-none z-[2]" />
+        <div className="quiz-archive-orbits pointer-events-none z-[2]">
+          <span />
+          <span />
+          <span />
+        </div>
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B89D68]/40 to-transparent z-[2]" />
 
         {/* Dynamic moving Morandi blobs */}
