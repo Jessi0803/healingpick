@@ -69,6 +69,15 @@ export const QUIZZES: Quiz[] = [
           { text: '鑲著暗金邊框、印有精緻復古玫瑰壓紋的暗紅色信封', scoreKey: 'D' },
         ],
       },
+      {
+        question: '當你想讓自己恢復狀態時，最想靠近哪種味道？',
+        options: [
+          { text: '剛切開的水果和清甜茶香', scoreKey: 'A' },
+          { text: '乾淨棉被、陽光和淡淡皂香', scoreKey: 'B' },
+          { text: '雨後草地、濕潤木頭和冷空氣', scoreKey: 'C' },
+          { text: '玫瑰、琥珀和一點溫暖香料', scoreKey: 'D' },
+        ],
+      },
     ],
     results: {
       A: {
@@ -136,6 +145,15 @@ export const QUIZZES: Quiz[] = [
           { text: '漫步在海風吹拂的沙灘上，將雙腳浸泡在溫暖的海水中聆聽潮起潮落', scoreKey: 'B' },
           { text: '踩在厚厚的落葉上，大口呼吸森林深處清新且略帶微涼的草木空氣', scoreKey: 'C' },
           { text: '在街角溫馨明亮的茶館裡，與懂得自己的三五好友聊著溫柔的生活日常', scoreKey: 'D' },
+        ],
+      },
+      {
+        question: '如果靈魂住處有一盞燈，你希望它在什麼時候亮起？',
+        options: [
+          { text: '深夜獨處，提醒我可以慢慢想', scoreKey: 'A' },
+          { text: '情緒起伏時，像海邊燈塔一樣陪我', scoreKey: 'B' },
+          { text: '壓力很大時，讓我重新站穩', scoreKey: 'C' },
+          { text: '日常疲憊時，把生活照得暖一點', scoreKey: 'D' },
         ],
       },
     ],
@@ -208,6 +226,16 @@ export const QUIZZES: Quiz[] = [
           { text: '「與星軌共振，宇宙會把所有答案在最合適的時刻告訴你。」', scoreKey: 'C' },
           { text: '「色彩與詩意是靈魂唯一的救贖，將剎那的浪漫化為永恆。」', scoreKey: 'D' },
           { text: '「遠方的風在不停呼喚我，生命就是一場永無止境的冒險！」', scoreKey: 'E' },
+        ],
+      },
+      {
+        question: '前世的你最可能留下哪一樣小物？',
+        options: [
+          { text: '寫滿策略註記的皮革筆記本', scoreKey: 'A' },
+          { text: '裝著乾燥草藥的小玻璃瓶', scoreKey: 'B' },
+          { text: '標記星象軌跡的黃銅羅盤', scoreKey: 'C' },
+          { text: '沾著顏料和香氣的手寫詩頁', scoreKey: 'D' },
+          { text: '磨舊的旅行徽章和一枚小鑰匙', scoreKey: 'E' },
         ],
       },
     ],
@@ -286,6 +314,15 @@ export const QUIZZES: Quiz[] = [
           { text: '冷靜而可靠地幫你剖析問題，並以絕對的安全感替你解決所有後顧之憂', scoreKey: 'D' },
         ],
       },
+      {
+        question: '當有人真的被你吸引時，你最希望他怎麼靠近？',
+        options: [
+          { text: '慢慢了解我，不急著要我立刻打開', scoreKey: 'A' },
+          { text: '直接表達喜歡，讓我不用一直猜', scoreKey: 'B' },
+          { text: '懂我的想法，也願意聊到很深的地方', scoreKey: 'C' },
+          { text: '和我一起規劃生活，也尊重我的目標', scoreKey: 'D' },
+        ],
+      },
     ],
     results: {
       A: {
@@ -352,6 +389,15 @@ export const QUIZZES: Quiz[] = [
           { text: '很快給建議，卻沒有真的聽懂我的感受', scoreKey: 'B' },
           { text: '把事情弄得更混亂，讓我沒有掌控感', scoreKey: 'C' },
           { text: '叫我不要想太多，卻不給我任何出口', scoreKey: 'D' },
+        ],
+      },
+      {
+        question: '一個真正有用的休息，對你來說最像什麼？',
+        options: [
+          { text: '沒有訊息聲的一小段安靜', scoreKey: 'A' },
+          { text: '有人願意聽我講完，不急著打斷', scoreKey: 'B' },
+          { text: '把混亂的東西整理回原位', scoreKey: 'C' },
+          { text: '走出去動一動，讓悶住的感覺散掉', scoreKey: 'D' },
         ],
       },
     ],
@@ -422,6 +468,15 @@ export const QUIZZES: Quiz[] = [
           { text: '不用等完美，你現在就可以開始一小步', scoreKey: 'D' },
         ],
       },
+      {
+        question: '如果把卡住的選擇先放小一點，你最願意做哪一步？',
+        options: [
+          { text: '先寫下自己真正想要什麼', scoreKey: 'A' },
+          { text: '先訂一個期限，不再無限比較', scoreKey: 'B' },
+          { text: '先算清楚能承受的風險', scoreKey: 'C' },
+          { text: '先做一個很小的試驗版本', scoreKey: 'D' },
+        ],
+      },
     ],
     results: {
       A: {
@@ -488,6 +543,15 @@ export const QUIZZES: Quiz[] = [
           { text: '你可以難過，不用假裝沒事', scoreKey: 'B' },
           { text: '你已經在變好了，哪怕只是一點點', scoreKey: 'C' },
           { text: '有些答案，安靜下來才會浮上來', scoreKey: 'D' },
+        ],
+      },
+      {
+        question: '今天如果可以給自己一個小小照顧，你會選哪個？',
+        options: [
+          { text: '慢慢吃一餐，不邊滑手機邊焦慮', scoreKey: 'A' },
+          { text: '允許自己低落一下，不急著振作', scoreKey: 'B' },
+          { text: '整理一個角落，找回一點掌控感', scoreKey: 'C' },
+          { text: '留一段安靜時間，聽聽心裡在說什麼', scoreKey: 'D' },
         ],
       },
     ],

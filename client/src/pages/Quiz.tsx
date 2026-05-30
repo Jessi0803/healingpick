@@ -447,6 +447,16 @@ export default function QuizPage() {
                   ୨୧ ───────── ୨୧
                 </div>
 
+                {recommendedProduct && (
+                  <div className="mx-auto mb-7 w-full max-w-sm overflow-hidden rounded-[28px] border border-[#D1BE9B]/20 bg-white/45 p-2 shadow-[0_14px_40px_rgba(209,190,155,0.14)]">
+                    <img
+                      src={recommendedProduct.img}
+                      alt={`${quizResult.title} 的療癒圖片`}
+                      className="aspect-[4/3] w-full rounded-[22px] object-cover"
+                    />
+                  </div>
+                )}
+
                 {/* Poetic description */}
                 <p className="text-[13px] md:text-[14px] leading-[2.1] text-[#31353A]/82 tracking-wider whitespace-pre-line text-left px-2 mb-8 font-light"
                   style={{ fontFamily: 'Noto Serif TC, serif' }}>
