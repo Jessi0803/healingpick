@@ -159,6 +159,7 @@ ${traitsDesc}
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
+        maxTokens: 1000,
         response_format: {
           type: "json_schema",
           json_schema: {

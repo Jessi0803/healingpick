@@ -1192,6 +1192,8 @@ export default function TarotPage() {
                     prose-headings:font-normal prose-headings:tracking-[0.08em] prose-headings:text-[#A38D6B]
                     prose-h1:text-[13px] prose-h1:font-semibold prose-h1:mt-5 prose-h1:mb-1.5 prose-h1:pb-1 prose-h1:border-b prose-h1:border-[#D1BE9B]/25
                     prose-h3:text-[13px] prose-h3:font-semibold prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
+                    [&_h1]:!text-[13px] [&_h1]:!leading-[2.1] [&_h1]:!font-semibold [&_h1]:!tracking-[0.08em] [&_h1]:!text-[#A38D6B] [&_h1]:!mt-5 [&_h1]:!mb-1.5 [&_h1]:!pb-1 [&_h1]:!border-b [&_h1]:!border-[#D1BE9B]/25
+                    [&_h3]:!text-[13px] [&_h3]:!leading-[2.1] [&_h3]:!font-semibold [&_h3]:!tracking-[0.08em] [&_h3]:!text-[#A38D6B] [&_h3]:!mt-5 [&_h3]:!mb-1.5 [&_h3]:!pb-1 [&_h3]:!border-b [&_h3]:!border-[#D1BE9B]/25
                     prose-p:my-1.5 prose-p:text-[#31353A]/80
                     prose-strong:text-[#31353A]/90 prose-strong:font-medium
                     prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
