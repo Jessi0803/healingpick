@@ -369,6 +369,24 @@ export default function ZiweiPage() {
                     </DialogHeader>
                     <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       <div>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 所以，算一次能幫你看到什麼？</h4>
+                        <p>
+                          你可能會想知道：為什麼我明明很努力，事情還是一直卡住？為什麼有些關係總是走到差不多的地方？為什麼一有壓力，就會變成自己也不太喜歡的樣子？
+                        </p>
+                        <p className="mt-3">
+                          很多人算完最有感的，通常是下面這幾件事：
+                        </p>
+                        <ul className="list-disc pl-5 mt-2 space-y-3">
+                          <li><strong className="font-medium text-[#A38D6B]">為什麼總在同一個地方卡住：</strong>你會更知道自己在壓力下的反應、容易繞進去的模式，還有那些反覆出現的關卡。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">感情和人際裡的慣性：</strong>不是只看別人對你怎麼樣，也會看你自己在關係裡比較容易期待什麼、忍耐什麼、受傷在哪裡。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">工作和人生節奏：</strong>你適合怎麼發揮、怎麼累積資源、什麼時候該衝、什麼時候該穩，會比一直硬撐來得清楚很多。</li>
+                        </ul>
+                        <p className="mt-3">
+                          當你知道自己是怎麼運作的，很多選擇就不會只能靠硬撐。紫微斗數不是要你迷信命運，而是讓你在混亂的時候，至少先看清楚自己。
+                        </p>
+                      </div>
+
+                      <div>
                         <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🪐 不是算命，是看懂自己的使用說明書</h4>
                         <p>
                           紫微斗數會根據你的出生年、月、日和<strong className="font-medium">時辰</strong>排出一張命盤，把個性、感情、工作、金錢、家庭等面向分開來看。<br /><br />
@@ -401,23 +419,6 @@ export default function ZiweiPage() {
                         </div>
                       </div>
 
-                      <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 所以，算一次能幫你看到什麼？</h4>
-                        <p>
-                          你可能會想知道：為什麼我明明很努力，事情還是一直卡住？為什麼有些關係總是走到差不多的地方？為什麼一有壓力，就會變成自己也不太喜歡的樣子？
-                        </p>
-                        <p className="mt-3">
-                          很多人算完最有感的，通常是下面這幾件事：
-                        </p>
-                        <ul className="list-disc pl-5 mt-2 space-y-3">
-                          <li><strong className="font-medium text-[#A38D6B]">為什麼總在同一個地方卡住：</strong>你會更知道自己在壓力下的反應、容易繞進去的模式，還有那些反覆出現的關卡。</li>
-                          <li><strong className="font-medium text-[#A38D6B]">感情和人際裡的慣性：</strong>不是只看別人對你怎麼樣，也會看你自己在關係裡比較容易期待什麼、忍耐什麼、受傷在哪裡。</li>
-                          <li><strong className="font-medium text-[#A38D6B]">工作和人生節奏：</strong>你適合怎麼發揮、怎麼累積資源、什麼時候該衝、什麼時候該穩，會比一直硬撐來得清楚很多。</li>
-                        </ul>
-                        <p className="mt-3">
-                          當你知道自己是怎麼運作的，很多選擇就不會只能靠硬撐。紫微斗數不是要你迷信命運，而是讓你在混亂的時候，至少先看清楚自己。
-                        </p>
-                      </div>
                     </div>
                   </DialogContent>
                 </Dialog>
