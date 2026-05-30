@@ -12,6 +12,7 @@ const ZIWEI_REQUIRED_SECTIONS = [
   "**可以怎麼改善**",
   "**具體建議**",
 ];
+const ZIWEI_FALLBACK_MESSAGE = "解讀暫時沒有完整生成，請再試一次。Mochi 剛剛講到一半卡住了，會重新幫你整理成完整四段。";
 
 function cleanZiweiInterpretation(content: string) {
   const normalized = content.trim();
@@ -39,6 +40,46 @@ function isZiweiInterpretationComplete(content: string) {
 function isLengthLimited(finishReason: string | null | undefined) {
   if (!finishReason) return false;
   return ["length", "max_tokens"].includes(finishReason.toLowerCase());
+}
+
+function parseJsonObject(content: string) {
+  try {
+    return JSON.parse(content) as Record<string, unknown>;
+  } catch {
+    const match = content.match(/\{[\s\S]*\}/u);
+    if (!match) return null;
+    try {
+      return JSON.parse(match[0]) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+}
+
+function formatZiweiStructuredInterpretation(content: string) {
+  const parsed = parseJsonObject(content);
+  if (!parsed) return null;
+
+  const sections = {
+    currentIssue: typeof parsed.currentIssue === "string" ? parsed.currentIssue.trim() : "",
+    strengthsAndDrains:
+      typeof parsed.strengthsAndDrains === "string" ? parsed.strengthsAndDrains.trim() : "",
+    improvement:
+      typeof parsed.improvement === "string" ? parsed.improvement.trim() : "",
+    concreteAdvice:
+      typeof parsed.concreteAdvice === "string" ? parsed.concreteAdvice.trim() : "",
+  };
+
+  if (Object.values(sections).some((value) => value.length < 12)) {
+    return null;
+  }
+
+  return [
+    `**目前問題在哪** ${sections.currentIssue}`,
+    `**優勢與容易耗力的地方** ${sections.strengthsAndDrains}`,
+    `**可以怎麼改善** ${sections.improvement}`,
+    `**具體建議** ${sections.concreteAdvice}`,
+  ].join("\n\n");
 }
 
 // 時辰選項（供前後端共用）
@@ -218,19 +259,55 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
               role: "user",
               content: `${prompt}
 
-上一版解讀被截斷或段落不完整。請重新輸出完整四段，第一行必須是「${ZIWEI_SECTION_START}」。
-四段標題都要出現，最後一句必須完整收尾。整體仍控制在 260-320 字，例子要短。`,
+上一版解讀被截斷或段落不完整。請改用 JSON 輸出，不要使用 Markdown，不要加前後說明。
+四個欄位都必須完整，每個欄位 45-70 字，文字要白話、具體、要有短例子：
+{
+  "currentIssue": "目前問題或原因在哪",
+  "strengthsAndDrains": "優勢與容易耗力的地方",
+  "improvement": "可以怎麼改善",
+  "concreteAdvice": "今天或這週能做的具體建議"
+}`,
             },
           ],
           maxTokens: 4000,
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "ziwei_interpretation",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  currentIssue: { type: "string" },
+                  strengthsAndDrains: { type: "string" },
+                  improvement: { type: "string" },
+                  concreteAdvice: { type: "string" },
+                },
+                required: [
+                  "currentIssue",
+                  "strengthsAndDrains",
+                  "improvement",
+                  "concreteAdvice",
+                ],
+                additionalProperties: false,
+              },
+            },
+          },
         });
 
         rawContent = response.choices?.[0]?.message?.content;
         interpretation = rawContent
-          ? cleanZiweiInterpretation(
+          ? formatZiweiStructuredInterpretation(
+              extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+            ) ??
+            cleanZiweiInterpretation(
               extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
             )
           : interpretation;
+      }
+
+      if (!isZiweiInterpretationComplete(interpretation)) {
+        interpretation = ZIWEI_FALLBACK_MESSAGE;
       }
 
       return {
