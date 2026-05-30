@@ -242,8 +242,8 @@ export default function TarotPage() {
     if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
       toast.error('今日免費額度已用完 🐾', {
         description: isAuthenticated
-          ? '可購買點數繼續算,或等明天的免費額度回來'
-          : '註冊登入就能購買點數繼續算,或等明天的免費額度回來',
+          ? '可購買點數繼續算,或等每日 00:00 免費額度重置'
+          : '註冊登入就能購買點數繼續算,或等每日 00:00 免費額度重置',
         action: {
           label: isAuthenticated ? '購買點數' : '註冊登入',
           onClick: () => {
@@ -263,7 +263,7 @@ export default function TarotPage() {
 
   const [step, setStep] = useState<Step>('intro');
   const [question, setQuestion] = useState('');
-  const [questionType, setQuestionType] = useState('love');
+  const [questionType, setQuestionType] = useState('romance');
   const [drawnCards, setDrawnCards] = useState<ReturnType<typeof drawCards>>([]);
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
@@ -582,6 +582,12 @@ export default function TarotPage() {
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 開始占卜
               </button>
+              {creditsQuery.data?.enabled && (
+                <p className="mt-3 text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                  每天免費 2 次，00:00 重置；用完後完整解讀消耗 1 點。
+                </p>
+              )}
             </div>
           )}
 
@@ -612,12 +618,14 @@ export default function TarotPage() {
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { id: 'love',       label: '感情', icon: '♥' },
-                      { id: 'career',     label: '事業', icon: '✦' },
-                      { id: 'clarity',    label: '人生', icon: '☆' },
-                      { id: 'protection', label: '心靈', icon: '◈' },
-                      { id: 'change',     label: '轉變', icon: '○' },
-                      { id: 'general',    label: '綜合', icon: '✧' },
+                      { id: 'romance',          label: '感情曖昧', icon: '♥' },
+                      { id: 'reconciliation',   label: '復合關係', icon: '♡' },
+                      { id: 'careerChoice',     label: '職涯選擇', icon: '✦' },
+                      { id: 'moneyOpportunity', label: '財務機會', icon: '◇' },
+                      { id: 'stuck',            label: '卡住迷惘', icon: '☆' },
+                      { id: 'decision',         label: '做決定', icon: '○' },
+                      { id: 'boundaries',       label: '人際界線', icon: '◈' },
+                      { id: 'emotions',         label: '情緒整理', icon: '☽' },
                     ].map(t => (
                       <button
                         key={t.id}

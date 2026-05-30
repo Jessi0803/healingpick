@@ -225,8 +225,8 @@ export default function ZiweiPage() {
     if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
       toast.error('今日免費額度已用完 🐾', {
         description: isAuthenticated
-          ? '可購買點數繼續看,或等明天的免費額度回來'
-          : '註冊登入就能購買點數繼續看,或等明天的免費額度回來',
+          ? '可購買點數繼續看,或等每日 00:00 免費額度重置'
+          : '註冊登入就能購買點數繼續看,或等每日 00:00 免費額度重置',
         action: {
           label: isAuthenticated ? '購買點數' : '註冊登入',
           onClick: () => {
@@ -464,6 +464,12 @@ export default function ZiweiPage() {
                     </span>
                   ) : '排出我的命盤'}
                 </button>
+                {creditsQuery.data?.enabled && (
+                  <p className="mt-3 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                    每天免費 2 次，00:00 重置；用完後命盤解讀消耗 1 點。
+                  </p>
+                )}
               </div>
 
               {/* Cat peeking at the form */}

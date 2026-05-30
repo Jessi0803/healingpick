@@ -22,6 +22,8 @@ const navLinks = [
   { label: '能量商品', href: '/shop' },
 ];
 
+const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、每日運勢用完免費額度後，每次解讀消耗 1 點。';
+
 export default function Navbar() {
   const { isAuthenticated, login, logout } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
@@ -147,6 +149,7 @@ export default function Navbar() {
                 {credits?.enabled && (
                   <Link
                     href="/buy"
+                    title={creditsHint}
                     className="text-xs tracking-[0.15em] text-[#A38D6B] hover:text-[#D1BE9B] transition-colors duration-300"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
@@ -177,6 +180,7 @@ export default function Navbar() {
               <div className="hidden lg:flex items-center gap-3">
                 {credits?.enabled && credits.freeRemaining > 0 && (
                   <span className="text-xs tracking-[0.15em] text-[#A38D6B]"
+                    title={creditsHint}
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     🐾 今日免費 {credits.freeRemaining}
                   </span>
@@ -220,12 +224,19 @@ export default function Navbar() {
                     {credits?.enabled && (
                       <Link
                         href="/buy"
+                        title={creditsHint}
                         className="text-xs tracking-[0.2em] text-[#A38D6B] hover:text-[#D1BE9B] transition-colors py-2"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                       >
                         🐾 {credits.credits} 點
                         {credits.freeRemaining > 0 ? ` · 今日免費 ${credits.freeRemaining}` : ''}
                       </Link>
+                    )}
+                    {credits?.enabled && (
+                      <p className="text-[10px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                        免費額度每日 00:00 重置；用完後每次解讀消耗 1 點
+                      </p>
                     )}
                     <Link
                       href="/history"

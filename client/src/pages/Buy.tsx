@@ -65,7 +65,7 @@ export default function BuyPage() {
             </h1>
             <p className="text-[12px] text-[#31353A]/54 tracking-wider"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-              每日有免費次數，用完後每次占卜消耗 1 點
+              每天可免費占卜 2 次，用完後每次解讀消耗 1 點
             </p>
           </div>
 
@@ -89,6 +89,10 @@ export default function BuyPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   目前餘額 <span className="text-[#31353A]/85 text-base">{credits?.credits ?? 0}</span> 點
                   {credits && credits.freeRemaining > 0 && ` · 今日還有 ${credits.freeRemaining} 次免費`}
+                </p>
+                <p className="mt-3 text-[11px] leading-[1.9] tracking-[0.12em] text-[#31353A]/48"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                  免費額度每日 00:00 重置，已購買點數不會被清空；塔羅、紫微、每日運勢會先消耗免費額度，用完後每次扣 1 點。
                 </p>
               </div>
 

@@ -39,13 +39,19 @@ export const DAILY_FREE_QUOTA = 2;
 /** Credits granted once when a user first signs up. */
 export const SIGNUP_BONUS_CREDITS = 5;
 
+function taipeiDateKey(date: Date): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
 function isNewDay(last: Date): boolean {
-  const now = new Date();
-  return (
-    now.getUTCFullYear() !== last.getUTCFullYear() ||
-    now.getUTCMonth() !== last.getUTCMonth() ||
-    now.getUTCDate() !== last.getUTCDate()
-  );
+  return taipeiDateKey(new Date()) !== taipeiDateKey(last);
 }
 
 /**
@@ -411,4 +417,3 @@ export async function getReadingsByUser(userId: number, limit = 20) {
     .orderBy(desc(readings.createdAt))
     .limit(limit);
 }
-
