@@ -91,8 +91,8 @@ function HowItWorksPanel() {
 
   return (
     <div className="mb-8 px-5 py-4 rounded-2xl border border-[#D1BE9B]/15 bg-[#D1BE9B]/5">
-      <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-3 text-center"
-        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+      <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
+        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
         ◎ 運勢如何計算
       </p>
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-start">
@@ -108,8 +108,8 @@ function HowItWorksPanel() {
                 {step.icon}
               </div>
               <div>
-                <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                <p className="text-[11px] tracking-[0.2em] text-[#8A7250] mb-0.5"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                   {step.label}
                 </p>
                 <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
