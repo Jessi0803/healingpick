@@ -520,59 +520,36 @@ export default function TarotPage() {
                 <p className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                   這次會抽出 5 張牌，幫你從不同角度看清楚現在的狀況。
-                  中間那張牌代表這件事的核心；四周的牌會分別看見：過去怎麼影響你、現在正在發生什麼、接下來可能往哪裡走，以及你可以怎麼做。
                 </p>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                  {SPREAD_POSITIONS.map(p => (
-                    <div key={p.id} className="text-center p-2 rounded-lg bg-[#D1BE9B]/8">
-                      <div className="text-[10px] tracking-[0.15em] text-[#D1BE9B] mb-0.5"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        {p.id + 1}
+                <div className="grid gap-2 mb-6">
+                  {[
+                    { label: '中心能量', desc: '這件事最核心的狀態' },
+                    { label: '過去', desc: '曾經如何影響現在' },
+                    { label: '現在', desc: '此刻真正卡住的地方' },
+                    { label: '未來', desc: '接下來可能出現的走向' },
+                    { label: '建議', desc: '牌面給你的下一步提醒' },
+                  ].map((item, i) => (
+                    <div key={item.label} className="flex items-center gap-3 rounded-xl bg-[#D1BE9B]/8 border border-[#D1BE9B]/10 px-3 py-2.5">
+                      <div className="w-7 h-7 rounded-full bg-white/55 border border-[#D1BE9B]/20 flex items-center justify-center text-[10px] text-[#D1BE9B] flex-shrink-0"
+                        style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                        {i + 1}
                       </div>
-                      <div className="text-[11px] tracking-[0.1em] text-[#31353A]/80"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        {p.label}
-                      </div>
+                      <p className="text-[12px] leading-[1.7] text-[#31353A]/68 tracking-wide"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        <span className="text-[#8A7250] tracking-[0.16em] mr-2"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                          {item.label}
+                        </span>
+                        {item.desc}
+                      </p>
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* How It Works */}
-              <div className="max-w-2xl mx-auto mb-8 px-5 py-4 rounded-2xl border border-[#D1BE9B]/15 bg-[#D1BE9B]/5">
-                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  ◎ 占卜如何進行
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-start">
-                  {[
-                    { icon: '🎴', label: '隨機洗牌', desc: '從 22 張大阿爾卡納中隨機抽出 5 張，並隨機決定正逆位' },
-                    { icon: '✦', label: '布陣解讀', desc: '五張牌分別代表中心、過去、現在、未來與建議' },
-                    { icon: '◈', label: 'Mochi解讀', desc: '將你的問題與牌面一同交給 Mochi，生成整體的能量解讀' },
-                  ].map((step, i) => (
-                    <div key={step.label} className="flex sm:flex-col sm:flex-1 items-start sm:items-center gap-3 sm:gap-2 sm:text-center">
-                      {i > 0 && (
-                        <div className="hidden sm:flex items-center justify-center w-8 mt-4 flex-shrink-0">
-                          <div className="h-px w-full bg-[#D1BE9B]/25" />
-                        </div>
-                      )}
-                      <div className="flex sm:flex-col sm:items-center gap-3 sm:gap-2 flex-1">
-                        <div className="w-9 h-9 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-base">
-                          {step.icon}
-                        </div>
-                        <div>
-                          <p className="text-[11px] tracking-[0.2em] text-[#8A7250] mb-0.5"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                            {step.label}
-                          </p>
-                          <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
-                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                            {step.desc}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                <div className="pt-4 border-t border-[#D1BE9B]/15">
+                  <p className="text-[12px] leading-[1.9] text-[#31353A]/62 tracking-wide"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    Mochi 會從 22 張大阿爾卡納中隨機抽出 5 張，包含正位或逆位，並結合你的問題生成完整解讀。
+                  </p>
                 </div>
               </div>
 
