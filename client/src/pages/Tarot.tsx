@@ -761,9 +761,6 @@ export default function TarotPage() {
                     style={{ fontFamily: 'Cormorant Garamond, serif', color: question.length >= 120 ? '#C9837A' : question.length >= 100 ? '#A38D6B' : '#31353A66' }}>
                     {question.length} / 120
                   </div>
-                  <div className="mt-4">
-                    {renderPopularQuestions()}
-                  </div>
                   <p className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                     ✦ 問題越具體，解讀越精準。也可以不填，讓牌自由說話。
