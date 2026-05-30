@@ -101,7 +101,9 @@ export default function BuyPage() {
                   <a
                     key={p.credits}
                     href={checkoutUrl}
-                    className="gumroad-button glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 text-center flex flex-col items-center gap-3 hover:border-[#D1BE9B]/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer no-underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 text-center flex flex-col items-center gap-3 hover:border-[#D1BE9B]/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer no-underline"
                   >
                     <span className="text-[10px] tracking-[0.2em] text-[#D1BE9B]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{p.tag}</span>
@@ -118,7 +120,7 @@ export default function BuyPage() {
 
               <p className="text-center text-[11px] text-[#31353A]/45 tracking-wider mb-2"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                結帳會在浮窗中進行，付款完成後點數會自動加到你的帳號 🐾
+                結帳會在 Gumroad 安全頁面進行，付款完成後點數會自動加到你的帳號 🐾
               </p>
               <p className="text-center text-[10px] text-[#31353A]/35 tracking-wider"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
