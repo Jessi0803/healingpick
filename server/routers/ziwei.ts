@@ -6,6 +6,12 @@ import { astro } from "iztro";
 import { t, translateChineseDate } from "./ziwei-locale";
 
 const ZIWEI_SECTION_START = "**目前問題在哪**";
+const ZIWEI_REQUIRED_SECTIONS = [
+  "**目前問題在哪**",
+  "**優勢與容易耗力的地方**",
+  "**可以怎麼改善**",
+  "**具體建議**",
+];
 
 function cleanZiweiInterpretation(content: string) {
   const normalized = content.trim();
@@ -20,6 +26,19 @@ function cleanZiweiInterpretation(content: string) {
     .replace(/^(你好|哈囉|嗨)[^。\n]*[。\n]\s*/u, "")
     .replace(/^Mochi\s*看到你的命盤了[^。\n]*[。\n]\s*/u, "")
     .trim();
+}
+
+function isZiweiInterpretationComplete(content: string) {
+  const trimmed = content.trim();
+  return (
+    ZIWEI_REQUIRED_SECTIONS.every((section) => trimmed.includes(section)) &&
+    /[。！？.!?]$/u.test(trimmed)
+  );
+}
+
+function isLengthLimited(finishReason: string | null | undefined) {
+  if (!finishReason) return false;
+  return ["length", "max_tokens", "MAX_TOKENS"].includes(finishReason);
 }
 
 // 時辰選項（供前後端共用）
@@ -166,24 +185,53 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
 
 **具體建議**：給具體建議，必須是使用者今天或這週能做的事。請用白話例子說明，例如「先把想問對方的話寫成一句，不要一次丟很多情緒」。`;
 
-      const response = await invokeLLM({
-        messages: [
-          {
-            role: "system",
-            content:
-              `你是「Mochi」，一隻很懂紫微斗數、有靈氣的療癒貓咪。把對方當平輩的好朋友聊，不是在哄小孩：可愛來自細膩優雅、帶點俏皮的口吻，而不是裝幼稚。少用「喔～」「呢～」這類幼稚語尾，也不要一直用第三人稱講「Mochi 怎樣」，更不要說教。可以偶爾用貓掌 🐾 點綴，但不要出現「喵」這個字。全程繁體中文、白話好懂、不文謅謅、不使用任何英文。少用抽象玄學詞，必須具體、可理解、能舉例。不下絕對斷言。禁止寒暄開場，第一行必須直接是「${ZIWEI_SECTION_START}」。`,
-          },
-          { role: "user", content: prompt },
-        ],
+      const messages = [
+        {
+          role: "system" as const,
+          content:
+            `你是「Mochi」，一隻很懂紫微斗數、有靈氣的療癒貓咪。把對方當平輩的好朋友聊，不是在哄小孩：可愛來自細膩優雅、帶點俏皮的口吻，而不是裝幼稚。少用「喔～」「呢～」這類幼稚語尾，也不要一直用第三人稱講「Mochi 怎樣」，更不要說教。可以偶爾用貓掌 🐾 點綴，但不要出現「喵」這個字。全程繁體中文、白話好懂、不文謅謅、不使用任何英文。少用抽象玄學詞，必須具體、可理解、能舉例。不下絕對斷言。禁止寒暄開場，第一行必須直接是「${ZIWEI_SECTION_START}」。`,
+        },
+        { role: "user" as const, content: prompt },
+      ];
+
+      let response = await invokeLLM({
+        messages,
         maxTokens: 1000,
       });
 
-      const rawContent = response.choices?.[0]?.message?.content;
-      const interpretation = rawContent
+      let rawContent = response.choices?.[0]?.message?.content;
+      let interpretation = rawContent
         ? cleanZiweiInterpretation(
             extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
           )
         : "解讀暫時無法取得，請稍後再試。";
+
+      if (
+        rawContent &&
+        (isLengthLimited(response.choices?.[0]?.finish_reason) ||
+          !isZiweiInterpretationComplete(interpretation))
+      ) {
+        response = await invokeLLM({
+          messages: [
+            messages[0],
+            {
+              role: "user",
+              content: `${prompt}
+
+上一版解讀被截斷或段落不完整。請重新輸出完整四段，第一行必須是「${ZIWEI_SECTION_START}」。
+四段標題都要出現，最後一句必須完整收尾。整體仍控制在 260-320 字，例子要短。`,
+            },
+          ],
+          maxTokens: 1600,
+        });
+
+        rawContent = response.choices?.[0]?.message?.content;
+        interpretation = rawContent
+          ? cleanZiweiInterpretation(
+              extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+            )
+          : interpretation;
+      }
 
       return {
         success: true,
