@@ -1022,10 +1022,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>Gentle Echoes</span>
-            <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>那些被溫柔接住的時刻</h2>
+            <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>大家看完的感覺</h2>
             <p className="mt-3 text-[12px] leading-[1.9] tracking-[0.14em] text-[#31353A]/52 max-w-xl mx-auto"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-              有些答案不一定轟轟烈烈，只是在剛好的時候，讓心安靜下來一點。
+              不一定會立刻有答案，但有時候光是看清楚一點，心情就差很多。
             </p>
           </div>
 
