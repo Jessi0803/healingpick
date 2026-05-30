@@ -357,6 +357,31 @@ export default function ZiweiPage() {
                       </div>
 
                       <div>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-3" style={{ fontFamily: 'Noto Serif TC, serif' }}>◎ 命盤如何排列</h4>
+                        <div className="space-y-3">
+                          {[
+                            { icon: '📊', label: '生辰排盤', desc: '以 iztro 紫微斗數演算法，依生年月日時排出十二宮位' },
+                            { icon: '✦', label: '星曜落點', desc: '計算主星、輔星在各宮位的座落與亮度' },
+                            { icon: '◈', label: 'Mochi解讀', desc: '將命盤資料與你關注的領域交給 Mochi，生成深度命盤解讀' },
+                          ].map((s) => (
+                            <div key={s.label} className="flex items-start gap-3 rounded-xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/55 px-3 py-3">
+                              <div className="w-8 h-8 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-sm text-[#A38D6B]">
+                                {s.icon}
+                              </div>
+                              <div>
+                                <p className="text-[11px] tracking-[0.18em] text-[#8A7250] mb-1" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                                  {s.label}
+                                </p>
+                                <p className="text-[12px] leading-[1.75] text-[#31353A]/64 tracking-wide">
+                                  {s.desc}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
                         <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 所以，算一次能幫你看到什麼？</h4>
                         <p>
                           你可能會想知道：為什麼我明明很努力，事情還是一直卡住？為什麼有些關係總是走到差不多的地方？為什麼一有壓力，就會變成自己也不太喜歡的樣子？
@@ -482,43 +507,6 @@ export default function ZiweiPage() {
                           : 'w-1.5 bg-[#D1BE9B]/35 hover:bg-[#D1BE9B]/60'
                       }`}
                     />
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/12 bg-[#D1BE9B]/5">
-                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  ◎ 命盤如何排列
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-start">
-                  {[
-                    { icon: '📊', label: '生辰排盤', desc: '以 iztro 紫微斗數演算法，依生年月日時排出十二宮位' },
-                    { icon: '✦', label: '星曜落點', desc: '計算主星、輔星在各宮位的座落與亮度' },
-                    { icon: '◈', label: 'Mochi解讀', desc: '將命盤資料與你關注的領域交給 Mochi，生成深度命盤解讀' },
-                  ].map((s, i) => (
-                    <div key={s.label} className="flex sm:flex-col sm:flex-1 items-start sm:items-center gap-3 sm:gap-2 sm:text-center">
-                      {i > 0 && (
-                        <div className="hidden sm:flex items-center justify-center w-8 mt-4 flex-shrink-0">
-                          <div className="h-px w-full bg-[#D1BE9B]/25" />
-                        </div>
-                      )}
-                      <div className="flex sm:flex-col sm:items-center gap-3 sm:gap-2 flex-1">
-                        <div className="w-9 h-9 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-base">
-                          {s.icon}
-                        </div>
-                        <div>
-                          <p className="text-[11px] tracking-[0.2em] text-[#8A7250] mb-0.5"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                            {s.label}
-                          </p>
-                          <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
-                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                            {s.desc}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
                   ))}
                 </div>
               </div>
