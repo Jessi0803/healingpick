@@ -75,6 +75,15 @@ const HOURS = [
   { label: '亥時 (21:00–23:00)', value: 11 },
 ];
 
+const POPULAR_QUESTIONS = [
+  '我最近為什麼一直卡住？',
+  '這段關係還適合繼續嗎？',
+  '我的工作方向是不是該調整？',
+  '我適合自己創業或接案嗎？',
+  '為什麼我總是在關係裡很累？',
+  '最近財務和安全感該注意什麼？',
+];
+
 // ─── Palace grid layout (traditional 4×4) ─────────────────────────────────────
 // Row 0: P3  P4  P5  P6
 // Row 1: P2  [center]   P7
@@ -396,6 +405,34 @@ export default function ZiweiPage() {
                         </p>
                       </div>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60">
+                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-2 text-center"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                  ◎ 你可以帶著這些問題來看命盤
+                </p>
+                <p className="text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide text-center mb-4"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                  問題不需要很完整，寫下最近最在意的事就好。Mochi 會把你的問題和命盤一起解讀。
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {POPULAR_QUESTIONS.map((question) => (
+                    <button
+                      key={question}
+                      type="button"
+                      onClick={() => setFocusArea(question.slice(0, 100))}
+                      className={`rounded-full border px-3 py-2 text-[11px] tracking-[0.08em] transition-all duration-200 ${
+                        focusArea === question
+                          ? 'border-[#D1BE9B] bg-[#D1BE9B]/16 text-[#8A7250]'
+                          : 'border-[#D1BE9B]/22 bg-white/40 text-[#31353A]/64 hover:border-[#D1BE9B]/55 hover:text-[#8A7250]'
+                      }`}
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    >
+                      {question}
+                    </button>
                   ))}
                 </div>
               </div>
