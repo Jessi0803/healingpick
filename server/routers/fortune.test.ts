@@ -3,7 +3,7 @@
  * Tests the moon phase calculation logic and fortune router structure
  */
 import { describe, it, expect } from "vitest";
-import { parseFortuneResult } from "./fortune";
+import { buildFallbackFortune, parseFortuneResult } from "./fortune";
 
 // ─── 月相計算邏輯（從 fortune.ts 複製，以便獨立測試）─────────────────────────
 function getMoonPhase(date: Date) {
@@ -131,5 +131,36 @@ describe("parseFortuneResult", () => {
     const result = parseFortuneResult(`好的，這是今天的運勢：\n${JSON.stringify(validFortune)}\n祝你今天順利。`);
     expect(result.moonPhase).toBe("滿月");
     expect(result.loveScore).toBe(7);
+  });
+});
+
+describe("buildFallbackFortune", () => {
+  it("returns a complete fortune result when the LLM is unavailable", () => {
+    const result = buildFallbackFortune({
+      signName: "雙魚座",
+      date: "2026-05-30",
+      moonPhase: {
+        phase: 0.5,
+        name: "滿月",
+        nameEn: "Full Moon",
+        energy: "滿月能量：適合看清情緒。",
+        symbol: "🌕",
+      },
+      traits: {
+        element: "水",
+        modality: "變動",
+        ruler: "海王星/木星",
+        traits: "夢幻、同情心、靈性",
+        strengths: "直覺、藝術才能、慈悲",
+        challenges: "逃避現實、邊界模糊",
+      },
+    });
+
+    expect(result.overall).toContain("雙魚座");
+    expect(result.moonPhase).toBe("滿月");
+    expect(result.moonSymbol).toBe("🌕");
+    expect(result.crystal).toBe("月光石");
+    expect(result.overallScore).toBeGreaterThanOrEqual(1);
+    expect(result.luckyNumber).toBeGreaterThanOrEqual(1);
   });
 });

@@ -98,6 +98,8 @@ const fortuneResultSchema = z.object({
 });
 
 type FortuneResult = z.infer<typeof fortuneResultSchema>;
+type MoonPhase = ReturnType<typeof getMoonPhase>;
+type ZodiacTraits = (typeof ZODIAC_TRAITS)[string];
 
 function extractJsonObject(content: string) {
   const trimmed = content
@@ -117,6 +119,55 @@ function extractJsonObject(content: string) {
 export function parseFortuneResult(content: string): FortuneResult {
   const parsed = JSON.parse(extractJsonObject(content));
   return fortuneResultSchema.parse(parsed);
+}
+
+function scoreFromSeed(seed: string, offset: number) {
+  const total = Array.from(seed).reduce((sum, char) => sum + char.charCodeAt(0), offset);
+  return 6 + (total % 4);
+}
+
+export function buildFallbackFortune({
+  signName,
+  date,
+  moonPhase,
+  traits,
+}: {
+  signName: string;
+  date: string;
+  moonPhase: MoonPhase;
+  traits: ZodiacTraits | null;
+}): FortuneResult {
+  const element = traits?.element ?? "風";
+  const strengths = traits?.strengths ?? "觀察力、調整力";
+  const challenges = traits?.challenges ?? "想太多、節奏容易被外界影響";
+  const signLabel = signName || "今天的你";
+
+  const elementGuide: Record<string, { color: string; crystal: string; action: string }> = {
+    火: { color: "暖金色", crystal: "紅瑪瑙", action: "先把最想推進的一件事寫下來，今天只做第一步" },
+    土: { color: "奶茶棕", crystal: "黃水晶", action: "整理一筆支出或一個待辦，讓安全感先回到手上" },
+    風: { color: "霧藍色", crystal: "白水晶", action: "把腦中的想法列成三點，先回覆最明確的一件事" },
+    水: { color: "月白色", crystal: "月光石", action: "留十分鐘安靜下來，分清楚感受和事實" },
+  };
+  const guide = elementGuide[element] ?? elementGuide.風;
+  const seed = `${date}-${signName}-${moonPhase.name}`;
+
+  return {
+    overall: `${signLabel}今天比較適合先把節奏放穩。${moonPhase.name}提醒你，不一定要一次解決全部；卡住時先看清楚真正消耗你的地方，例如訊息、待辦或某個反覆想起的人。`,
+    overallScore: scoreFromSeed(seed, 11),
+    love: `感情上容易因為小細節想太多，像對方晚回、語氣變淡，就開始自己補完劇情。今天先觀察對方有沒有願意說清楚，比急著下結論更有幫助。`,
+    loveScore: scoreFromSeed(seed, 17),
+    career: `工作和財務適合用${strengths}，但也要留意${challenges}。先挑最有把握的一件事收尾，像整理資料、確認付款或把任務拆小，不要一口氣硬扛。`,
+    careerScore: scoreFromSeed(seed, 23),
+    health: `身體狀態需要少一點硬撐。今天如果覺得累，先補水、少喝冰的，或走路十分鐘，讓緊繃的注意力慢慢鬆開。`,
+    healthScore: scoreFromSeed(seed, 31),
+    luckyColor: guide.color,
+    luckyNumber: 1 + (Array.from(seed).reduce((sum, char) => sum + char.charCodeAt(0), 0) % 99),
+    crystal: guide.crystal,
+    crystalReason: `${guide.crystal}適合搭配${moonPhase.name}，陪你把今天容易混在一起的情緒和行動慢慢分開。`,
+    advice: `${guide.action}。這個小動作會讓你比較知道今天該衝哪裡、又該在哪裡先穩住。`,
+    moonPhase: moonPhase.name,
+    moonSymbol: moonPhase.symbol,
+  };
 }
 
 // ─── Fortune Router ────────────────────────────────────────────────────────────
@@ -141,6 +192,12 @@ export const fortuneRouter = router({
 
       // 取得星座特性
       const traits = ZODIAC_TRAITS[input.sign] || null;
+      const fallbackFortune = buildFallbackFortune({
+        signName: input.signName,
+        date: input.date,
+        moonPhase,
+        traits,
+      });
       const traitsDesc = traits
         ? `【星座特性】
 - 元素：${traits.element}元素
@@ -244,28 +301,32 @@ ${traitsDesc}
           },
         });
       } catch {
-        response = await invokeLLM({
-          messages: [
-            messages[0],
-            {
-              role: "user",
-              content: `${userPrompt}\n\n請只回傳一個可被 JSON.parse 解析的 JSON 物件，不要使用 Markdown code block，不要加任何前後說明。`,
-            },
-          ],
-          maxTokens: 1000,
-        });
+        try {
+          response = await invokeLLM({
+            messages: [
+              messages[0],
+              {
+                role: "user",
+                content: `${userPrompt}\n\n請只回傳一個可被 JSON.parse 解析的 JSON 物件，不要使用 Markdown code block，不要加任何前後說明。`,
+              },
+            ],
+            maxTokens: 1000,
+          });
+        } catch {
+          return fallbackFortune;
+        }
       }
 
       const rawContent = response.choices?.[0]?.message?.content;
       const content = rawContent ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>) : null;
       if (!content) {
-        throw new Error("運勢生成失敗，請稍後再試");
+        return fallbackFortune;
       }
 
       try {
         return parseFortuneResult(content);
       } catch {
-        throw new Error("運勢解析失敗，請稍後再試");
+        return fallbackFortune;
       }
     }),
 
