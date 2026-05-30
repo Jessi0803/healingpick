@@ -519,15 +519,15 @@ export default function TarotPage() {
                 </h3>
                 <p className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  這次會抽出 5 張牌，幫你從不同角度看清楚現在的狀況。
+                  這副牌不是只替你看現在發生什麼，也會幫你整理出接下來可以怎麼做。五張牌一起看，通常比只抽一張更容易知道問題卡在哪裡，以及下一步可以先往哪個方向走。
                 </p>
                 <div className="grid gap-2 mb-6">
                   {[
-                    { label: '中心能量', desc: '這件事最核心的狀態' },
-                    { label: '過去', desc: '曾經如何影響現在' },
-                    { label: '現在', desc: '此刻真正卡住的地方' },
-                    { label: '未來', desc: '接下來可能出現的走向' },
-                    { label: '建議', desc: '牌面給你的下一步提醒' },
+                    { label: '中心能量', desc: '事情現在最核心的地方' },
+                    { label: '過去', desc: '以前的事怎麼一路影響到現在' },
+                    { label: '現在', desc: '你眼前真正正在卡的點' },
+                    { label: '未來', desc: '接下來可能會往哪裡發展' },
+                    { label: '建議', desc: '現在最適合你的下一步' },
                   ].map((item, i) => (
                     <div key={item.label} className="flex items-center gap-3 rounded-xl bg-[#D1BE9B]/8 border border-[#D1BE9B]/10 px-3 py-2.5">
                       <div className="w-7 h-7 rounded-full bg-white/55 border border-[#D1BE9B]/20 flex items-center justify-center text-[10px] text-[#D1BE9B] flex-shrink-0"
@@ -548,7 +548,7 @@ export default function TarotPage() {
                 <div className="pt-4 border-t border-[#D1BE9B]/15">
                   <p className="text-[12px] leading-[1.9] text-[#31353A]/62 tracking-wide"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                    Mochi 會從 22 張大阿爾卡納中隨機抽出 5 張，包含正位或逆位，並結合你的問題生成完整解讀。
+                    Mochi 會隨機抽出 5 張大阿爾卡納，包含正位和逆位，讓每次抽牌都有不同層次。再把你的提問和整個牌陣放在一起看，幫你不只知道牌面在說什麼，也比較清楚自己接下來可以怎麼做。
                   </p>
                 </div>
               </div>
