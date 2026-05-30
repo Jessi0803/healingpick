@@ -383,7 +383,7 @@ export default function ZiweiPage() {
 
             <p className="text-sm italic text-[#31353A]/54 tracking-[0.15em]"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-              「星曜落在哪一宮，便訴說人生的故事。」
+              「把看不懂的自己，慢慢整理成看得懂的方向。」
             </p>
           </div>
 
