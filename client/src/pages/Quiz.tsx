@@ -10,6 +10,8 @@ import { QUIZZES, Quiz, QuizQuestion } from '@/data/quizzes';
 import { findProduct } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
+const ARCHIVE_NUMERALS = ['I', 'II', 'III', 'IV'];
+
 export default function QuizPage() {
   const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState<number>(0);
@@ -104,10 +106,10 @@ export default function QuizPage() {
   const getQuizTheme = () => {
     if (!activeQuiz) {
       return {
-        bg: 'bg-[#FAF7F4]',
-        blob1: 'bg-[#E5DFEE]/35',
-        blob2: 'bg-[#FAF0EC]/40',
-        particles: ['✧', '✦', '⋆', '☁︎', '✨', '🐾'],
+        bg: 'bg-[#F4EFE7]',
+        blob1: 'bg-[#DED3C4]/45',
+        blob2: 'bg-[#C8B8A2]/35',
+        particles: ['✧', '✦', '⋆', '☽', '✷', '𓆸'],
       };
     }
 
@@ -142,10 +144,10 @@ export default function QuizPage() {
         };
       default:
         return {
-          bg: 'bg-[#FAF7F4]',
-          blob1: 'bg-[#E5DFEE]/35',
-          blob2: 'bg-[#FAF0EC]/40',
-          particles: ['✧', '✦', '⋆', '☁︎', '✨', '🐾'],
+          bg: 'bg-[#F4EFE7]',
+          blob1: 'bg-[#DED3C4]/45',
+          blob2: 'bg-[#C8B8A2]/35',
+          particles: ['✧', '✦', '⋆', '☽', '✷', '𓆸'],
         };
     }
   };
@@ -155,10 +157,12 @@ export default function QuizPage() {
 
   return (
     <PageLayout>
-      <div className={`min-h-screen py-12 px-4 md:px-8 ${theme.bg} relative overflow-hidden transition-colors duration-1000`}>
+      <div className={`quiz-archive-shell min-h-screen py-12 px-4 md:px-8 ${theme.bg} relative overflow-hidden transition-colors duration-1000`}>
         
         {/* Grain Noise Texture for high-end luxury feel */}
         <div className="absolute inset-0 bg-noise opacity-[0.4] pointer-events-none mix-blend-overlay z-10" />
+        <div className="absolute inset-0 quiz-archive-vignette pointer-events-none z-[1]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B89D68]/40 to-transparent z-[2]" />
 
         {/* Dynamic moving Morandi blobs */}
         <div className={`absolute top-1/6 left-1/6 w-[450px] h-[450px] rounded-full ${theme.blob1} blur-[120px] pointer-events-none animate-blob-1 z-0 transition-colors duration-1000`} />
@@ -192,63 +196,77 @@ export default function QuizPage() {
             <div className="animate-fade-in-up">
               {/* Header */}
               <div className="text-center mb-12">
-                <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
+                <span className="inline-flex items-center gap-3 rounded-full border border-[#B89D68]/25 bg-[#F8F1E7]/55 px-5 py-2 text-[10px] tracking-[0.42em] text-[#9A7C52] uppercase shadow-[0_10px_30px_rgba(86,66,42,0.06)]"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  Psychological Resonance Quizzes
+                  <span className="text-[#B89D68]">✦</span>
+                  Soul Archive
+                  <span className="text-[#B89D68]">✦</span>
                 </span>
-                <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] mt-3 mb-3"
+                <h1 className="text-3xl md:text-5xl tracking-[0.24em] font-extralight text-[#2F3336] mt-5 mb-4"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   宇宙心理測驗
                 </h1>
-                <p className="text-xs md:text-sm italic text-[#31353A]/54 tracking-[0.15em] mb-4"
-                  style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                  "Answer with your heart and discover your soul's matching frequency."
+                <p className="max-w-xl mx-auto text-[12px] md:text-[13px] leading-[2.1] text-[#31353A]/62 tracking-[0.16em] mb-5"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                  選一份被你吸引的靈魂檔案。不用想太多，第一眼停留的地方，通常就是心裡正在發光的線索。
                 </p>
                 
-                <div className="flex justify-center items-center gap-2 mt-4">
+                <div className="flex justify-center items-center gap-2 mt-5">
                   <CatSitting className="w-10 h-12" />
-                  <span className="text-[10px] text-[#D1BE9B]/80 font-light select-none tracking-widest">
-                    Mochi 陪伴你的內在探索 ⊹ ࣪ ˖
+                  <span className="text-[10px] text-[#9A7C52]/75 font-light select-none tracking-widest">
+                    Mochi 會在旁邊替你守著這盞小燈 ⊹ ࣪ ˖
                   </span>
                 </div>
               </div>
 
               {/* Lobby Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                {QUIZZES.map((quiz) => (
+                {QUIZZES.map((quiz, index) => (
                   <button
                     type="button"
                     key={quiz.slug}
                     onClick={() => handleStartQuiz(quiz)}
-                    className="group quiz-lobby-card cursor-pointer glass-panel bg-white/40 border border-[#D1BE9B]/15 rounded-3xl p-7 shadow-sm relative overflow-hidden text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#FAF7F4]"
+                    className="group quiz-lobby-card quiz-archive-card cursor-pointer rounded-[30px] p-7 shadow-sm relative overflow-hidden text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B89D68]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#F4EFE7]"
                   >
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#D1BE9B]/5 to-transparent pointer-events-none rounded-tr-3xl" />
+                    <div className="absolute inset-[10px] rounded-[22px] border border-[#B89D68]/18 pointer-events-none" />
+                    <div className="absolute -top-16 -right-14 w-36 h-36 rounded-full bg-[#D1BE9B]/12 blur-2xl pointer-events-none transition-opacity duration-300 group-hover:opacity-100 opacity-40" />
                     
-                    <div className="flex items-start gap-4">
-                      <span className="text-3xl p-3 rounded-2xl bg-white/60 shadow-inner border border-[#D1BE9B]/10 select-none">
+                    <div className="relative z-10 flex items-start justify-between gap-4 mb-8">
+                      <div>
+                        <span className="text-[10px] tracking-[0.35em] text-[#9A7C52]/70 uppercase"
+                          style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                          Archive {ARCHIVE_NUMERALS[index] ?? index + 1}
+                        </span>
+                        <div className="mt-2 h-px w-16 bg-gradient-to-r from-[#B89D68]/50 to-transparent" />
+                      </div>
+                      <span className="quiz-archive-seal text-3xl rounded-full border border-[#B89D68]/25 bg-[#FBF6EC]/70 shadow-inner select-none">
                         {quiz.emoji}
                       </span>
-                      
-                      <div className="flex-1 text-left">
-                        <span className="text-[9px] tracking-[0.2em] text-[#D1BE9B] uppercase font-light"
+                    </div>
+                    
+                    <div className="relative z-10">
+                      <span className="text-[9px] tracking-[0.26em] text-[#9A7C52] uppercase font-light"
                           style={{ fontFamily: 'Noto Serif TC, serif' }}>
-                          {quiz.subtitle}
-                        </span>
-                        <h3 className="text-[15px] md:text-base tracking-[0.1em] text-[#31353A] mt-1 mb-2 font-medium"
-                          style={{ fontFamily: 'Noto Serif TC, serif' }}>
-                          {quiz.name}
-                        </h3>
-                        <p className="text-[12px] leading-[1.8] text-[#31353A]/60 font-light"
-                          style={{ fontFamily: 'Noto Serif TC, serif' }}>
-                          {quiz.desc}
-                        </p>
-                      </div>
+                        {quiz.subtitle}
+                      </span>
+                      <h3 className="text-[17px] md:text-lg tracking-[0.13em] text-[#2F3336] mt-2 mb-3 font-medium"
+                        style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                        {quiz.name}
+                      </h3>
+                      <p className="text-[12px] leading-[1.95] text-[#31353A]/62 font-light"
+                        style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                        {quiz.desc}
+                      </p>
                     </div>
 
-                    <div className="flex justify-end mt-4 pt-3 border-t border-[#D1BE9B]/10">
-                      <span className="text-[10px] tracking-[0.15em] text-[#A38D6B] hover:text-[#31353A] transition-colors flex items-center gap-1"
+                    <div className="relative z-10 flex justify-between items-center mt-7 pt-4 border-t border-[#B89D68]/15">
+                      <span className="text-[9px] tracking-[0.24em] text-[#31353A]/38 uppercase"
+                        style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                        Sealed Reading
+                      </span>
+                      <span className="text-[10px] tracking-[0.18em] text-[#8A6D45] transition-colors flex items-center gap-1"
                         style={{ fontFamily: 'Noto Serif TC, serif' }}>
-                        開啟測驗 ✦
+                        開啟檔案 ✦
                       </span>
                     </div>
                   </button>
@@ -261,7 +279,7 @@ export default function QuizPage() {
                   <CatPeeking className="w-12 h-14" side="right" />
                   <p className="text-[11px] text-[#31353A]/50 tracking-wider italic"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    選一個你當下最被吸引的圖案，靜下心來測驗吧 𓆩♡𓆪
+                    先不要急著分析，讓直覺替你翻開第一頁 𓆩♡𓆪
                   </p>
                 </div>
               </div>
@@ -285,8 +303,8 @@ export default function QuizPage() {
 
               {/* Quiz card header */}
               <div className="mb-8">
-                <span className="text-[10px] tracking-[0.35em] text-[#D1BE9B] uppercase font-light">
-                  {activeQuiz.subtitle}
+                <span className="text-[10px] tracking-[0.35em] text-[#9A7C52] uppercase font-light">
+                  Archive in progress · {activeQuiz.subtitle}
                 </span>
                 <h2 className="text-xl md:text-2xl tracking-[0.15em] text-[#31353A] mt-1.5 mb-3"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
@@ -295,14 +313,14 @@ export default function QuizPage() {
                 
                 {/* Custom Unicode Star Progress bar */}
                 <div className="flex flex-col items-center gap-1.5 mt-4 select-none">
-                  <span className="text-[10px] text-[#D1BE9B]/60 tracking-[0.2em] font-light">
-                    ⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆
+                  <span className="text-[10px] text-[#9A7C52]/60 tracking-[0.2em] font-light">
+                    ✦ ── soul scan ── ✦
                   </span>
                   
                   {/* Progress Line */}
-                  <div className="w-48 h-0.5 bg-[#D1BE9B]/20 rounded-full relative overflow-hidden">
+                  <div className="w-52 h-px bg-[#B89D68]/20 rounded-full relative overflow-hidden">
                     <div 
-                      className="absolute top-0 left-0 h-full bg-[#A38D6B] transition-[width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-full"
+                      className="absolute top-0 left-0 h-full bg-[#8A6D45] transition-[width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-full"
                       style={{ width: `${((currentQuestionIdx + 1) / activeQuiz.questions.length) * 100}%` }}
                     />
                   </div>
@@ -315,8 +333,13 @@ export default function QuizPage() {
               {/* Active Question Box */}
               <div
                 key={`${activeQuiz.slug}-${currentQuestionIdx}`}
-                className="quiz-question-card glass-panel bg-white/45 backdrop-blur-md border border-[#D1BE9B]/25 rounded-[32px] p-8 shadow-[0_12px_40px_rgba(209,190,155,0.08)] mb-8"
+                className="quiz-question-card quiz-archive-panel rounded-[32px] p-8 shadow-[0_18px_50px_rgba(86,66,42,0.10)] mb-8"
               >
+                <div className="mb-5 flex items-center justify-between gap-4 text-[9px] tracking-[0.26em] text-[#9A7C52]/70 uppercase"
+                  style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                  <span>Entry {String(currentQuestionIdx + 1).padStart(2, '0')}</span>
+                  <span>Listen first</span>
+                </div>
                 <p className="text-[14px] md:text-[15.5px] leading-[2.1] text-[#31353A] tracking-wider mb-8 font-light"
                   style={{ fontFamily: 'Noto Serif TC, serif' }}>
                   {activeQuiz.questions[currentQuestionIdx].question}
@@ -331,8 +354,8 @@ export default function QuizPage() {
                       disabled={isAnimatingNext}
                       className={`quiz-option-button w-full text-left px-6 py-4 text-xs md:text-sm tracking-wide border rounded-2xl font-light disabled:opacity-70 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/70 ${
                         selectedOptionKey === opt.scoreKey
-                          ? 'bg-[#3D4144] text-[#FAF7F4] border-[#3D4144] shadow-md'
-                          : 'bg-white/40 border-[#D1BE9B]/20 text-[#31353A]/80'
+                          ? 'bg-[#2F3336] text-[#FAF7F4] border-[#2F3336] shadow-md'
+                          : 'bg-[#FFF9EF]/55 border-[#B89D68]/20 text-[#31353A]/80'
                       }`}
                       style={{ fontFamily: 'Noto Serif TC, serif', lineHeight: '1.7' }}
                     >
@@ -367,8 +390,8 @@ export default function QuizPage() {
                 <div className="absolute top-4 left-6 opacity-30 select-none text-xs">𓆩♡𓆪</div>
                 <div className="absolute top-4 right-6 opacity-30 select-none text-xs">𓆩♡𓆪</div>
                 
-                <span className="text-[10px] tracking-[0.4em] text-[#D1BE9B] uppercase font-light">
-                  Resonance Result
+                <span className="text-[10px] tracking-[0.4em] text-[#9A7C52] uppercase font-light">
+                  Archive Revealed
                 </span>
                 
                 <h3 className="text-base italic text-[#A38D6B] mt-2 mb-2 font-serif"
