@@ -437,7 +437,7 @@ export default function PageLayout({ children, className = '', noFooter = false 
         type="button"
         onClick={toggleMusic}
         aria-label={isMusicPlaying ? '暫停背景音樂' : '播放背景音樂'}
-        className={`fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full border shadow-[0_10px_28px_rgba(49,53,58,0.16)] backdrop-blur-md transition-all duration-300 active:scale-95 ${
+        className={`fixed bottom-5 left-5 z-50 flex h-11 w-11 items-center justify-center rounded-full border shadow-[0_10px_28px_rgba(49,53,58,0.16)] backdrop-blur-md transition-all duration-300 active:scale-95 ${
           isMusicPlaying
             ? 'border-[#D1BE9B]/55 bg-[#D1BE9B]/20 text-[#8A7250]'
             : 'border-[#D1BE9B]/25 bg-[#FDFBF7]/70 text-[#A38D6B] hover:border-[#D1BE9B]/45 hover:bg-[#FDFBF7]/90'
