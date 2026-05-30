@@ -26,7 +26,7 @@ const navLinks = [
 const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、每日運勢用完免費額度後，每次解讀消耗 1 點。';
 
 export default function Navbar() {
-  const { isAuthenticated, login, logout } = useAuth();
+  const { user, isAuthenticated, login, logout } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
     refetchOnWindowFocus: true,
   });
@@ -169,6 +169,19 @@ export default function Navbar() {
                 >
                   ✦ 我的紀錄
                 </Link>
+                {user?.role === 'admin' && (
+                  <Link
+                    href="/admin"
+                    className={`text-xs tracking-[0.2em] transition-colors duration-300 ${
+                      isActive('/admin')
+                        ? 'text-[#D1BE9B]'
+                        : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
+                    }`}
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    後台
+                  </Link>
+                )}
                 <button
                   onClick={() => logout()}
                   className="text-xs tracking-[0.2em] text-[#31353A]/62 hover:text-[#D1BE9B] transition-colors duration-300"
@@ -246,6 +259,15 @@ export default function Navbar() {
                     >
                       ✦ 我的紀錄
                     </Link>
+                    {user?.role === 'admin' && (
+                      <Link
+                        href="/admin"
+                        className="text-xs tracking-[0.25em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors py-2"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        後台
+                      </Link>
+                    )}
                     <button
                       onClick={() => logout()}
                       className="text-left text-xs tracking-[0.25em] text-[#31353A]/62 hover:text-[#D1BE9B] transition-colors py-2"

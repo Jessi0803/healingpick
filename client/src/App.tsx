@@ -17,6 +17,7 @@ import History from "./pages/History";
 import Buy from "./pages/Buy";
 import ResetPassword from "./pages/ResetPassword";
 import LoginDialog from "./components/LoginDialog";
+import Admin from "./pages/Admin";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -32,6 +33,7 @@ function Router() {
       <Route path="/shop/:id" component={ProductDetail} />
       <Route path="/history" component={History} />
       <Route path="/buy" component={Buy} />
+      <Route path="/admin" component={Admin} />
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

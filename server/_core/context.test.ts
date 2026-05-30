@@ -1,0 +1,105 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createContext } from "./context";
+import { verifyAccessToken } from "./supabase";
+import { getUserByOpenId, upsertUser } from "../db";
+
+vi.mock("./supabase", () => ({
+  verifyAccessToken: vi.fn(),
+}));
+
+vi.mock("../db", () => ({
+  getUserByOpenId: vi.fn(),
+  upsertUser: vi.fn(),
+}));
+
+const mockVerifyAccessToken = vi.mocked(verifyAccessToken);
+const mockGetUserByOpenId = vi.mocked(getUserByOpenId);
+const mockUpsertUser = vi.mocked(upsertUser);
+
+function createOptions(headers: Record<string, string | string[] | undefined> = {}) {
+  return {
+    req: {
+      headers,
+      socket: { remoteAddress: "203.0.113.10" },
+    },
+    res: {},
+  } as Parameters<typeof createContext>[0];
+}
+
+describe("createContext", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("keeps public requests anonymous while preserving valid anon and IP identities", async () => {
+    const ctx = await createContext(createOptions({ "x-anon-id": "anon_123456" }));
+
+    expect(ctx.user).toBeNull();
+    expect(ctx.anonId).toBe("anon_123456");
+    expect(ctx.ipHash).toMatch(/^[a-f0-9]{32}$/);
+    expect(mockVerifyAccessToken).not.toHaveBeenCalled();
+  });
+
+  it("rejects malformed anonymous ids", async () => {
+    const ctx = await createContext(createOptions({ "x-anon-id": "../bad" }));
+
+    expect(ctx.anonId).toBeNull();
+    expect(ctx.ipHash).toMatch(/^[a-f0-9]{32}$/);
+  });
+
+  it("uses an existing app user for a valid bearer token", async () => {
+    mockVerifyAccessToken.mockResolvedValueOnce({
+      id: "supabase-user",
+      email: "user@example.com",
+      name: "User",
+    });
+    mockGetUserByOpenId.mockResolvedValueOnce({
+      id: 9,
+      openId: "supabase-user",
+      email: "user@example.com",
+      name: "User",
+    } as Awaited<ReturnType<typeof getUserByOpenId>>);
+
+    const ctx = await createContext(createOptions({ authorization: "Bearer token-123" }));
+
+    expect(mockVerifyAccessToken).toHaveBeenCalledWith("token-123");
+    expect(mockGetUserByOpenId).toHaveBeenCalledWith("supabase-user");
+    expect(mockUpsertUser).not.toHaveBeenCalled();
+    expect(ctx.user?.id).toBe(9);
+  });
+
+  it("creates an app user on first authenticated sign-in", async () => {
+    mockVerifyAccessToken.mockResolvedValueOnce({
+      id: "new-supabase-user",
+      email: "new@example.com",
+      name: "New User",
+    });
+    mockGetUserByOpenId.mockResolvedValueOnce(undefined);
+    mockUpsertUser.mockResolvedValueOnce({
+      id: 10,
+      openId: "new-supabase-user",
+      email: "new@example.com",
+      name: "New User",
+      loginMethod: "google",
+    } as Awaited<ReturnType<typeof upsertUser>>);
+
+    const ctx = await createContext(createOptions({ authorization: "Bearer token-456" }));
+
+    expect(mockUpsertUser).toHaveBeenCalledWith({
+      openId: "new-supabase-user",
+      email: "new@example.com",
+      name: "New User",
+      loginMethod: "google",
+    });
+    expect(ctx.user?.id).toBe(10);
+  });
+
+  it("falls back to anonymous context when token verification fails", async () => {
+    mockVerifyAccessToken.mockRejectedValueOnce(new Error("bad token"));
+
+    const ctx = await createContext(createOptions({ authorization: "Bearer bad-token" }));
+
+    expect(ctx.user).toBeNull();
+    expect(ctx.ipHash).toMatch(/^[a-f0-9]{32}$/);
+  });
+});
