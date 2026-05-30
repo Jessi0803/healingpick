@@ -246,6 +246,7 @@ export default function ZiweiPage() {
   const [hourValue, setHourValue] = useState('0');
   const [gender, setGender] = useState<'男' | '女'>('女');
   const [focusArea, setFocusArea] = useState('');
+  const [activeQuestionCategory, setActiveQuestionCategory] = useState<string | null>(null);
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
@@ -488,33 +489,56 @@ export default function ZiweiPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                   不知道怎麼問也沒關係，可以先從大家常問的方向開始，也可以點一下再改成自己的情況。
                 </p>
-                <div className="grid gap-3">
-                  {QUESTION_CATEGORIES.map((category) => (
-                    <div key={category.label} className="rounded-xl border border-[#D1BE9B]/14 bg-white/38 px-3 py-3">
-                      <div className="mb-2 flex items-center gap-2">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/12 text-[11px] text-[#A38D6B]">
-                          {category.icon}
-                        </span>
-                        <p className="text-[11px] tracking-[0.22em] text-[#8A7250]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                          {category.label}
-                        </p>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {QUESTION_CATEGORIES.map((category) => {
+                    const isOpen = activeQuestionCategory === category.label;
+
+                    return (
+                      <div key={category.label} className="overflow-hidden rounded-xl border border-[#D1BE9B]/14 bg-white/38">
+                        <button
+                          type="button"
+                          onClick={() => setActiveQuestionCategory(isOpen ? null : category.label)}
+                          className={`flex w-full items-center justify-between gap-2 px-3 py-3 text-left transition-all duration-200 ${
+                            isOpen ? 'bg-[#D1BE9B]/10' : 'hover:bg-white/45'
+                          }`}
+                          aria-expanded={isOpen}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/12 text-[11px] text-[#A38D6B]">
+                              {category.icon}
+                            </span>
+                            <span className="text-[11px] tracking-[0.18em] text-[#8A7250]"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                              {category.label}
+                            </span>
+                            <span className="hidden text-[10px] tracking-[0.08em] text-[#31353A]/42 sm:inline"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                              {category.questions.length} 題
+                            </span>
+                          </span>
+                          <span className={`text-[13px] text-[#A38D6B] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                            ˅
+                          </span>
+                        </button>
+
+                        {isOpen && (
+                          <div className="animate-fade-in-up grid gap-2 border-t border-[#D1BE9B]/10 px-2.5 py-2.5">
+                            {category.questions.map(prompt => (
+                              <button
+                                key={prompt}
+                                type="button"
+                                onClick={() => setFocusArea(prompt.slice(0, 100))}
+                                className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
+                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                              >
+                                {prompt}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {category.questions.map(prompt => (
-                          <button
-                            key={prompt}
-                            type="button"
-                            onClick={() => setFocusArea(prompt.slice(0, 100))}
-                            className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                          >
-                            {prompt}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
