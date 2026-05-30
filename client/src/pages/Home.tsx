@@ -11,7 +11,7 @@
  *   7. Testimonials (使用者心聲)
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatPeeking } from '@/components/CatElements';
@@ -180,7 +180,6 @@ export default function Home() {
 
   const [activeCrystal, setActiveCrystal] = useState<string | null>(null);
   const [bodyBg, setBodyBg] = useState('');
-  const [testimonialsIdx, setTestimonialsIdx] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
@@ -190,14 +189,6 @@ export default function Home() {
   };
 
   const audioCtxRef = useRef<AudioContext | null>(null);
-
-  // Auto-advance testimonials
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTestimonialsIdx(prev => (prev + 1) % testimonials.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
 
   const crystalFrequencies: Record<string, { f1: number; f2: number; label: string }> = {
     purple: { f1: 432, f2: 648, label: '432Hz · 頂輪淨化' },
@@ -237,6 +228,10 @@ export default function Home() {
   }
 
   const activeData = activeCrystal ? altarData[activeCrystal] : null;
+
+  function scrollToTestimonials() {
+    document.getElementById('testimonials-section')?.scrollIntoView({ behavior: 'smooth' });
+  }
 
   const crystalIconMap: Record<string, React.ReactNode> = {
     '紫水晶': <div className="w-5 h-6"><CrystalPurple /></div>,
@@ -388,6 +383,14 @@ export default function Home() {
               </button>
             </Link>
           </div>
+
+          <button
+            onClick={scrollToTestimonials}
+            className="mt-5 inline-flex items-center justify-center rounded-full border border-[#D1BE9B]/28 bg-white/30 px-5 py-2 text-[11px] tracking-[0.18em] text-[#A38D6B] backdrop-blur-sm transition-all duration-300 hover:border-[#D1BE9B]/55 hover:bg-white/55 hover:text-[#31353A] active:scale-95"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+          >
+            ♡ 看看大家怎麼被療癒
+          </button>
         </div>
 
         {/* Scroll indicator */}
@@ -900,49 +903,57 @@ export default function Home() {
 
 
       {/* ── TESTIMONIALS ──────────────────────────────────────────────────── */}
-      <section className="py-20 px-6 md:px-10 bg-[#F2EDE8]/30">
-        <div className="max-w-3xl mx-auto">
+      <section id="testimonials-section" className="py-20 px-6 md:px-10 bg-[#F2EDE8]/30 scroll-mt-24">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>Voices from the Soul</span>
-            <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>使用者心聲</h2>
+            <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>Gentle Echoes</span>
+            <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>那些被溫柔接住的時刻</h2>
+            <p className="mt-3 text-[12px] leading-[1.9] tracking-[0.14em] text-[#31353A]/52 max-w-xl mx-auto"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+              有些答案不一定轟轟烈烈，只是在剛好的時候，讓心安靜下來一點。
+            </p>
           </div>
 
-          {/* Auto-carousel testimonial */}
-          <div className="relative overflow-hidden">
-            <div
-              className="flex transition-transform duration-700"
-              style={{ transform: `translateX(-${testimonialsIdx * 100}%)`, transitionTimingFunction: 'cubic-bezier(0.23,1,0.32,1)' }}
-            >
-              {testimonials.map((t, i) => (
-                <div key={i} className="w-full flex-shrink-0 px-2">
-                  <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/15 text-center">
-                    <div className="flex justify-center mb-4">
-                      <div className="w-8 h-10 opacity-60">
-                        {crystalIconMap[t.crystal] ?? <div className="w-8 h-10 rounded-full bg-[#D1BE9B]/20" />}
-                      </div>
-                    </div>
-                    <p className="text-[13px] leading-[2.2] text-[#31353A]/72 tracking-wider mb-6 italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>「{t.text}」</p>
-                    <p className="text-xs tracking-[0.15em] text-[#31353A]/82" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{t.name}</p>
-                    <p className="text-[11px] tracking-[0.15em] text-[#D1BE9B] mt-0.5" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{t.tag}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {testimonials.map((t, i) => (
+              <article
+                key={t.tag}
+                className="group relative min-h-[20rem] rounded-xl border border-[#D1BE9B]/18 bg-white/55 px-6 py-7 shadow-[0_14px_45px_rgba(49,53,58,0.05)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#D1BE9B]/42 hover:shadow-[0_18px_55px_rgba(49,53,58,0.08)]"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                <div className="mb-6 flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[11px] tracking-[0.22em] text-[#D1BE9B]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      {t.tag}
+                    </p>
+                    <p className="mt-1 text-[11px] tracking-[0.12em] text-[#31353A]/42"
+                      style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                      note {String(i + 1).padStart(2, '0')}
+                    </p>
+                  </div>
+                  <div className="w-8 h-10 shrink-0 opacity-58 transition-opacity duration-300 group-hover:opacity-80">
+                    {crystalIconMap[t.crystal] ?? <div className="w-8 h-10 rounded-full bg-[#D1BE9B]/20" />}
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="flex justify-center gap-2 mt-6">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setTestimonialsIdx(i)}
-                  className="transition-all duration-300"
-                  style={{
-                    width: testimonialsIdx === i ? '1.5rem' : '0.4rem',
-                    height: '0.4rem',
-                    borderRadius: '9999px',
-                    background: testimonialsIdx === i ? '#D1BE9B' : 'rgba(209,190,155,0.3)',
-                  }}
-                />
-              ))}
-            </div>
+
+                <p className="text-[13px] leading-[2.15] text-[#31353A]/72 tracking-wider"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                  「{t.text}」
+                </p>
+
+                <div className="mt-7 flex items-center justify-between border-t border-[#D1BE9B]/14 pt-4">
+                  <p className="text-xs tracking-[0.16em] text-[#31353A]/72"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    {t.name}
+                  </p>
+                  <span className="text-[11px] tracking-[0.14em] text-[#A38D6B]/70"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                    使用者回饋
+                  </span>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
