@@ -3,7 +3,7 @@
  * Provides: Navbar + Aurora background + Footer + Page enter animation
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -15,11 +15,37 @@ interface PageLayoutProps {
 
 export default function PageLayout({ children, className = '', noFooter = false }: PageLayoutProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
   // Scroll to top on page mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = 0.18;
+  }, []);
+
+  const toggleMusic = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      try {
+        await audio.play();
+        setIsMusicPlaying(true);
+      } catch {
+        setIsMusicPlaying(false);
+      }
+      return;
+    }
+
+    audio.pause();
+    setIsMusicPlaying(false);
+  };
 
   // Ethereal particle canvas
   useEffect(() => {
@@ -404,6 +430,24 @@ export default function PageLayout({ children, className = '', noFooter = false 
       </div>
 
       <Navbar />
+
+      <audio ref={audioRef} src="/audio/music.mp3" loop preload="metadata" />
+
+      <button
+        type="button"
+        onClick={toggleMusic}
+        aria-label={isMusicPlaying ? '暫停背景音樂' : '播放背景音樂'}
+        className={`fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full border shadow-[0_10px_28px_rgba(49,53,58,0.16)] backdrop-blur-md transition-all duration-300 active:scale-95 ${
+          isMusicPlaying
+            ? 'border-[#D1BE9B]/55 bg-[#D1BE9B]/20 text-[#8A7250]'
+            : 'border-[#D1BE9B]/25 bg-[#FDFBF7]/70 text-[#A38D6B] hover:border-[#D1BE9B]/45 hover:bg-[#FDFBF7]/90'
+        }`}
+      >
+        <span className="sr-only">{isMusicPlaying ? '暫停背景音樂' : '播放背景音樂'}</span>
+        <span aria-hidden="true" className="text-base leading-none">
+          {isMusicPlaying ? '♪' : '♫'}
+        </span>
+      </button>
 
       <main className={`relative z-10 pt-20 page-enter ${className}`}>
         {children}
