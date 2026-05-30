@@ -9,7 +9,7 @@
  *   - AI interpretation
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
@@ -75,15 +75,58 @@ const HOURS = [
   { label: '亥時 (21:00–23:00)', value: 11 },
 ];
 
-const QUESTION_PROMPTS = [
-  '我最近為什麼一直卡住？',
-  '這段關係還適合繼續嗎？',
-  '我的工作方向是不是該調整？',
-  '我適合自己創業或接案嗎？',
-  '為什麼我總是在關係裡很累？',
-  '最近財務和安全感該注意什麼？',
+const QUESTION_CATEGORIES = [
+  {
+    label: '工作',
+    icon: '◈',
+    questions: [
+      '我現在的工作方向適合我嗎？',
+      '我適合穩定上班、轉職，還是自己接案？',
+      '為什麼我工作上常常很努力卻卡住？',
+      '接下來一年事業上要衝刺，還是先穩住比較好？',
+    ],
+  },
+  {
+    label: '財運',
+    icon: '✦',
+    questions: [
+      '我最近財務和安全感該注意什麼？',
+      '我適合靠什麼方式累積收入？',
+      '為什麼我存錢或花錢常常沒有安全感？',
+      '現在適合投資、副業，還是先整理金錢習慣？',
+    ],
+  },
+  {
+    label: '感情',
+    icon: '♡',
+    questions: [
+      '這段關係還適合繼續嗎？',
+      '為什麼我總是在關係裡很累？',
+      '我在感情裡最容易卡住的模式是什麼？',
+      '我適合怎樣的人，才比較能走得長久？',
+    ],
+  },
+  {
+    label: '自我',
+    icon: '☽',
+    questions: [
+      '我最近為什麼一直卡住？',
+      '我的個性裡最需要被理解的是什麼？',
+      '我面對壓力時最容易變成什麼樣子？',
+      '我現在最需要調整的是心態、方向，還是生活節奏？',
+    ],
+  },
+  {
+    label: '人際家庭',
+    icon: '𓂃',
+    questions: [
+      '我和家人的相處為什麼常常有壓力？',
+      '我在人際關係裡容易吸引怎樣的人？',
+      '我是不是太容易替別人承擔情緒？',
+      '我該怎麼建立比較舒服的界線？',
+    ],
+  },
 ];
-const POPULAR_QUESTIONS_PER_PAGE = 6;
 
 // ─── Palace grid layout (traditional 4×4) ─────────────────────────────────────
 // Row 0: P3  P4  P5  P6
@@ -203,32 +246,9 @@ export default function ZiweiPage() {
   const [hourValue, setHourValue] = useState('0');
   const [gender, setGender] = useState<'男' | '女'>('女');
   const [focusArea, setFocusArea] = useState('');
-  const [popularQuestionPage, setPopularQuestionPage] = useState(0);
-  const [isPopularQuestionsPaused, setIsPopularQuestionsPaused] = useState(false);
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
-
-  const popularQuestionGroups = Array.from(
-    { length: Math.ceil(QUESTION_PROMPTS.length / POPULAR_QUESTIONS_PER_PAGE) },
-    (_, index) =>
-      QUESTION_PROMPTS.slice(
-        index * POPULAR_QUESTIONS_PER_PAGE,
-        index * POPULAR_QUESTIONS_PER_PAGE + POPULAR_QUESTIONS_PER_PAGE
-      )
-  );
-  const visiblePopularQuestions =
-    popularQuestionGroups[popularQuestionPage % popularQuestionGroups.length] ?? [];
-
-  useEffect(() => {
-    if (isPopularQuestionsPaused || popularQuestionGroups.length <= 1) return;
-
-    const interval = window.setInterval(() => {
-      setPopularQuestionPage((page) => page + 1);
-    }, 6000);
-
-    return () => window.clearInterval(interval);
-  }, [isPopularQuestionsPaused, popularQuestionGroups.length]);
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -456,57 +476,43 @@ export default function ZiweiPage() {
                 </div>
               </div>
 
-              <div
-                className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60"
-                onMouseEnter={() => setIsPopularQuestionsPaused(true)}
-                onMouseLeave={() => setIsPopularQuestionsPaused(false)}
-                onFocus={() => setIsPopularQuestionsPaused(true)}
-                onBlur={() => setIsPopularQuestionsPaused(false)}
-              >
-                <div className="flex items-center justify-between gap-3 mb-2">
+              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60">
+                <div className="mb-2">
                   <p className="text-[11px] tracking-[0.3em] text-[#8A7250]"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                     ◎ 熱門問題
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => setPopularQuestionPage((page) => page + 1)}
-                    className="rounded-full border border-[#D1BE9B]/24 bg-white/45 px-3 py-1 text-[10px] tracking-[0.14em] text-[#8A7250] transition-all duration-200 hover:border-[#D1BE9B]/55 hover:bg-white/70 active:scale-[0.98]"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  >
-                    換一組
-                  </button>
                 </div>
                 <p className="text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide mb-3"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  不知道怎麼問也沒關係，可以先從大家常問的方向開始。
+                  不知道怎麼問也沒關係，可以先從大家常問的方向開始，也可以點一下再改成自己的情況。
                 </p>
-                <div className="grid gap-2">
-                  {visiblePopularQuestions.map(prompt => (
-                    <button
-                      key={prompt}
-                      type="button"
-                      onClick={() => setFocusArea(prompt.slice(0, 100))}
-                      className="w-full rounded-xl border border-[#D1BE9B]/18 bg-white/45 px-3 py-2 text-left text-[11px] leading-[1.7] tracking-[0.08em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {prompt}
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-3 flex justify-center gap-1.5">
-                  {popularQuestionGroups.map((_, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      aria-label={`切換到第 ${index + 1} 組熱門問題`}
-                      onClick={() => setPopularQuestionPage(index)}
-                      className={`h-1.5 rounded-full transition-all duration-200 ${
-                        index === popularQuestionPage % popularQuestionGroups.length
-                          ? 'w-5 bg-[#A38D6B]'
-                          : 'w-1.5 bg-[#D1BE9B]/35 hover:bg-[#D1BE9B]/60'
-                      }`}
-                    />
+                <div className="grid gap-3">
+                  {QUESTION_CATEGORIES.map((category) => (
+                    <div key={category.label} className="rounded-xl border border-[#D1BE9B]/14 bg-white/38 px-3 py-3">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/12 text-[11px] text-[#A38D6B]">
+                          {category.icon}
+                        </span>
+                        <p className="text-[11px] tracking-[0.22em] text-[#8A7250]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                          {category.label}
+                        </p>
+                      </div>
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {category.questions.map(prompt => (
+                          <button
+                            key={prompt}
+                            type="button"
+                            onClick={() => setFocusArea(prompt.slice(0, 100))}
+                            className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          >
+                            {prompt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
