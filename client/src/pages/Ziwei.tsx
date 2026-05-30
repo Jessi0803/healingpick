@@ -357,6 +357,44 @@ export default function ZiweiPage() {
           {!astrolabe ? (
             /* ── FORM ──────────────────────────────────────────────────────── */
             <div className="max-w-lg mx-auto animate-fade-in-up">
+              {/* How It Works */}
+              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/15 bg-[#D1BE9B]/5">
+                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                  ◎ 命盤如何排列
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-start">
+                  {[
+                    { icon: '📊', label: '生辰排盤', desc: '以 iztro 紫微斗數演算法，依生年月日時排出十二宮位' },
+                    { icon: '✦', label: '星曜落點', desc: '計算主星、輔星在各宮位的座落與亮度' },
+                    { icon: '◈', label: 'Mochi解讀', desc: '將命盤資料與你關注的領域交給 Mochi，生成深度命盤解讀' },
+                  ].map((s, i) => (
+                    <div key={s.label} className="flex sm:flex-col sm:flex-1 items-start sm:items-center gap-3 sm:gap-2 sm:text-center">
+                      {i > 0 && (
+                        <div className="hidden sm:flex items-center justify-center w-8 mt-4 flex-shrink-0">
+                          <div className="h-px w-full bg-[#D1BE9B]/25" />
+                        </div>
+                      )}
+                      <div className="flex sm:flex-col sm:items-center gap-3 sm:gap-2 flex-1">
+                        <div className="w-9 h-9 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-base">
+                          {s.icon}
+                        </div>
+                        <div>
+                          <p className="text-[11px] tracking-[0.2em] text-[#8A7250] mb-0.5"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                            {s.label}
+                          </p>
+                          <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
+                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                            {s.desc}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20">
                 <h2 className="text-sm tracking-[0.2em] text-[#31353A]/82 mb-6 text-center"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
@@ -476,44 +514,6 @@ export default function ZiweiPage() {
                   <CatPeeking className="w-14 h-16" side="left" />
                   <span className="text-[10px] tracking-[0.15em] text-[#D1BE9B]/40"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>我也想看你的命盤 ✦</span>
-                </div>
-              </div>
-
-              {/* How It Works */}
-              <div className="mt-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/15 bg-[#D1BE9B]/5">
-                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  ◎ 命盤如何排列
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-start">
-                  {[
-                    { icon: '📊', label: '生辰排盤', desc: '以 iztro 紫微斗數演算法，依生年月日時排出十二宮位' },
-                    { icon: '✦', label: '星曜落點', desc: '計算主星、輔星在各宮位的座落與亮度' },
-                    { icon: '◈', label: 'Mochi解讀', desc: '將命盤資料與你關注的領域交給 Mochi，生成深度命盤解讀' },
-                  ].map((s, i) => (
-                    <div key={s.label} className="flex sm:flex-col sm:flex-1 items-start sm:items-center gap-3 sm:gap-2 sm:text-center">
-                      {i > 0 && (
-                        <div className="hidden sm:flex items-center justify-center w-8 mt-4 flex-shrink-0">
-                          <div className="h-px w-full bg-[#D1BE9B]/25" />
-                        </div>
-                      )}
-                      <div className="flex sm:flex-col sm:items-center gap-3 sm:gap-2 flex-1">
-                        <div className="w-9 h-9 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-base">
-                          {s.icon}
-                        </div>
-                        <div>
-                          <p className="text-[11px] tracking-[0.2em] text-[#8A7250] mb-0.5"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                            {s.label}
-                          </p>
-                          <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
-                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                            {s.desc}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
