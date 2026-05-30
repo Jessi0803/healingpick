@@ -220,7 +220,7 @@ export default function ZiweiPage() {
 
     const interval = window.setInterval(() => {
       setPopularQuestionPage((page) => page + 1);
-    }, 4500);
+    }, 6000);
 
     return () => window.clearInterval(interval);
   }, [isPopularQuestionsPaused, popularQuestionGroups.length]);
