@@ -440,7 +440,7 @@ export default function ZiweiPage() {
 
             <p className="text-sm italic text-[#31353A]/54 tracking-[0.15em]"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-              「把看不懂的自己，慢慢整理成看得懂的方向。」
+              「幫助運用自己的優勢及劣勢，及時把握機會跟改善近況。」
             </p>
           </div>
 
