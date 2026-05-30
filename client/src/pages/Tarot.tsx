@@ -519,8 +519,9 @@ export default function TarotPage() {
                 </h3>
                 <p className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  五牌陣星形牌陣以五張牌排列成五角星形，中心一張代表核心能量，
-                  四角分別展示過去、現在、未來與建議，簡潔而清晰地為你描繪當前處境的完整能量圖景。
+                  這次會抽出 5 張牌，幫你從不同角度看清楚現在的狀況。
+                  中間那張牌代表這件事的核心；四周的牌會分別看見：過去怎麼影響你、現在正在發生什麼、接下來可能往哪裡走，以及你可以怎麼做。
+                  它不是要替你決定答案，而是把混在一起的感受攤開來，讓你比較看得清楚。
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                   {SPREAD_POSITIONS.map(p => (
