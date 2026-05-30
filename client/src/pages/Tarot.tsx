@@ -493,35 +493,32 @@ export default function TarotPage() {
                       </DialogHeader>
                       <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                         <p>
-                          你有沒有過這種感覺？有時候遇到煩惱，其實心裡隱約已經有答案了，只是腦袋一團亂，需要有人幫你理清楚。<br/><br/>
-                          塔羅牌，其實就是一面<strong className="font-medium text-[#A38D6B]">「照出你內心真實模樣的鏡子」</strong>。
+                          如果你最近一直反覆想同一件事，卻怎麼想都想不出答案，很適合抽一次塔羅。<br/><br/>
+                          它會幫你看見現在卡住的原因、你忽略的盲點，以及這件事接下來可以怎麼面對。
                         </p>
 
                         <div>
-                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🃏 為什麼 Mochi 只用這 22 張牌？</h4>
+                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🃏 為什麼先用這 22 張牌？</h4>
                           <p>
-                            塔羅牌裡有 22 張最重要的牌，我們叫它「大阿爾卡納」。<br/>
-                            想像這 22 張牌，是一部名為<strong className="font-medium">「愚者的旅行」</strong>的電影，主角就是你。<br/><br/>
-                            從第 0 張牌《愚者》（代表天真無畏的開始），一路經歷《戀人》（面臨選擇）、《高塔》（突如其來的改變），最後走到第 21 張牌《世界》（達成圓滿）。<br/><br/>
-                            <strong className="font-medium">這 22 張牌，包含了我們這一生中「所有可能遇到的重大關卡與情緒」</strong>。因為它涵蓋了人生的所有縮影，所以當你遇到困惑時，這 22 個故事裡，總有一個能完美對應你此刻的處境。這就是為什麼它總是那麼準確。
+                            這 22 張牌叫做「大阿爾卡納」，可以把它想成一套人生常見狀態的牌卡。裡面有開始、有選擇、有曖昧、有改變，也有低潮後重新站起來的提醒。<br/><br/>
+                            對第一次來算的人來說，這 22 張牌比較好理解，不會一下子資訊太多。你只要帶著一個最近最在意的問題來抽，Mochi 會幫你把牌面整理成白話文，讓你知道現在卡住的點在哪裡、接下來可以怎麼看。
                           </p>
                         </div>
 
                         <div>
-                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🤔 所以，抽出來的牌為什麼會準？</h4>
-                          <p>其實，這是一種很奇妙的「直覺共鳴」，背後有兩個簡單的邏輯：</p>
+                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🤔 為什麼有時候會覺得很準？</h4>
+                          <p>很多時候，不是牌在替你決定人生，而是它剛好把你心裡已經有感覺、但還沒說出口的地方點出來。</p>
                           <ul className="list-disc pl-5 mt-2 space-y-2">
-                            <li><strong className="font-medium">你的心，會引導你選牌：</strong>當你閉上眼睛、專心想著問題洗牌時，你當下的情緒和直覺，會不自覺地牽引你，選出那張最能反映你目前狀態的牌。</li>
-                            <li><strong className="font-medium">看圖，找出藏在心裡的答案：</strong>當你看到牌面的那一刻，腦海中第一個浮現的感覺，往往就是你潛意識裡「最真實的聲音」。</li>
+                            <li><strong className="font-medium">你會更快看見自己的狀態：</strong>牌面會把你的焦慮、期待、害怕或猶豫，用一種比較具體的方式呈現出來。</li>
+                            <li><strong className="font-medium">問題會變得比較好整理：</strong>原本腦中一團亂的事，會被拆成「現在發生什麼」「你真正擔心什麼」「下一步可以怎麼做」。</li>
                           </ul>
                         </div>
 
                         <div>
-                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🧭 塔羅牌不是「算命」，而是「導航」</h4>
+                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🧭 它適合問什麼？</h4>
                           <p>
-                            如果人生是一趟旅行，塔羅牌<strong className="font-medium">不是寫好的劇本</strong>，不會告訴你「明天一定會發生什麼壞事」。<br/><br/>
-                            它比較像是一台<strong className="font-medium">導航儀</strong>，溫柔地提醒你：「嘿，前面這條路好像有點塞車喔，要不要換個心態走走看？」<br/><br/>
-                            真正握著方向盤、決定要怎麼走的，永遠都是你自己。
+                            如果你心裡有一個一直反覆想的問題，就很適合來抽牌。像是：這段關係該繼續嗎？對方現在的態度是什麼？我工作是不是該換方向？最近為什麼一直提不起勁？<br/><br/>
+                            塔羅不會跟你說「你只能怎樣」，而是幫你看見目前的能量、盲點和可以調整的方向。最後要不要走、怎麼走，還是你自己決定；只是你不用再一個人亂猜。
                           </p>
                         </div>
 
@@ -530,8 +527,8 @@ export default function TarotPage() {
                             <CatListening className="w-7 h-7" /> Mochi 的悄悄話：
                           </div>
                           <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                            「不用害怕抽到看起來黑黑暗暗的牌，每一張牌，都是來提醒你、保護你的小提示。<br/>
-                            深呼吸，把心靜下來，讓我陪你一起聽聽你心底的聲音吧 🐾」
+                            「不用怕抽到看起來比較沉重的牌，它通常不是壞消息，而是在提醒你：這裡需要被看見。<br/>
+                            先想一個你最近最想問的問題，慢慢抽牌，我陪你一起把答案整理清楚 🐾」
                           </p>
                         </div>
                       </div>
