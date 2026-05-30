@@ -199,7 +199,12 @@ export default function LoginDialog() {
             </div>
 
             <button
-              onClick={() => signInWithGoogle()}
+              onClick={async () => {
+                setError(null);
+                setInfo(null);
+                const res = await signInWithGoogle();
+                if (!res.ok) setError(translateAuthError(res.error));
+              }}
               className="w-full py-3 text-[12px] tracking-[0.25em] border border-[#31353A]/30 text-[#31353A]/85 rounded-full hover:bg-[#31353A] hover:text-[#FAF7F4] transition-all duration-500"
               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}>
               使用 Google {mode === "register" ? "註冊" : "登入"}
