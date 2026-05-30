@@ -202,12 +202,9 @@ export default function ZiweiPage() {
   const [hourValue, setHourValue] = useState('0');
   const [gender, setGender] = useState<'男' | '女'>('女');
   const [focusArea, setFocusArea] = useState('');
-  const [questionPromptIndex, setQuestionPromptIndex] = useState(0);
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
-
-  const currentQuestionPrompt = QUESTION_PROMPTS[questionPromptIndex % QUESTION_PROMPTS.length];
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -413,41 +410,26 @@ export default function ZiweiPage() {
               </div>
 
               <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60">
-                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-2 text-center"
+                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-2"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                   ◎ 不知道怎麼問也沒關係
                 </p>
-                <p className="text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide text-center mb-4"
+                <p className="text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide mb-3"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  你可以自由寫下最近最在意的事，下面只是一些提問靈感。
+                  你可以自由寫下最近最在意的事，也可以從下面選一個提問靈感開始。
                 </p>
-                <div className="rounded-2xl border border-[#D1BE9B]/14 bg-white/45 px-4 py-4 text-center">
-                  <p className="text-[10px] tracking-[0.22em] text-[#A38D6B]/75 mb-2"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    也許你想問
-                  </p>
-                  <p className="min-h-[3.6rem] flex items-center justify-center text-[14px] leading-[1.9] tracking-[0.08em] text-[#31353A]/76"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    「{currentQuestionPrompt}」
-                  </p>
-                  <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
+                <div className="flex flex-wrap gap-2">
+                  {QUESTION_PROMPTS.map(prompt => (
                     <button
+                      key={prompt}
                       type="button"
-                      onClick={() => setFocusArea(currentQuestionPrompt.slice(0, 100))}
-                      className="rounded-full border border-[#D1BE9B]/45 bg-[#31353A] px-4 py-2 text-[11px] tracking-[0.16em] text-[#FAF7F4] transition-all duration-200 hover:bg-[#D1BE9B] hover:text-[#31353A]"
+                      onClick={() => setFocusArea(prompt.slice(0, 100))}
+                      className="rounded-full border border-[#D1BE9B]/22 bg-white/45 px-3 py-1.5 text-[10.5px] leading-[1.6] tracking-[0.08em] text-[#31353A]/62 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.98]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
-                      用這題開始
+                      {prompt}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setQuestionPromptIndex((index) => index + 1)}
-                      className="rounded-full border border-[#D1BE9B]/26 bg-white/45 px-4 py-2 text-[11px] tracking-[0.16em] text-[#8A7250] transition-all duration-200 hover:border-[#D1BE9B]/55 hover:bg-white/70"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      換一個靈感
-                    </button>
-                  </div>
+                  ))}
                 </div>
               </div>
 
