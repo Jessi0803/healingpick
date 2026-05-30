@@ -261,7 +261,6 @@ ${traitsDesc}
       try {
         response = await invokeLLM({
           messages,
-          maxTokens: 2000,
           response_format: {
             type: "json_schema",
             json_schema: {
@@ -310,7 +309,6 @@ ${traitsDesc}
                 content: `${userPrompt}\n\n請只回傳一個可被 JSON.parse 解析的 JSON 物件，不要使用 Markdown code block，不要加任何前後說明。`,
               },
             ],
-            maxTokens: 2000,
           });
         } catch {
           return fallbackFortune;
