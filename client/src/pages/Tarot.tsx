@@ -521,7 +521,6 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                   這次會抽出 5 張牌，幫你從不同角度看清楚現在的狀況。
                   中間那張牌代表這件事的核心；四周的牌會分別看見：過去怎麼影響你、現在正在發生什麼、接下來可能往哪裡走，以及你可以怎麼做。
-                  它不是要替你決定答案，而是把混在一起的感受攤開來，讓你比較看得清楚。
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                   {SPREAD_POSITIONS.map(p => (
