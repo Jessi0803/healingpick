@@ -106,9 +106,9 @@ export default function QuizPage() {
   const getQuizTheme = () => {
     if (!activeQuiz) {
       return {
-        bg: 'bg-[#F4EFE7]',
-        blob1: 'bg-[#DED3C4]/45',
-        blob2: 'bg-[#C8B8A2]/35',
+        bg: 'bg-[#FBFAF6]',
+        blob1: 'bg-[#DED3C4]/28',
+        blob2: 'bg-[#C8D3D2]/20',
         particles: ['✧', '✦', '⋆', '☽', '✷', '𓆸'],
       };
     }
@@ -116,58 +116,58 @@ export default function QuizPage() {
     switch (activeQuiz.slug) {
       case 'scent':
         return {
-          bg: 'bg-[#FAF6F4]',
-          blob1: 'bg-[#FBECE6]/45', // warm peach
-          blob2: 'bg-[#EADED6]/40', // Morandi taupe
+          bg: 'bg-[#FBFAF7]',
+          blob1: 'bg-[#FBECE6]/30', // warm peach
+          blob2: 'bg-[#DCE8E4]/20', // airy sage
           particles: ['✿', '❀', '🌷', '✦', '𓂃', '🍃'],
         };
       case 'soul-home':
         return {
-          bg: 'bg-[#F6F5F8]',
-          blob1: 'bg-[#E2DCEE]/45', // misty violet
-          blob2: 'bg-[#D3C7E4]/35', // soft purple
+          bg: 'bg-[#FAFAFC]',
+          blob1: 'bg-[#E2DCEE]/30', // misty violet
+          blob2: 'bg-[#DCE7EC]/22', // soft blue
           particles: ['☁︎', '☾', '⋆', '✧', '𓆩♡𓆪', '🌌'],
         };
       case 'past-life':
         return {
-          bg: 'bg-[#F4F6F2]',
-          blob1: 'bg-[#DFEAD9]/45', // sage green
-          blob2: 'bg-[#EAE0CD]/35', // antique bronze
+          bg: 'bg-[#FAFBF7]',
+          blob1: 'bg-[#DFEAD9]/30', // sage green
+          blob2: 'bg-[#DCE7EC]/20', // pale blue
           particles: ['🔮', '📜', '🧭', '✦', '𓇢𓆸', '⚜'],
         };
       case 'love-magnet':
         return {
-          bg: 'bg-[#F8F5F0]',
-          blob1: 'bg-[#EFE7D8]/50', // champagne
-          blob2: 'bg-[#F5DEC9]/40', // warm apricot
+          bg: 'bg-[#FBFAF6]',
+          blob1: 'bg-[#EFE7D8]/30', // champagne
+          blob2: 'bg-[#E4ECE8]/20', // soft green
           particles: ['🦋', '🌸', '♡', '୨୧', '✦', '✨'],
         };
       case 'stress-style':
         return {
-          bg: 'bg-[#F5F7F2]',
-          blob1: 'bg-[#DFEADC]/45',
-          blob2: 'bg-[#EFE1D2]/38',
+          bg: 'bg-[#FAFBF7]',
+          blob1: 'bg-[#DFEADC]/30',
+          blob2: 'bg-[#DCE7EC]/20',
           particles: ['🕯️', '☁︎', '✧', '𓂃', '♡', '⋆'],
         };
       case 'decision-style':
         return {
-          bg: 'bg-[#F7F3EC]',
-          blob1: 'bg-[#EFE2CC]/45',
-          blob2: 'bg-[#DCE7EC]/35',
+          bg: 'bg-[#FBFAF6]',
+          blob1: 'bg-[#EFE2CC]/28',
+          blob2: 'bg-[#DCE7EC]/22',
           particles: ['🗝️', '✦', '⋆', '☽', '𓇢', '♡'],
         };
       case 'heart-weather':
         return {
-          bg: 'bg-[#F3F6F7]',
-          blob1: 'bg-[#DDE9EE]/45',
-          blob2: 'bg-[#F0DDD8]/38',
+          bg: 'bg-[#FAFCFC]',
+          blob1: 'bg-[#DDE9EE]/30',
+          blob2: 'bg-[#F0DDD8]/20',
           particles: ['🌦️', '☁︎', '☾', '✧', '⋆', '♡'],
         };
       default:
         return {
-          bg: 'bg-[#F4EFE7]',
-          blob1: 'bg-[#DED3C4]/45',
-          blob2: 'bg-[#C8B8A2]/35',
+          bg: 'bg-[#FBFAF6]',
+          blob1: 'bg-[#DED3C4]/28',
+          blob2: 'bg-[#C8D3D2]/20',
           particles: ['✧', '✦', '⋆', '☽', '✷', '𓆸'],
         };
     }
@@ -193,7 +193,7 @@ export default function QuizPage() {
 
         {/* Dynamic moving Morandi blobs */}
         <div className={`absolute top-1/6 left-1/6 w-[450px] h-[450px] rounded-full ${theme.blob1} blur-[120px] pointer-events-none animate-blob-1 z-0 transition-colors duration-1000`} />
-        <div className={`absolute bottom-1/6 right-1/6 w-[500px] h-[500px] rounded-full ${theme.blob2} blur-[130px] pointer-events-none animate-blob-2 z-0 transition-colors duration-1000`} />
+        <div className={`absolute bottom-[24%] right-[24%] w-[440px] h-[440px] rounded-full ${theme.blob2} blur-[120px] pointer-events-none animate-blob-2 z-0 transition-colors duration-1000`} />
 
         {/* Shifting floating background particles */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
