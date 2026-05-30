@@ -83,6 +83,7 @@ const QUESTION_PROMPTS = [
   '為什麼我總是在關係裡很累？',
   '最近財務和安全感該注意什麼？',
 ];
+const POPULAR_QUESTIONS_PER_PAGE = 6;
 
 // ─── Palace grid layout (traditional 4×4) ─────────────────────────────────────
 // Row 0: P3  P4  P5  P6
@@ -209,8 +210,12 @@ export default function ZiweiPage() {
   const [llmInterpretation, setLlmInterpretation] = useState('');
 
   const popularQuestionGroups = Array.from(
-    { length: Math.ceil(QUESTION_PROMPTS.length / 3) },
-    (_, index) => QUESTION_PROMPTS.slice(index * 3, index * 3 + 3)
+    { length: Math.ceil(QUESTION_PROMPTS.length / POPULAR_QUESTIONS_PER_PAGE) },
+    (_, index) =>
+      QUESTION_PROMPTS.slice(
+        index * POPULAR_QUESTIONS_PER_PAGE,
+        index * POPULAR_QUESTIONS_PER_PAGE + POPULAR_QUESTIONS_PER_PAGE
+      )
   );
   const visiblePopularQuestions =
     popularQuestionGroups[popularQuestionPage % popularQuestionGroups.length] ?? [];
