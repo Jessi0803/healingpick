@@ -357,8 +357,50 @@ export default function ZiweiPage() {
           {!astrolabe ? (
             /* ── FORM ──────────────────────────────────────────────────────── */
             <div className="max-w-lg mx-auto animate-fade-in-up">
-              {/* How It Works */}
-              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/15 bg-[#D1BE9B]/5">
+              {/* Why it matters */}
+              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/20 bg-white/45">
+                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                  ◎ 為什麼值得算一次
+                </p>
+                <div className="flex flex-col gap-3">
+                  {[
+                    {
+                      icon: '☽',
+                      label: '看見你的天生節奏',
+                      desc: '從出生時間排出命盤，先看懂你做決定、面對壓力、處理關係時最自然的方式。',
+                    },
+                    {
+                      icon: '✦',
+                      label: '不是只講玄的',
+                      desc: '命盤會把個性、關係、工作、金錢分開來看，讓你知道問題到底落在哪裡，也看見自己的優勢跟劣勢。',
+                    },
+                    {
+                      icon: '◈',
+                      label: '不是只給答案',
+                      desc: 'Mochi 會幫你整理成你看得懂的語言，讓你知道下一步可以怎麼走。',
+                    },
+                  ].map((s) => (
+                    <div key={s.label} className="flex items-start gap-3 rounded-xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/55 px-3 py-3">
+                      <div className="w-8 h-8 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-sm text-[#A38D6B]">
+                        {s.icon}
+                      </div>
+                      <div>
+                        <p className="text-[11px] tracking-[0.18em] text-[#8A7250] mb-1"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                          {s.label}
+                        </p>
+                        <p className="text-[12px] leading-[1.75] text-[#31353A]/64 tracking-wide"
+                          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                          {s.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/12 bg-[#D1BE9B]/5">
                 <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                   ◎ 命盤如何排列
