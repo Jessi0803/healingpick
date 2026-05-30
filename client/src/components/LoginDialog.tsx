@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
+  IN_APP_BROWSER_LOGIN_MESSAGE,
   sendPasswordResetEmail,
   signInWithGoogle,
   signInWithPassword,
@@ -30,6 +31,7 @@ export default function LoginDialog() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [copiedUrl, setCopiedUrl] = useState(false);
 
   useEffect(() => {
     const handler = () => {
@@ -37,6 +39,7 @@ export default function LoginDialog() {
       setMode("login");
       setError(null);
       setInfo(null);
+      setCopiedUrl(false);
     };
     window.addEventListener("open-login", handler);
     return () => window.removeEventListener("open-login", handler);
@@ -46,6 +49,7 @@ export default function LoginDialog() {
   useEffect(() => {
     setError(null);
     setInfo(null);
+    setCopiedUrl(false);
   }, [mode]);
 
   if (!supabaseEnabled) return null;
@@ -91,6 +95,24 @@ export default function LoginDialog() {
       }
       setInfo(`重設密碼連結已寄到 ${email}\n打開信點連結就能設一組新密碼。`);
     }
+  };
+
+  const handleCopyCurrentUrl = async () => {
+    const currentUrl = window.location.href;
+    try {
+      await navigator.clipboard.writeText(currentUrl);
+    } catch {
+      const input = document.createElement("textarea");
+      input.value = currentUrl;
+      input.setAttribute("readonly", "");
+      input.style.position = "fixed";
+      input.style.left = "-9999px";
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      document.body.removeChild(input);
+    }
+    setCopiedUrl(true);
   };
 
   return (
@@ -164,9 +186,21 @@ export default function LoginDialog() {
                       : "寄重設連結"}
               </button>
               {error && (
-                <p className="text-center text-[11px] text-[#C9837A] tracking-wider mt-1">
-                  {error}
-                </p>
+                <div className="mt-1 text-center">
+                  <p className="text-[11px] text-[#C9837A] tracking-wider">
+                    {error}
+                  </p>
+                  {error === IN_APP_BROWSER_LOGIN_MESSAGE && (
+                    <button
+                      type="button"
+                      onClick={handleCopyCurrentUrl}
+                      className="mt-3 rounded-full border border-[#D1BE9B]/45 bg-white/55 px-4 py-2 text-[11px] tracking-[0.18em] text-[#8A7250] transition-all duration-300 hover:border-[#A38D6B]/70 hover:bg-white/80 hover:text-[#31353A]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      {copiedUrl ? "已複製網址" : "複製網址"}
+                    </button>
+                  )}
+                </div>
               )}
             </form>
 

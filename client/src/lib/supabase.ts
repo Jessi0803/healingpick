@@ -10,7 +10,7 @@ export const supabase: SupabaseClient | null = supabaseEnabled
   ? createClient(url as string, anonKey as string)
   : null;
 
-const IN_APP_BROWSER_LOGIN_MESSAGE =
+export const IN_APP_BROWSER_LOGIN_MESSAGE =
   "目前的瀏覽器無法使用 Google 登入。請點右下角選單，選擇「在 Safari 開啟」或「在 Chrome 開啟」後再登入。";
 
 function isInAppBrowser(): boolean {
