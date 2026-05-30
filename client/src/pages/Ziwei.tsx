@@ -202,9 +202,17 @@ export default function ZiweiPage() {
   const [hourValue, setHourValue] = useState('0');
   const [gender, setGender] = useState<'男' | '女'>('女');
   const [focusArea, setFocusArea] = useState('');
+  const [popularQuestionPage, setPopularQuestionPage] = useState(0);
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
+
+  const popularQuestionGroups = Array.from(
+    { length: Math.ceil(QUESTION_PROMPTS.length / 3) },
+    (_, index) => QUESTION_PROMPTS.slice(index * 3, index * 3 + 3)
+  );
+  const visiblePopularQuestions =
+    popularQuestionGroups[popularQuestionPage % popularQuestionGroups.length] ?? [];
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -410,25 +418,50 @@ export default function ZiweiPage() {
               </div>
 
               <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60">
-                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-2"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  ◎ 不知道怎麼問也沒關係
-                </p>
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <p className="text-[11px] tracking-[0.3em] text-[#8A7250]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                    ◎ 熱門問題
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setPopularQuestionPage((page) => page + 1)}
+                    className="rounded-full border border-[#D1BE9B]/24 bg-white/45 px-3 py-1 text-[10px] tracking-[0.14em] text-[#8A7250] transition-all duration-200 hover:border-[#D1BE9B]/55 hover:bg-white/70 active:scale-[0.98]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    換一組
+                  </button>
+                </div>
                 <p className="text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide mb-3"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  你可以自由寫下最近最在意的事，也可以從下面選一個提問靈感開始。
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                  不知道怎麼問也沒關係，可以先從大家常問的方向開始。
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {QUESTION_PROMPTS.map(prompt => (
+                <div className="grid gap-2">
+                  {visiblePopularQuestions.map(prompt => (
                     <button
                       key={prompt}
                       type="button"
                       onClick={() => setFocusArea(prompt.slice(0, 100))}
-                      className="rounded-full border border-[#D1BE9B]/22 bg-white/45 px-3 py-1.5 text-[10.5px] leading-[1.6] tracking-[0.08em] text-[#31353A]/62 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.98]"
+                      className="w-full rounded-xl border border-[#D1BE9B]/18 bg-white/45 px-3 py-2 text-left text-[11px] leading-[1.7] tracking-[0.08em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                     >
                       {prompt}
                     </button>
+                  ))}
+                </div>
+                <div className="mt-3 flex justify-center gap-1.5">
+                  {popularQuestionGroups.map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      aria-label={`切換到第 ${index + 1} 組熱門問題`}
+                      onClick={() => setPopularQuestionPage(index)}
+                      className={`h-1.5 rounded-full transition-all duration-200 ${
+                        index === popularQuestionPage % popularQuestionGroups.length
+                          ? 'w-5 bg-[#A38D6B]'
+                          : 'w-1.5 bg-[#D1BE9B]/35 hover:bg-[#D1BE9B]/60'
+                      }`}
+                    />
                   ))}
                 </div>
               </div>
