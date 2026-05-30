@@ -12,36 +12,36 @@ import ContactDialog from '@/components/ContactDialog';
 
 const ARCHIVE_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
 
-const RESULT_HEALING_IMAGES: Record<string, { keywords: string; lock: number; alt: string }> = {
-  'scent:A': { keywords: 'cute,peach,tea', lock: 1101, alt: '白桃烏龍感的清甜療癒圖片' },
-  'scent:B': { keywords: 'cozy,bedroom,sunlight', lock: 1102, alt: '白麝香感的乾淨療癒圖片' },
-  'scent:C': { keywords: 'forest,rain,peaceful', lock: 1103, alt: '雨後森林感的清新療癒圖片' },
-  'scent:D': { keywords: 'rose,garden,soft', lock: 1104, alt: '玫瑰花園感的浪漫療癒圖片' },
-  'soul-home:A': { keywords: 'moon,night,calm', lock: 1201, alt: '靜謐月球感的安靜療癒圖片' },
-  'soul-home:B': { keywords: 'seaside,sunset,cozy', lock: 1202, alt: '溫柔海邊感的放鬆療癒圖片' },
-  'soul-home:C': { keywords: 'ancient,forest,moss', lock: 1203, alt: '巨木森林感的穩定療癒圖片' },
-  'soul-home:D': { keywords: 'storybook,town,cottage', lock: 1204, alt: '童話小鎮感的溫暖療癒圖片' },
-  'past-life:A': { keywords: 'library,castle,warm', lock: 1301, alt: '王室顧問感的智慧療癒圖片' },
-  'past-life:B': { keywords: 'herbs,cottage,garden', lock: 1302, alt: '神祕草藥師感的自然療癒圖片' },
-  'past-life:C': { keywords: 'stars,telescope,night', lock: 1303, alt: '皇家占星師感的星空療癒圖片' },
-  'past-life:D': { keywords: 'painting,studio,flowers', lock: 1304, alt: '自由藝術家感的創作療癒圖片' },
-  'past-life:E': { keywords: 'travel,map,adventure', lock: 1305, alt: '流浪冒險家感的自由療癒圖片' },
-  'love-magnet:A': { keywords: 'safe,harbor,cozy', lock: 1401, alt: '成熟治癒型的安心療癒圖片' },
-  'love-magnet:B': { keywords: 'sunny,picnic,cute', lock: 1402, alt: '熱烈直球型的明亮療癒圖片' },
-  'love-magnet:C': { keywords: 'romantic,stars,flowers', lock: 1403, alt: '浪漫靈性型的心動療癒圖片' },
-  'love-magnet:D': { keywords: 'coffee,desk,plants', lock: 1404, alt: '專注事業型的穩定療癒圖片' },
-  'stress-style:A': { keywords: 'quiet,room,window', lock: 1501, alt: '安靜充電感的放鬆療癒圖片' },
-  'stress-style:B': { keywords: 'tea,friends,cozy', lock: 1502, alt: '被好好理解感的陪伴療癒圖片' },
-  'stress-style:C': { keywords: 'tidy,desk,plants', lock: 1503, alt: '重新整理生活感的清爽療癒圖片' },
-  'stress-style:D': { keywords: 'walking,park,sunlight', lock: 1504, alt: '行動感休息的輕盈療癒圖片' },
-  'decision-style:A': { keywords: 'heart,journal,soft', lock: 1601, alt: '怕讓人失望時的溫柔療癒圖片' },
-  'decision-style:B': { keywords: 'thinking,cafe,notebook', lock: 1602, alt: '想找到最好答案時的療癒圖片' },
-  'decision-style:C': { keywords: 'home,blanket,warm', lock: 1603, alt: '需要安全感時的療癒圖片' },
-  'decision-style:D': { keywords: 'first,step,path', lock: 1604, alt: '準備開始一小步的療癒圖片' },
-  'heart-weather:A': { keywords: 'misty,morning,sunlight', lock: 1701, alt: '微霧早晨感的療癒圖片' },
-  'heart-weather:B': { keywords: 'soft,rain,window', lock: 1702, alt: '安靜小雨感的療癒圖片' },
-  'heart-weather:C': { keywords: 'clearing,sky,flowers', lock: 1703, alt: '雲後放晴感的療癒圖片' },
-  'heart-weather:D': { keywords: 'moonlight,window,calm', lock: 1704, alt: '深夜月光感的療癒圖片' },
+const RESULT_HEALING_IMAGES: Record<string, { keywords: string; lock: number; alt: string; caption: string }> = {
+  'scent:A': { keywords: 'peach,oolong,tea,soft', lock: 1101, alt: '白桃烏龍香氣的清甜療癒圖片', caption: '白桃烏龍｜清甜、乾淨、讓人放鬆' },
+  'scent:B': { keywords: 'white,linen,sunlight,cozy', lock: 1102, alt: '白麝香香氣的乾淨棉被療癒圖片', caption: '白麝香｜乾淨、可靠、像曬過太陽的棉被' },
+  'scent:C': { keywords: 'rainforest,moss,fern,forest', lock: 1103, alt: '雨後森林香氣的濕潤森林療癒圖片', caption: '雨後森林｜濕潤木頭、青苔和安靜空氣' },
+  'scent:D': { keywords: 'rose,garden,vintage,romantic', lock: 1104, alt: '玫瑰花園香氣的浪漫療癒圖片', caption: '玫瑰花園｜有品味、有氛圍，也很真誠' },
+  'soul-home:A': { keywords: 'moon,sanctuary,night,quiet', lock: 1201, alt: '靜謐月球的深夜療癒圖片', caption: '靜謐月球｜留一點空白，聽見自己的聲音' },
+  'soul-home:B': { keywords: 'seaside,sunset,waves,retreat', lock: 1202, alt: '溫柔海邊的夕陽海浪療癒圖片', caption: '溫柔海邊｜有陪伴，也有可以呼吸的自由' },
+  'soul-home:C': { keywords: 'redwood,forest,moss,ancient', lock: 1203, alt: '巨木森林的穩定療癒圖片', caption: '巨木森林｜穩定、踏實，也需要被支持' },
+  'soul-home:D': { keywords: 'cottage,town,storybook,warm', lock: 1204, alt: '童話小鎮的溫暖生活療癒圖片', caption: '童話小鎮｜被日常小事重新充滿電' },
+  'past-life:A': { keywords: 'royal,library,castle,books', lock: 1301, alt: '王室顧問的古老圖書館療癒圖片', caption: '王室顧問｜冷靜看局，也記得照顧感受' },
+  'past-life:B': { keywords: 'herbs,apothecary,forest,cottage', lock: 1302, alt: '神祕草藥師的花草療癒圖片', caption: '神祕草藥師｜懂得照顧傷口，也要保留力氣' },
+  'past-life:C': { keywords: 'observatory,stars,telescope,night', lock: 1303, alt: '皇家占星師的星空觀測療癒圖片', caption: '皇家占星師｜看懂規律，也給答案一點時間' },
+  'past-life:D': { keywords: 'artist,studio,painting,flowers', lock: 1304, alt: '自由藝術家的畫室療癒圖片', caption: '自由藝術家｜把敏感變成創作和魅力' },
+  'past-life:E': { keywords: 'map,compass,travel,ship', lock: 1305, alt: '流浪冒險家的地圖旅行療癒圖片', caption: '流浪冒險家｜想去遠方，也要帶著穩定感' },
+  'love-magnet:A': { keywords: 'harbor,warm,blanket,safe', lock: 1401, alt: '成熟治癒型的安心港灣療癒圖片', caption: '成熟治癒型｜慢慢靠近，穩穩接住' },
+  'love-magnet:B': { keywords: 'sunny,picnic,laughter,bright', lock: 1402, alt: '熱烈直球型的陽光療癒圖片', caption: '熱烈直球型｜喜歡就靠近，明亮又直接' },
+  'love-magnet:C': { keywords: 'romantic,stars,letter,flowers', lock: 1403, alt: '浪漫靈性型的星光花束療癒圖片', caption: '浪漫靈性型｜不只心動，也想懂你' },
+  'love-magnet:D': { keywords: 'coffee,desk,plants,focused', lock: 1404, alt: '專注事業型的咖啡桌面療癒圖片', caption: '專注事業型｜一起努力，也一起好好相待' },
+  'stress-style:A': { keywords: 'quiet,bedroom,window,calm', lock: 1501, alt: '安靜充電的房間窗光療癒圖片', caption: '安靜充電｜把不被打擾的時間還給自己' },
+  'stress-style:B': { keywords: 'tea,conversation,cozy,friendship', lock: 1502, alt: '被好好理解的茶與陪伴療癒圖片', caption: '被好好理解｜不用先整理好，才值得被聽見' },
+  'stress-style:C': { keywords: 'tidy,desk,plants,reset', lock: 1503, alt: '重新整理生活的清爽桌面療癒圖片', caption: '重新整理生活｜先整理一小塊，心也會跟著穩' },
+  'stress-style:D': { keywords: 'walking,park,sunlight,path', lock: 1504, alt: '需要行動感的陽光散步療癒圖片', caption: '一點行動感｜讓悶住的能量先流動起來' },
+  'decision-style:A': { keywords: 'journal,heart,soft,writing', lock: 1601, alt: '怕讓人失望時寫下真心的療癒圖片', caption: '怕讓人失望｜先聽見自己真正想選什麼' },
+  'decision-style:B': { keywords: 'cafe,notebook,thinking,choice', lock: 1602, alt: '想找到最好答案時的筆記咖啡療癒圖片', caption: '想找到最好答案｜先選一個能往前走的版本' },
+  'decision-style:C': { keywords: 'home,blanket,warm,safe', lock: 1603, alt: '需要安全感時的溫暖居家療癒圖片', caption: '需要安全感｜有退路，才更敢往前' },
+  'decision-style:D': { keywords: 'small,path,first,step', lock: 1604, alt: '等待準備好時踏出小步的療癒圖片', caption: '等自己準備好｜先做很小的一步就算開始' },
+  'heart-weather:A': { keywords: 'mist,morning,sunlight,soft', lock: 1701, alt: '微霧早晨的柔光療癒圖片', caption: '微霧早晨｜不用急，霧會慢慢散' },
+  'heart-weather:B': { keywords: 'rain,window,tea,quiet', lock: 1702, alt: '安靜小雨的窗邊療癒圖片', caption: '安靜小雨｜允許自己低落，也給自己一點暖' },
+  'heart-weather:C': { keywords: 'clearing,sky,flowers,bright', lock: 1703, alt: '雲後放晴的花與天空療癒圖片', caption: '雲後放晴｜抓住那一點想變好的念頭' },
+  'heart-weather:D': { keywords: 'moonlight,window,night,peaceful', lock: 1704, alt: '深夜月光的安靜療癒圖片', caption: '深夜月光｜安靜下來，答案會慢慢浮上來' },
 };
 
 const getResultHealingImage = (quizSlug?: string, resultKey?: string) => {
@@ -51,6 +51,7 @@ const getResultHealingImage = (quizSlug?: string, resultKey?: string) => {
   return {
     src: `https://loremflickr.com/800/600/${image.keywords}?lock=${image.lock}`,
     alt: image.alt,
+    caption: image.caption,
   };
 };
 
@@ -497,6 +498,10 @@ export default function QuizPage() {
                       alt={resultHealingImage.alt}
                       className="aspect-[4/3] w-full rounded-[22px] object-cover"
                     />
+                    <p className="px-3 py-3 text-center text-[11px] leading-relaxed tracking-[0.12em] text-[#6F6256]/70 font-light"
+                      style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                      {resultHealingImage.caption}
+                    </p>
                   </div>
                 )}
 
