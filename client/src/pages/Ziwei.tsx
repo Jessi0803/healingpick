@@ -481,8 +481,8 @@ export default function ZiweiPage() {
 
               {/* How It Works */}
               <div className="mt-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/15 bg-[#D1BE9B]/5">
-                <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-3 text-center"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                   ◎ 命盤如何排列
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-start">
@@ -502,8 +502,8 @@ export default function ZiweiPage() {
                           {s.icon}
                         </div>
                         <div>
-                          <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          <p className="text-[11px] tracking-[0.2em] text-[#8A7250] mb-0.5"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                             {s.label}
                           </p>
                           <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
