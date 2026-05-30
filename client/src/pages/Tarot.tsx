@@ -229,6 +229,49 @@ function ProductCard({ product }: { product: Product }) {
 
 type Step = 'intro' | 'question' | 'shuffle' | 'pick' | 'spread' | 'reading';
 
+const QUESTION_PROMPTS: Record<string, string[]> = {
+  romance: [
+    '我和他的關係接下來會怎麼發展？',
+    '這段曖昧裡，我該主動一點嗎？',
+    '最近感情裡我最需要看清楚什麼？',
+  ],
+  reconciliation: [
+    '這段關係還有修復的可能嗎？',
+    '我該繼續等，還是慢慢放下？',
+    '如果想重新靠近，我需要注意什麼？',
+  ],
+  careerChoice: [
+    '我現在適合換工作或調整方向嗎？',
+    '這個職涯選擇對我來說代表什麼？',
+    '工作卡住時，我下一步可以怎麼走？',
+  ],
+  moneyOpportunity: [
+    '最近財務和安全感該注意什麼？',
+    '這個收入機會值得我投入嗎？',
+    '我該怎麼面對目前的金錢壓力？',
+  ],
+  stuck: [
+    '我現在真正卡住的原因是什麼？',
+    '這件事背後，我還沒看見什麼？',
+    '我該先處理哪個問題核心？',
+  ],
+  decision: [
+    '面對這兩個選項，我該怎麼判斷？',
+    '如果選擇往前走，我需要注意什麼？',
+    '現在做決定前，我最該看清楚什麼？',
+  ],
+  boundaries: [
+    '這段人際關係讓我消耗的原因是什麼？',
+    '我該怎麼建立更清楚的界線？',
+    '面對這個人，我需要保護自己哪裡？',
+  ],
+  emotions: [
+    '最近的低潮想提醒我什麼？',
+    '我該怎麼整理現在的情緒？',
+    '今天我最需要好好照顧自己的哪一部分？',
+  ],
+};
+
 export default function TarotPage() {
   const { isAuthenticated, login } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
@@ -363,6 +406,7 @@ export default function TarotPage() {
   }
 
   const recommendedProducts = step === 'reading' ? recommendForTarot(questionType, question) : [];
+  const questionPrompts = QUESTION_PROMPTS[questionType] ?? QUESTION_PROMPTS.stuck;
 
   return (
     <PageLayout>
@@ -632,6 +676,25 @@ export default function TarotPage() {
                   <div className="mt-1 text-right text-[10px] tracking-wider"
                     style={{ fontFamily: 'Cormorant Garamond, serif', color: question.length >= 120 ? '#C9837A' : question.length >= 100 ? '#A38D6B' : '#31353A66' }}>
                     {question.length} / 120
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-[10px] tracking-[0.22em] text-[#D1BE9B] mb-2"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      提問靈感
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {questionPrompts.map(prompt => (
+                        <button
+                          key={prompt}
+                          type="button"
+                          onClick={() => setQuestion(prompt.slice(0, 120))}
+                          className="px-3 py-1.5 rounded-full border border-[#D1BE9B]/20 bg-white/35 text-[10.5px] leading-[1.6] tracking-[0.08em] text-[#31353A]/62 hover:border-[#D1BE9B]/45 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] transition-all duration-200 active:scale-[0.98]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        >
+                          {prompt}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   <p className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
