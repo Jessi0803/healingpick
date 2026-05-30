@@ -622,8 +622,8 @@ export default function TarotPage() {
                       { id: 'reconciliation',   label: '復合關係', icon: '♡' },
                       { id: 'careerChoice',     label: '職涯選擇', icon: '✦' },
                       { id: 'moneyOpportunity', label: '財務機會', icon: '◇' },
-                      { id: 'stuck',            label: '卡住迷惘', icon: '☆' },
-                      { id: 'decision',         label: '做決定', icon: '○' },
+                      { id: 'issueClarity',     label: '問題釐清', icon: '☆' },
+                      { id: 'choice',           label: '選項抉擇', icon: '○' },
                       { id: 'boundaries',       label: '人際界線', icon: '◈' },
                       { id: 'emotions',         label: '情緒整理', icon: '☽' },
                     ].map(t => (

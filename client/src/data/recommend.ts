@@ -71,35 +71,50 @@ function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product
 
 // ─── Tarot ──────────────────────────────────────────────────────────────────
 const TAROT_SIGNAL: Record<string, Signal> = {
-  love: {
+  romance: {
     categories: ['wish', 'protect'],
-    keywords: ['桃花', '愛', '感情', '人緣', '緣分', '魅力'],
+    keywords: ['喜歡', '曖昧', '桃花', '感情', '關係發展', '緣分', '魅力'],
     preferSlugs: ['wish-fox', 'wish-bunny'],
   },
-  career: {
+  reconciliation: {
+    categories: ['wish', 'calm'],
+    keywords: ['前任', '復合', '冷戰', '修復', '放不下', '和好', '關係'],
+    preferSlugs: ['wish-bunny', 'calm-light'],
+  },
+  careerChoice: {
+    categories: ['courage', 'protect'],
+    keywords: ['換工作', '職涯', '升遷', '方向', '卡住', '選擇'],
+    preferSlugs: ['courage-cat', 'moonlight-wings'],
+  },
+  moneyOpportunity: {
     categories: ['wealth', 'courage'],
-    keywords: ['工作', '事業', '錢', '財富', '機會', '行動', '升職', '創業'],
+    keywords: ['投資', '接案', '收入', '金錢', '財務', '機會', '決策'],
     preferSlugs: ['wealth-stone', 'courage-cat'],
   },
-  clarity: {
+  issueClarity: {
     categories: ['protect', 'calm'],
-    keywords: ['迷惘', '方向', '直覺', '清晰', '困惑'],
-    preferSlugs: ['moonlight-wings', 'calm-light'],
-  },
-  protection: {
-    categories: ['protect', 'calm'],
-    keywords: ['守護', '保護', '安全感', '安定', '界線'],
+    keywords: ['釐清', '問題', '原因', '卡住', '困境', '不知道', '壓力'],
     preferSlugs: ['glimmer-fox', 'calm-light'],
   },
-  change: {
+  choice: {
     categories: ['courage', 'protect'],
-    keywords: ['改變', '轉變', '勇氣', '新開始', '行動'],
+    keywords: ['選項', '抉擇', '選擇', '決定', '要不要', '比較'],
     preferSlugs: ['courage-cat', 'moonlight-wings'],
+  },
+  boundaries: {
+    categories: ['protect', 'calm'],
+    keywords: ['同事', '朋友', '家人', '界線', '拒絕', '被消耗', '壓力'],
+    preferSlugs: ['glimmer-fox', 'moonlight-wings'],
+  },
+  emotions: {
+    categories: ['calm', 'wish'],
+    keywords: ['焦慮', '低潮', '情緒', '整理', '難過', '找回自己'],
+    preferSlugs: ['calm-light', 'wish-bunny'],
   },
 };
 
 export function recommendForTarot(questionType: string, question: string): Product[] {
-  const base = TAROT_SIGNAL[questionType] || TAROT_SIGNAL.clarity;
+  const base = TAROT_SIGNAL[questionType] || TAROT_SIGNAL.issueClarity;
   return pickTop(
     { ...base, keywords: [...(base.keywords ?? []), ...extractKeywords(question)] },
     2,
@@ -112,7 +127,7 @@ export function recommendForTarot(questionType: string, question: string): Produ
 const PALACE_SIGNAL: Record<string, Signal> = {
   命宮: { categories: ['protect', 'calm'], preferSlugs: ['glimmer-fox', 'calm-light'] },
   福德宮: { categories: ['calm', 'wish'], preferSlugs: ['calm-light', 'wish-bunny'] },
-  財帛宮: { categories: ['wealth'], preferSlugs: ['wealth-stone'] },
+  財帛宮: { categories: ['wealth', 'courage'], preferSlugs: ['wealth-stone', 'courage-cat'] },
   田宅宮: { categories: ['wealth', 'protect'], preferSlugs: ['wealth-stone', 'glimmer-fox'] },
   官祿宮: { categories: ['wealth', 'courage'], preferSlugs: ['wealth-stone', 'courage-cat'] },
   事業宮: { categories: ['wealth', 'courage'], preferSlugs: ['wealth-stone', 'courage-cat'] },

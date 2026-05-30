@@ -232,6 +232,77 @@ const assertApiKey = () => {
   }
 };
 
+const createMockValueFromSchema = (schema: Record<string, unknown>): unknown => {
+  const type = schema.type;
+
+  if (type === "object") {
+    const properties = schema.properties as
+      | Record<string, Record<string, unknown>>
+      | undefined;
+    const required = Array.isArray(schema.required)
+      ? (schema.required as string[])
+      : Object.keys(properties ?? {});
+
+    return required.reduce<Record<string, unknown>>((result, key) => {
+      const propertySchema = properties?.[key];
+      result[key] = propertySchema
+        ? createMockValueFromSchema(propertySchema)
+        : "mock";
+      return result;
+    }, {});
+  }
+
+  if (type === "array") return [];
+  if (type === "integer") return 7;
+  if (type === "number") return 7;
+  if (type === "boolean") return true;
+  if (Array.isArray(schema.enum) && schema.enum.length > 0) return schema.enum[0];
+
+  return "這是本機測試用的 LLM mock 回覆，沒有呼叫 Gemini API。";
+};
+
+const createMockContent = (params: InvokeParams): string => {
+  const responseFormat = normalizeResponseFormat({
+    responseFormat: params.responseFormat,
+    response_format: params.response_format,
+    outputSchema: params.outputSchema,
+    output_schema: params.output_schema,
+  });
+
+  if (responseFormat?.type === "json_schema") {
+    return JSON.stringify(
+      createMockValueFromSchema(responseFormat.json_schema.schema)
+    );
+  }
+
+  if (responseFormat?.type === "json_object") {
+    return JSON.stringify({ message: "mock" });
+  }
+
+  return "這是本機測試用的 LLM mock 回覆，沒有呼叫 Gemini API。";
+};
+
+const createMockInvokeResult = (params: InvokeParams): InvokeResult => ({
+  id: "mock-llm-response",
+  created: Math.floor(Date.now() / 1000),
+  model: `mock:${ENV.geminiModel}`,
+  choices: [
+    {
+      index: 0,
+      message: {
+        role: "assistant",
+        content: createMockContent(params),
+      },
+      finish_reason: "stop",
+    },
+  ],
+  usage: {
+    prompt_tokens: 0,
+    completion_tokens: 0,
+    total_tokens: 0,
+  },
+});
+
 const normalizeResponseFormat = ({
   responseFormat,
   response_format,
@@ -278,6 +349,10 @@ const normalizeResponseFormat = ({
 };
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
+  if (ENV.llmMock) {
+    return createMockInvokeResult(params);
+  }
+
   assertApiKey();
 
   const {

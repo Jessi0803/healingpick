@@ -2,8 +2,8 @@
  * Soul Ease — Router Integration Tests
  * Tests the tRPC router structure and LLM helper utilities.
  */
-import { describe, it, expect } from "vitest";
-import { extractTextContent } from "./_core/llm";
+import { describe, it, expect, vi } from "vitest";
+import { extractTextContent, invokeLLM } from "./_core/llm";
 
 describe("extractTextContent", () => {
   it("returns string as-is when content is a plain string", () => {
@@ -44,6 +44,39 @@ describe("extractTextContent", () => {
   });
 });
 
+describe("invokeLLM mock mode", () => {
+  it("returns a schema-shaped response without calling fetch", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    const result = await invokeLLM({
+      messages: [{ role: "user", content: "Generate a test payload" }],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "test_payload",
+          schema: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              score: { type: "integer" },
+            },
+            required: ["title", "score"],
+            additionalProperties: false,
+          },
+        },
+      },
+    });
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(JSON.parse(result.choices[0].message.content as string)).toEqual({
+      title: "這是本機測試用的 LLM mock 回覆，沒有呼叫 Gemini API。",
+      score: 7,
+    });
+
+    fetchSpy.mockRestore();
+  });
+});
+
 describe("Fortune router input validation", () => {
   it("validates date format YYYY-MM-DD", () => {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -62,4 +95,3 @@ describe("Fortune router input validation", () => {
     expect(validSigns.includes("invalid")).toBe(false);
   });
 });
-
