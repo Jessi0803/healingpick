@@ -316,30 +316,30 @@ export default function ZiweiPage() {
                     </DialogHeader>
                     <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       <p>
-                        紫微斗數可以先想成一張<strong className="font-medium text-[#A38D6B]">「人生整理表」</strong>。<br/><br/>
-                        它不是要一句話斷定你會變成什麼樣的人，而是用你的出生時間，幫你把個性、感情、工作、財運、家庭等面向分開來看。這樣你比較容易知道：自己天生重視什麼、容易卡在哪裡、適合怎麼調整。
+                        很多人來看紫微斗數，不是真的想知道<strong className="font-medium text-[#A38D6B]">「自己命好不好」</strong>。<br /><br />
+                        比較像是最近心裡已經卡了一陣子，想知道：為什麼我明明很努力，事情還是一直卡住？為什麼有些關係總是走到差不多的地方？為什麼一有壓力，就會變成自己也不太喜歡的樣子？
                       </p>
 
                       <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🪐 簡單來說，紫微斗數是什麼？</h4>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🪐 不是算命，是看懂自己的使用說明書</h4>
                         <p>
-                          紫微斗數會根據你的出生年、月、日和<strong className="font-medium">時辰</strong>排出一張命盤。命盤裡有 12 個宮位，你可以把它們理解成 12 個生活分類。<br/><br/>
-                          例如「命宮」看你的個性和做事方式，「夫妻宮」看感情互動，「事業宮」看工作方向，「財帛宮」看金錢觀和賺錢方式。每個宮位裡的星曜不同，代表那個面向有不同的特質和提醒。
+                          紫微斗數會根據你的出生年、月、日和<strong className="font-medium">時辰</strong>排出一張命盤，把個性、感情、工作、金錢、家庭等面向分開來看。<br /><br />
+                          它不是替你下結論，而是把你的<strong className="font-medium text-[#A38D6B]">慣性、優勢、盲點</strong>和當下的人生節奏攤開來，讓你比較容易看懂自己到底卡在哪裡。
                         </p>
                       </div>
 
                       <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 看命盤時，可以怎麼理解？</h4>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 所以，算一次能幫你看到什麼？</h4>
                         <p>
-                          你不需要先懂所有星曜，也不用急著背名詞。先把命盤當成一份觀察自己的工具就好。Mochi 建議你用這三個方向看：
+                          你不需要先懂所有星曜，也不用先背名詞。先把命盤當成一份觀察自己的工具就好。很多人算完最有感的，通常是下面這幾件事：
                         </p>
                         <ul className="list-disc pl-5 mt-2 space-y-3">
-                          <li><strong className="font-medium text-[#A38D6B]">先看自己：</strong>命宮和福德宮會透露你的性格、內在需求，以及什麼事情會讓你有安全感。</li>
-                          <li><strong className="font-medium text-[#A38D6B]">再看關係：</strong>夫妻宮、朋友宮、家庭相關宮位，可以幫你理解自己在人際和親密關係裡的習慣。</li>
-                          <li><strong className="font-medium text-[#A38D6B]">最後看方向：</strong>事業宮和財帛宮會提醒你適合怎麼工作、怎麼累積資源，以及哪裡需要更穩一點。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">為什麼總在同一個地方卡住：</strong>你會更知道自己在壓力下的反應、容易繞進去的模式，還有那些反覆出現的關卡。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">感情和人際裡的慣性：</strong>不是只看別人對你怎麼樣，也會看你自己在關係裡比較容易期待什麼、忍耐什麼、受傷在哪裡。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">工作和人生節奏：</strong>你適合怎麼發揮、怎麼累積資源、什麼時候該衝、什麼時候該穩，會比一直硬撐來得清楚很多。</li>
                         </ul>
                         <p className="mt-3">
-                          所以，紫微斗數不是要你害怕命運，而是幫你更懂自己。看懂命盤之後，你可以更清楚地選擇：哪些特質值得好好發揮，哪些模式可以慢慢調整。
+                          當你知道自己是怎麼運作的，很多選擇就不會只能靠硬撐。紫微斗數不是要你迷信命運，而是讓你在混亂的時候，至少先看清楚自己。
                         </p>
                       </div>
                     </div>
