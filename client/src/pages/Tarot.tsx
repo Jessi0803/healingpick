@@ -423,11 +423,72 @@ export default function TarotPage() {
     setActiveQuestionCategory(type);
   };
 
-  const handlePopularQuestionClick = (prompt: string, type: string) => {
+  const handlePopularQuestionClick = (prompt: string, type: string, nextStep?: Step) => {
     setQuestion(prompt.slice(0, 120));
     setQuestionType(type);
     setActiveQuestionCategory(type);
+    if (nextStep) setStep(nextStep);
   };
+
+  const renderPopularQuestions = (nextStep?: Step) => (
+    <div className="rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60 px-4 py-4">
+      <p className="text-[11px] tracking-[0.3em] text-[#8A7250]"
+        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+        ◎ 熱門問題
+      </p>
+      <p className="mt-2 mb-3 text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide"
+        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+        不知道怎麼問也沒關係，可以先從大家常問的方向開始，點一下再改成自己的情況。
+      </p>
+      <div className="grid grid-cols-2 gap-2.5">
+        {QUESTION_CATEGORIES.map((category) => {
+          const isOpen = activeQuestionCategory === category.id;
+
+          return (
+            <div key={category.id} className="overflow-hidden rounded-xl border border-[#D1BE9B]/14 bg-white/38">
+              <button
+                type="button"
+                onClick={() => setActiveQuestionCategory(isOpen ? '' : category.id)}
+                className={`flex w-full items-center justify-between gap-2 px-3 py-3 text-left transition-all duration-200 ${
+                  isOpen ? 'bg-[#D1BE9B]/10' : 'hover:bg-white/45'
+                }`}
+                aria-expanded={isOpen}
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/12 text-[11px] text-[#A38D6B]">
+                    {category.icon}
+                  </span>
+                  <span className="text-[11px] tracking-[0.16em] text-[#8A7250]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                    {category.label}
+                  </span>
+                </span>
+                <span className={`text-[13px] text-[#A38D6B] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                  ˅
+                </span>
+              </button>
+
+              {isOpen && (
+                <div className="animate-fade-in-up grid gap-2 border-t border-[#D1BE9B]/10 px-2.5 py-2.5">
+                  {category.questions.map(prompt => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      onClick={() => handlePopularQuestionClick(prompt, category.id, nextStep)}
+                      className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   return (
     <PageLayout>
@@ -609,6 +670,10 @@ export default function TarotPage() {
                 </div>
               </div>
 
+              <div className="max-w-2xl mx-auto mb-8">
+                {renderPopularQuestions('question')}
+              </div>
+
               <button
                 onClick={handleStart}
                 className="px-10 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
@@ -695,62 +760,8 @@ export default function TarotPage() {
                     style={{ fontFamily: 'Cormorant Garamond, serif', color: question.length >= 120 ? '#C9837A' : question.length >= 100 ? '#A38D6B' : '#31353A66' }}>
                     {question.length} / 120
                   </div>
-                  <div className="mt-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60 px-4 py-4">
-                    <p className="text-[11px] tracking-[0.3em] text-[#8A7250]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                      ◎ 熱門問題
-                    </p>
-                    <p className="mt-2 mb-3 text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      不知道怎麼問也沒關係，可以先從大家常問的方向開始，點一下再改成自己的情況。
-                    </p>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      {QUESTION_CATEGORIES.map((category) => {
-                        const isOpen = activeQuestionCategory === category.id;
-
-                        return (
-                          <div key={category.id} className="overflow-hidden rounded-xl border border-[#D1BE9B]/14 bg-white/38">
-                            <button
-                              type="button"
-                              onClick={() => setActiveQuestionCategory(isOpen ? '' : category.id)}
-                              className={`flex w-full items-center justify-between gap-2 px-3 py-3 text-left transition-all duration-200 ${
-                                isOpen ? 'bg-[#D1BE9B]/10' : 'hover:bg-white/45'
-                              }`}
-                              aria-expanded={isOpen}
-                            >
-                              <span className="flex min-w-0 items-center gap-2">
-                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/12 text-[11px] text-[#A38D6B]">
-                                  {category.icon}
-                                </span>
-                                <span className="text-[11px] tracking-[0.16em] text-[#8A7250]"
-                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                                  {category.label}
-                                </span>
-                              </span>
-                              <span className={`text-[13px] text-[#A38D6B] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
-                                ˅
-                              </span>
-                            </button>
-
-                            {isOpen && (
-                              <div className="animate-fade-in-up grid gap-2 border-t border-[#D1BE9B]/10 px-2.5 py-2.5">
-                                {category.questions.map(prompt => (
-                                  <button
-                                    key={prompt}
-                                    type="button"
-                                    onClick={() => handlePopularQuestionClick(prompt, category.id)}
-                                    className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
-                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                                  >
-                                    {prompt}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+                  <div className="mt-4">
+                    {renderPopularQuestions()}
                   </div>
                   <p className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
