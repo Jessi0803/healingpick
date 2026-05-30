@@ -26,7 +26,7 @@ function isTarotInterpretationComplete(content: string, positions: string[]) {
 
 function isLengthLimited(finishReason: string | null | undefined) {
   if (!finishReason) return false;
-  return ["length", "max_tokens", "MAX_TOKENS"].includes(finishReason);
+  return ["length", "max_tokens"].includes(finishReason.toLowerCase());
 }
 
 export const tarotRouter = router({
@@ -104,7 +104,7 @@ ${cardsSummary}
 
       let response = await invokeLLM({
         messages,
-        maxTokens: 1000,
+        maxTokens: 3000,
       });
 
       let rawContent = response.choices?.[0]?.message?.content;
@@ -131,7 +131,7 @@ ${cardsSummary}
 - 每段要短，整體仍控制在 320-380 字，不要超過 400 字`,
             },
           ],
-          maxTokens: 1600,
+          maxTokens: 4000,
         });
 
         rawContent = response.choices?.[0]?.message?.content;

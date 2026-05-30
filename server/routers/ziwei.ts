@@ -38,7 +38,7 @@ function isZiweiInterpretationComplete(content: string) {
 
 function isLengthLimited(finishReason: string | null | undefined) {
   if (!finishReason) return false;
-  return ["length", "max_tokens", "MAX_TOKENS"].includes(finishReason);
+  return ["length", "max_tokens"].includes(finishReason.toLowerCase());
 }
 
 // 時辰選項（供前後端共用）
@@ -196,7 +196,7 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
 
       let response = await invokeLLM({
         messages,
-        maxTokens: 1000,
+        maxTokens: 3000,
       });
 
       let rawContent = response.choices?.[0]?.message?.content;
@@ -222,7 +222,7 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
 四段標題都要出現，最後一句必須完整收尾。整體仍控制在 260-320 字，例子要短。`,
             },
           ],
-          maxTokens: 1600,
+          maxTokens: 4000,
         });
 
         rawContent = response.choices?.[0]?.message?.content;
