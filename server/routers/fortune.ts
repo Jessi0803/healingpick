@@ -79,6 +79,46 @@ const ZODIAC_TRAITS: Record<string, {
   pisces:      { element: '水', modality: '變動', ruler: '海王星/木星', traits: '夢幻、同情心、靈性', strengths: '直覺、藝術才能、慈悲', challenges: '逃避現實、邊界模糊' },
 };
 
+const fortuneResultSchema = z.object({
+  overall: z.string(),
+  overallScore: z.coerce.number().int().min(1).max(10),
+  love: z.string(),
+  loveScore: z.coerce.number().int().min(1).max(10),
+  career: z.string(),
+  careerScore: z.coerce.number().int().min(1).max(10),
+  health: z.string(),
+  healthScore: z.coerce.number().int().min(1).max(10),
+  luckyColor: z.string(),
+  luckyNumber: z.coerce.number().int().min(1).max(99),
+  crystal: z.string(),
+  crystalReason: z.string(),
+  advice: z.string(),
+  moonPhase: z.string(),
+  moonSymbol: z.string(),
+});
+
+type FortuneResult = z.infer<typeof fortuneResultSchema>;
+
+function extractJsonObject(content: string) {
+  const trimmed = content
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+  if (trimmed.startsWith("{") && trimmed.endsWith("}")) return trimmed;
+
+  const start = trimmed.indexOf("{");
+  const end = trimmed.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) return trimmed;
+  return trimmed.slice(start, end + 1);
+}
+
+export function parseFortuneResult(content: string): FortuneResult {
+  const parsed = JSON.parse(extractJsonObject(content));
+  return fortuneResultSchema.parse(parsed);
+}
+
 // ─── Fortune Router ────────────────────────────────────────────────────────────
 export const fortuneRouter = router({
   /**
@@ -155,50 +195,66 @@ ${traitsDesc}
   "moonSymbol": "${moonPhase.symbol}"
 }`;
 
-      const response = await invokeLLM({
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        maxTokens: 1000,
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "daily_fortune",
-            strict: true,
-            schema: {
-              type: "object",
-              properties: {
-                overall: { type: "string" },
-                overallScore: { type: "integer" },
-                love: { type: "string" },
-                loveScore: { type: "integer" },
-                career: { type: "string" },
-                careerScore: { type: "integer" },
-                health: { type: "string" },
-                healthScore: { type: "integer" },
-                luckyColor: { type: "string" },
-                luckyNumber: { type: "integer" },
-                crystal: { type: "string" },
-                crystalReason: { type: "string" },
-                advice: { type: "string" },
-                moonPhase: { type: "string" },
-                moonSymbol: { type: "string" },
+      const messages = [
+        { role: "system" as const, content: systemPrompt },
+        { role: "user" as const, content: userPrompt },
+      ];
+
+      let response;
+      try {
+        response = await invokeLLM({
+          messages,
+          maxTokens: 1000,
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "daily_fortune",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  overall: { type: "string" },
+                  overallScore: { type: "integer" },
+                  love: { type: "string" },
+                  loveScore: { type: "integer" },
+                  career: { type: "string" },
+                  careerScore: { type: "integer" },
+                  health: { type: "string" },
+                  healthScore: { type: "integer" },
+                  luckyColor: { type: "string" },
+                  luckyNumber: { type: "integer" },
+                  crystal: { type: "string" },
+                  crystalReason: { type: "string" },
+                  advice: { type: "string" },
+                  moonPhase: { type: "string" },
+                  moonSymbol: { type: "string" },
+                },
+                required: [
+                  "overall", "overallScore",
+                  "love", "loveScore",
+                  "career", "careerScore",
+                  "health", "healthScore",
+                  "luckyColor", "luckyNumber",
+                  "crystal", "crystalReason",
+                  "advice", "moonPhase", "moonSymbol",
+                ],
+                additionalProperties: false,
               },
-              required: [
-                "overall", "overallScore",
-                "love", "loveScore",
-                "career", "careerScore",
-                "health", "healthScore",
-                "luckyColor", "luckyNumber",
-                "crystal", "crystalReason",
-                "advice", "moonPhase", "moonSymbol",
-              ],
-              additionalProperties: false,
             },
           },
-        },
-      });
+        });
+      } catch {
+        response = await invokeLLM({
+          messages: [
+            messages[0],
+            {
+              role: "user",
+              content: `${userPrompt}\n\n請只回傳一個可被 JSON.parse 解析的 JSON 物件，不要使用 Markdown code block，不要加任何前後說明。`,
+            },
+          ],
+          maxTokens: 1000,
+        });
+      }
 
       const rawContent = response.choices?.[0]?.message?.content;
       const content = rawContent ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>) : null;
@@ -207,23 +263,7 @@ ${traitsDesc}
       }
 
       try {
-        return JSON.parse(content) as {
-          overall: string;
-          overallScore: number;
-          love: string;
-          loveScore: number;
-          career: string;
-          careerScore: number;
-          health: string;
-          healthScore: number;
-          luckyColor: string;
-          luckyNumber: number;
-          crystal: string;
-          crystalReason: string;
-          advice: string;
-          moonPhase: string;
-          moonSymbol: string;
-        };
+        return parseFortuneResult(content);
       } catch {
         throw new Error("運勢解析失敗，請稍後再試");
       }

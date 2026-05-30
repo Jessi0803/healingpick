@@ -3,6 +3,7 @@
  * Tests the moon phase calculation logic and fortune router structure
  */
 import { describe, it, expect } from "vitest";
+import { parseFortuneResult } from "./fortune";
 
 // ─── 月相計算邏輯（從 fortune.ts 複製，以便獨立測試）─────────────────────────
 function getMoonPhase(date: Date) {
@@ -97,5 +98,38 @@ describe("getMoonPhase", () => {
     const result1 = getMoonPhase(date1);
     const result2 = getMoonPhase(date2);
     expect(result1.phase).not.toBe(result2.phase);
+  });
+});
+
+describe("parseFortuneResult", () => {
+  const validFortune = {
+    overall: "今天適合先整理節奏。",
+    overallScore: "8",
+    love: "感情上不要急著腦補。",
+    loveScore: 7,
+    career: "工作先收斂最重要的三件事。",
+    careerScore: 8,
+    health: "早點休息，少硬撐。",
+    healthScore: 6,
+    luckyColor: "月白色",
+    luckyNumber: "18",
+    crystal: "月光石",
+    crystalReason: "適合陪你整理今天的情緒節奏。",
+    advice: "先寫下今天最重要的一件事。",
+    moonPhase: "滿月",
+    moonSymbol: "🌕",
+  };
+
+  it("parses JSON wrapped in a markdown code block", () => {
+    const result = parseFortuneResult(`\`\`\`json\n${JSON.stringify(validFortune)}\n\`\`\``);
+    expect(result.overallScore).toBe(8);
+    expect(result.luckyNumber).toBe(18);
+    expect(result.crystal).toBe("月光石");
+  });
+
+  it("extracts JSON when the model adds surrounding text", () => {
+    const result = parseFortuneResult(`好的，這是今天的運勢：\n${JSON.stringify(validFortune)}\n祝你今天順利。`);
+    expect(result.moonPhase).toBe("滿月");
+    expect(result.loveScore).toBe(7);
   });
 });
