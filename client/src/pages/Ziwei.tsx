@@ -980,31 +980,31 @@ export default function ZiweiPage() {
                 </p>
               </div>
 
-              {/* LLM interpretation â full width below chart */}
+              {/* LLM interpretation - full width below chart */}
               <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="text-[#D1BE9B]" style={{ fontSize: '18px' }}>â¯</span>
+                  <span className="text-[#D1BE9B]" style={{ fontSize: '18px' }}>☯</span>
                   <h4 className="text-[13px] tracking-[0.2em] text-[#31353A]/86"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    å½ç¤æ´é«è§£è®
+                    命盤整體解讀
                   </h4>
                 </div>
                 {interpretMutation.isPending && (
                   <div className="flex flex-col items-center py-8 gap-3">
-                    <div className="text-[#D1BE9B] text-2xl animate-spin">â¯</div>
+                    <div className="text-[#D1BE9B] text-2xl animate-spin">☯</div>
                     <p className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      æ­£å¸è§£è®ä½ çå½ç¤...
+                      正在解讀你的命盤...
                     </p>
                   </div>
                 )}
                 {interpretMutation.isError && (
-                  <p className="text-[11px] text-[#EAA8AC] tracking-wider">è§£è®æ«æç¡æ³åå¾ï¼è«ç¨å¾åè©¦ã</p>
+                  <p className="text-[11px] text-[#EAA8AC] tracking-wider">解讀暫時無法取得，請稍後再試。</p>
                 )}
                 {!interpretMutation.isPending && !interpretMutation.isError && !llmInterpretation && (
                   <p className="text-[12px] text-[#31353A]/50 tracking-wider text-center py-4"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    æç¤å®æå¾å°èªåçæ AI å½ç¤è§£è®
+                    排盤完成後將自動生成 AI 命盤解讀
                   </p>
                 )}
                 {llmInterpretation && (
