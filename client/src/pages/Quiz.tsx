@@ -14,6 +14,7 @@ export default function QuizPage() {
   const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+  const [selectedOptionKey, setSelectedOptionKey] = useState<string | null>(null);
   const [isAnimatingNext, setIsAnimatingNext] = useState<boolean>(false);
   const [quizResult, setQuizResult] = useState<any | null>(null);
   
@@ -26,6 +27,7 @@ export default function QuizPage() {
     setActiveQuiz(quiz);
     setCurrentQuestionIdx(0);
     setSelectedAnswers([]);
+    setSelectedOptionKey(null);
     setQuizResult(null);
     setIsAnimatingNext(false);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -36,12 +38,14 @@ export default function QuizPage() {
     if (isAnimatingNext) return;
     
     setIsAnimatingNext(true);
+    setSelectedOptionKey(scoreKey);
     const updatedAnswers = [...selectedAnswers, scoreKey];
     setSelectedAnswers(updatedAnswers);
 
     setTimeout(() => {
       if (activeQuiz && currentQuestionIdx < activeQuiz.questions.length - 1) {
         setCurrentQuestionIdx(currentQuestionIdx + 1);
+        setSelectedOptionKey(null);
         setIsAnimatingNext(false);
       } else {
         // Compute Results
@@ -85,6 +89,7 @@ export default function QuizPage() {
     setActiveQuiz(null);
     setQuizResult(null);
     setSelectedAnswers([]);
+    setSelectedOptionKey(null);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   };
 
@@ -211,10 +216,11 @@ export default function QuizPage() {
               {/* Lobby Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                 {QUIZZES.map((quiz) => (
-                  <div
+                  <button
+                    type="button"
                     key={quiz.slug}
                     onClick={() => handleStartQuiz(quiz)}
-                    className="group cursor-pointer glass-panel bg-white/40 border border-[#D1BE9B]/15 rounded-3xl p-7 shadow-sm hover:shadow-[0_12px_32px_rgba(209,190,155,0.12)] hover:-translate-y-1 transition-all duration-500 relative overflow-hidden"
+                    className="group quiz-lobby-card cursor-pointer glass-panel bg-white/40 border border-[#D1BE9B]/15 rounded-3xl p-7 shadow-sm relative overflow-hidden text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#FAF7F4]"
                   >
                     <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#D1BE9B]/5 to-transparent pointer-events-none rounded-tr-3xl" />
                     
@@ -245,7 +251,7 @@ export default function QuizPage() {
                         開啟測驗 ✦
                       </span>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
 
@@ -296,7 +302,7 @@ export default function QuizPage() {
                   {/* Progress Line */}
                   <div className="w-48 h-0.5 bg-[#D1BE9B]/20 rounded-full relative overflow-hidden">
                     <div 
-                      className="absolute top-0 left-0 h-full bg-[#A38D6B] transition-all duration-500 rounded-full"
+                      className="absolute top-0 left-0 h-full bg-[#A38D6B] transition-[width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-full"
                       style={{ width: `${((currentQuestionIdx + 1) / activeQuiz.questions.length) * 100}%` }}
                     />
                   </div>
@@ -307,7 +313,10 @@ export default function QuizPage() {
               </div>
 
               {/* Active Question Box */}
-              <div className="glass-panel bg-white/45 backdrop-blur-md border border-[#D1BE9B]/25 rounded-[32px] p-8 shadow-[0_12px_40px_rgba(209,190,155,0.08)] mb-8">
+              <div
+                key={`${activeQuiz.slug}-${currentQuestionIdx}`}
+                className="quiz-question-card glass-panel bg-white/45 backdrop-blur-md border border-[#D1BE9B]/25 rounded-[32px] p-8 shadow-[0_12px_40px_rgba(209,190,155,0.08)] mb-8"
+              >
                 <p className="text-[14px] md:text-[15.5px] leading-[2.1] text-[#31353A] tracking-wider mb-8 font-light"
                   style={{ fontFamily: 'Noto Serif TC, serif' }}>
                   {activeQuiz.questions[currentQuestionIdx].question}
@@ -320,10 +329,16 @@ export default function QuizPage() {
                       key={idx}
                       onClick={() => handleSelectOption(opt.scoreKey)}
                       disabled={isAnimatingNext}
-                      className="w-full text-left px-6 py-4 text-xs md:text-sm tracking-wide bg-white/40 border border-[#D1BE9B]/20 text-[#31353A]/80 hover:bg-[#3D4144] hover:text-[#FAF7F4] hover:border-[#3D4144] transition-all duration-300 rounded-2xl font-light active:scale-[0.99] disabled:opacity-50 cursor-pointer shadow-sm hover:shadow-md"
+                      className={`quiz-option-button w-full text-left px-6 py-4 text-xs md:text-sm tracking-wide border rounded-2xl font-light disabled:opacity-70 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/70 ${
+                        selectedOptionKey === opt.scoreKey
+                          ? 'bg-[#3D4144] text-[#FAF7F4] border-[#3D4144] shadow-md'
+                          : 'bg-white/40 border-[#D1BE9B]/20 text-[#31353A]/80'
+                      }`}
                       style={{ fontFamily: 'Noto Serif TC, serif', lineHeight: '1.7' }}
                     >
-                      <span className="inline-block mr-2.5 text-[10px] text-[#A38D6B] font-serif group-hover:text-inherit">
+                      <span className={`inline-block mr-2.5 text-[10px] font-serif transition-colors duration-150 ${
+                        selectedOptionKey === opt.scoreKey ? 'text-[#D1BE9B]' : 'text-[#A38D6B]'
+                      }`}>
                         {String.fromCharCode(65 + idx)}.
                       </span>
                       {opt.text}
