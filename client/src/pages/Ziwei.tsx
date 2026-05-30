@@ -316,32 +316,30 @@ export default function ZiweiPage() {
                     </DialogHeader>
                     <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       <p>
-                        你有沒有過這種感覺？有時候看著別人好像都很清楚自己要什麼，自己卻像走在迷霧裡，不知道下一步該往哪去。<br/><br/>
-                        其實，我們每個人在出生的那一刻，宇宙就已經偷偷塞給我們一張專屬的<strong className="font-medium text-[#A38D6B]">「人生冒險地圖」</strong>了——這就是紫微斗數。
+                        紫微斗數可以先想成一張<strong className="font-medium text-[#A38D6B]">「人生整理表」</strong>。<br/><br/>
+                        它不是要一句話斷定你會變成什麼樣的人，而是用你的出生時間，幫你把個性、感情、工作、財運、家庭等面向分開來看。這樣你比較容易知道：自己天生重視什麼、容易卡在哪裡、適合怎麼調整。
                       </p>
 
                       <div>
                         <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🪐 簡單來說，紫微斗數是什麼？</h4>
                         <p>
-                          如果把算命說得白話一點，它其實就是古代版的<strong className="font-medium text-[#A38D6B]">「大數據性格統計學」</strong>！<br/>
-                          就像每台新買的手機都有「出廠設定」，紫微斗數就是你這台人生的出廠說明書。<br/><br/>
-                          它根據你出生的年、月、日、還有最關鍵的<strong className="font-medium">時辰</strong>，把你的命盤分成 12 個宮位（就像 12 個不同的生活領域，比如你的個性、感情、工作、財運等），並把各種星曜擺進去。
+                          紫微斗數會根據你的出生年、月、日和<strong className="font-medium">時辰</strong>排出一張命盤。命盤裡有 12 個宮位，你可以把它們理解成 12 個生活分類。<br/><br/>
+                          例如「命宮」看你的個性和做事方式，「夫妻宮」看感情互動，「事業宮」看工作方向，「財帛宮」看金錢觀和賺錢方式。每個宮位裡的星曜不同，代表那個面向有不同的特質和提醒。
                         </p>
                       </div>
 
                       <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 為什麼它真的那麼準？因為它超級個人化！</h4>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 看命盤時，可以怎麼理解？</h4>
                         <p>
-                          很多通俗星座占卜，把全世界幾十億人只分成 12 種。但紫微斗數的組合高達 <strong className="font-medium">20 多萬種</strong>！加上每個人每十年運勢的變化，幾乎不可能找到另一個跟你命盤一模一樣的人。<br/><br/>
-                          而這份準確度，來自於它三大核心的精密設計：
+                          你不需要先懂所有星曜，也不用急著背名詞。先把命盤當成一份觀察自己的工具就好。Mochi 建議你用這三個方向看：
                         </p>
                         <ul className="list-disc pl-5 mt-2 space-y-3">
-                          <li><strong className="font-medium text-[#A38D6B]">多維度的星系交織：</strong>除了出生的年月，最關鍵的還有出生「時辰」，這決定了你獨一無二的星曜排列。主星與數十顆輔星相互碰撞，細緻地勾勒出每個人性格的極微小紋理。</li>
-                          <li><strong className="font-medium text-[#A38D6B]">十二宮位的生態網絡：</strong>命宮、夫妻宮、事業宮、財帛宮等十二個宮位並非孤立，而是透過「三方四正」的相位交互作用。你的事業可能受到性格（命宮）的牽引，也可能被潛意識（福德宮）所左右，呈現出極其立體且符合現實的複雜人生。</li>
-                          <li><strong className="font-medium text-[#A38D6B]">動態的時間軌跡：</strong>它不僅是一張靜態的性格速寫，更會隨時間流轉。每十年轉換的「大限（大運）」與每年的「流年」，精準捕捉了你在不同生命階段面臨的機遇、心境轉變與內在成長。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">先看自己：</strong>命宮和福德宮會透露你的性格、內在需求，以及什麼事情會讓你有安全感。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">再看關係：</strong>夫妻宮、朋友宮、家庭相關宮位，可以幫你理解自己在人際和親密關係裡的習慣。</li>
+                          <li><strong className="font-medium text-[#A38D6B]">最後看方向：</strong>事業宮和財帛宮會提醒你適合怎麼工作、怎麼累積資源，以及哪裡需要更穩一點。</li>
                         </ul>
                         <p className="mt-3">
-                          所以，紫微斗數不是空泛的預測，而是一張無比契合你真實生命歷程、指引你順勢而為的<strong className="font-medium text-[#A38D6B]">「靈魂地圖」</strong>。
+                          所以，紫微斗數不是要你害怕命運，而是幫你更懂自己。看懂命盤之後，你可以更清楚地選擇：哪些特質值得好好發揮，哪些模式可以慢慢調整。
                         </p>
                       </div>
                     </div>
