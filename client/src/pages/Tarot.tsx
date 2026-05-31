@@ -318,7 +318,7 @@ export default function TarotPage() {
   const [step, setStep] = useState<Step>('intro');
   const [question, setQuestion] = useState('');
   const [questionType, setQuestionType] = useState('romance');
-  const [activeQuestionCategory, setActiveQuestionCategory] = useState('romance');
+  const [activeQuestionCategory, setActiveQuestionCategory] = useState('');
   const [drawnCards, setDrawnCards] = useState<ReturnType<typeof drawCards>>([]);
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
