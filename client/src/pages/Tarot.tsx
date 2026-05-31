@@ -424,7 +424,7 @@ export default function TarotPage() {
   };
 
   const handlePopularQuestionClick = (prompt: string, type: string, nextStep?: Step) => {
-    setQuestion(prompt.slice(0, 120));
+    setQuestion(prompt.slice(0, 300));
     setQuestionType(type);
     setActiveQuestionCategory(type);
     if (nextStep) setStep(nextStep);
@@ -750,16 +750,16 @@ export default function TarotPage() {
                   </label>
                   <textarea
                     value={question}
-                    onChange={e => setQuestion(e.target.value.slice(0, 120))}
-                    maxLength={120}
+                    onChange={e => setQuestion(e.target.value.slice(0, 300))}
+                    maxLength={300}
                     placeholder="例如：我與他的感情未來會如何發展？"
                     rows={3}
                     className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-3 text-xs text-[#31353A]/80 tracking-wider leading-[1.9] resize-none focus:outline-none focus:border-[#D1BE9B]/50 placeholder:text-[#31353A]/46"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
                   <div className="mt-1 text-right text-[10px] tracking-wider"
-                    style={{ fontFamily: 'Cormorant Garamond, serif', color: question.length >= 120 ? '#C9837A' : question.length >= 100 ? '#A38D6B' : '#31353A66' }}>
-                    {question.length} / 120
+                    style={{ fontFamily: 'Cormorant Garamond, serif', color: question.length >= 300 ? '#C9837A' : question.length >= 250 ? '#A38D6B' : '#31353A66' }}>
+                    {question.length} / 300
                   </div>
                   <p className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>

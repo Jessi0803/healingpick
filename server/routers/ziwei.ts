@@ -106,7 +106,7 @@ export const ziweiRouter = router({
         solarDate: z.string(),
         timeIndex: z.number().int().min(0).max(11),
         gender: z.enum(["男", "女"]),
-        focusArea: z.string().max(100).optional(),
+        focusArea: z.string().max(300).optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
