@@ -21,6 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Mail } from 'lucide-react';
 import { recommendForTarot } from '@/data/recommend';
 import type { Product } from '@/data/products';
+import { useRotatingText } from '@/hooks/useRotatingText';
 
 // ─── Tarot Card Data ──────────────────────────────────────────────────────────
 const MAJOR_ARCANA = [
@@ -55,6 +56,14 @@ const SPREAD_POSITIONS = [
   { id: 2, label: '現在',     desc: '目前正在發生的事件與你的實際狀態' },
   { id: 3, label: '未來',     desc: '即將展開的能量走向與可能的結果' },
   { id: 4, label: '建議',     desc: '塔羅給予你的行動指引與內在智慧' },
+];
+
+const TAROT_WAITING_MESSAGES = [
+  '正在洗牌，讓問題慢慢浮上來...',
+  'Mochi 正在看牌面之間的關聯...',
+  '正在整理這次牌陣想說的重點...',
+  '把牌裡的訊息翻成你看得懂的話...',
+  '快好了，正在把建議整理得更具體一點...',
 ];
 
 // Rider-Waite-Smith Tarot card images (public domain), self-hosted in
@@ -344,6 +353,7 @@ export default function TarotPage() {
       });
     },
   });
+  const tarotWaitingMessage = useRotatingText(TAROT_WAITING_MESSAGES, interpretMutation.isPending);
 
   // 開始持續洗牌動畫
   const handleStartShuffle = useCallback(() => {
@@ -1178,7 +1188,7 @@ export default function TarotPage() {
                     <div className="text-[#D1BE9B] text-3xl animate-spin">✦</div>
                     <p className="text-xs tracking-[0.2em] text-[#31353A]/58"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      Mochi 正在為你解讀牌陣能量...
+                      {tarotWaitingMessage}
                     </p>
                   </div>
                 )}

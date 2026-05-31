@@ -20,6 +20,15 @@ import { CatListening, CatPeeking } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { recommendForZiwei } from '@/data/recommend';
 import type { Product } from '@/data/products';
+import { useRotatingText } from '@/hooks/useRotatingText';
+
+const ZIWEI_WAITING_MESSAGES = [
+  '命盤排列中，正在對照你的出生時辰...',
+  '正在看命宮、身宮與各宮位的關係...',
+  'Mochi 正在整理你的優勢和容易卡住的地方...',
+  '正在把命盤訊息翻成白話解讀...',
+  '快好了，正在整理適合你現在的方向...',
+];
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
 function ProductCard({ product }: { product: Product }) {
@@ -271,6 +280,7 @@ export default function ZiweiPage() {
       toast.error('命盤排列失敗，請稍後再試');
     },
   });
+  const ziweiWaitingMessage = useRotatingText(ZIWEI_WAITING_MESSAGES, interpretMutation.isPending);
 
   function handleGenerate() {
     if (!birthDate) {
@@ -641,7 +651,7 @@ export default function ZiweiPage() {
                   {interpretMutation.isPending ? (
                     <span className="flex items-center justify-center gap-2">
                       <span className="animate-spin">✦</span>
-                      命盤排列中...
+                      {ziweiWaitingMessage}
                     </span>
                   ) : '排出我的命盤'}
                 </button>
@@ -994,7 +1004,7 @@ export default function ZiweiPage() {
                     <div className="text-[#D1BE9B] text-2xl animate-spin">☯</div>
                     <p className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      正在解讀你的命盤...
+                      {ziweiWaitingMessage}
                     </p>
                   </div>
                 )}

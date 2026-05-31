@@ -16,6 +16,7 @@ import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { recommendForFortune } from '@/data/recommend';
 import type { Product } from '@/data/products';
+import { useRotatingText } from '@/hooks/useRotatingText';
 
 // ─── Zodiac Signs ─────────────────────────────────────────────────────────────
 const ZODIAC_SIGNS = [
@@ -31,6 +32,14 @@ const ZODIAC_SIGNS = [
   { id: 'capricorn',   name: '摩羯座', en: 'Capricorn',   symbol: '♑', dates: '12/22–1/19', element: '土', color: '#A0A8A0' },
   { id: 'aquarius',    name: '水瓶座', en: 'Aquarius',    symbol: '♒', dates: '1/20–2/18',  element: '風', color: '#98B8C8' },
   { id: 'pisces',      name: '雙魚座', en: 'Pisces',      symbol: '♓', dates: '2/19–3/20',  element: '水', color: '#B8A8C8' },
+];
+
+const FORTUNE_WAITING_MESSAGES = [
+  '正在看看今天的整體節奏...',
+  'Mochi 正在整理今天適合留意的地方...',
+  '正在把感情、工作和狀態分開看看...',
+  '快好了，正在準備今天的小提醒...',
+  '正在找出今天最適合你的行動建議...',
 ];
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
@@ -312,6 +321,7 @@ export default function FortunePage() {
   }, [dailyFortuneQuery.data, isAuthenticated]);
 
   const aiData = dailyFortuneQuery.data;
+  const fortuneWaitingMessage = useRotatingText(FORTUNE_WAITING_MESSAGES, dailyFortuneQuery.isLoading);
 
   return (
     <PageLayout>
@@ -431,7 +441,7 @@ export default function FortunePage() {
                             <span className="text-[#D1BE9B] animate-spin text-xs">✦</span>
                             <span className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                              計算月相中...
+                              {fortuneWaitingMessage}
                             </span>
                           </div>
                         )}
@@ -493,7 +503,7 @@ export default function FortunePage() {
                             <div className="text-3xl animate-pulse">🌙</div>
                             <p className="text-[12px] tracking-[0.2em] text-[#31353A]/54"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                              Mochi 正在觀察今日月相與星象能量...
+                              {fortuneWaitingMessage}
                             </p>
                           </div>
                         )}
