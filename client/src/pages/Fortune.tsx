@@ -476,11 +476,7 @@ export default function FortunePage() {
                               className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] hover:bg-[#D1BE9B] hover:text-[#31353A] rounded-full transition-all duration-500 font-medium active:scale-95 cursor-pointer shadow-sm text-center"
                               style={{ fontFamily: 'Noto Serif TC, serif' }}
                             >
-                              {credits?.enabled
-                                ? credits.freeRemaining > 0
-                                  ? `✨ 消耗 1 次免費額度 · 解鎖今日運勢 🐾`
-                                  : `✨ 消耗 1 點餘額 · 解鎖今日運勢 🐾`
-                                : `✨ 開啟 Mochi 今日星象解讀 ✦`}
+                              解鎖每日運勢
                             </button>
                             {credits?.enabled && (
                               <p className="mt-3 text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
