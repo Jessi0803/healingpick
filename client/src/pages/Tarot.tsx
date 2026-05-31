@@ -448,7 +448,7 @@ export default function TarotPage() {
       </p>
       <p className="mt-2 mb-3 text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide"
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-        不知道怎麼問也沒關係，可以先從大家常問的方向開始，點一下再改成自己的情況。
+        不知道怎麼問也沒關係，可以點開每個分類看細項，再選一題改成自己的情況。
       </p>
       <div className="grid grid-cols-2 gap-2.5">
         {QUESTION_CATEGORIES.map((category) => {
