@@ -320,6 +320,51 @@ export default function ZiweiPage() {
 
   const selectedPalace = astrolabe?.palaces.find((p) => p.name === selectedPalaceName) ?? null;
   const soulPalaceName = astrolabe?.palaces.find((p) => p.name === '命宮')?.name ?? '命宮';
+  const renderInterpretationSection = (className = '') => (
+    <div className={className}>
+      <div className="flex items-center gap-3 mb-2 px-1">
+        <CatListening className="w-12 h-14 flex-shrink-0" />
+        <p className="text-[11px] tracking-[0.15em] text-[#D1BE9B]/50 italic"
+          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, color: '#766060', fontSize: '12px' }}>
+          Mochi 認真地看著你的命盤… ✦
+        </p>
+      </div>
+
+      <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-[#D1BE9B]" style={{ fontSize: '18px' }}>☯</span>
+          <h4 className="text-[13px] tracking-[0.2em] text-[#31353A]/86"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            命盤整體解讀
+          </h4>
+        </div>
+        {interpretMutation.isPending && (
+          <div className="flex flex-col items-center py-8 gap-3">
+            <div className="text-[#D1BE9B] text-2xl animate-spin">☯</div>
+            <p className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              {ziweiWaitingMessage}
+            </p>
+          </div>
+        )}
+        {interpretMutation.isError && (
+          <p className="text-[11px] text-[#EAA8AC] tracking-wider">解讀暫時無法取得，請稍後再試。</p>
+        )}
+        {!interpretMutation.isPending && !interpretMutation.isError && !llmInterpretation && (
+          <p className="text-[12px] text-[#31353A]/50 tracking-wider text-center py-4"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+            排盤完成後將自動生成 AI 命盤解讀
+          </p>
+        )}
+        {llmInterpretation && (
+          <div className="text-[13px] leading-[2.2] text-[#31353A]/75 tracking-wider"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            <Streamdown>{llmInterpretation}</Streamdown>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <PageLayout>
@@ -828,14 +873,16 @@ export default function ZiweiPage() {
                     </div>
                   </div>
 
-                  <p className="text-center mt-3 text-[11px] tracking-[0.15em] text-[#31353A]/50"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    點擊宮位查看詳細解讀
-                  </p>
-                </div>
+	                  <p className="text-center mt-3 text-[11px] tracking-[0.15em] text-[#31353A]/50"
+	                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+	                    點擊宮位查看詳細解讀
+	                  </p>
+	                </div>
 
-                {/* Palace detail */}
-                <div className="xl:w-72">
+	                {renderInterpretationSection('w-full xl:hidden')}
+
+	                {/* Palace detail */}
+	                <div className="xl:w-72">
                   {selectedPalace ? (
                     <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 animate-fade-in-up">
                       <div className="flex items-center gap-2 mb-4">
@@ -981,49 +1028,7 @@ export default function ZiweiPage() {
                 </div>
               </div>
 
-              {/* Cat staring at the chart */}
-              <div className="flex items-center gap-3 mb-2 px-1">
-                <CatListening className="w-12 h-14 flex-shrink-0" />
-                <p className="text-[11px] tracking-[0.15em] text-[#D1BE9B]/50 italic"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, color: '#766060', fontSize: '12px' }}>
-                  Mochi 認真地看著你的命盤… ✦
-                </p>
-              </div>
-
-              {/* LLM interpretation - full width below chart */}
-              <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-[#D1BE9B]" style={{ fontSize: '18px' }}>☯</span>
-                  <h4 className="text-[13px] tracking-[0.2em] text-[#31353A]/86"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    命盤整體解讀
-                  </h4>
-                </div>
-                {interpretMutation.isPending && (
-                  <div className="flex flex-col items-center py-8 gap-3">
-                    <div className="text-[#D1BE9B] text-2xl animate-spin">☯</div>
-                    <p className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {ziweiWaitingMessage}
-                    </p>
-                  </div>
-                )}
-                {interpretMutation.isError && (
-                  <p className="text-[11px] text-[#EAA8AC] tracking-wider">解讀暫時無法取得，請稍後再試。</p>
-                )}
-                {!interpretMutation.isPending && !interpretMutation.isError && !llmInterpretation && (
-                  <p className="text-[12px] text-[#31353A]/50 tracking-wider text-center py-4"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    排盤完成後將自動生成 AI 命盤解讀
-                  </p>
-                )}
-                {llmInterpretation && (
-                  <div className="text-[13px] leading-[2.2] text-[#31353A]/75 tracking-wider"
-                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                    <Streamdown>{llmInterpretation}</Streamdown>
-                  </div>
-                )}
-              </div>
+	              {renderInterpretationSection('hidden xl:block')}
               </div>
             </div>
           )}
