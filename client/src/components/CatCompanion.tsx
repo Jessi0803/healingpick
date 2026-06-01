@@ -489,7 +489,7 @@ export default function CatCompanion() {
                     </button>
                     <button
                       onClick={resetQuiz}
-                      className="w-full text-[9px] tracking-[0.25em] py-1 text-[#31353A]/40 hover:text-[#31353A]/72 transition-colors cursor-pointer text-center mt-1.5 border-none bg-transparent"
+                      className="w-full text-[10.5px] tracking-[0.2em] py-1.5 text-[#8A7250] hover:text-[#31353A] transition-colors cursor-pointer text-center mt-1.5 border-none bg-transparent"
                       style={{ fontFamily: 'Noto Serif TC, serif' }}
                     >
                       重新測驗 🐾
