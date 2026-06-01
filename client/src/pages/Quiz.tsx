@@ -227,7 +227,7 @@ export default function QuizPage() {
       <div className={`quiz-archive-shell min-h-screen py-12 px-4 md:px-8 ${theme.bg} relative overflow-hidden transition-colors duration-1000`}>
         
         {/* Grain Noise Texture for high-end luxury feel */}
-        <div className="absolute inset-0 bg-noise opacity-[0.4] pointer-events-none mix-blend-overlay z-10" />
+        <div className="quiz-noise-layer absolute inset-0 bg-noise pointer-events-none z-10" />
         <div className="absolute inset-0 quiz-archive-vignette pointer-events-none z-[1]" />
         <div className="quiz-archive-stardust pointer-events-none z-[2]" />
         <div className="quiz-archive-orbits pointer-events-none z-[2]">
@@ -238,18 +238,18 @@ export default function QuizPage() {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B89D68]/40 to-transparent z-[2]" />
 
         {/* Dynamic moving Morandi blobs */}
-        <div className={`absolute top-1/6 left-1/6 w-[450px] h-[450px] rounded-full ${theme.blob1} blur-[120px] pointer-events-none animate-blob-1 z-0 transition-colors duration-1000`} />
-        <div className={`absolute bottom-[24%] right-[24%] w-[440px] h-[440px] rounded-full ${theme.blob2} blur-[120px] pointer-events-none animate-blob-2 z-0 transition-colors duration-1000`} />
+        <div className={`quiz-ambient-blob quiz-ambient-blob-one absolute top-1/6 left-1/6 w-[450px] h-[450px] rounded-full ${theme.blob1} pointer-events-none z-0 transition-colors duration-1000`} />
+        <div className={`quiz-ambient-blob quiz-ambient-blob-two absolute bottom-[24%] right-[24%] w-[440px] h-[440px] rounded-full ${theme.blob2} pointer-events-none z-0 transition-colors duration-1000`} />
 
         {/* Shifting floating background particles */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
+        <div className="quiz-floating-particles absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
           {theme.particles.map((char, index) => {
             const delay = index * 2.5;
             const left = 5 + (index * 15) + (index % 2 === 0 ? 5 : -5);
             return (
               <span
                 key={index}
-                className="absolute text-[#A38D6B]/20 font-light animate-drift-particle text-sm md:text-base"
+                className="quiz-floating-particle absolute text-[#A38D6B]/20 font-light text-sm md:text-base"
                 style={{
                   left: `${left}%`,
                   animationDelay: `${delay}s`,
@@ -458,7 +458,7 @@ export default function QuizPage() {
             <div className="animate-fade-in-up max-w-2xl mx-auto text-center">
               
               {/* Outer results board */}
-              <div className="quiz-result-card glass-panel bg-white/45 backdrop-blur-md border border-[#D1BE9B]/25 rounded-[40px] p-8 md:p-12 shadow-[0_20px_60px_rgba(209,190,155,0.12)] relative overflow-hidden mb-8">
+              <div className="quiz-result-card bg-white/55 border border-[#D1BE9B]/25 rounded-[40px] p-8 md:p-12 shadow-[0_20px_60px_rgba(209,190,155,0.12)] relative overflow-hidden mb-8">
                 <div className="quiz-result-reveal pointer-events-none" />
                 
                 {/* Elegant decorative corners */}

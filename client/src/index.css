@@ -398,6 +398,11 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
 }
 
+.quiz-noise-layer {
+  opacity: 0.16;
+  mix-blend-mode: soft-light;
+}
+
 @keyframes floatBlob1 {
   0%, 100% { transform: translate(0, 0) scale(1); }
   33% { transform: translate(30px, -50px) scale(1.1); }
@@ -447,7 +452,7 @@
 .quiz-archive-stardust {
   position: absolute;
   inset: 0;
-  opacity: 0.42;
+  opacity: 0.28;
   background-image:
     radial-gradient(circle, rgba(184, 157, 104, 0.42) 0 1px, transparent 1.8px),
     radial-gradient(circle, rgba(255, 249, 235, 0.78) 0 1px, transparent 1.7px),
@@ -460,7 +465,23 @@
     96px 96px,
     132px 132px,
     168px 168px;
-  animation: quizStardustDrift 26s linear infinite;
+}
+
+.quiz-ambient-blob {
+  filter: blur(80px);
+  transform: translateZ(0);
+}
+
+.quiz-ambient-blob-one {
+  animation: floatBlob1 22s ease-in-out infinite;
+}
+
+.quiz-ambient-blob-two {
+  animation: floatBlob2 24s ease-in-out infinite -5s;
+}
+
+.quiz-floating-particle {
+  animation: driftUp 24s linear infinite;
 }
 
 .quiz-archive-orbits {
@@ -595,8 +616,6 @@
     linear-gradient(145deg, rgba(255, 250, 240, 0.78), rgba(240, 229, 211, 0.58)),
     radial-gradient(circle at top right, rgba(184, 157, 104, 0.14), transparent 34%);
   border: 1px solid rgba(184, 157, 104, 0.26);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
 }
 
 .quiz-archive-panel::before {
@@ -699,6 +718,10 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .quiz-archive-stardust {
+    animation: quizStardustDrift 34s linear infinite;
+  }
+
   .quiz-lobby-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 24px 60px rgba(86, 66, 42, 0.13);
@@ -738,10 +761,30 @@
   }
 }
 
+@media (max-width: 767px), (pointer: coarse) {
+  .quiz-noise-layer {
+    opacity: 0.1;
+  }
+
+  .quiz-ambient-blob,
+  .quiz-archive-orbits,
+  .quiz-floating-particles {
+    display: none;
+  }
+
+  .quiz-archive-card,
+  .quiz-archive-panel,
+  .quiz-result-card {
+    box-shadow: 0 12px 34px rgba(86, 66, 42, 0.08);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-blob-1,
   .animate-blob-2,
   .animate-drift-particle,
+  .quiz-ambient-blob,
+  .quiz-floating-particle,
   .quiz-archive-stardust,
   .quiz-archive-orbits span,
   .quiz-question-card,
