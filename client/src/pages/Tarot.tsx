@@ -20,7 +20,7 @@ import { CatWaving, CatListening } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Mail } from 'lucide-react';
 import { recommendForTarot } from '@/data/recommend';
-import type { Product } from '@/data/products';
+import { getProductFeatureSummary, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
 
 // ─── Tarot Card Data ──────────────────────────────────────────────────────────
@@ -189,6 +189,7 @@ function drawCards(): Array<{ card: typeof MAJOR_ARCANA[0]; reversed: boolean }>
 // ─── Product Card ─────────────────────────────────────────────────────────────
 function ProductCard({ product }: { product: Product }) {
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
+  const featureSummary = getProductFeatureSummary(product);
   return (
     <Link href={`/shop/${product.slug}`}>
       <div className="flex gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
@@ -226,6 +227,10 @@ function ProductCard({ product }: { product: Product }) {
               </span>
             ))}
           </div>
+          <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/58 mb-2 line-clamp-2"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            {featureSummary}
+          </p>
           <span className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             查看商品 →

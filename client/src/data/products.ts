@@ -311,6 +311,13 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
+export function getProductFeatureSummary(product: Product, limit = 2): string {
+  return product.features
+    .slice(0, limit)
+    .map((feature) => `${feature.title}：${feature.desc}`)
+    .join(' ');
+}
+
 export const CATEGORY_OPTIONS: { id: string; label: string }[] = [
   { id: 'all', label: '全部商品' },
   { id: 'protect', label: '守護平安' },
