@@ -7,7 +7,7 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import { QUIZZES, Quiz, QuizQuestion } from '@/data/quizzes';
-import { findProduct, getProductFeatureSummary } from '@/data/products';
+import { findProduct } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
 const ARCHIVE_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
@@ -220,8 +220,8 @@ export default function QuizPage() {
 
   const theme = getQuizTheme();
   const recommendedProduct = quizResult ? findProduct(quizResult.crystalSlug) : undefined;
-  const recommendedProductFeatureSummary = recommendedProduct
-    ? getProductFeatureSummary(recommendedProduct)
+  const recommendedProductSuitedFor = recommendedProduct
+    ? `適合：${recommendedProduct.suitedFor.slice(0, 3).join('、')}`
     : '';
   const resultHealingImage = getResultHealingImage(activeQuiz?.slug, quizResult?.key);
 
@@ -552,7 +552,7 @@ export default function QuizPage() {
                         </p>
                         <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/60 mb-3 line-clamp-2"
                           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                          {recommendedProductFeatureSummary}
+                          {recommendedProductSuitedFor}
                         </p>
                         <div className="flex items-center justify-center sm:justify-start gap-3">
                           <span className="text-sm text-[#A38D6B]"
