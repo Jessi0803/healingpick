@@ -562,14 +562,23 @@ export default function QuizPage() {
                         </div>
                       </div>
 
-                      {/* Direct purchase trigger */}
-                      <button
-                        onClick={() => handleBuy(recommendedProduct.name)}
-                        className="py-2.5 px-6 text-[10.5px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light select-none cursor-pointer"
-                        style={{ fontFamily: 'Noto Serif TC, serif' }}
-                      >
-                        立即諮詢購買 ♡
-                      </button>
+                      {/* Product actions */}
+                      <div className="flex w-full flex-col gap-2 sm:w-auto">
+                        <Link
+                          href={`/shop/${recommendedProduct.slug}`}
+                          className="w-full py-2.5 px-6 text-center text-[10.5px] tracking-[0.2em] border border-[#D1BE9B]/35 bg-white/55 text-[#A38D6B] rounded-full hover:bg-[#F0EBE3] hover:border-[#D1BE9B]/60 transition-all duration-300 active:scale-95 shadow-sm font-light select-none cursor-pointer"
+                          style={{ fontFamily: 'Noto Serif TC, serif' }}
+                        >
+                          商品詳情 ✦
+                        </Link>
+                        <button
+                          onClick={() => handleBuy(recommendedProduct.name)}
+                          className="w-full py-2.5 px-6 text-[10.5px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light select-none cursor-pointer"
+                          style={{ fontFamily: 'Noto Serif TC, serif' }}
+                        >
+                          立即諮詢購買 ♡
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
