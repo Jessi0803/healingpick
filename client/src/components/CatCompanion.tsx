@@ -474,18 +474,18 @@ export default function CatCompanion() {
 
                   <div className="flex flex-col gap-2">
                     <button
-                      onClick={() => setIsContactOpen(true)}
-                      className="w-full text-[10.5px] font-medium tracking-[0.2em] py-2 rounded-full bg-[#3D4144] hover:bg-[#D1BE9B] text-[#FAF7F4] hover:text-[#31353A] transition-all duration-300 active:scale-95 cursor-pointer shadow-sm text-center"
-                      style={{ fontFamily: 'Noto Serif TC, serif' }}
-                    >
-                      立即諮詢購買 ♡
-                    </button>
-                    <button
                       onClick={() => goTo(`/shop/${recommendedProduct.slug}`)}
                       className="w-full text-[10.5px] tracking-[0.2em] py-2 rounded-full border border-[#D1BE9B]/40 text-[#A38D6B] hover:bg-[#D1BE9B]/10 transition-all duration-300 active:scale-95 cursor-pointer text-center"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
                     >
                       了解療癒詳情 →
+                    </button>
+                    <button
+                      onClick={() => setIsContactOpen(true)}
+                      className="w-full text-[10.5px] font-medium tracking-[0.2em] py-2 rounded-full bg-[#3D4144] hover:bg-[#D1BE9B] text-[#FAF7F4] hover:text-[#31353A] transition-all duration-300 active:scale-95 cursor-pointer shadow-sm text-center"
+                      style={{ fontFamily: 'Noto Serif TC, serif' }}
+                    >
+                      立即諮詢購買 ♡
                     </button>
                     <button
                       onClick={resetQuiz}
