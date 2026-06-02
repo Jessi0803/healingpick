@@ -345,12 +345,12 @@ export default function Home() {
                 塔羅占卜
               </button>
             </Link>
-            <Link href="/quiz">
+            <Link href="/ziwei">
               <button
-                className="w-full px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/30 backdrop-blur-sm rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
+                className="w-full px-8 py-3 text-xs tracking-[0.25em] border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                心理測驗
+                紫微斗數
               </button>
             </Link>
             <Link href="/fortune">
@@ -361,12 +361,12 @@ export default function Home() {
                 每日運勢
               </button>
             </Link>
-            <Link href="/ziwei">
+            <Link href="/quiz">
               <button
-                className="w-full px-8 py-3 text-xs tracking-[0.25em] border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
+                className="w-full px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/30 backdrop-blur-sm rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                紫微斗數
+                心理測驗
               </button>
             </Link>
           </div>
