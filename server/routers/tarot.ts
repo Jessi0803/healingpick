@@ -106,4 +106,69 @@ ${cardsSummary}
 
       return { interpretation };
     }),
+
+  /**
+   * 免費追問一次：基於同一份牌面與原解讀，給短但具體的延伸回答。
+   * 不扣點；目前由前端限制每次占卜結果只可使用一次。
+   */
+  followUp: publicProcedure
+    .input(
+      z.object({
+        question: z.string().max(300),
+        questionType: z.string(),
+        cards: z.array(cardSchema).max(5),
+        interpretation: z.string().max(10000),
+        followUpQuestion: z.string().min(2).max(300),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const cardsSummary = input.cards
+        .map(
+          (c, i) =>
+            `${i + 1}. 位置「${c.position}」（${c.positionDesc}）：${c.name}（${c.en}）${c.reversed ? "【逆位】" : "【正位】"} — ${c.reversed ? "逆位含義：" + c.meaning : "含義：" + c.meaning}`
+        )
+        .join("\n");
+
+      const systemPrompt = `你是「Mochi」，一隻溫柔但說話具體的塔羅陪伴貓咪。你正在回答使用者對「同一份塔羅牌面」的免費追問。
+
+回答規則：
+- 全程使用繁體中文
+- 不要重新抽牌，不要假裝有新的牌
+- 回答必須控制在 100-180 個中文字左右
+- 短，但要準：直接回答使用者追問，不要籠統安慰
+- 必須引用本次牌面中的 1-2 個具體重點，例如牌位、牌名、正逆位或原解讀中的判斷
+- 必須說明「為什麼這樣判斷」
+- 最後給 1 個可執行的小建議，建議要具體到使用者今天或這週可以做什麼
+- 不要分很多標題，不要寫完整深度解析
+- 不要使用「相信直覺」「慢慢來」「宇宙會安排」「照顧自己」這類空泛句，除非後面立刻補上具體做法
+- 可以自然提到 Mochi，但不要撒嬌，不要出現「喵」`;
+
+      const userPrompt = `使用者原本的問題類型：${input.questionType}
+使用者原本的問題：${input.question || "（未填寫具體問題）"}
+
+本次五牌陣：
+${cardsSummary}
+
+剛剛的完整塔羅解讀：
+${input.interpretation}
+
+使用者現在追問：
+${input.followUpQuestion}
+
+請只基於上面這份牌面與原解讀，回答這次追問。`;
+
+      const response = await invokeLLM({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      });
+
+      const rawContent = response.choices?.[0]?.message?.content;
+      const answer = rawContent
+        ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+        : "Mochi 暫時讀不到這個追問，請稍後再試。";
+
+      return { answer };
+    }),
 });

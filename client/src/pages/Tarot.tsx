@@ -9,7 +9,7 @@
  *   - Crystal recommendation based on reading
  */
 
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, type FormEvent } from 'react';
 import { Link } from 'wouter';
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
@@ -343,6 +343,9 @@ export default function TarotPage() {
   const [pickedIndices, setPickedIndices] = useState<number[]>([]);
   const shuffleIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState<string>('');
+  const [followUpQuestion, setFollowUpQuestion] = useState('');
+  const [followUpAnswer, setFollowUpAnswer] = useState('');
+  const [followUpUsed, setFollowUpUsed] = useState(false);
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -358,7 +361,39 @@ export default function TarotPage() {
       });
     },
   });
+  const followUpMutation = trpc.tarot.followUp.useMutation({
+    onSuccess: (data) => {
+      setFollowUpAnswer(data.answer);
+      setFollowUpUsed(true);
+      setFollowUpQuestion('');
+    },
+  });
   const tarotWaitingMessage = useRotatingText(TAROT_WAITING_MESSAGES, interpretMutation.isPending);
+
+  const getReadingCardsPayload = () =>
+    drawnCards.map((d, i) => ({
+      name: d.card.name,
+      en: d.card.en,
+      symbol: d.card.symbol,
+      meaning: d.reversed ? d.card.reversed : d.card.meaning,
+      reversed: d.reversed,
+      position: SPREAD_POSITIONS[i].label,
+      positionDesc: SPREAD_POSITIONS[i].desc,
+    }));
+
+  const handleFollowUpSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedQuestion = followUpQuestion.trim();
+    if (!trimmedQuestion || followUpUsed || !llmInterpretation || followUpMutation.isPending) return;
+
+    followUpMutation.mutate({
+      question,
+      questionType,
+      cards: getReadingCardsPayload(),
+      interpretation: llmInterpretation,
+      followUpQuestion: trimmedQuestion,
+    });
+  };
 
   // 開始持續洗牌動畫
   const handleStartShuffle = useCallback(() => {
@@ -1116,18 +1151,13 @@ export default function TarotPage() {
                       onClick={() => {
                         setStep('reading');
                         setLlmInterpretation('');
+                        setFollowUpQuestion('');
+                        setFollowUpAnswer('');
+                        setFollowUpUsed(false);
                         interpretMutation.mutate({
                           question,
                           questionType,
-                          cards: drawnCards.map((d, i) => ({
-                            name: d.card.name,
-                            en: d.card.en,
-                            symbol: d.card.symbol,
-                            meaning: d.reversed ? d.card.reversed : d.card.meaning,
-                            reversed: d.reversed,
-                            position: SPREAD_POSITIONS[i].label,
-                            positionDesc: SPREAD_POSITIONS[i].desc,
-                          })),
+                          cards: getReadingCardsPayload(),
                         });
                       }}
                       className="w-full mt-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
@@ -1218,6 +1248,74 @@ export default function TarotPage() {
                 )}
               </div>
 
+              {/* Free follow-up */}
+              {llmInterpretation && (
+                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
+                  <div className="flex flex-col gap-2 mb-4">
+                    <p className="text-[11px] tracking-[0.28em] text-[#D1BE9B]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      ◎ 免費追問
+                    </p>
+                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      Mochi 可以再陪你看一次這份牌面。本次免費追問 1 次，回答會短短的，但會基於牌面講具體判斷和一個可執行建議。
+                    </p>
+                  </div>
+
+                  {!followUpUsed ? (
+                    <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
+                      <textarea
+                        value={followUpQuestion}
+                        onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
+                        maxLength={300}
+                        placeholder="例如：他現在還喜歡我嗎？我接下來該主動嗎？"
+                        className="min-h-[96px] resize-none rounded-2xl border border-[#D1BE9B]/20 bg-white/55 px-4 py-3 text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                      />
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
+                          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                          {followUpQuestion.length}/300
+                        </span>
+                        <button
+                          type="submit"
+                          disabled={!followUpQuestion.trim() || followUpMutation.isPending}
+                          className="px-6 py-2.5 text-[11px] tracking-[0.22em] bg-[#3D4144] text-[#FAF7F4] rounded-full transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 hover:bg-[#D1BE9B] hover:text-[#31353A]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        >
+                          {followUpMutation.isPending ? 'Mochi 正在看牌面...' : '送出免費追問 ✦'}
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <p className="rounded-2xl border border-[#D1BE9B]/18 bg-white/42 px-4 py-3 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/55"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      本次免費追問已使用完畢。
+                    </p>
+                  )}
+
+                  {followUpMutation.isError && (
+                    <p className="mt-3 text-[12px] tracking-[0.08em] text-[#EAA8AC]"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      追問暫時無法送出，請稍後再試。
+                    </p>
+                  )}
+
+                  {followUpAnswer && (
+                    <div className="mt-5 rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
+                      <p className="mb-2 text-[11px] tracking-[0.24em] text-[#A38D6B]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        Mochi 的短答
+                      </p>
+                      <p className="text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/78 whitespace-pre-line"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        {followUpAnswer}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Product recommendation */}
               {recommendedProducts.length > 0 && (
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
@@ -1242,6 +1340,9 @@ export default function TarotPage() {
                     setRevealedCards(new Set());
                     setSelectedCard(null);
                     setQuestion('');
+                    setFollowUpQuestion('');
+                    setFollowUpAnswer('');
+                    setFollowUpUsed(false);
                   }}
                   className="px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
