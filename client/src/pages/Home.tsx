@@ -8,7 +8,6 @@
  *   4. Divination Preview (占卜聖殿入口)
  *   5. Quiz Teaser (心理測驗)
  *   6. Shop Preview (能量商品)
- *   7. Testimonials (使用者心聲)
  */
 
 import { useState, useRef } from 'react';
@@ -135,87 +134,6 @@ const altarData: Record<string, {
   },
 };
 
-// ─── Testimonials ─────────────────────────────────────────────────────────────
-const testimonials = [
-  {
-    text: '半夜睡不著亂點的，沒想到有一句剛好打到我。它說我不是不知道答案，只是一直在等別人先開口。說得太好了。',
-    tag: '塔羅占卜',
-    crystal: '紫水晶',
-  },
-  {
-    text: '我問的是工作。老實說我本來期待它直接跟我說要不要離職，但它沒有，它反而把我現在那種又累、又怕自己是不是太草莓的狀態講出來。看完有比較冷靜。',
-    tag: '塔羅占卜',
-    crystal: '紫水晶',
-  },
-  {
-    text: '這個塔羅跟我以前玩的不太一樣欸，它不是一直講對方怎樣怎樣，反而會一直問你自己到底想要什麼。剛開始有點煩，後來想想滿有道理的哈哈。',
-    tag: '塔羅占卜',
-    crystal: '粉晶',
-  },
-  {
-    text: '抽完沒有那種人生突然開悟啦，但心裡有鬆一點。它講話不會很可怕，也不會一直灌雞湯，這點我喜歡。',
-    tag: '塔羅占卜',
-    crystal: '黃水晶',
-  },
-  {
-    text: '紫微我真的完全門外漢，什麼宮什麼星都看不懂。這邊至少看得下去，而且有幾段講到我的個性滿準的，尤其是表面很穩、其實腦袋裡一直想備案那段。',
-    tag: '紫微斗數',
-    crystal: '粉晶',
-  },
-  {
-    text: '有點意外。以前看命盤都覺得很像在被宣判，這個比較像把你平常的慣性攤開來看。沒有那麼玄，反而比較舒服。',
-    tag: '紫微斗數',
-    crystal: '紫水晶',
-  },
-  {
-    text: '老實說有些名詞我還是不熟，但整體不會難讀。它講關係裡我容易先照顧別人，後面自己爆掉，這個……滿像我的。',
-    tag: '紫微斗數',
-    crystal: '粉晶',
-  },
-  {
-    text: '看完紫微沒有覺得「哇命運都決定了」，反而是覺得原來我有些反應模式是有跡可循的。這種講法我比較吃得下去。',
-    tag: '紫微斗數',
-    crystal: '黃水晶',
-  },
-  {
-    text: '早上捷運上看一下剛剛好，不會太長。今天那句「先不要急著把全部想清楚」救到我，因為我真的一早就在焦慮。',
-    tag: '每日運勢',
-    crystal: '黃水晶',
-  },
-  {
-    text: '每日運勢滿像小便條的，不是預言。它有時候講的事情很普通，可是普通到剛好，會讓我今天比較記得照顧自己。',
-    tag: '每日運勢',
-    crystal: '紫水晶',
-  },
-  {
-    text: '我不是每天看，但心情很亂的時候會點。看完不會突然變超正能量，就是比較穩一點，這樣其實就夠了。',
-    tag: '每日運勢',
-    crystal: '粉晶',
-  },
-  {
-    text: '喜歡它沒有嚇人。很多星座運勢會寫什麼小心破財小心爛桃花，這個比較像：今天慢一點也沒關係。舒服很多。',
-    tag: '每日運勢',
-    crystal: '紫水晶',
-  },
-  {
-    text: '我是先被水晶照片吸引進來的，後來才玩測驗。它推薦的方式不像硬推銷，比較像先問你最近怎麼了，這點滿加分。',
-    tag: '水晶推薦',
-    crystal: '紫水晶',
-  },
-  {
-    text: '商品介紹寫得很不像一般購物網站。不是只有「招財、招桃花」那種，它會講一個狀態。看一看會覺得，對，我最近好像真的需要安定一點。',
-    tag: '能量商品',
-    crystal: '黃水晶',
-  },
-  {
-    text: '整個網站節奏很慢，我滿喜歡。不是卡，是它不會一直催你買、催你下一步。適合我這種只是想安靜一下的人。',
-    tag: '整體體驗',
-    crystal: '紫水晶',
-  },
-];
-
-const testimonialFilters = ['全部', '塔羅占卜', '紫微斗數', '每日運勢', '水晶商品'] as const;
-
 // ─── Products Preview ─────────────────────────────────────────────────────────
 // Real products are loaded dynamically from PRODUCTS data.
 
@@ -241,8 +159,6 @@ export default function Home() {
   const [bodyBg, setBodyBg] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
   const [isContactOpen, setIsContactOpen] = useState(false);
-  const [testimonialFilter, setTestimonialFilter] = useState<(typeof testimonialFilters)[number]>('全部');
-  const [showAllTestimonials, setShowAllTestimonials] = useState(false);
 
   const handleBuyProduct = (productName: string) => {
     setSelectedProduct(productName);
@@ -290,24 +206,9 @@ export default function Home() {
 
   const activeData = activeCrystal ? altarData[activeCrystal] : null;
 
-  const filteredTestimonials = testimonials.filter((item) => {
-    if (testimonialFilter === '全部') return true;
-    if (testimonialFilter === '水晶商品') {
-      return ['水晶推薦', '能量商品', '整體體驗'].includes(item.tag);
-    }
-    return item.tag === testimonialFilter;
-  });
-  const visibleTestimonials = showAllTestimonials ? filteredTestimonials : filteredTestimonials.slice(0, 6);
-
   function scrollToTestimonials() {
     document.getElementById('testimonials-section')?.scrollIntoView({ behavior: 'smooth' });
   }
-
-  const crystalIconMap: Record<string, React.ReactNode> = {
-    '紫水晶': <div className="w-5 h-6"><CrystalPurple /></div>,
-    '粉晶': <div className="w-5 h-6"><CrystalRose /></div>,
-    '黃水晶': <div className="w-5 h-6"><CrystalCitrine /></div>,
-  };
 
   return (
     <PageLayout>
@@ -461,6 +362,7 @@ export default function Home() {
           >
             ♡ 看看大家怎麼被療癒
           </button>
+
         </div>
 
         {/* Scroll indicator */}
@@ -971,11 +873,10 @@ export default function Home() {
         </div>
       </section>
 
-
       {/* ── TESTIMONIALS ──────────────────────────────────────────────────── */}
       <section id="testimonials-section" className="py-20 px-6 md:px-10 bg-[#F2EDE8]/30 scroll-mt-24">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center">
             <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>Gentle Echoes</span>
             <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>大家看完的感覺</h2>
             <p className="mt-3 text-[12px] leading-[1.9] tracking-[0.14em] text-[#31353A]/52 max-w-xl mx-auto"
@@ -983,76 +884,6 @@ export default function Home() {
               不一定會立刻有答案，但有時候光是看清楚一點，心情就差很多。
             </p>
           </div>
-
-          <div className="mb-8 flex gap-2 overflow-x-auto pb-1 md:justify-center">
-            {testimonialFilters.map((filter) => (
-              <button
-                key={filter}
-                onClick={() => {
-                  setTestimonialFilter(filter);
-                  setShowAllTestimonials(false);
-                }}
-                className={`shrink-0 rounded-full border px-4 py-2 text-[11px] tracking-[0.16em] transition-all duration-300 ${
-                  testimonialFilter === filter
-                    ? 'border-[#D1BE9B]/70 bg-[#31353A] text-[#FAF7F4]'
-                    : 'border-[#D1BE9B]/26 bg-white/35 text-[#A38D6B] hover:border-[#D1BE9B]/55 hover:bg-white/60 hover:text-[#31353A]'
-                }`}
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {visibleTestimonials.map((t, i) => (
-              <article
-                key={`${t.tag}-${i}`}
-                className="group relative min-h-[20rem] rounded-xl border border-[#D1BE9B]/18 bg-white/55 px-6 py-7 shadow-[0_14px_45px_rgba(49,53,58,0.05)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#D1BE9B]/42 hover:shadow-[0_18px_55px_rgba(49,53,58,0.08)]"
-                style={{ animationDelay: `${i * 0.1}s` }}
-              >
-                <div className="mb-6 flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-[11px] tracking-[0.22em] text-[#D1BE9B]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {t.tag}
-                    </p>
-                    <p className="mt-1 text-[11px] tracking-[0.12em] text-[#31353A]/42"
-                      style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                      note {String(i + 1).padStart(2, '0')}
-                    </p>
-                  </div>
-                  <div className="w-8 h-10 shrink-0 opacity-58 transition-opacity duration-300 group-hover:opacity-80">
-                    {crystalIconMap[t.crystal] ?? <div className="w-8 h-10 rounded-full bg-[#D1BE9B]/20" />}
-                  </div>
-                </div>
-
-                <p className="text-[13px] leading-[2.15] text-[#31353A]/72 tracking-wider"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  「{t.text}」
-                </p>
-
-                <div className="mt-7 flex items-center justify-end border-t border-[#D1BE9B]/14 pt-4">
-                  <span className="text-[11px] tracking-[0.14em] text-[#A38D6B]/70"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    使用者回饋
-                  </span>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {filteredTestimonials.length > 6 && (
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={() => setShowAllTestimonials((value) => !value)}
-                className="rounded-full border border-[#D1BE9B]/30 bg-white/35 px-6 py-2.5 text-[11px] tracking-[0.18em] text-[#A38D6B] transition-all duration-300 hover:border-[#D1BE9B]/60 hover:bg-white/60 hover:text-[#31353A]"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              >
-                {showAllTestimonials ? '收起部分回饋' : `看全部 ${filteredTestimonials.length} 則回饋`}
-              </button>
-            </div>
-          )}
         </div>
       </section>
 
