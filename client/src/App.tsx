@@ -18,6 +18,7 @@ import Buy from "./pages/Buy";
 import ResetPassword from "./pages/ResetPassword";
 import LoginDialog from "./components/LoginDialog";
 import Admin from "./pages/Admin";
+import Seo from "./components/Seo";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -47,6 +48,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
+          <Seo />
           <Router />
           <CatCompanion />
           <LoginDialog />
