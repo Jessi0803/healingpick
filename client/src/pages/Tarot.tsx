@@ -1252,9 +1252,9 @@ export default function TarotPage() {
               {llmInterpretation && (
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
                   <div className="flex flex-col gap-2 mb-4">
-                    <p className="text-[11px] tracking-[0.28em] text-[#D1BE9B]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      ◎ 免費追問
+                    <p className="text-[13px] tracking-[0.2em] text-[#8A7250]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                      ◎ 想繼續問下去嗎
                     </p>
                     <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
