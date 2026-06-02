@@ -1319,8 +1319,8 @@ export default function TarotPage() {
               {/* Product recommendation */}
               {recommendedProducts.length > 0 && (
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
-                  <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-4 text-center"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                  <p className="text-[13px] tracking-[0.24em] text-[#8A7250] mb-5 text-center"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                     ◎ 根據牌陣能量，為你推薦
                   </p>
                   <div className="flex flex-col gap-3">
