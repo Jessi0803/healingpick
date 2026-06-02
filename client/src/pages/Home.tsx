@@ -336,10 +336,10 @@ export default function Home() {
             "Some feelings only need a gentle place to rest."
           </p>
 
-          <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="mx-auto grid w-full max-w-[20rem] grid-cols-1 gap-3 sm:max-w-[24rem] sm:grid-cols-2">
             <Link href="/tarot">
               <button
-                className="w-full px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                className="w-full px-6 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 塔羅占卜
@@ -347,7 +347,7 @@ export default function Home() {
             </Link>
             <Link href="/ziwei">
               <button
-                className="w-full px-8 py-3 text-xs tracking-[0.25em] border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
+                className="w-full px-6 py-3 text-xs tracking-[0.25em] border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 紫微斗數
@@ -355,7 +355,7 @@ export default function Home() {
             </Link>
             <Link href="/fortune">
               <button
-                className="w-full px-8 py-3 text-xs tracking-[0.25em] border border-[#D1BE9B]/40 bg-[#D1BE9B]/18 text-[#8A7250] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                className="w-full px-6 py-3 text-xs tracking-[0.25em] border border-[#D1BE9B]/40 bg-[#D1BE9B]/18 text-[#8A7250] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 每日運勢
@@ -363,7 +363,7 @@ export default function Home() {
             </Link>
             <Link href="/quiz">
               <button
-                className="w-full px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/30 backdrop-blur-sm rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
+                className="w-full px-6 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/30 backdrop-blur-sm rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 心理測驗
