@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { spendForReading, spendVisitorFree } from "../db";
+import { spendForReading, spendPaidCredit, spendVisitorFree } from "../db";
 import type { TrpcContext } from "./context";
 import { isSupabaseConfigured } from "./supabase";
 
@@ -41,4 +41,22 @@ export async function chargeReading(ctx: TrpcContext, reason: string): Promise<v
   }
 
   throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+}
+
+/**
+ * Charge one paid credit only. This does not consume daily free quota and is
+ * used for paid add-ons after a free trial action has already been used.
+ */
+export async function chargePaidCredit(ctx: TrpcContext, reason: string): Promise<void> {
+  if (!isCreditsEnabled()) return;
+
+  if (!ctx.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+  }
+
+  const result = await spendPaidCredit(ctx.user.id, reason);
+  if (!result.ok) {
+    if (result.reason === "no_db") return; // fail open
+    throw new TRPCError({ code: "FORBIDDEN", message: "INSUFFICIENT_CREDITS" });
+  }
 }

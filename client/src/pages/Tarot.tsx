@@ -242,6 +242,11 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 type Step = 'intro' | 'question' | 'shuffle' | 'pick' | 'spread' | 'reading';
+type FollowUpExchange = {
+  question: string;
+  answer: string;
+  isPaid: boolean;
+};
 
 const QUESTION_PROMPTS: Record<string, string[]> = {
   romance: [
@@ -344,8 +349,8 @@ export default function TarotPage() {
   const shuffleIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState<string>('');
   const [followUpQuestion, setFollowUpQuestion] = useState('');
-  const [followUpAnswer, setFollowUpAnswer] = useState('');
-  const [followUpUsed, setFollowUpUsed] = useState(false);
+  const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
+  const [freeFollowUpUsed, setFreeFollowUpUsed] = useState(false);
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -362,10 +367,57 @@ export default function TarotPage() {
     },
   });
   const followUpMutation = trpc.tarot.followUp.useMutation({
-    onSuccess: (data) => {
-      setFollowUpAnswer(data.answer);
-      setFollowUpUsed(true);
+    onSuccess: (data, variables) => {
+      setFollowUpExchanges(prev => [
+        ...prev,
+        {
+          question: variables.followUpQuestion,
+          answer: data.answer,
+          isPaid: Boolean(variables.isPaid),
+        },
+      ]);
+      if (!variables.isPaid) {
+        setFreeFollowUpUsed(true);
+      }
       setFollowUpQuestion('');
+      if (variables.isPaid) {
+        void creditsQuery.refetch();
+      }
+    },
+    onError: (error) => {
+      if (error.message === 'FREE_FOLLOWUP_USED') {
+        setFreeFollowUpUsed(true);
+        toast.error('免費追問已使用完畢', {
+          description: '之後每次追問會消耗 1 點，請再按一次送出深入追問。',
+          duration: 6000,
+        });
+        return;
+      }
+
+      if (error.message === 'NOT_SIGNED_IN') {
+        toast.error('登入後可繼續追問', {
+          description: '免費追問已使用完畢，之後每次追問會消耗 1 點。',
+          action: {
+            label: '登入',
+            onClick: () => void login(),
+          },
+          duration: 6000,
+        });
+        return;
+      }
+
+      if (error.message === 'INSUFFICIENT_CREDITS') {
+        toast.error('點數不足', {
+          description: '免費追問已使用完畢，之後每次追問會消耗 1 點。',
+          action: {
+            label: '購買點數',
+            onClick: () => {
+              window.location.href = '/buy';
+            },
+          },
+          duration: 6000,
+        });
+      }
     },
   });
   const tarotWaitingMessage = useRotatingText(TAROT_WAITING_MESSAGES, interpretMutation.isPending);
@@ -384,7 +436,37 @@ export default function TarotPage() {
   const handleFollowUpSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedQuestion = followUpQuestion.trim();
-    if (!trimmedQuestion || followUpUsed || !llmInterpretation || followUpMutation.isPending) return;
+    if (!trimmedQuestion || !llmInterpretation || followUpMutation.isPending) return;
+
+    const isPaid = freeFollowUpUsed;
+    const c = creditsQuery.data;
+    if (isPaid && c?.enabled) {
+      if (!isAuthenticated) {
+        toast.error('登入後可繼續追問', {
+          description: '免費追問已使用完畢，之後每次追問會消耗 1 點。',
+          action: {
+            label: '登入',
+            onClick: () => void login(),
+          },
+          duration: 6000,
+        });
+        return;
+      }
+
+      if (c.credits <= 0) {
+        toast.error('點數不足', {
+          description: '免費追問已使用完畢，之後每次追問會消耗 1 點。',
+          action: {
+            label: '購買點數',
+            onClick: () => {
+              window.location.href = '/buy';
+            },
+          },
+          duration: 6000,
+        });
+        return;
+      }
+    }
 
     followUpMutation.mutate({
       question,
@@ -392,6 +474,7 @@ export default function TarotPage() {
       cards: getReadingCardsPayload(),
       interpretation: llmInterpretation,
       followUpQuestion: trimmedQuestion,
+      isPaid,
     });
   };
 
@@ -1152,8 +1235,8 @@ export default function TarotPage() {
                         setStep('reading');
                         setLlmInterpretation('');
                         setFollowUpQuestion('');
-                        setFollowUpAnswer('');
-                        setFollowUpUsed(false);
+                        setFollowUpExchanges([]);
+                        setFreeFollowUpUsed(false);
                         interpretMutation.mutate({
                           question,
                           questionType,
@@ -1258,41 +1341,40 @@ export default function TarotPage() {
                     </p>
                     <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      Mochi 可以再陪你看一次這份牌面。本次免費追問 1 次，回答會短短的，但會基於牌面講具體判斷和一個可執行建議。
+                      {freeFollowUpUsed
+                        ? '免費追問已使用完畢。之後每次追問會消耗 1 點，Mochi 會基於同一份牌面給你更完整的延伸解讀。'
+                        : 'Mochi 可以再陪你看一次這份牌面。本次免費追問 1 次，回答會短短的，但會基於牌面講具體判斷和一個可執行建議。'}
                     </p>
                   </div>
 
-                  {!followUpUsed ? (
-                    <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
-                      <textarea
-                        value={followUpQuestion}
-                        onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
-                        maxLength={300}
-                        placeholder="例如：他現在還喜歡我嗎？我接下來該主動嗎？"
-                        className="min-h-[96px] resize-none rounded-2xl border border-[#D1BE9B]/20 bg-white/55 px-4 py-3 text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                      />
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                        <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
-                          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                          {followUpQuestion.length}/300
-                        </span>
-                        <button
-                          type="submit"
-                          disabled={!followUpQuestion.trim() || followUpMutation.isPending}
-                          className="px-6 py-2.5 text-[11px] tracking-[0.22em] bg-[#3D4144] text-[#FAF7F4] rounded-full transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 hover:bg-[#D1BE9B] hover:text-[#31353A]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                        >
-                          {followUpMutation.isPending ? 'Mochi 正在看牌面...' : '送出免費追問 ✦'}
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <p className="rounded-2xl border border-[#D1BE9B]/18 bg-white/42 px-4 py-3 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/55"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      本次免費追問已使用完畢。
-                    </p>
-                  )}
+                  <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
+                    <textarea
+                      value={followUpQuestion}
+                      onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
+                      maxLength={300}
+                      placeholder="例如：他現在還喜歡我嗎？我接下來該主動嗎？"
+                      className="min-h-[96px] resize-none rounded-2xl border border-[#D1BE9B]/20 bg-white/55 px-4 py-3 text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                    />
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                      <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        {followUpQuestion.length}/300
+                      </span>
+                      <button
+                        type="submit"
+                        disabled={!followUpQuestion.trim() || followUpMutation.isPending}
+                        className="px-6 py-2.5 text-[11px] tracking-[0.18em] bg-[#3D4144] text-[#FAF7F4] rounded-full transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 hover:bg-[#D1BE9B] hover:text-[#31353A]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        {followUpMutation.isPending
+                          ? 'Mochi 正在看牌面...'
+                          : freeFollowUpUsed
+                            ? '送出深入追問（消耗 1 點）'
+                            : '送出免費追問 ✦'}
+                      </button>
+                    </div>
+                  </form>
 
                   {followUpMutation.isError && (
                     <p className="mt-3 text-[12px] tracking-[0.08em] text-[#EAA8AC]"
@@ -1301,16 +1383,26 @@ export default function TarotPage() {
                     </p>
                   )}
 
-                  {followUpAnswer && (
-                    <div className="mt-5 rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
-                      <p className="mb-2 text-[11px] tracking-[0.24em] text-[#A38D6B]"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        Mochi 的短答
-                      </p>
-                      <p className="text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/78 whitespace-pre-line"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        {followUpAnswer}
-                      </p>
+                  {followUpExchanges.length > 0 && (
+                    <div className="mt-5 flex flex-col gap-3">
+                      {followUpExchanges.map((item, index) => (
+                        <div key={`${index}-${item.question}`} className="rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
+                          <div className="mb-3 flex flex-col gap-1">
+                            <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                              {item.isPaid ? 'Mochi 的深入回答' : 'Mochi 的免費短答'}
+                            </p>
+                            <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
+                              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                              你的追問：{item.question}
+                            </p>
+                          </div>
+                          <p className="text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/78 whitespace-pre-line"
+                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                            {item.answer}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -1341,8 +1433,8 @@ export default function TarotPage() {
                     setSelectedCard(null);
                     setQuestion('');
                     setFollowUpQuestion('');
-                    setFollowUpAnswer('');
-                    setFollowUpUsed(false);
+                    setFollowUpExchanges([]);
+                    setFreeFollowUpUsed(false);
                   }}
                   className="px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>

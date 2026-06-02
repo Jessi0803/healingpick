@@ -209,6 +209,39 @@ export async function spendForReading(userId: number, reason: string): Promise<S
   return { ok: false, reason: "insufficient" };
 }
 
+/**
+ * Spend one paid credit only. This intentionally does not consume daily free
+ * quota, for paid add-ons such as extra follow-up questions.
+ */
+export async function spendPaidCredit(userId: number, reason: string): Promise<SpendResult> {
+  const db = await getDb();
+  if (!db) return { ok: false, reason: "no_db" };
+
+  await ensureFreshDay(userId);
+  const user = await getUserById(userId);
+  if (!user) return { ok: false, reason: "no_db" };
+
+  if (user.credits > 0) {
+    const updated = await db
+      .update(users)
+      .set({ credits: sql`${users.credits} - 1` })
+      .where(sql`${users.id} = ${userId} AND ${users.credits} > 0`)
+      .returning();
+    if (updated.length > 0) {
+      await db.insert(creditTransactions).values({
+        userId,
+        amount: -1,
+        reason,
+        balanceAfter: updated[0].credits,
+      });
+      const state = await getCreditState(userId);
+      return { ok: true, usedFree: false, state: state! };
+    }
+  }
+
+  return { ok: false, reason: "insufficient" };
+}
+
 /** Add credits (admin top-up or, later, a completed purchase). */
 export async function addCredits(userId: number, amount: number, reason: string) {
   const db = await getDb();
