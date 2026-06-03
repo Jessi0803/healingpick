@@ -6,7 +6,8 @@ import { useAuth } from '@/_core/hooks/useAuth';
 const tabs = [
   { id: 'users', label: '會員管理' },
   { id: 'orders', label: '訂單管理' },
-  { id: 'inputs', label: '顧客輸入' },
+  { id: 'inputs', label: '會員問答' },
+  { id: 'visitors', label: '訪客問答' },
   { id: 'transactions', label: '點數紀錄' },
 ] as const;
 
@@ -44,6 +45,8 @@ type AdminTransactionRow = {
 type AdminReadingRow = {
   id: number;
   userId: number | null;
+  anonId: string | null;
+  ipHash: string | null;
   email: string | null;
   name: string | null;
   type: string;
@@ -67,6 +70,17 @@ function formatDate(value: string | Date | null | undefined) {
 function shortText(value: string | null | undefined, max = 90) {
   if (!value) return '—';
   return value.length > max ? `${value.slice(0, max)}...` : value;
+}
+
+function isVisitor(row: Pick<AdminReadingRow, 'userId'>) {
+  return row.userId == null;
+}
+
+function readerLabel(row: Pick<AdminReadingRow, 'userId' | 'email' | 'name' | 'anonId' | 'ipHash'>) {
+  if (row.userId != null) return row.email ?? row.name ?? `會員 #${row.userId}`;
+  if (row.anonId) return `訪客 ${row.anonId.slice(0, 8)}`;
+  if (row.ipHash) return `訪客 IP ${row.ipHash.slice(0, 8)}`;
+  return '訪客';
 }
 
 function reasonLabel(reason: string) {
@@ -116,11 +130,20 @@ export default function AdminPage() {
     const rows = data?.readings ?? [];
     if (!normalizedQuery) return rows;
     return rows.filter((row) =>
-      [row.email, row.name, row.type, row.question, row.inputData].some((value) =>
+      [row.email, row.name, row.type, row.question, row.inputData, row.anonId].some((value) =>
         (value ?? '').toLowerCase().includes(normalizedQuery)
       )
     );
   }, [data?.readings, normalizedQuery]);
+
+  const memberReadings = useMemo(
+    () => filteredReadings.filter((row) => !isVisitor(row)),
+    [filteredReadings]
+  );
+  const visitorReadings = useMemo(
+    () => filteredReadings.filter((row) => isVisitor(row)),
+    [filteredReadings]
+  );
 
   const filteredTransactions = useMemo(() => {
     const rows = data?.transactions ?? [];
@@ -192,9 +215,11 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 mb-6">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-6 mb-6">
             <Metric label="會員數" value={data?.stats.users ?? 0} />
             <Metric label="占卜紀錄" value={data?.stats.readings ?? 0} />
+            <Metric label="訪客數" value={data?.stats.visitors ?? 0} />
+            <Metric label="訪客問答" value={data?.stats.visitorReadings ?? 0} />
             <Metric label="Gumroad 訂單" value={data?.stats.purchases ?? 0} />
             <Metric label="售出點數" value={data?.stats.creditsSold ?? 0} />
           </div>
@@ -228,7 +253,8 @@ export default function AdminPage() {
             <div className="rounded-lg border border-[#D1BE9B]/20 bg-white/55 shadow-[0_12px_40px_rgba(49,53,58,0.06)] overflow-hidden">
               {activeTab === 'users' && <UsersTable rows={filteredUsers} />}
               {activeTab === 'orders' && <OrdersTable rows={filteredOrders} />}
-              {activeTab === 'inputs' && <ReadingsTable rows={filteredReadings} />}
+              {activeTab === 'inputs' && <ReadingsTable rows={memberReadings} />}
+              {activeTab === 'visitors' && <ReadingsTable rows={visitorReadings} />}
               {activeTab === 'transactions' && <TransactionsTable rows={filteredTransactions} />}
             </div>
           )}
@@ -341,8 +367,11 @@ function ReadingsTable({ rows }: { rows: AdminReadingRow[] }) {
           <summary className="cursor-pointer list-none">
             <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
               <div>
-                <div className="text-xs tracking-[0.14em] text-[#31353A]/78">
-                  {typeLabels[row.type] ?? row.type} · {row.email ?? `User #${row.userId ?? '—'}`}
+                <div className="flex items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] tracking-[0.1em] ${isVisitor(row) ? 'bg-[#C9837A]/12 text-[#C9837A]' : 'bg-[#A38D6B]/14 text-[#A38D6B]'}`}>
+                    {isVisitor(row) ? '訪客' : '會員'}
+                  </span>
+                  <span>{typeLabels[row.type] ?? row.type} · {readerLabel(row)}</span>
                 </div>
                 <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
                   {shortText(row.question || row.inputData, 120)}
@@ -354,6 +383,7 @@ function ReadingsTable({ rows }: { rows: AdminReadingRow[] }) {
             </div>
           </summary>
           <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
+            <RecordBlock title="顧客身分" value={readerLabel(row)} />
             <RecordBlock title="顧客問題" value={row.question} />
             <RecordBlock title="輸入資料" value={row.inputData} />
             <div className="md:col-span-2">

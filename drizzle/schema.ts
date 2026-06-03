@@ -88,6 +88,10 @@ export type InsertIpQuota = typeof ipQuotas.$inferInsert;
 export const readings = pgTable("readings", {
   id: serial("id").primaryKey(),
   userId: integer("userId"),
+  /** Anonymous visitor session id (set when the reading is done while logged out). */
+  anonId: varchar("anonId", { length: 64 }),
+  /** Hashed visitor IP for logged-out readings; pairs with anonId to identify visitors. */
+  ipHash: varchar("ipHash", { length: 64 }),
   type: readingTypeEnum("type").notNull(),
   question: text("question"),
   inputData: text("inputData"),

@@ -357,7 +357,7 @@ export default function TarotPage() {
   const interpretMutation = trpc.tarot.interpret.useMutation({
     onSuccess: (data) => {
       setLlmInterpretation(data.interpretation);
-      if (!isAuthenticated) return;
+      // Record for members and logged-out visitors alike (server attributes by user / anon id).
       saveReadingMutation.mutate({
         type: 'tarot',
         question: question || undefined,

@@ -273,13 +273,12 @@ export default function ZiweiPage() {
     onSuccess: (data) => {
       setAstrolabe(data.astrolabe as AstrolabeData);
       setLlmInterpretation(data.interpretation);
-      if (isAuthenticated) {
-        saveReadingMutation.mutate({
-          type: 'ziwei',
-          inputData: JSON.stringify({ solarDate: birthDate, timeIndex: parseInt(hourValue), gender }),
-          interpretation: data.interpretation,
-        });
-      }
+      // Record for members and logged-out visitors alike (server attributes by user / anon id).
+      saveReadingMutation.mutate({
+        type: 'ziwei',
+        inputData: JSON.stringify({ solarDate: birthDate, timeIndex: parseInt(hourValue), gender }),
+        interpretation: data.interpretation,
+      });
     },
     onError: () => {
       toast.error('命盤排列失敗，請稍後再試');
