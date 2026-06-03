@@ -321,7 +321,7 @@ export default function FortunePage() {
 
   // 儲存每日運勢紀錄（僅登入後，且同一星座同一天只儲一次）
   useEffect(() => {
-    if (!dailyFortuneQuery.data || !isAuthenticated) return;
+    if (!dailyFortuneQuery.data) return;
     const key = `${selectedSign}-${apiDateStr}`;
     if (savedFortuneRef.current === key) return;
     savedFortuneRef.current = key;
@@ -332,7 +332,7 @@ export default function FortunePage() {
       interpretation: `整體運勢：${d.overall}\n\n感情愛情：${d.love}\n\n事業財運：${d.career}\n\n行動建議：${d.advice}`,
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyFortuneQuery.data, isAuthenticated]);
+  }, [dailyFortuneQuery.data]);
 
   const aiData = dailyFortuneQuery.data;
   const fortuneWaitingMessage = useRotatingText(FORTUNE_WAITING_MESSAGES, dailyFortuneQuery.isLoading);

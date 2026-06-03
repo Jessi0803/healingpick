@@ -22,6 +22,8 @@ export const adminRouter = router({
           stats: {
             users: 0,
             readings: 0,
+            visitors: 0,
+            visitorReadings: 0,
             purchases: 0,
             creditsSold: 0,
           },
@@ -34,10 +36,28 @@ export const adminRouter = router({
 
       const limit = input?.limit ?? 100;
 
-      const [userCount, readingCount, purchaseStats, userRows, orderRows, transactionRows, readingRows] =
-        await Promise.all([
+      // Distinct visitor key: prefer the anon session id, fall back to the hashed IP.
+      const visitorKey = sql<string>`coalesce('anon:' || ${readings.anonId}, 'ip:' || ${readings.ipHash})`;
+
+      const [
+        userCount,
+        readingCount,
+        visitorStats,
+        purchaseStats,
+        userRows,
+        orderRows,
+        transactionRows,
+        readingRows,
+      ] = await Promise.all([
           db.select({ count: sql<number>`count(*)` }).from(users),
           db.select({ count: sql<number>`count(*)` }).from(readings),
+          db
+            .select({
+              readings: sql<number>`count(*)`,
+              visitors: sql<number>`count(distinct ${visitorKey})`,
+            })
+            .from(readings)
+            .where(sql`${readings.userId} is null`),
           db
             .select({
               count: sql<number>`count(*)`,
@@ -96,6 +116,8 @@ export const adminRouter = router({
             .select({
               id: readings.id,
               userId: readings.userId,
+              anonId: readings.anonId,
+              ipHash: readings.ipHash,
               email: users.email,
               name: users.name,
               type: readings.type,
@@ -111,11 +133,14 @@ export const adminRouter = router({
         ]);
 
       const purchaseStat = purchaseStats[0];
+      const visitorStat = visitorStats[0];
 
       return {
         stats: {
           users: toNumber(userCount[0]?.count),
           readings: toNumber(readingCount[0]?.count),
+          visitors: toNumber(visitorStat?.visitors),
+          visitorReadings: toNumber(visitorStat?.readings),
           purchases: toNumber(purchaseStat?.count),
           creditsSold: toNumber(purchaseStat?.creditsSold),
         },
