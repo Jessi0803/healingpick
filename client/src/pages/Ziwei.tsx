@@ -36,8 +36,8 @@ function ProductCard({ product }: { product: Product }) {
   const featureSummary = getProductFeatureSummary(product);
   return (
     <Link href={`/shop/${product.slug}`}>
-      <div className="flex gap-3 p-3 rounded-xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
-        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
+      <div className="flex flex-col sm:flex-row gap-3 p-3 rounded-xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
+        <div className="w-full h-48 sm:w-28 sm:h-28 rounded-lg overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
           <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
         </div>
         <div className="flex-1 min-w-0">
@@ -1005,7 +1005,7 @@ export default function ZiweiPage() {
                   <div className="mt-4 glass-panel rounded-xl p-4 border border-[#D1BE9B]/15">
                     <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-3"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      ◎ 命盤能量推薦
+                      ◎ 為你挑選的專屬療癒小物
                     </p>
                     <div className="flex flex-col gap-2">
                       {recommendForZiwei(selectedPalaceName, gender).map(product => (
