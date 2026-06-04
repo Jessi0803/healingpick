@@ -317,7 +317,7 @@ export function CatSleeping({ className = '', style = {} }: { className?: string
       {/* ZZZ animation */}
       <text
         x="38" y="22"
-        fontSize="12"
+        fontSize="10.8"
         fill="none"
         stroke="#D1BE9B"
         strokeWidth="0.5"
@@ -327,7 +327,7 @@ export function CatSleeping({ className = '', style = {} }: { className?: string
       >z</text>
       <text
         x="46" y="16"
-        fontSize="15"
+        fontSize="13.5"
         fill="none"
         stroke="#D1BE9B"
         strokeWidth="0.5"
@@ -337,7 +337,7 @@ export function CatSleeping({ className = '', style = {} }: { className?: string
       >z</text>
       <text
         x="56" y="10"
-        fontSize="18"
+        fontSize="16.2"
         fill="none"
         stroke="#D1BE9B"
         strokeWidth="0.5"
