@@ -51,7 +51,9 @@ const ELEMENT_RECOMMENDATION_MESSAGES: Record<string, string> = {
 };
 
 function getFortuneRecommendationMessage(element: string, advice?: string) {
-  const trimmedAdvice = advice?.trim();
+  const trimmedAdvice = advice
+    ?.trim()
+    .replace(/^(今天的提醒是|今天的提醒：|今天的提醒:|因為今天的訊息是|因為今天的訊息是：|因為今天的訊息是:)\s*/u, '');
   if (trimmedAdvice) return trimmedAdvice;
   return ELEMENT_RECOMMENDATION_MESSAGES[element] ?? '先穩住自己，再做決定。';
 }
@@ -641,7 +643,7 @@ export default function FortunePage() {
                                 <div className="mb-4 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3">
 	                                  <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
 	                                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-	                                    因為今天的訊息是：{getFortuneRecommendationMessage(selectedSignData.element, aiData?.advice)}
+	                                    根據今天的提醒：{getFortuneRecommendationMessage(selectedSignData.element, aiData?.advice)}
 	                                  </p>
                                   <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
                                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
