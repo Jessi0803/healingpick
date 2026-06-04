@@ -111,9 +111,8 @@
 
   html {
     scroll-behavior: smooth;
-    /* Nudge the whole site slightly larger for readability while keeping
-       every element's proportions in harmony. */
-    zoom: 1.32;
+    /* Scale the full site so fixed px text utilities stay readable together. */
+    zoom: 1.5;
   }
 
   body {

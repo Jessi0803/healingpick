@@ -793,8 +793,13 @@ export default function ZiweiPage() {
           ) : (
             /* ── CHART ─────────────────────────────────────────────────────── */
             <div className="animate-fade-in-up">
+              <div className="flex flex-col gap-8">
+              {renderInterpretationSection()}
+
+              {renderProductRecommendationSection()}
+
               {/* Birth info banner */}
-              <div className="flex flex-wrap justify-center gap-3 mb-8">
+              <div className="flex flex-wrap justify-center gap-3">
                 {[
                   { label: '農曆生日', value: astrolabe.lunarDate },
                   { label: '四柱', value: astrolabe.chineseDate },
@@ -815,9 +820,6 @@ export default function ZiweiPage() {
                   </div>
                 ))}
               </div>
-
-              <div className="flex flex-col gap-8">
-              {renderProductRecommendationSection()}
 
               {/* Chart + sidebar row */}
               <div className="flex flex-col xl:flex-row gap-8 items-start">
@@ -948,13 +950,7 @@ export default function ZiweiPage() {
                     </div>
                   </div>
 
-	                  <p className="text-center mt-3 text-[11px] tracking-[0.15em] text-[#31353A]/50"
-	                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-	                    點擊宮位查看詳細解讀
-	                  </p>
 	                </div>
-
-	                {renderInterpretationSection('w-full xl:hidden')}
 
 	                {/* Palace detail */}
 	                <div className="xl:w-72">
@@ -1062,15 +1058,7 @@ export default function ZiweiPage() {
                         </div>
                       )}
                     </div>
-                  ) : (
-                    <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 text-center">
-                      <div className="text-2xl mb-3 opacity-30">☯</div>
-                      <p className="text-xs tracking-[0.15em] text-[#31353A]/50"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                        點擊宮位<br />查看詳細解讀
-                      </p>
-                    </div>
-                  )}
+                  ) : null}
 
                   {/* Actions */}
                   <div className="mt-4 flex flex-col gap-2">
@@ -1089,8 +1077,6 @@ export default function ZiweiPage() {
                   </div>
                 </div>
               </div>
-
-	              {renderInterpretationSection('hidden xl:block')}
               </div>
             </div>
           )}
