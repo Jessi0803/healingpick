@@ -195,7 +195,7 @@ const CardBack = () => (
         fill="#F8F1DE" fillOpacity="0.9" />
     ))}
     {/* Brand text */}
-    <text x="60" y="187" textAnchor="middle" fontSize="8.1" fill="#F3E7CC" fillOpacity="0.7"
+    <text x="60" y="187" textAnchor="middle" fontSize="7.68" fill="#F3E7CC" fillOpacity="0.7"
       fontFamily="Cormorant Garamond, serif" letterSpacing="2.5" fontStyle="italic">
       Healing Pick
     </text>
