@@ -113,7 +113,7 @@
     scroll-behavior: smooth;
     /* Nudge the whole site slightly larger for readability while keeping
        every element's proportions in harmony. */
-    zoom: 1.22;
+    zoom: 1.25;
   }
 
   body {
