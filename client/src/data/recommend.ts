@@ -10,6 +10,8 @@
 
 import { PRODUCTS, type Product } from './products';
 
+export type RecommendationCategory = 'protect' | 'wish' | 'courage' | 'calm' | 'wealth';
+
 type Signal = {
   categories?: string[];
   keywords?: string[];
@@ -115,6 +117,10 @@ export function recommendForTarot(questionType: string, question: string): Produ
     2,
     base.categories?.[0],
   );
+}
+
+export function recommendForCategory(category: string, limit = 2): Product[] {
+  return pickTop({ categories: [category] }, limit, category);
 }
 
 // ─── Ziwei ──────────────────────────────────────────────────────────────────

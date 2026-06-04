@@ -13,6 +13,38 @@ const cardSchema = z.object({
   positionDesc: z.string(),
 });
 
+const recommendationSchema = z.object({
+  category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
+  message: z.string().min(4).max(120),
+  reason: z.string().min(4).max(180),
+});
+
+type ProductRecommendation = z.infer<typeof recommendationSchema>;
+
+function extractRecommendation(content: string): {
+  interpretation: string;
+  recommendation: ProductRecommendation | null;
+} {
+  const marker = "RECOMMENDATION_JSON:";
+  const markerIndex = content.lastIndexOf(marker);
+  if (markerIndex === -1) {
+    return { interpretation: content.trim(), recommendation: null };
+  }
+
+  const interpretation = content.slice(0, markerIndex).trim();
+  const rawJson = content.slice(markerIndex + marker.length).trim();
+
+  try {
+    const parsed = recommendationSchema.safeParse(JSON.parse(rawJson));
+    return {
+      interpretation: interpretation || content.trim(),
+      recommendation: parsed.success ? parsed.data : null,
+    };
+  } catch {
+    return { interpretation: content.trim(), recommendation: null };
+  }
+}
+
 export const tarotRouter = router({
   /**
    * 根據抽到的牌陣，呼叫 LLM 進行完整解讀
@@ -71,7 +103,12 @@ export const tarotRouter = router({
 - 不要加「# 🐾 給你的話」區塊；所有鼓勵、解決方向和具體行動都整合在「建議」那張牌裡
 - 只有「建議」段落需要集中寫改善方向與具體做法，並且一定要包含 1 個「例如：」開頭、這週可以做的小行動
 - 少用「能量流動」「宇宙安排」「內在課題」這類抽象詞；如果使用，後面一定要用白話解釋
-- 每張牌的解讀都要白話、具體、短。整體字數控制在 420-520 字，不要超過 600 字`;
+- 每張牌的解讀都要白話、具體、短。整體字數控制在 420-520 字，不要超過 600 字
+- 完整解讀結束後，最後另起一行輸出商品推薦訊號，格式必須完全符合：
+RECOMMENDATION_JSON: {"category":"calm","message":"先穩住情緒，再看清真正的選擇。","reason":"這次牌面反覆提到情緒拉扯與需要釐清，所以適合靜心、安定類商品。"}
+- category 只能是 protect、wish、courage、calm、wealth 其中之一
+- message 是「今天的訊息是」後面的短句，不要包含「今天的訊息是」
+- reason 是依據本次牌面與解讀推薦此類商品的原因，不要提到商品名稱`;
 
       const userPrompt = `求問者的問題類型：${input.questionType}
 求問者的問題：${input.question || "（未填寫具體問題，請根據牌陣整體能量解讀）"}
@@ -90,7 +127,8 @@ ${cardsSummary}
 8. 不要輸出「整體訊息」或「給你的話」，請把總結、鼓勵與具體行動放進「建議」段落
 9. 輸出順序固定為：中心能量、過去、現在、未來、建議
 10. 中心能量、過去、現在、未來每段固定 2 句：第 1 句說牌位代表的狀態與判斷，第 2 句以「例如：」開頭給短例子；每段不得超過 70 字，不要補第三句，也不要每段都寫建議
-11. 「建議」段落一定要包含「直白結論」「解決方向」「這週能做的一個行動」三個重點，並用「例如：」給出具體做法`;
+11. 「建議」段落一定要包含「直白結論」「解決方向」「這週能做的一個行動」三個重點，並用「例如：」給出具體做法
+12. 最後必須附上 RECOMMENDATION_JSON，依本次牌面與完整解讀選出最適合的商品分類與推薦原因。`;
 
       const response = await invokeLLM({
         messages: [
@@ -100,11 +138,12 @@ ${cardsSummary}
       });
 
       const rawContent = response.choices?.[0]?.message?.content;
-      const interpretation = rawContent
+      const textContent = rawContent
         ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
-        : '解讀暫時無法取得，請稍後再試。';
+        : "解讀暫時無法取得，請稍後再試。";
+      const { interpretation, recommendation } = extractRecommendation(textContent);
 
-      return { interpretation };
+      return { interpretation, recommendation };
     }),
 
   /**

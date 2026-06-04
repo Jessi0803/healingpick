@@ -7,6 +7,38 @@ import { t, translateChineseDate } from "./ziwei-locale";
 
 const ZIWEI_SECTION_START = "**目前問題在哪**";
 
+const recommendationSchema = z.object({
+  category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
+  message: z.string().min(4).max(120),
+  reason: z.string().min(4).max(180),
+});
+
+type ProductRecommendation = z.infer<typeof recommendationSchema>;
+
+function extractRecommendation(content: string): {
+  interpretation: string;
+  recommendation: ProductRecommendation | null;
+} {
+  const marker = "RECOMMENDATION_JSON:";
+  const markerIndex = content.lastIndexOf(marker);
+  if (markerIndex === -1) {
+    return { interpretation: content.trim(), recommendation: null };
+  }
+
+  const interpretation = content.slice(0, markerIndex).trim();
+  const rawJson = content.slice(markerIndex + marker.length).trim();
+
+  try {
+    const parsed = recommendationSchema.safeParse(JSON.parse(rawJson));
+    return {
+      interpretation: interpretation || content.trim(),
+      recommendation: parsed.success ? parsed.data : null,
+    };
+  } catch {
+    return { interpretation: content.trim(), recommendation: null };
+  }
+}
+
 function cleanZiweiInterpretation(content: string) {
   const normalized = content.trim();
   const sectionIndex = normalized.indexOf(ZIWEI_SECTION_START);
@@ -162,7 +194,13 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
 
 **可以怎麼改善**：集中回答使用者的問題，說清楚解決方向。如果問感情，就講關係模式、對方互動中該觀察什麼、下一步怎麼做；如果問工作，就講適合的工作節奏、該把握的機會、該改善的近況；如果問財運，就講金錢習慣、累積方式、近期要注意什麼。不得超過 100 字
 
-**具體建議**：給具體建議，必須是使用者今天或這週能做的事。請用白話例子說明，例如「先把想問對方的話寫成一句，不要一次丟很多情緒」。不得超過 100字`;
+**具體建議**：給具體建議，必須是使用者今天或這週能做的事。請用白話例子說明，例如「先把想問對方的話寫成一句，不要一次丟很多情緒」。不得超過 100字
+
+完整解讀結束後，最後另起一行輸出商品推薦訊號，格式必須完全符合：
+RECOMMENDATION_JSON: {"category":"wealth","message":"先整理事業與金錢節奏，再談突破。","reason":"這次命盤解讀集中在工作定位與資源累積，所以適合豐盛、行動類商品。"}
+category 只能是 protect、wish、courage、calm、wealth 其中之一。
+message 是「今天的訊息是」後面的短句，不要包含「今天的訊息是」。
+reason 是依據本次命盤與解讀推薦此類商品的原因，不要提到商品名稱。`;
 
       const response = await invokeLLM({
         messages: [
@@ -176,15 +214,16 @@ ${focusArea ? `【特別想了解的面向】\n${focusArea}\n` : ""}
       });
 
       const rawContent = response.choices?.[0]?.message?.content;
-      const interpretation = rawContent
-        ? cleanZiweiInterpretation(
-            extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
-          )
+      const textContent = rawContent
+        ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
         : "解讀暫時無法取得，請稍後再試。";
+      const extracted = extractRecommendation(textContent);
+      const interpretation = cleanZiweiInterpretation(extracted.interpretation);
 
       return {
         success: true,
         interpretation,
+        recommendation: extracted.recommendation,
         astrolabe: data,
       };
     }),

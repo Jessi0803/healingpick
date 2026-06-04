@@ -19,7 +19,7 @@ import { Streamdown } from 'streamdown';
 import { CatWaving, CatListening } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Mail } from 'lucide-react';
-import { recommendForTarot } from '@/data/recommend';
+import { recommendForCategory, recommendForTarot, type RecommendationCategory } from '@/data/recommend';
 import { getProductRecommendationReason, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
 
@@ -278,6 +278,12 @@ type FollowUpExchange = {
   answer: string;
 };
 
+type ReadingRecommendation = {
+  category: RecommendationCategory;
+  message: string;
+  reason: string;
+};
+
 const QUESTION_PROMPTS: Record<string, string[]> = {
   love: [
     '我和他的關係接下來會怎麼發展？',
@@ -361,6 +367,7 @@ export default function TarotPage() {
   const [pickedIndices, setPickedIndices] = useState<number[]>([]);
   const shuffleIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState<string>('');
+  const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
 
@@ -369,6 +376,7 @@ export default function TarotPage() {
   const interpretMutation = trpc.tarot.interpret.useMutation({
     onSuccess: (data) => {
       setLlmInterpretation(data.interpretation);
+      setReadingRecommendation(data.recommendation ?? null);
       // Record for members and logged-out visitors alike (server attributes by user / anon id).
       saveReadingMutation.mutate({
         type: 'tarot',
@@ -433,6 +441,7 @@ export default function TarotPage() {
   const startReading = (cards = drawnCards) => {
     setStep('reading');
     setLlmInterpretation('');
+    setReadingRecommendation(null);
     setFollowUpQuestion('');
     setFollowUpExchanges([]);
     interpretMutation.mutate({
@@ -555,9 +564,15 @@ export default function TarotPage() {
     setSelectedCard(idx);
   }
 
-  const recommendedProducts = step === 'reading' ? recommendForTarot(questionType, question) : [];
+  const recommendedProducts = step === 'reading'
+    ? readingRecommendation
+      ? recommendForCategory(readingRecommendation.category)
+      : recommendForTarot(questionType, question)
+    : [];
   const tarotRecommendationMessage =
-    TAROT_RECOMMENDATION_MESSAGES[questionType] ?? TAROT_RECOMMENDATION_MESSAGES.growth;
+    readingRecommendation?.message ??
+    TAROT_RECOMMENDATION_MESSAGES[questionType] ??
+    TAROT_RECOMMENDATION_MESSAGES.growth;
   const handleQuestionTypeSelect = (type: string) => {
     setQuestionType(type);
     setActiveQuestionCategory(type);
@@ -1278,6 +1293,37 @@ export default function TarotPage() {
                 )}
               </div>
 
+              {/* Product recommendation */}
+              {recommendedProducts.length > 0 && (
+                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
+                  <p className="text-[14px] tracking-[0.2em] text-[#6F5A3A] mb-5 text-center"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                    ◎ Mochi 為你挑的今日商品
+                  </p>
+                  <div className="mb-5 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3 text-center">
+                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      因為今天的訊息是：{tarotRecommendationMessage}
+                    </p>
+                    {readingRecommendation?.reason && (
+                      <p className="mt-1 text-[11px] leading-[1.8] tracking-[0.07em] text-[#31353A]/56"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        推薦依據：{readingRecommendation.reason}
+                      </p>
+                    )}
+                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      所以推薦你：
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {recommendedProducts.map(product => (
+                      <ProductCard key={product.slug} product={product} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Paid follow-up */}
               {llmInterpretation && (
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
@@ -1348,31 +1394,6 @@ export default function TarotPage() {
                       ))}
                     </div>
                   )}
-                </div>
-              )}
-
-              {/* Product recommendation */}
-              {recommendedProducts.length > 0 && (
-                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
-                  <p className="text-[14px] tracking-[0.2em] text-[#6F5A3A] mb-5 text-center"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                    ◎ Mochi 為你挑的今日商品
-                  </p>
-                  <div className="mb-5 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3 text-center">
-	                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-	                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-	                      因為今天的訊息是：{tarotRecommendationMessage}
-	                    </p>
-                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      所以推薦你：
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    {recommendedProducts.map(product => (
-                      <ProductCard key={product.slug} product={product} />
-                    ))}
-                  </div>
                 </div>
               )}
 

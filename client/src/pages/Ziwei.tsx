@@ -18,7 +18,7 @@ import { Streamdown } from 'streamdown';
 import { toast } from 'sonner';
 import { CatListening, CatPeeking } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { recommendForZiwei } from '@/data/recommend';
+import { recommendForCategory, recommendForZiwei, type RecommendationCategory } from '@/data/recommend';
 import { getProductRecommendationReason, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
 
@@ -266,6 +266,12 @@ type AstrolabeData = {
   palaces: Palace[];
 };
 
+type ReadingRecommendation = {
+  category: RecommendationCategory;
+  message: string;
+  reason: string;
+};
+
 export default function ZiweiPage() {
   const { isAuthenticated, login } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
@@ -279,6 +285,7 @@ export default function ZiweiPage() {
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
+  const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const formSectionRef = useRef<HTMLDivElement | null>(null);
   const focusAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -298,6 +305,7 @@ export default function ZiweiPage() {
     onSuccess: (data) => {
       setAstrolabe(data.astrolabe as AstrolabeData);
       setLlmInterpretation(data.interpretation);
+      setReadingRecommendation(data.recommendation ?? null);
       // Record for members and logged-out visitors alike (server attributes by user / anon id).
       saveReadingMutation.mutate({
         type: 'ziwei',
@@ -338,6 +346,7 @@ export default function ZiweiPage() {
     }
     setAstrolabe(null);
     setLlmInterpretation('');
+    setReadingRecommendation(null);
     setSelectedPalaceName(null);
     interpretMutation.mutate({
       solarDate: birthDate,
@@ -349,7 +358,8 @@ export default function ZiweiPage() {
 
   const selectedPalace = astrolabe?.palaces.find((p) => p.name === selectedPalaceName) ?? null;
   const soulPalaceName = astrolabe?.palaces.find((p) => p.name === '命宮')?.name ?? '命宮';
-  const ziweiRecommendationMessage = getZiweiRecommendationMessage(selectedPalaceName);
+  const ziweiRecommendationMessage =
+    readingRecommendation?.message ?? getZiweiRecommendationMessage(selectedPalaceName);
   const renderInterpretationSection = (className = '') => (
     <div className={className}>
       <div className="flex items-center gap-3 mb-2 px-1">
@@ -403,17 +413,26 @@ export default function ZiweiPage() {
         ◎ Mochi 為你挑的今日商品
       </p>
       <div className="mb-3 rounded-xl border border-[#D1BE9B]/15 bg-white/35 px-3 py-2.5">
-	        <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
-	          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-	          因為今天的訊息是：{ziweiRecommendationMessage}
-	        </p>
+        <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
+          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+          因為今天的訊息是：{ziweiRecommendationMessage}
+        </p>
+        {readingRecommendation?.reason && (
+          <p className="mt-1 text-[10px] leading-[1.8] tracking-[0.06em] text-[#31353A]/56"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            推薦依據：{readingRecommendation.reason}
+          </p>
+        )}
         <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
           所以推薦你：
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        {recommendForZiwei(selectedPalaceName, gender).map(product => (
+        {(readingRecommendation
+          ? recommendForCategory(readingRecommendation.category)
+          : recommendForZiwei(selectedPalaceName, gender)
+        ).map(product => (
           <ProductCard key={product.slug} product={product} />
         ))}
       </div>
@@ -1056,7 +1075,7 @@ export default function ZiweiPage() {
                   {/* Actions */}
                   <div className="mt-4 flex flex-col gap-2">
                     <button
-                      onClick={() => { setAstrolabe(null); setSelectedPalaceName(null); setLlmInterpretation(''); }}
+                      onClick={() => { setAstrolabe(null); setSelectedPalaceName(null); setLlmInterpretation(''); setReadingRecommendation(null); }}
                       className="w-full py-2.5 text-xs tracking-[0.2em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       重新排盤
