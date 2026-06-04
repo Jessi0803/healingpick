@@ -539,8 +539,8 @@
 
 /* Tarot Envelope Float Animation — subtle rotation makes it feel wind-caught, not mechanical */
 @keyframes float-envelope {
-  0%, 100% { transform: translateY(0px) rotate(-1deg); }
-  50%       { transform: translateY(-8px) rotate(1.5deg); }
+  0%, 100% { transform: translateY(calc(-50% + 0px)) rotate(-1deg); }
+  50%       { transform: translateY(calc(-50% - 8px)) rotate(1.5deg); }
 }
 .animate-float-envelope {
   animation: float-envelope 4s ease-in-out infinite;

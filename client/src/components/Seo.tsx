@@ -4,7 +4,7 @@ import { findProduct } from '@/data/products';
 
 const SITE_URL = 'https://healingpick.com';
 const SITE_NAME = 'HealingPick 癒見好物';
-const DEFAULT_DESCRIPTION = '有些心事，只需要一個溫柔的出口。塔羅占卜、紫微斗數、每日運勢、心靈療癒與能量水晶。';
+const DEFAULT_DESCRIPTION = '有些心事，可以先放進 Mochi 小宇宙。塔羅占卜、紫微斗數、每日運勢、心靈療癒與能量水晶。';
 
 const PAGE_META: Record<string, { title: string; description: string }> = {
   '/': {

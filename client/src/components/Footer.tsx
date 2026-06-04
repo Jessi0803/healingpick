@@ -44,7 +44,7 @@ export default function Footer() {
               className="text-[12px] leading-[2] text-[#31353A]/68 max-w-xs tracking-wider"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
             >
-              有些心事，只需要一個溫柔的出口。<br />
+              有些心事，可以先放進 Mochi 小宇宙。<br />
               在這裡，讓星象與水晶陪伴你，<br />
               找到屬於自己的安定與方向。
             </p>
@@ -52,7 +52,7 @@ export default function Footer() {
               className="mt-4 text-[11px] tracking-[0.15em] text-[#D1BE9B]/80 italic"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}
             >
-              "Some feelings only need a gentle place to rest."
+              "A small universe for feelings to rest."
             </p>
           </div>
 
