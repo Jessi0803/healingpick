@@ -290,6 +290,7 @@ export default function FortunePage() {
   const { isAuthenticated } = useAuth();
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [hasClickedGenerate, setHasClickedGenerate] = useState(false);
+  const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
   const [today] = useState(new Date());
   const savedFortuneRef = useRef<string>('');
 
@@ -300,10 +301,12 @@ export default function FortunePage() {
     if (selectedSign === signId) {
       setSelectedSign(null);
       setHasClickedGenerate(false);
+      setUnlockDialogOpen(false);
       return;
     }
     setSelectedSign(signId);
     setHasClickedGenerate(false);
+    setUnlockDialogOpen(true);
   }
 
   const selectedSignData = ZODIAC_SIGNS.find(s => s.id === selectedSign);
@@ -430,8 +433,66 @@ export default function FortunePage() {
                 ))}
               </div>
 
+              {selectedSignData && (
+                <Dialog open={unlockDialogOpen} onOpenChange={setUnlockDialogOpen}>
+                  <DialogContent className="sm:max-w-md bg-[#FDFBF7] border-[#D1BE9B]/30 rounded-2xl p-6" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                    <DialogHeader>
+                      <DialogTitle className="text-center text-[15px] tracking-[0.18em] font-light text-[#31353A]">
+                        解鎖每日運勢
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="text-center pt-2">
+                      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#D1BE9B]/35"
+                        style={{ background: selectedSignData.color + '20' }}>
+                        <span className="text-3xl" style={{ color: selectedSignData.color }}>
+                          {selectedSignData.symbol}
+                        </span>
+                      </div>
+                      <p className="mb-1 text-[13px] tracking-[0.18em] text-[#31353A]/84"
+                        style={{ fontWeight: 400 }}>
+                        {selectedSignData.name}
+                      </p>
+                      <p className="mb-5 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/60"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        Mochi 將結合今日月相能量，為你生成今天的整體、感情、事業與健康提醒。
+                      </p>
+
+                      {credits?.enabled && credits.freeRemaining <= 0 && credits.credits <= 0 ? (
+                        <Link href="/buy" className="block">
+                          <button
+                            onClick={() => setUnlockDialogOpen(false)}
+                            className="w-full rounded-full bg-[#D1BE9B]/15 px-5 py-3.5 text-xs font-medium tracking-[0.2em] text-[#A38D6B] transition-all duration-300 hover:bg-[#D1BE9B]/25 active:scale-95"
+                            style={{ fontFamily: 'Noto Serif TC, serif' }}
+                          >
+                            點數與免費額度不足，前往加值
+                          </button>
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setHasClickedGenerate(true);
+                            setUnlockDialogOpen(false);
+                          }}
+                          className="w-full rounded-full bg-[#3D4144] px-5 py-3.5 text-xs font-medium tracking-[0.25em] text-[#FAF7F4] shadow-sm transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                          style={{ fontFamily: 'Noto Serif TC, serif' }}
+                        >
+                          確認解鎖
+                        </button>
+                      )}
+
+                      {credits?.enabled && (
+                        <p className="mt-3 text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                          免費額度每日 00:00 重置；用完後每次解讀消耗 1 點。
+                        </p>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
+
               {/* Fortune detail */}
-              {selectedSign && selectedSignData && (
+              {selectedSign && selectedSignData && hasClickedGenerate && (
                 <div className="animate-fade-in-up">
                   <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20">
 
@@ -470,51 +531,7 @@ export default function FortunePage() {
                       </div>
                     </div>
 
-                    {/* Check if user has clicked generate button */}
-                    {!hasClickedGenerate ? (
-                      <div className="py-8 text-center max-w-md mx-auto animate-fade-in">
-                        <div className="text-3xl mb-4 select-none animate-bounce-slow">🔮</div>
-                        <h4 className="text-sm tracking-[0.2em] text-[#31353A]/80 mb-2.5" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          星座已選擇：{selectedSignData.name}
-                        </h4>
-                        <p className="text-[12px] leading-[2] text-[#31353A]/54 tracking-wider mb-6" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                          選定星座後，點擊下方按鈕，<br />
-                          Mochi 將結合今日月相能量為你解讀運勢。
-                        </p>
-
-                        {credits?.enabled && credits.freeRemaining <= 0 && credits.credits <= 0 ? (
-                          <Link href="/buy" className="w-full inline-block">
-                            <button
-                              className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#D1BE9B]/15 text-[#A38D6B] hover:bg-[#D1BE9B]/25 rounded-full transition-all duration-300 font-medium active:scale-95 cursor-pointer text-center"
-                              style={{ fontFamily: 'Noto Serif TC, serif' }}
-                            >
-                              🐾 點數與免費額度不足，點此前往加值 ↗
-                            </button>
-                          </Link>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => setHasClickedGenerate(true)}
-                              className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] hover:bg-[#D1BE9B] hover:text-[#31353A] rounded-full transition-all duration-500 font-medium active:scale-95 cursor-pointer shadow-sm text-center"
-                              style={{ fontFamily: 'Noto Serif TC, serif' }}
-                            >
-                              解鎖每日運勢
-                            </button>
-                            {credits?.enabled && (
-                              <p className="mt-3 text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
-                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                                免費額度每日 00:00 重置；用完後每次解讀消耗 1 點。
-                              </p>
-                            )}
-                          </>
-                        )}
-
-                        <div className="text-center text-[8px] text-[#D1BE9B]/60 tracking-widest mt-6 select-none">
-                          ୨୧ ───────── ୨୧
-                        </div>
-                      </div>
-                    ) : (
-                      <>
+                    <>
                         {/* Loading state */}
                         {dailyFortuneQuery.isLoading && (
                           <div className="flex flex-col items-center gap-4 py-12">
@@ -641,7 +658,6 @@ export default function FortunePage() {
                           </>
                         )}
                       </>
-                    )}
                   </div>
                 </div>
               )}
