@@ -1245,7 +1245,7 @@ export default function TarotPage() {
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                       {SPREAD_POSITIONS[idx].label}
                     </div>
-                    <div className="mx-auto mb-2 w-14 sm:w-16 aspect-[2/3]">
+                    <div className="mx-auto mb-2 w-20 sm:w-24 aspect-[2/3]">
                       <CardFace card={drawn.card} reversed={drawn.reversed} />
                     </div>
                     <div className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
@@ -1420,12 +1420,12 @@ export default function TarotPage() {
                     setFollowUpQuestion('');
                     setFollowUpExchanges([]);
                   }}
-                  className="px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
+                  className="w-full sm:w-44 px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   重新占卜
                 </button>
-                <Link href="/quiz">
-                  <button className="px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                <Link href="/quiz" className="w-full sm:w-44">
+                  <button className="w-full px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     進行心理測驗 ✦
                   </button>
