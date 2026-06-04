@@ -1378,12 +1378,6 @@ export default function TarotPage() {
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       因為今天的訊息是：{tarotRecommendationMessage}
                     </p>
-                    {readingRecommendation?.reason && (
-                      <p className="mt-1 text-[11px] leading-[1.8] tracking-[0.07em] text-[#31353A]/56"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        推薦依據：{readingRecommendation.reason}
-                      </p>
-                    )}
                     <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       所以推薦你：
