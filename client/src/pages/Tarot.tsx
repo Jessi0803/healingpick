@@ -283,6 +283,13 @@ const QUESTION_CATEGORIES = [
   { id: 'growth', label: '自我提升', icon: '☽', questions: QUESTION_PROMPTS.growth },
 ];
 
+const TAROT_RECOMMENDATION_MESSAGES: Record<string, string> = {
+  love: '先看清關係裡真正讓你不安的地方。',
+  career: '先整理方向，再決定下一步要不要衝。',
+  wealth: '先穩住金錢節奏，再評估新的機會。',
+  growth: '先把情緒照顧好，再要求自己前進。',
+};
+
 export default function TarotPage() {
   const { isAuthenticated, login } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
@@ -524,6 +531,8 @@ export default function TarotPage() {
   }
 
   const recommendedProducts = step === 'reading' ? recommendForTarot(questionType, question) : [];
+  const tarotRecommendationMessage =
+    TAROT_RECOMMENDATION_MESSAGES[questionType] ?? TAROT_RECOMMENDATION_MESSAGES.growth;
   const handleQuestionTypeSelect = (type: string) => {
     setQuestionType(type);
     setActiveQuestionCategory(type);
@@ -1325,10 +1334,10 @@ export default function TarotPage() {
                     ◎ Mochi 為你挑的今日商品
                   </p>
                   <div className="mb-5 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3 text-center">
-                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      因為今天的訊息是：先穩住自己，再做決定。
-                    </p>
+	                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+	                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+	                      因為今天的訊息是：{tarotRecommendationMessage}
+	                    </p>
                     <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       所以推薦你：

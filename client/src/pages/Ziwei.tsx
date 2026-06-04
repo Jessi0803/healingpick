@@ -134,6 +134,29 @@ const QUESTION_CATEGORIES = [
   },
 ];
 
+const PALACE_RECOMMENDATION_MESSAGES: Record<string, string> = {
+  命宮: '先理解自己，再做選擇。',
+  福德宮: '先照顧內在狀態，再安排生活節奏。',
+  財帛宮: '先看懂你的金錢安全感，再談豐盛。',
+  田宅宮: '先穩住生活根基，再慢慢累積資源。',
+  官祿宮: '先整理事業定位，再決定要衝還是穩。',
+  事業宮: '先整理事業定位，再決定要衝還是穩。',
+  夫妻宮: '先看清關係模式，再回應對方。',
+  子女宮: '先照顧心裡柔軟的期待，再做安排。',
+  兄弟宮: '先看清互動裡的界線，再決定要給多少。',
+  遷移宮: '先確認外在機會是否適合你，再往前走。',
+  疾厄宮: '先把身心狀態穩住，再處理其他壓力。',
+  父母宮: '先釐清責任與期待，再回到自己的步調。',
+  交友宮: '先看清誰讓你舒服，再投入關係。',
+  僕役宮: '先看清誰讓你舒服，再投入關係。',
+};
+
+function getZiweiRecommendationMessage(palaceName: string | null) {
+  return palaceName
+    ? PALACE_RECOMMENDATION_MESSAGES[palaceName] ?? '先看清目前最需要調整的地方，再做下一步。'
+    : '先理解自己的整體節奏，再做選擇。';
+}
+
 // ─── Palace grid layout (traditional 4×4) ─────────────────────────────────────
 // Row 0: P3  P4  P5  P6
 // Row 1: P2  [center]   P7
@@ -326,6 +349,7 @@ export default function ZiweiPage() {
 
   const selectedPalace = astrolabe?.palaces.find((p) => p.name === selectedPalaceName) ?? null;
   const soulPalaceName = astrolabe?.palaces.find((p) => p.name === '命宮')?.name ?? '命宮';
+  const ziweiRecommendationMessage = getZiweiRecommendationMessage(selectedPalaceName);
   const renderInterpretationSection = (className = '') => (
     <div className={className}>
       <div className="flex items-center gap-3 mb-2 px-1">
@@ -368,6 +392,30 @@ export default function ZiweiPage() {
             <Streamdown>{llmInterpretation}</Streamdown>
           </div>
         )}
+      </div>
+    </div>
+  );
+
+  const renderProductRecommendationSection = (className = '') => (
+    <div className={`glass-panel rounded-xl p-4 border border-[#D1BE9B]/15 ${className}`}>
+      <p className="text-[14px] tracking-[0.18em] text-[#6F5A3A] mb-3"
+        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+        ◎ Mochi 為你挑的今日商品
+      </p>
+      <div className="mb-3 rounded-xl border border-[#D1BE9B]/15 bg-white/35 px-3 py-2.5">
+	        <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
+	          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+	          因為今天的訊息是：{ziweiRecommendationMessage}
+	        </p>
+        <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
+          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+          所以推薦你：
+        </p>
+      </div>
+      <div className="flex flex-col gap-2">
+        {recommendForZiwei(selectedPalaceName, gender).map(product => (
+          <ProductCard key={product.slug} product={product} />
+        ))}
       </div>
     </div>
   );
@@ -509,7 +557,7 @@ export default function ZiweiPage() {
                     {
                       icon: '☽',
                       label: '想知道自己真正適合怎麼走嗎？',
-                      desc: '紫微命盤會幫你看見自己天生比較擅長什麼、容易在哪裡耗力，以及現在適合怎麼調整。比起硬撐，先看懂自己，會更容易找到方向。',
+                      desc: '紫微命盤會幫你看見自己天生比較擅長什麼、容易在哪裡耗力，以及現在適合怎麼調整。',
                     },
                     {
                       icon: '◈',
@@ -750,6 +798,8 @@ export default function ZiweiPage() {
               </div>
 
               <div className="flex flex-col gap-8">
+              {renderProductRecommendationSection()}
+
               {/* Chart + sidebar row */}
               <div className="flex flex-col xl:flex-row gap-8 items-start">
                 {/* Chart grid */}
@@ -1002,29 +1052,6 @@ export default function ZiweiPage() {
                       </p>
                     </div>
                   )}
-
-                  {/* Product recommendation */}
-                  <div className="mt-4 glass-panel rounded-xl p-4 border border-[#D1BE9B]/15">
-                    <p className="text-[14px] tracking-[0.18em] text-[#6F5A3A] mb-3"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                      ◎ Mochi 為你挑的今日商品
-                    </p>
-                    <div className="mb-3 rounded-xl border border-[#D1BE9B]/15 bg-white/35 px-3 py-2.5">
-                      <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        因為今天的訊息是：先穩住自己，再做決定。
-                      </p>
-                      <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        所以推薦你：
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      {recommendForZiwei(selectedPalaceName, gender).map(product => (
-                        <ProductCard key={product.slug} product={product} />
-                      ))}
-                    </div>
-                  </div>
 
                   {/* Actions */}
                   <div className="mt-4 flex flex-col gap-2">

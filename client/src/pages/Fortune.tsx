@@ -42,6 +42,19 @@ const FORTUNE_WAITING_MESSAGES = [
   '正在找出今天最適合你的行動建議...',
 ];
 
+const ELEMENT_RECOMMENDATION_MESSAGES: Record<string, string> = {
+  火: '先把行動力收回自己手上。',
+  土: '先穩住生活節奏，再慢慢推進。',
+  風: '先釐清想法，再開口溝通。',
+  水: '先照顧情緒，再做判斷。',
+};
+
+function getFortuneRecommendationMessage(element: string, advice?: string) {
+  const trimmedAdvice = advice?.trim();
+  if (trimmedAdvice) return trimmedAdvice;
+  return ELEMENT_RECOMMENDATION_MESSAGES[element] ?? '先穩住自己，再做決定。';
+}
+
 // ─── Product Card ─────────────────────────────────────────────────────────────
 function ProductCard({ product }: { product: Product }) {
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
@@ -611,10 +624,10 @@ export default function FortunePage() {
                                   ◎ Mochi 為你挑的今日商品
                                 </p>
                                 <div className="mb-4 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3">
-                                  <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-                                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                                    因為今天的訊息是：先穩住自己，再做決定。
-                                  </p>
+	                                  <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+	                                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+	                                    因為今天的訊息是：{getFortuneRecommendationMessage(selectedSignData.element, aiData?.advice)}
+	                                  </p>
                                   <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
                                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                                     所以推薦你：
