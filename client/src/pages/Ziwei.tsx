@@ -277,7 +277,7 @@ export default function ZiweiPage() {
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
     refetchOnWindowFocus: true,
   });
-  const [birthDate, setBirthDate] = useState('');
+  const [birthDate, setBirthDate] = useState('1998-08-03');
   const [hourValue, setHourValue] = useState('0');
   const [gender, setGender] = useState<'男' | '女'>('女');
   const [focusArea, setFocusArea] = useState('');
