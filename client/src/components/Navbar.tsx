@@ -128,7 +128,7 @@ export default function Navbar() {
                 Healing Pick
               </span>
               <span
-                className="text-[11px] tracking-[0.3em] text-[#31353A]/58 mt-0.5"
+                className="text-[12px] tracking-[0.3em] text-[#31353A]/58 mt-0.5"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, fontSize: '12px' }}
               >
                 癒見好物

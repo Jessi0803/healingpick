@@ -111,13 +111,12 @@
 
   html {
     scroll-behavior: smooth;
-    /* Scale the full site so fixed px text utilities stay readable together. */
-    zoom: 1.5;
   }
 
   body {
     @apply bg-background text-foreground;
     font-family: 'Noto Sans TC', sans-serif;
+    font-size: 24px;
     font-weight: 300;
     letter-spacing: 0.08em;
     -webkit-font-smoothing: antialiased;
@@ -134,6 +133,133 @@
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
+  }
+}
+
+@layer utilities {
+  [class~="text-xs"],
+  [class*=":text-xs"] {
+    font-size: 1.125rem !important;
+  }
+
+  [class~="text-sm"],
+  [class*=":text-sm"] {
+    font-size: 1.3125rem !important;
+  }
+
+  [class~="text-base"],
+  [class*=":text-base"] {
+    font-size: 1.5rem !important;
+  }
+
+  [class~="text-lg"],
+  [class*=":text-lg"] {
+    font-size: 1.6875rem !important;
+  }
+
+  [class~="text-xl"],
+  [class*=":text-xl"] {
+    font-size: 1.875rem !important;
+  }
+
+  [class~="text-2xl"],
+  [class*=":text-2xl"] {
+    font-size: 2.25rem !important;
+  }
+
+  [class~="text-3xl"],
+  [class*=":text-3xl"] {
+    font-size: 2.8125rem !important;
+  }
+
+  [class~="text-4xl"],
+  [class*=":text-4xl"] {
+    font-size: 3.375rem !important;
+  }
+
+  [class~="text-5xl"],
+  [class*=":text-5xl"] {
+    font-size: 4.5rem !important;
+  }
+
+  [class*="text-[0.8rem]"] {
+    font-size: 1.2rem !important;
+  }
+
+  [class*="text-[8px]"] {
+    font-size: 12px !important;
+  }
+
+  [class*="text-[9px]"] {
+    font-size: 13.5px !important;
+  }
+
+  [class*="text-[10px]"] {
+    font-size: 15px !important;
+  }
+
+  [class*="text-[10.5px]"] {
+    font-size: 15.75px !important;
+  }
+
+  [class*="text-[11px]"] {
+    font-size: 16.5px !important;
+  }
+
+  [class*="text-[11.5px]"] {
+    font-size: 17.25px !important;
+  }
+
+  [class*="text-[12px]"] {
+    font-size: 18px !important;
+  }
+
+  [class*="text-[12.5px]"] {
+    font-size: 18.75px !important;
+  }
+
+  [class*="text-[13px]"] {
+    font-size: 19.5px !important;
+  }
+
+  [class*="text-[13.5px]"] {
+    font-size: 20.25px !important;
+  }
+
+  [class*="text-[14px]"] {
+    font-size: 21px !important;
+  }
+
+  [class*="text-[15px]"] {
+    font-size: 22.5px !important;
+  }
+
+  [class*="text-[15.5px]"] {
+    font-size: 23.25px !important;
+  }
+
+  [class*="text-[16px]"] {
+    font-size: 24px !important;
+  }
+
+  [class*="text-[17px]"] {
+    font-size: 25.5px !important;
+  }
+
+  [class*="text-[60px]"] {
+    font-size: 90px !important;
+  }
+
+  [class*="text-[80px]"] {
+    font-size: 120px !important;
+  }
+
+  [class*="text-[14vw]"] {
+    font-size: 21vw !important;
+  }
+
+  [class*="text-[18vw]"] {
+    font-size: 27vw !important;
   }
 }
 

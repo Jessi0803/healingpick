@@ -364,7 +364,7 @@ export default function ZiweiPage() {
     <div className={className}>
       <div className="flex items-center gap-3 mb-2 px-1">
         <CatListening className="w-12 h-14 flex-shrink-0" />
-        <p className="text-[11px] tracking-[0.15em] text-[#D1BE9B]/50 italic"
+        <p className="text-[12px] tracking-[0.15em] text-[#D1BE9B]/50 italic"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, color: '#766060', fontSize: '12px' }}>
           Mochi 認真地看著你的命盤… ✦
         </p>
@@ -372,7 +372,7 @@ export default function ZiweiPage() {
 
       <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20">
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-[#D1BE9B]" style={{ fontSize: '18px' }}>☯</span>
+          <span className="text-[18px] text-[#D1BE9B]">☯</span>
           <h4 className="text-[13px] tracking-[0.2em] text-[#31353A]/86"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             命盤整體解讀

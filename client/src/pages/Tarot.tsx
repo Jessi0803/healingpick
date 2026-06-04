@@ -195,7 +195,7 @@ const CardBack = () => (
         fill="#F8F1DE" fillOpacity="0.9" />
     ))}
     {/* Brand text */}
-    <text x="60" y="187" textAnchor="middle" fontSize="6" fill="#F3E7CC" fillOpacity="0.7"
+    <text x="60" y="187" textAnchor="middle" fontSize="9" fill="#F3E7CC" fillOpacity="0.7"
       fontFamily="Cormorant Garamond, serif" letterSpacing="2.5" fontStyle="italic">
       Healing Pick
     </text>
@@ -916,7 +916,7 @@ export default function TarotPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   洗牌
                 </h2>
-                <p className="mt-2 text-[12px] text-[#31353A]/58 tracking-wider"
+                <p className="mt-2 text-[15px] text-[#31353A]/58 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, fontSize: '15px' }}>
                   {isShufflingActive ? '牌正在洗動中⋯⋯心中默想問題，按下停止' : '深呼吸，讓心靜下來，準備好後按下開始洗牌'}
                 </p>
