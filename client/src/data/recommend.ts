@@ -93,6 +93,11 @@ const TAROT_SIGNAL: Record<string, Signal> = {
     keywords: ['自我', '成長', '情緒', '照顧', '釐清', '低潮', '節奏'],
     preferSlugs: ['calm-light', 'moonlight-wings'],
   },
+  other: {
+    categories: ['protect', 'calm'],
+    keywords: ['問題', '狀況', '選擇', '方向', '看清楚', '面對', '下一步'],
+    preferSlugs: ['moonlight-wings', 'calm-light'],
+  },
   clarity: {
     categories: ['protect', 'calm'],
     keywords: ['迷惘', '方向', '直覺', '清晰', '困惑'],

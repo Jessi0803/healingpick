@@ -381,6 +381,18 @@ export default function ZiweiPage() {
             命盤整體解讀
           </h4>
         </div>
+        {focusArea.trim() && (
+          <div className="mb-5 rounded-2xl border border-[#D1BE9B]/35 bg-[#FFFDF9] px-4 py-3 shadow-[0_8px_24px_rgba(209,190,155,0.12)]">
+            <p className="mb-1.5 text-[11px] tracking-[0.22em] text-[#8A7250]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+              這次想看的重點：
+            </p>
+            <p className="text-[13px] leading-[1.9] tracking-[0.08em] text-[#31353A]/86"
+              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 350 }}>
+              「{focusArea.trim()}」
+            </p>
+          </div>
+        )}
         {interpretMutation.isPending && (
           <div className="flex flex-col items-center py-8 gap-3">
             <div className="text-[#D1BE9B] text-2xl animate-spin">☯</div>

@@ -305,6 +305,11 @@ const QUESTION_PROMPTS: Record<string, string[]> = {
     '我該怎麼整理現在的情緒？',
     '今天我最需要好好照顧自己的哪一部分？',
   ],
+  other: [
+    '我現在最需要看清楚什麼？',
+    '這件事接下來可能會怎麼發展？',
+    '我可以用什麼心態面對目前的狀況？',
+  ],
 };
 
 const QUESTION_CATEGORIES = [
@@ -312,6 +317,7 @@ const QUESTION_CATEGORIES = [
   { id: 'career', label: '工作', icon: '✦', questions: QUESTION_PROMPTS.career },
   { id: 'wealth', label: '財運', icon: '◇', questions: QUESTION_PROMPTS.wealth },
   { id: 'growth', label: '自我提升', icon: '☽', questions: QUESTION_PROMPTS.growth },
+  { id: 'other', label: '其他', icon: '○', questions: QUESTION_PROMPTS.other },
 ];
 
 const TAROT_RECOMMENDATION_MESSAGES: Record<string, string> = {
@@ -319,6 +325,7 @@ const TAROT_RECOMMENDATION_MESSAGES: Record<string, string> = {
   career: '先整理方向，再決定下一步要不要衝。',
   wealth: '先穩住金錢節奏，再評估新的機會。',
   growth: '先把情緒照顧好，再要求自己前進。',
+  other: '先看清真正困住你的核心，再決定下一步。',
 };
 
 export default function TarotPage() {
@@ -846,12 +853,13 @@ export default function TarotPage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     占卜主題
                   </label>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
                     {[
                       { id: 'love',   label: '感情', icon: '♥' },
                       { id: 'career', label: '工作', icon: '✦' },
                       { id: 'wealth', label: '財運', icon: '◇' },
                       { id: 'growth', label: '自我提升', icon: '☽' },
+                      { id: 'other', label: '其他', icon: '○' },
                     ].map(t => (
                       <button
                         key={t.id}
@@ -1263,6 +1271,18 @@ export default function TarotPage() {
                     五牌陣星形解讀
                   </h3>
                 </div>
+                {question.trim() && (
+                  <div className="mb-5 rounded-2xl border border-[#D1BE9B]/35 bg-[#FFFDF9] px-4 py-3 shadow-[0_8px_24px_rgba(209,190,155,0.12)]">
+                    <p className="mb-1.5 text-[11px] tracking-[0.22em] text-[#8A7250]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                      你剛剛問的是：
+                    </p>
+                    <p className="text-[13px] leading-[1.9] tracking-[0.08em] text-[#31353A]/86"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 350 }}>
+                      「{question.trim()}」
+                    </p>
+                  </div>
+                )}
                 {interpretMutation.isPending && (
                   <div className="flex flex-col items-center justify-center py-12 gap-4">
                     <div className="text-[#D1BE9B] text-3xl animate-spin">✦</div>
