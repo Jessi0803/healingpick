@@ -320,13 +320,10 @@ export default function Home() {
 
           {/* Main title */}
           <h1
-            className="text-xl md:text-3xl leading-[1.6] md:leading-[1.8] mb-3 tracking-[0.2em] font-extralight text-[#31353A]"
+            className="text-xl md:text-3xl leading-[1.6] md:leading-[1.8] mb-5 tracking-[0.2em] font-extralight text-[#31353A]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
           >
             Mochi 小宇宙
-            <span className="block text-lg md:text-xl font-light text-[#31353A]/62 mt-2 tracking-[0.25em]">
-              心事可以先放在這裡
-            </span>
           </h1>
 
           <p
