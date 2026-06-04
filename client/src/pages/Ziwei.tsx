@@ -567,7 +567,7 @@ export default function ZiweiPage() {
             <div className="max-w-lg mx-auto animate-fade-in-up">
               {/* Why it matters */}
               <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/20 bg-white/45">
-                <p className="text-[11px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
+                <p className="text-[12px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                   ◎ 為什麼值得算一次
                 </p>
@@ -605,7 +605,7 @@ export default function ZiweiPage() {
 
               <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60">
                 <div className="mb-2">
-                  <p className="text-[11px] tracking-[0.3em] text-[#8A7250]"
+                  <p className="text-[12px] tracking-[0.3em] text-[#8A7250]"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                     ◎ 熱門問題
                   </p>

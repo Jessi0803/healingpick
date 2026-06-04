@@ -594,7 +594,7 @@ export default function TarotPage() {
 
   const renderPopularQuestions = (nextStep?: Step) => (
     <div className="rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60 px-4 py-4">
-      <p className="text-[11px] tracking-[0.3em] text-[#8A7250]"
+      <p className="text-[12px] tracking-[0.3em] text-[#8A7250]"
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
         ◎ 熱門問題
       </p>
