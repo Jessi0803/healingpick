@@ -1,5 +1,3 @@
-import { createHash } from "node:crypto";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { invokeLLM, extractTextContent } from "../_core/llm";
@@ -14,38 +12,6 @@ const cardSchema = z.object({
   position: z.string(),
   positionDesc: z.string(),
 });
-
-const FREE_FOLLOW_UP_TTL_MS = 1000 * 60 * 60 * 6;
-const freeFollowUpKeys = new Map<string, number>();
-
-function cleanupFreeFollowUpKeys(now: number) {
-  if (freeFollowUpKeys.size < 500) return;
-  for (const [key, expiresAt] of freeFollowUpKeys) {
-    if (expiresAt <= now) freeFollowUpKeys.delete(key);
-  }
-}
-
-function freeFollowUpKey(input: {
-  question: string;
-  questionType: string;
-  cards: z.infer<typeof cardSchema>[];
-  interpretation: string;
-}, ownerKey: string) {
-  const readingFingerprint = createHash("sha256")
-    .update(JSON.stringify({
-      question: input.question,
-      questionType: input.questionType,
-      cards: input.cards.map(card => ({
-        name: card.name,
-        reversed: card.reversed,
-        position: card.position,
-      })),
-      interpretation: input.interpretation,
-    }))
-    .digest("hex");
-
-  return `${ownerKey}:${readingFingerprint}`;
-}
 
 export const tarotRouter = router({
   /**
@@ -141,7 +107,7 @@ ${cardsSummary}
     }),
 
   /**
-   * 追問：第一次可由前端標記為免費短答；之後的付費追問每次扣 1 點。
+   * 追問：每次扣 1 點，不消耗每日免費額度。
    */
   followUp: publicProcedure
     .input(
@@ -151,30 +117,12 @@ ${cardsSummary}
         cards: z.array(cardSchema).max(5),
         interpretation: z.string().max(10000),
         followUpQuestion: z.string().min(2).max(300),
+        // Kept for backward compatibility with older clients; follow-ups are always paid.
         isPaid: z.boolean().default(false),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      let freeKey: string | null = null;
-      let freeKeyExpiresAt = 0;
-
-      if (input.isPaid) {
-        await chargePaidCredit(ctx, "tarot_followup");
-      } else {
-        const ownerKey = ctx.user
-          ? `user:${ctx.user.id}`
-          : `anon:${ctx.anonId ?? "none"}:${ctx.ipHash ?? "none"}`;
-        const key = freeFollowUpKey(input, ownerKey);
-        const now = Date.now();
-        cleanupFreeFollowUpKeys(now);
-
-        if ((freeFollowUpKeys.get(key) ?? 0) > now) {
-          throw new TRPCError({ code: "FORBIDDEN", message: "FREE_FOLLOWUP_USED" });
-        }
-
-        freeKey = key;
-        freeKeyExpiresAt = now + FREE_FOLLOW_UP_TTL_MS;
-      }
+      await chargePaidCredit(ctx, "tarot_followup");
 
       const cardsSummary = input.cards
         .map(
@@ -183,8 +131,7 @@ ${cardsSummary}
         )
         .join("\n");
 
-      const systemPrompt = input.isPaid
-        ? `你是「Mochi」，一隻溫柔但說話具體的塔羅陪伴貓咪。你正在回答使用者對「同一份塔羅牌面」的付費深入追問。
+      const systemPrompt = `你是「Mochi」，一隻溫柔但說話具體的塔羅陪伴貓咪。你正在回答使用者對「同一份塔羅牌面」的付費深入追問。
 
 回答規則：
 - 全程使用繁體中文
@@ -196,19 +143,6 @@ ${cardsSummary}
 - 要給出具體情境判斷，例如對方可能的心態、工作卡點、金錢風險或使用者容易誤判的地方；依問題主題選擇，不要硬塞無關面向
 - 最後給 2 個可執行建議，具體到使用者今天或這週可以做什麼、觀察什麼訊號
 - 可以用短段落呈現，但不要寫完整重新解牌
-- 不要使用「相信直覺」「慢慢來」「宇宙會安排」「照顧自己」這類空泛句，除非後面立刻補上具體做法
-- 可以自然提到 Mochi，但不要撒嬌，不要出現「喵」`
-        : `你是「Mochi」，一隻溫柔但說話具體的塔羅陪伴貓咪。你正在回答使用者對「同一份塔羅牌面」的免費追問。
-
-回答規則：
-- 全程使用繁體中文
-- 不要重新抽牌，不要假裝有新的牌
-- 回答必須控制在 100-180 個中文字左右
-- 短，但要準：直接回答使用者追問，不要籠統安慰
-- 必須引用本次牌面中的 1-2 個具體重點，例如牌位、牌名、正逆位或原解讀中的判斷
-- 必須說明「為什麼這樣判斷」
-- 最後給 1 個可執行的小建議，建議要具體到使用者今天或這週可以做什麼
-- 不要分很多標題，不要寫完整深度解析
 - 不要使用「相信直覺」「慢慢來」「宇宙會安排」「照顧自己」這類空泛句，除非後面立刻補上具體做法
 - 可以自然提到 Mochi，但不要撒嬌，不要出現「喵」`;
 
@@ -237,10 +171,6 @@ ${input.followUpQuestion}
       const answer = rawContent
         ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
         : "Mochi 暫時讀不到這個追問，請稍後再試。";
-
-      if (freeKey) {
-        freeFollowUpKeys.set(freeKey, freeKeyExpiresAt);
-      }
 
       return { answer };
     }),

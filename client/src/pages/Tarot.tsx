@@ -251,7 +251,6 @@ type Step = 'intro' | 'question' | 'shuffle' | 'pick' | 'spread' | 'reading';
 type FollowUpExchange = {
   question: string;
   answer: string;
-  isPaid: boolean;
 };
 
 const QUESTION_PROMPTS: Record<string, string[]> = {
@@ -332,7 +331,6 @@ export default function TarotPage() {
   const [llmInterpretation, setLlmInterpretation] = useState<string>('');
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
-  const [freeFollowUpUsed, setFreeFollowUpUsed] = useState(false);
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -355,30 +353,15 @@ export default function TarotPage() {
         {
           question: variables.followUpQuestion,
           answer: data.answer,
-          isPaid: Boolean(variables.isPaid),
         },
       ]);
-      if (!variables.isPaid) {
-        setFreeFollowUpUsed(true);
-      }
       setFollowUpQuestion('');
-      if (variables.isPaid) {
-        void creditsQuery.refetch();
-      }
+      void creditsQuery.refetch();
     },
     onError: (error) => {
-      if (error.message === 'FREE_FOLLOWUP_USED') {
-        setFreeFollowUpUsed(true);
-        toast.error('免費追問已使用完畢', {
-          description: '之後每次追問會消耗 1 點，請再按一次送出深入追問。',
-          duration: 6000,
-        });
-        return;
-      }
-
       if (error.message === 'NOT_SIGNED_IN') {
         toast.error('登入後可繼續追問', {
-          description: '免費追問已使用完畢，之後每次追問會消耗 1 點。',
+          description: '追問每次會消耗 1 點，登入後即可繼續。',
           action: {
             label: '登入',
             onClick: () => void login(),
@@ -390,7 +373,7 @@ export default function TarotPage() {
 
       if (error.message === 'INSUFFICIENT_CREDITS') {
         toast.error('點數不足', {
-          description: '免費追問已使用完畢，之後每次追問會消耗 1 點。',
+          description: '追問每次會消耗 1 點，請先購買點數。',
           action: {
             label: '購買點數',
             onClick: () => {
@@ -420,12 +403,11 @@ export default function TarotPage() {
     const trimmedQuestion = followUpQuestion.trim();
     if (!trimmedQuestion || !llmInterpretation || followUpMutation.isPending) return;
 
-    const isPaid = freeFollowUpUsed;
     const c = creditsQuery.data;
-    if (isPaid && c?.enabled) {
+    if (c?.enabled) {
       if (!isAuthenticated) {
         toast.error('登入後可繼續追問', {
-          description: '免費追問已使用完畢，之後每次追問會消耗 1 點。',
+          description: '追問每次會消耗 1 點，登入後即可繼續。',
           action: {
             label: '登入',
             onClick: () => void login(),
@@ -437,7 +419,7 @@ export default function TarotPage() {
 
       if (c.credits <= 0) {
         toast.error('點數不足', {
-          description: '免費追問已使用完畢，之後每次追問會消耗 1 點。',
+          description: '追問每次會消耗 1 點，請先購買點數。',
           action: {
             label: '購買點數',
             onClick: () => {
@@ -456,7 +438,6 @@ export default function TarotPage() {
       cards: getReadingCardsPayload(),
       interpretation: llmInterpretation,
       followUpQuestion: trimmedQuestion,
-      isPaid,
     });
   };
 
@@ -1167,7 +1148,6 @@ export default function TarotPage() {
                         setLlmInterpretation('');
                         setFollowUpQuestion('');
                         setFollowUpExchanges([]);
-                        setFreeFollowUpUsed(false);
                         interpretMutation.mutate({
                           question,
                           questionType,
@@ -1262,7 +1242,7 @@ export default function TarotPage() {
                 )}
               </div>
 
-              {/* Free follow-up */}
+              {/* Paid follow-up */}
               {llmInterpretation && (
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
                   <div className="flex flex-col gap-2 mb-4">
@@ -1272,9 +1252,7 @@ export default function TarotPage() {
                     </p>
                     <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      {freeFollowUpUsed
-                        ? '免費追問已使用完畢。之後每次追問會消耗 1 點，Mochi 會基於同一份牌面給你更完整的延伸解讀。'
-                        : 'Mochi 可以再陪你看一次這份牌面。本次免費追問 1 次，回答會短短的，但會基於牌面講具體判斷和一個可執行建議。'}
+                      每次追問會消耗 1 點。Mochi 會基於同一份牌面，回答你更具體的延伸問題。
                     </p>
                   </div>
 
@@ -1300,9 +1278,7 @@ export default function TarotPage() {
                       >
                         {followUpMutation.isPending
                           ? 'Mochi 正在看牌面...'
-                          : freeFollowUpUsed
-                            ? '送出深入追問（消耗 1 點）'
-                            : '送出免費追問 ✦'}
+                          : '送出追問（消耗 1 點）'}
                       </button>
                     </div>
                   </form>
@@ -1321,7 +1297,7 @@ export default function TarotPage() {
                           <div className="mb-3 flex flex-col gap-1">
                             <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                              {item.isPaid ? 'Mochi 的深入回答' : 'Mochi 的免費短答'}
+                              Mochi 的深入回答
                             </p>
                             <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
                               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
@@ -1375,7 +1351,6 @@ export default function TarotPage() {
                     setQuestion('');
                     setFollowUpQuestion('');
                     setFollowUpExchanges([]);
-                    setFreeFollowUpUsed(false);
                   }}
                   className="px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
