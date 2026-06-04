@@ -531,8 +531,8 @@ export default function TarotPage() {
         reversed: Math.random() > 0.7,
       }));
       setDrawnCards(cards);
-      setRevealedCards(new Set());
-      setSelectedCard(null);
+      setRevealedCards(new Set([0, 1, 2, 3, 4]));
+      setSelectedCard(0);
       setTimeout(() => setStep('spread'), 400);
     }
   }
@@ -542,6 +542,8 @@ export default function TarotPage() {
     setShuffling(true);
     setTimeout(() => {
       setDrawnCards(drawCards());
+      setRevealedCards(new Set([0, 1, 2, 3, 4]));
+      setSelectedCard(0);
       setShuffling(false);
       setStep('spread');
     }, 2000);
@@ -550,10 +552,6 @@ export default function TarotPage() {
   function handleRevealCard(idx: number) {
     setRevealedCards(prev => new Set(Array.from(prev).concat(idx)));
     setSelectedCard(idx);
-  }
-
-  function handleRevealAll() {
-    setRevealedCards(new Set([0, 1, 2, 3, 4]));
   }
 
   const recommendedProducts = step === 'reading' ? recommendForTarot(questionType, question) : [];
@@ -1101,13 +1099,9 @@ export default function TarotPage() {
           {step === 'spread' && (
             <div className="animate-fade-in-up">
               <div className="text-center mb-8">
-                <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  Step 4
-                </span>
                 <h2 className="text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-2"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  點擊牌面，逐一揭示
+                  你抽到的牌
                 </h2>
                 {question && (
                   <p className="mt-2 text-xs italic text-[#31353A]/62 tracking-wider"
@@ -1115,10 +1109,6 @@ export default function TarotPage() {
                     「{question}」
                   </p>
                 )}
-                <p className="mt-2 text-[11px] text-[#31353A]/54 tracking-wider"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  已揭示 {revealedCards.size} / 5
-                </p>
               </div>
 
               {/* Mobile + Desktop responsive layout */}
@@ -1178,19 +1168,6 @@ export default function TarotPage() {
                     </div>
                   </div>
 
-                  {/* Reveal all button */}
-                  {revealedCards.size < 5 && (
-                    <div className="text-center mt-7">
-                      <button
-                        onClick={handleRevealAll}
-                        className="group inline-flex items-center gap-2 text-[15px] tracking-[0.28em] text-[#8A7250] hover:text-[#5C4A2E] transition-colors duration-300 border-b border-[#A38D6B]/50 hover:border-[#8A7250]/80 pb-1.5"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                        <span className="text-[#C9A86A] group-hover:text-[#A38D6B] transition-colors">✦</span>
-                        一次揭示全部牌面
-                        <span className="text-[#C9A86A] group-hover:text-[#A38D6B] transition-colors">✦</span>
-                      </button>
-                    </div>
-                  )}
                 </div>
 
                 {/* ── Card detail panel ── */}
