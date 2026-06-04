@@ -1003,9 +1003,9 @@ export default function ZiweiPage() {
 
                   {/* Product recommendation */}
                   <div className="mt-4 glass-panel rounded-xl p-4 border border-[#D1BE9B]/15">
-                    <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-3"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      ◎ 為你挑選的專屬療癒小物
+                    <p className="text-[14px] tracking-[0.18em] text-[#6F5A3A] mb-3"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                      ◎ 適合你的療癒小物
                     </p>
                     <div className="flex flex-col gap-2">
                       {recommendForZiwei(selectedPalaceName, gender).map(product => (

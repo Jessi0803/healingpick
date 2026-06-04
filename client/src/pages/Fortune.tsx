@@ -609,9 +609,9 @@ export default function FortunePage() {
                             {/* Product recommendation */}
                             {selectedSignData && (
                               <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
-                                <p className="text-[11px] tracking-[0.3em] text-[#D1BE9B] mb-3"
-                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                                  ◎ 為你挑選的專屬療癒小物
+                                <p className="text-[14px] tracking-[0.24em] text-[#6F5A3A] mb-3"
+                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                                  ◎ 適合你的療癒小物
                                 </p>
                                 <div className="flex flex-col gap-3">
                                   {recommendForFortune(selectedSignData.element).map(product => (

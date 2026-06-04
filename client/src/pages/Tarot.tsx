@@ -51,11 +51,11 @@ const MAJOR_ARCANA = [
 
 // Star spread positions (5 cards)
 const SPREAD_POSITIONS = [
-  { id: 0, label: '中心能量', desc: '代表你目前的核心狀態與問題所在' },
-  { id: 1, label: '過去',     desc: '影響現況的過去事件或根源能量' },
-  { id: 2, label: '現在',     desc: '目前正在發生的事件與你的實際狀態' },
-  { id: 3, label: '未來',     desc: '即將展開的能量走向與可能的結果' },
-  { id: 4, label: '建議',     desc: '塔羅給予你的行動指引與內在智慧' },
+  { id: 0, label: '第 1 張', desc: '你抽到的第一張牌' },
+  { id: 1, label: '第 2 張', desc: '你抽到的第二張牌' },
+  { id: 2, label: '第 3 張', desc: '你抽到的第三張牌' },
+  { id: 3, label: '第 4 張', desc: '你抽到的第四張牌' },
+  { id: 4, label: '第 5 張', desc: '你抽到的第五張牌' },
 ];
 
 const TAROT_WAITING_MESSAGES = [
@@ -778,30 +778,6 @@ export default function TarotPage() {
                   如果你最近一直反覆想同一件事，卻怎麼想都想不出答案，很適合抽一次塔羅。<br/><br/>
                   它會幫你看見現在卡住的原因、你忽略的盲點，以及這件事接下來可以怎麼面對。
                 </p>
-                <div className="grid gap-2 mb-6">
-                  {[
-                    { label: '中心能量', desc: '事情現在最核心的地方' },
-                    { label: '過去', desc: '以前的事怎麼一路影響到現在' },
-                    { label: '現在', desc: '你眼前真正正在卡的點' },
-                    { label: '未來', desc: '接下來可能會往哪裡發展' },
-                    { label: '建議', desc: '現在最適合你的下一步' },
-                  ].map((item, i) => (
-                    <div key={item.label} className="flex items-center gap-3 rounded-xl bg-[#D1BE9B]/8 border border-[#D1BE9B]/10 px-3 py-2.5">
-                      <div className="w-7 h-7 rounded-full bg-white/55 border border-[#D1BE9B]/20 flex items-center justify-center text-[10px] text-[#D1BE9B] flex-shrink-0"
-                        style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                        {i + 1}
-                      </div>
-                      <p className="text-[12px] leading-[1.7] text-[#31353A]/68 tracking-wide"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        <span className="text-[#8A7250] tracking-[0.16em] mr-2"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                          {item.label}
-                        </span>
-                        {item.desc}
-                      </p>
-                    </div>
-                  ))}
-                </div>
               </div>
 
               <div className="max-w-2xl mx-auto mb-8">
@@ -1168,27 +1144,27 @@ export default function TarotPage() {
                   {/* Desktop (≥ xl): tidy diamond layout — centre + 上下左右 */}
                   <div className="hidden xl:block">
                     <div className="grid grid-cols-3 gap-x-8 gap-y-6 w-fit mx-auto place-items-center">
-                      {/* 過去 — top centre */}
+                      {/* Top centre */}
                       <div className="col-start-2 row-start-1 flex flex-col items-center gap-1.5">
                         <span className="text-[11px] tracking-[0.2em] text-[#A38D6B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{SPREAD_POSITIONS[1].label}</span>
                         <CardSlot idx={1} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
-                      {/* 建議 — left */}
+                      {/* Left */}
                       <div className="col-start-1 row-start-2 flex flex-col items-center gap-1.5">
                         <span className="text-[11px] tracking-[0.2em] text-[#A38D6B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{SPREAD_POSITIONS[4].label}</span>
                         <CardSlot idx={4} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
-                      {/* 中心能量 — centre */}
+                      {/* Centre */}
                       <div className="col-start-2 row-start-2 flex flex-col items-center gap-1.5">
                         <span className="text-[11px] tracking-[0.2em] text-[#D1BE9B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>{SPREAD_POSITIONS[0].label}</span>
                         <CardSlot idx={0} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
-                      {/* 現在 — right */}
+                      {/* Right */}
                       <div className="col-start-3 row-start-2 flex flex-col items-center gap-1.5">
                         <span className="text-[11px] tracking-[0.2em] text-[#A38D6B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{SPREAD_POSITIONS[2].label}</span>
                         <CardSlot idx={2} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
                       </div>
-                      {/* 未來 — bottom centre */}
+                      {/* Bottom centre */}
                       <div className="col-start-2 row-start-3 flex flex-col items-center gap-1.5">
                         <span className="text-[11px] tracking-[0.2em] text-[#A38D6B]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{SPREAD_POSITIONS[3].label}</span>
                         <CardSlot idx={3} drawnCards={drawnCards} revealedCards={revealedCards} onReveal={handleRevealCard} selectedCard={selectedCard} />
@@ -1411,9 +1387,9 @@ export default function TarotPage() {
               {/* Product recommendation */}
               {recommendedProducts.length > 0 && (
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
-                  <p className="text-[13px] tracking-[0.24em] text-[#8A7250] mb-5 text-center"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                    ◎ 為你挑選的專屬療癒小物
+                  <p className="text-[14px] tracking-[0.2em] text-[#6F5A3A] mb-5 text-center"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                    ◎ 適合你的療癒小物
                   </p>
                   <div className="flex flex-col gap-3">
                     {recommendedProducts.map(product => (
