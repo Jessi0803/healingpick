@@ -608,7 +608,7 @@ export default function FortunePage() {
                               <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
                                 <p className="text-[14px] tracking-[0.24em] text-[#6F5A3A] mb-3"
                                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                                  ◎ Mochi 為你挑的今日守護物
+                                  ◎ Mochi 為你挑的今日商品
                                 </p>
                                 <div className="mb-4 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3">
                                   <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
