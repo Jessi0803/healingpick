@@ -97,13 +97,21 @@ const HOURS = [
 
 const QUESTION_CATEGORIES = [
   {
+    label: '感情',
+    icon: '♡',
+    questions: [
+      '這段關係還適合繼續嗎？',
+      '我在感情裡最容易卡住的模式是什麼？',
+      '我適合怎樣的人，才比較能走得長久？',
+    ],
+  },
+  {
     label: '工作',
     icon: '◈',
     questions: [
       '我現在的工作方向適合我嗎？',
       '我適合穩定上班、轉職，還是自己接案？',
       '為什麼我工作上常常很努力卻卡住？',
-      '接下來一年事業上要衝刺，還是先穩住比較好？',
     ],
   },
   {
@@ -112,28 +120,16 @@ const QUESTION_CATEGORIES = [
     questions: [
       '我最近財務和安全感該注意什麼？',
       '我適合靠什麼方式累積收入？',
-      '為什麼我存錢或花錢常常沒有安全感？',
       '現在適合投資、副業，還是先整理金錢習慣？',
     ],
   },
   {
-    label: '感情',
-    icon: '♡',
+    label: '自我提升',
+    icon: '☽',
     questions: [
-      '這段關係還適合繼續嗎？',
-      '為什麼我總是在關係裡很累？',
-      '我在感情裡最容易卡住的模式是什麼？',
-      '我適合怎樣的人，才比較能走得長久？',
-    ],
-  },
-  {
-    label: '人際家庭',
-    icon: '𓂃',
-    questions: [
-      '我和家人的相處為什麼常常有壓力？',
-      '我在人際關係裡容易吸引怎樣的人？',
-      '我是不是太容易替別人承擔情緒？',
-      '我該怎麼建立比較舒服的界線？',
+      '我現在最需要看見自己的哪個優勢？',
+      '我容易在哪些地方消耗自己？',
+      '我接下來最適合怎麼調整生活節奏？',
     ],
   },
 ];
@@ -551,7 +547,7 @@ export default function ZiweiPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
                   不知道怎麼問也沒關係，可以點開每個分類看細項，再選一題改成自己的情況。
                 </p>
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 gap-2.5">
                   {QUESTION_CATEGORIES.map((category) => {
                     const isOpen = activeQuestionCategory === category.label;
 

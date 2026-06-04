@@ -81,6 +81,16 @@ const TAROT_SIGNAL: Record<string, Signal> = {
     keywords: ['工作', '事業', '錢', '財富', '機會', '行動', '升職', '創業'],
     preferSlugs: ['wealth-stone', 'courage-cat'],
   },
+  wealth: {
+    categories: ['wealth', 'courage'],
+    keywords: ['財運', '金錢', '收入', '投資', '副業', '安全感', '豐盛'],
+    preferSlugs: ['wealth-stone', 'courage-cat'],
+  },
+  growth: {
+    categories: ['calm', 'protect'],
+    keywords: ['自我', '成長', '情緒', '照顧', '釐清', '低潮', '節奏'],
+    preferSlugs: ['calm-light', 'moonlight-wings'],
+  },
   clarity: {
     categories: ['protect', 'calm'],
     keywords: ['迷惘', '方向', '直覺', '清晰', '困惑'],

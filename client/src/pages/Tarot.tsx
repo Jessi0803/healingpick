@@ -255,57 +255,33 @@ type FollowUpExchange = {
 };
 
 const QUESTION_PROMPTS: Record<string, string[]> = {
-  romance: [
+  love: [
     '我和他的關係接下來會怎麼發展？',
-    '這段曖昧裡，我該主動一點嗎？',
     '最近感情裡我最需要看清楚什麼？',
-  ],
-  reconciliation: [
-    '這段關係還有修復的可能嗎？',
     '我該繼續等，還是慢慢放下？',
-    '如果想重新靠近，我需要注意什麼？',
   ],
-  careerChoice: [
+  career: [
     '我現在適合換工作或調整方向嗎？',
-    '這個職涯選擇對我來說代表什麼？',
     '工作卡住時，我下一步可以怎麼走？',
+    '接下來事業上該衝刺，還是先穩住？',
   ],
-  moneyOpportunity: [
+  wealth: [
     '最近財務和安全感該注意什麼？',
     '這個收入機會值得我投入嗎？',
     '我該怎麼面對目前的金錢壓力？',
   ],
-  stuck: [
+  growth: [
     '我現在真正卡住的原因是什麼？',
-    '這件事背後，我還沒看見什麼？',
-    '我該先處理哪個問題核心？',
-  ],
-  decision: [
-    '面對這兩個選項，我該怎麼判斷？',
-    '如果選擇往前走，我需要注意什麼？',
-    '現在做決定前，我最該看清楚什麼？',
-  ],
-  boundaries: [
-    '這段人際關係讓我消耗的原因是什麼？',
-    '我該怎麼建立更清楚的界線？',
-    '面對這個人，我需要保護自己哪裡？',
-  ],
-  emotions: [
-    '最近的低潮想提醒我什麼？',
     '我該怎麼整理現在的情緒？',
     '今天我最需要好好照顧自己的哪一部分？',
   ],
 };
 
 const QUESTION_CATEGORIES = [
-  { id: 'romance',          label: '感情曖昧', icon: '♥', questions: QUESTION_PROMPTS.romance },
-  { id: 'reconciliation',   label: '復合關係', icon: '♡', questions: QUESTION_PROMPTS.reconciliation },
-  { id: 'careerChoice',     label: '職涯選擇', icon: '✦', questions: QUESTION_PROMPTS.careerChoice },
-  { id: 'moneyOpportunity', label: '財務機會', icon: '◇', questions: QUESTION_PROMPTS.moneyOpportunity },
-  { id: 'stuck',            label: '問題釐清', icon: '☆', questions: QUESTION_PROMPTS.stuck },
-  { id: 'decision',         label: '選項抉擇', icon: '○', questions: QUESTION_PROMPTS.decision },
-  { id: 'boundaries',       label: '人際界線', icon: '◈', questions: QUESTION_PROMPTS.boundaries },
-  { id: 'emotions',         label: '情緒整理', icon: '☽', questions: QUESTION_PROMPTS.emotions },
+  { id: 'love',   label: '感情', icon: '♥', questions: QUESTION_PROMPTS.love },
+  { id: 'career', label: '工作', icon: '✦', questions: QUESTION_PROMPTS.career },
+  { id: 'wealth', label: '財運', icon: '◇', questions: QUESTION_PROMPTS.wealth },
+  { id: 'growth', label: '自我提升', icon: '☽', questions: QUESTION_PROMPTS.growth },
 ];
 
 export default function TarotPage() {
@@ -342,7 +318,7 @@ export default function TarotPage() {
 
   const [step, setStep] = useState<Step>('intro');
   const [question, setQuestion] = useState('');
-  const [questionType, setQuestionType] = useState('romance');
+  const [questionType, setQuestionType] = useState('love');
   const [activeQuestionCategory, setActiveQuestionCategory] = useState('');
   const [drawnCards, setDrawnCards] = useState<ReturnType<typeof drawCards>>([]);
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
@@ -577,7 +553,7 @@ export default function TarotPage() {
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
         不知道怎麼問也沒關係，可以點開每個分類看細項，再選一題改成自己的情況。
       </p>
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-1 gap-2.5">
         {QUESTION_CATEGORIES.map((category) => {
           const isOpen = activeQuestionCategory === category.id;
 
@@ -828,16 +804,12 @@ export default function TarotPage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     占卜主題
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {[
-                      { id: 'romance',          label: '感情曖昧', icon: '♥' },
-                      { id: 'reconciliation',   label: '復合關係', icon: '♡' },
-                      { id: 'careerChoice',     label: '職涯選擇', icon: '✦' },
-                      { id: 'moneyOpportunity', label: '財務機會', icon: '◇' },
-                      { id: 'stuck',            label: '問題釐清', icon: '☆' },
-                      { id: 'decision',         label: '選項抉擇', icon: '○' },
-                      { id: 'boundaries',       label: '人際界線', icon: '◈' },
-                      { id: 'emotions',         label: '情緒整理', icon: '☽' },
+                      { id: 'love',   label: '感情', icon: '♥' },
+                      { id: 'career', label: '工作', icon: '✦' },
+                      { id: 'wealth', label: '財運', icon: '◇' },
+                      { id: 'growth', label: '自我提升', icon: '☽' },
                     ].map(t => (
                       <button
                         key={t.id}
