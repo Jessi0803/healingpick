@@ -1305,10 +1305,6 @@ export default function TarotPage() {
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       根據你的牌面：{tarotRecommendationMessage}
                     </p>
-                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      所以推薦你：
-                    </p>
                   </div>
                   <div className="flex flex-col gap-3">
                     {recommendedProducts.map(product => (

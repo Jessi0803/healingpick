@@ -417,10 +417,6 @@ export default function ZiweiPage() {
           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
           根據你的命盤：{ziweiRecommendationMessage}
         </p>
-        <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
-          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-          所以推薦你：
-        </p>
       </div>
       <div className="flex flex-col gap-2">
         {(readingRecommendation
