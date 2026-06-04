@@ -320,17 +320,17 @@ export default function Home() {
 
           {/* Main title */}
           <h1
-            className="text-3xl md:text-5xl leading-[1.6] md:leading-[1.8] mb-3 tracking-[0.2em] font-extralight text-[#31353A]"
+            className="text-2xl md:text-4xl leading-[1.6] md:leading-[1.8] mb-3 tracking-[0.2em] font-extralight text-[#31353A]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
           >
             有些心事
-            <span className="block text-2xl md:text-3xl font-light text-[#31353A]/62 mt-2 tracking-[0.25em]">
+            <span className="block text-xl md:text-2xl font-light text-[#31353A]/62 mt-2 tracking-[0.25em]">
               只需要一個溫柔的出口
             </span>
           </h1>
 
           <p
-            className="text-base md:text-lg text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8 italic"
+            className="text-sm md:text-base text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8 italic"
             style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}
           >
             "Some feelings only need a gentle place to rest."
@@ -613,7 +613,7 @@ export default function Home() {
                 Tarot Reading
               </span>
               <h2
-                className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
+                className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 塔羅牌占卜
@@ -729,7 +729,7 @@ export default function Home() {
                 Zi Wei Dou Shu
               </span>
               <h2
-                className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
+                className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 紫微斗數命盤
@@ -773,7 +773,7 @@ export default function Home() {
                 Psychological Resonance
               </span>
               <h2
-                className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
+                className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 互動心理測驗
@@ -812,7 +812,7 @@ export default function Home() {
                 Energy Crystals
               </span>
               <h2
-                className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2"
+                className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 能量商品精選

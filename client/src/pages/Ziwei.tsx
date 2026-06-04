@@ -447,7 +447,7 @@ export default function ZiweiPage() {
             
             {/* flex justify-center keeps h1 perfectly centred; envelope is absolute so it never shifts the title */}
             <div className="relative mt-3 mb-3 flex justify-center items-center">
-              <h1 className="text-3xl md:text-4xl tracking-[0.2em] font-extralight text-[#31353A] m-0"
+              <h1 className="text-2xl md:text-3xl tracking-[0.2em] font-extralight text-[#31353A] m-0"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                 紫微斗數命盤
               </h1>
