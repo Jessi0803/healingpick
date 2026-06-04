@@ -1058,12 +1058,12 @@ export default function ZiweiPage() {
                   <div className="mt-4 flex flex-col gap-2">
                     <button
                       onClick={() => { setAstrolabe(null); setSelectedPalaceName(null); setLlmInterpretation(''); setReadingRecommendation(null); }}
-                      className="w-full py-2.5 text-xs tracking-[0.2em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
+                      className="w-full px-5 py-3.5 text-xs leading-none tracking-[0.2em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       重新排盤
                     </button>
                     <Link href="/quiz">
-                      <button className="w-full py-2.5 text-xs tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                      <button className="w-full px-5 py-3.5 text-xs leading-none tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                         進行心理測驗 ✦
                       </button>

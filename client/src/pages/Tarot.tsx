@@ -1293,6 +1293,31 @@ export default function TarotPage() {
                 )}
               </div>
 
+              {/* Product recommendation */}
+              {recommendedProducts.length > 0 && (
+                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
+                  <p className="text-[14px] tracking-[0.2em] text-[#6F5A3A] mb-5 text-center"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                    ◎ Mochi 為你挑的今日商品
+                  </p>
+                  <div className="mb-5 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3 text-center">
+                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      根據你的牌面：{tarotRecommendationMessage}
+                    </p>
+                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      所以推薦你：
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {recommendedProducts.map(product => (
+                      <ProductCard key={product.slug} product={product} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Paid follow-up */}
               {llmInterpretation && (
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
@@ -1363,31 +1388,6 @@ export default function TarotPage() {
                       ))}
                     </div>
                   )}
-                </div>
-              )}
-
-              {/* Product recommendation */}
-              {recommendedProducts.length > 0 && (
-                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
-                  <p className="text-[14px] tracking-[0.2em] text-[#6F5A3A] mb-5 text-center"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                    ◎ Mochi 為你挑的今日商品
-                  </p>
-                  <div className="mb-5 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3 text-center">
-                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      因為今天的訊息是：{tarotRecommendationMessage}
-                    </p>
-                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      所以推薦你：
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    {recommendedProducts.map(product => (
-                      <ProductCard key={product.slug} product={product} />
-                    ))}
-                  </div>
                 </div>
               )}
 

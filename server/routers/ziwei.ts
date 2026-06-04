@@ -6,6 +6,12 @@ import { astro } from "iztro";
 import { t, translateChineseDate } from "./ziwei-locale";
 
 const ZIWEI_SECTION_START = "**目前問題在哪**";
+const ZIWEI_SECTION_MARKERS: Array<[string, string]> = [
+  ["目前問題在哪", "①"],
+  ["優勢與容易耗力的地方", "②"],
+  ["可以怎麼改善", "③"],
+  ["具體建議", "④"],
+];
 
 const recommendationSchema = z.object({
   category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
@@ -42,16 +48,27 @@ function extractRecommendation(content: string): {
 function cleanZiweiInterpretation(content: string) {
   const normalized = content.trim();
   const sectionIndex = normalized.indexOf(ZIWEI_SECTION_START);
+  const markSections = (value: string) =>
+    ZIWEI_SECTION_MARKERS.reduce(
+      (result, [title, marker]) =>
+        result.replace(
+          new RegExp(`(^|\\n)(?:[①②③④]\\s*)?\\*\\*${title}\\*\\*`, "gu"),
+          `$1${marker} **${title}**`,
+        ),
+      value,
+    );
 
   if (sectionIndex > 0) {
-    return normalized.slice(sectionIndex).trim();
+    return markSections(normalized.slice(sectionIndex).trim());
   }
 
-  return normalized
-    .replace(/^#+\s*命盤整體解讀\s*/u, "")
-    .replace(/^(你好|哈囉|嗨)[^。\n]*[。\n]\s*/u, "")
-    .replace(/^Mochi\s*看到你的命盤了[^。\n]*[。\n]\s*/u, "")
-    .trim();
+  return markSections(
+    normalized
+      .replace(/^#+\s*命盤整體解讀\s*/u, "")
+      .replace(/^(你好|哈囉|嗨)[^。\n]*[。\n]\s*/u, "")
+      .replace(/^Mochi\s*看到你的命盤了[^。\n]*[。\n]\s*/u, "")
+      .trim(),
+  );
 }
 
 // 時辰選項（供前後端共用）
