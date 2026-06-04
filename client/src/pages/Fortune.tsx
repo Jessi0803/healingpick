@@ -121,10 +121,6 @@ function ProductCard({ product }: { product: Product }) {
 function HowItWorksPanel() {
   const insights = [
     {
-      icon: '☀',
-      label: '今日整體狀態',
-    },
-    {
       icon: '✦',
       label: '收到溫柔提醒',
       desc: '感情、工作、健康與心情，都會有一段給今天的你剛剛好的提醒。',

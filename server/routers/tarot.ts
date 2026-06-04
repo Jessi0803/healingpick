@@ -16,7 +16,7 @@ const cardSchema = z.object({
 const recommendationSchema = z.object({
   category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
   message: z.string().min(4).max(120),
-  reason: z.string().min(4).max(180),
+  reason: z.string().min(4).max(260),
 });
 
 type ProductRecommendation = z.infer<typeof recommendationSchema>;
@@ -33,15 +33,67 @@ function extractRecommendation(content: string): {
 
   const interpretation = content.slice(0, markerIndex).trim();
   const rawJson = content.slice(markerIndex + marker.length).trim();
+  const jsonMatch = rawJson.match(/\{[\s\S]*\}/);
 
   try {
-    const parsed = recommendationSchema.safeParse(JSON.parse(rawJson));
+    const parsed = recommendationSchema.safeParse(JSON.parse(jsonMatch?.[0] ?? rawJson));
     return {
       interpretation: interpretation || content.trim(),
       recommendation: parsed.success ? parsed.data : null,
     };
   } catch {
     return { interpretation: content.trim(), recommendation: null };
+  }
+}
+
+async function generateRecommendation(input: {
+  questionType: string;
+  question: string;
+  cardsSummary: string;
+  interpretation: string;
+}): Promise<ProductRecommendation | null> {
+  const response = await invokeLLM({
+    responseFormat: { type: "json_object" },
+    messages: [
+      {
+        role: "system",
+        content:
+          "你是 Healing Pick 的商品推薦訊號產生器。只輸出 JSON，不要 Markdown，不要 code block。",
+      },
+      {
+        role: "user",
+        content: `請根據塔羅問題、牌面與解讀，產生商品推薦訊號。
+
+規則：
+- category 只能是 protect、wish、courage、calm、wealth 其中之一
+- message 是畫面「因為今天的訊息是：」後面的短句，必須依本次牌面與解讀重新生成，不要使用固定模板
+- message 不要包含「今天的訊息是」
+- reason 說明為什麼這次適合該分類，不要提商品名稱
+- 只回傳 JSON：{"category":"...","message":"...","reason":"..."}
+
+問題類型：${input.questionType}
+問題：${input.question || "（未填寫具體問題）"}
+
+牌面：
+${input.cardsSummary}
+
+解讀：
+${input.interpretation}`,
+      },
+    ],
+  });
+
+  const rawContent = response.choices?.[0]?.message?.content;
+  const textContent = rawContent
+    ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+    : "";
+  const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+
+  try {
+    const parsed = recommendationSchema.safeParse(JSON.parse(jsonMatch?.[0] ?? textContent));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
   }
 }
 
@@ -74,11 +126,11 @@ export const tarotRouter = router({
 - 可愛來自細膩的觀察、優雅又帶點俏皮的比喻，而不是裝幼稚
 - 避免幼稚或討好的語氣：不要頻繁使用「喔～」「呢～」「加油喔！」這類語尾，也不要一直用第三人稱講「Mochi 怎樣怎樣」
 - 不要過度安慰或說教，把對方當成能為自己負責的成熟大人
-- 正文可以自然穿插少量療癒符號與語氣符號，例如 🐾、✦、☽、✨、～，讓語氣柔一點
-- 符號和「～」只能偶爾出現在正文句尾或轉折句後面，不要放在標題裡，不要塞在句子中間
-- 每個段落最多 1 個符號或 1 個「～」，整篇正文最多使用 4-6 次；不要連續堆疊，例如「～～」「✨🐾☽」
+- 正文要自然穿插療癒符號與語氣符號，例如 🐾、✦、☽、✨、♡、～，讓語氣柔一點
+- 符號和「～」適合出現在正文句尾或轉折句後面，不要放在標題裡，不要塞在句子中間
+- 每個段落可以有 1-2 個符號或「～」，整篇正文使用 6-9 次；不要連續堆疊，例如「～～」「✨🐾☽」
 - 不要使用太浮誇或太撒嬌的 emoji，例如 😂、🥺、😍、🔥
-- 正文中可以用 Markdown 粗體標出真正重要的判斷或行動重點，每段最多粗體 1 個短句
+- 正文每個段落都必須用 Markdown 粗體標出 1 個真正重要的判斷或行動重點，而且每段剛好粗體 1 個短句
 - 粗體內容要具體，例如「**先觀察對方是否願意主動約時間**」、「**這週先整理履歷和作品集**」
 - 不要把空泛鼓勵粗體，例如「**相信自己**」、「**慢慢來**」；粗體不能取代分析，前後仍要有白話解釋
 - 可以偶爾用一個淡淡的貓咪意象（如尾巴輕掃過牌面）點綴氣氛，但要克制、自然，且不要出現「喵」這個字
@@ -111,9 +163,10 @@ export const tarotRouter = router({
 - 少用「能量流動」「宇宙安排」「內在課題」這類抽象詞；如果使用，後面一定要用白話解釋
 - 每張牌的解讀都要白話、具體、短。整體字數控制在 420-520 字，不要超過 600 字
 - 完整解讀結束後，最後另起一行輸出商品推薦訊號，格式必須完全符合：
-RECOMMENDATION_JSON: {"category":"calm","message":"先穩住情緒，再看清真正的選擇。","reason":"這次牌面反覆提到情緒拉扯與需要釐清，所以適合靜心、安定類商品。"}
+RECOMMENDATION_JSON: {"category":"<protect|wish|courage|calm|wealth>","message":"<依本次牌面重新生成的短句>","reason":"<依本次牌面與解讀產生的推薦原因>"}
 - category 只能是 protect、wish、courage、calm、wealth 其中之一
 - message 是「今天的訊息是」後面的短句，不要包含「今天的訊息是」
+- message 必須依本次牌面與求問主題生成，不要照抄範例或固定文案
 - reason 是依據本次牌面與解讀推薦此類商品的原因，不要提到商品名稱`;
 
       const userPrompt = `求問者的問題類型：${input.questionType}
@@ -148,8 +201,16 @@ ${cardsSummary}
         ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
         : "解讀暫時無法取得，請稍後再試。";
       const { interpretation, recommendation } = extractRecommendation(textContent);
+      const finalRecommendation =
+        recommendation ??
+        (await generateRecommendation({
+          questionType: input.questionType,
+          question: input.question,
+          cardsSummary,
+          interpretation,
+        }));
 
-      return { interpretation, recommendation };
+      return { interpretation, recommendation: finalRecommendation };
     }),
 
   /**
