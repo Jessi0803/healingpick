@@ -318,6 +318,44 @@ export function getProductFeatureSummary(product: Product, limit = 2): string {
     .join(' ');
 }
 
+const PRODUCT_RECOMMENDATION_REASONS: Record<string, string> = {
+  'glimmer-fox':
+    '這款商品對應「安定、保護、界線」的能量，適合你在疲憊或容易被外界影響時，提醒自己先回到內在的安全感。',
+  'wish-fox':
+    '這款商品對應「魅力、心願、溫柔連結」的能量，適合你在期待關係、人緣或新機會時，陪你把注意力放回自己的光。',
+  'courage-cat':
+    '這款商品對應「勇氣、行動、突破」的能量，適合你在想前進卻有點猶豫時，提醒自己先踏出一個小小的開始。',
+  'wish-bunny':
+    '這款商品對應「願望、陪伴、柔軟信念」的能量，適合你在心裡有期待卻還不敢說出口時，陪你慢慢把願望照顧好。',
+  'calm-light':
+    '這款商品對應「靜心、釐清、放鬆」的能量，適合你在情緒混亂或想太多時，把注意力慢慢收回自己身上。',
+  'moonlight-wings':
+    '這款商品對應「直覺、守護、重新整理」的能量，適合你在不確定下一步時，陪你安靜聽見心裡真正的方向。',
+  'wealth-stone':
+    '這款商品對應「豐盛、機會、行動力」的能量，適合你在整理金錢、工作或自我價值時，提醒自己把焦慮轉成實際行動。',
+};
+
+const CATEGORY_RECOMMENDATION_REASONS: Record<string, string> = {
+  protect:
+    '這款商品對應「安定、保護、界線」的能量，適合你在需要穩住自己時，提醒內心慢慢回到安全的位置。',
+  wish:
+    '這款商品對應「心願、吸引力、溫柔連結」的能量，適合你在期待新的關係、機會或祝福時，陪你守住心裡的願望。',
+  courage:
+    '這款商品對應「勇氣、突破、開始」的能量，適合你在需要採取行動時，提醒自己不用一次完美，只要先開始。',
+  calm:
+    '這款商品對應「靜心、釐清、放鬆」的能量，適合你在思緒很多時，陪你把節奏慢慢調回來。',
+  wealth:
+    '這款商品對應「豐盛、機會、行動力」的能量，適合你在面對工作、金錢與自我價值時，提醒自己值得被看見。',
+};
+
+export function getProductRecommendationReason(product: Product): string {
+  return (
+    PRODUCT_RECOMMENDATION_REASONS[product.slug] ??
+    CATEGORY_RECOMMENDATION_REASONS[product.category] ??
+    '這款商品適合陪你把今天的提醒落在生活裡，成為一個能看見、能觸碰的小小支持。'
+  );
+}
+
 export const CATEGORY_OPTIONS: { id: string; label: string }[] = [
   { id: 'all', label: '全部商品' },
   { id: 'protect', label: '守護平安' },

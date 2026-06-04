@@ -15,7 +15,7 @@ import { CatListening } from '@/components/CatElements';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { recommendForFortune } from '@/data/recommend';
-import { type Product } from '@/data/products';
+import { getProductRecommendationReason, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
 
 // ─── Zodiac Signs ─────────────────────────────────────────────────────────────
@@ -45,6 +45,7 @@ const FORTUNE_WAITING_MESSAGES = [
 // ─── Product Card ─────────────────────────────────────────────────────────────
 function ProductCard({ product }: { product: Product }) {
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
+  const recommendationReason = getProductRecommendationReason(product);
   return (
     <Link href={`/shop/${product.slug}`}>
       <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
@@ -82,19 +83,15 @@ function ProductCard({ product }: { product: Product }) {
               </span>
             ))}
           </div>
-          <div className="mb-2">
+          <div className="mb-2 rounded-xl border border-[#D1BE9B]/15 bg-[#F8F4EC]/45 px-3 py-2">
             <p className="text-[10px] tracking-[0.18em] text-[#A38D6B] mb-1"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              適合這樣的你
+              為什麼適合你
             </p>
-            <div className="space-y-1">
-              {product.suitedFor.map((item) => (
-                <p key={item} className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/58"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  ・{item}
-                </p>
-              ))}
-            </div>
+            <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62"
+              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+              {recommendationReason}
+            </p>
           </div>
           <span className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
@@ -611,8 +608,18 @@ export default function FortunePage() {
                               <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
                                 <p className="text-[14px] tracking-[0.24em] text-[#6F5A3A] mb-3"
                                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                                  ◎ 適合你的療癒小物
+                                  ◎ Mochi 為你挑的今日守護物
                                 </p>
+                                <div className="mb-4 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3">
+                                  <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+                                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                    因為今天的訊息是：先穩住自己，再做決定。
+                                  </p>
+                                  <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+                                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                    所以推薦你：
+                                  </p>
+                                </div>
                                 <div className="flex flex-col gap-3">
                                   {recommendForFortune(selectedSignData.element).map(product => (
                                     <ProductCard key={product.slug} product={product} />
