@@ -360,6 +360,9 @@ export default function ZiweiPage() {
   const soulPalaceName = astrolabe?.palaces.find((p) => p.name === '命宮')?.name ?? '命宮';
   const ziweiRecommendationMessage =
     readingRecommendation?.message ?? getZiweiRecommendationMessage(selectedPalaceName);
+  const ziweiRecommendedProducts = readingRecommendation
+    ? recommendForCategory(readingRecommendation.category)
+    : recommendForZiwei(selectedPalaceName, gender);
   const renderInterpretationSection = (className = '') => (
     <div className={className}>
       <div className="flex items-center gap-3 mb-2 px-1">
@@ -397,34 +400,33 @@ export default function ZiweiPage() {
           </p>
         )}
         {llmInterpretation && (
-          <div className="text-[13px] leading-[2.2] text-[#31353A]/75 tracking-wider"
-            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-            <Streamdown>{llmInterpretation}</Streamdown>
+          <div>
+            <div className="text-[13px] leading-[2.2] text-[#31353A]/75 tracking-wider"
+              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+              <Streamdown>{llmInterpretation}</Streamdown>
+            </div>
+
+            {ziweiRecommendedProducts.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
+                <p className="text-[14px] tracking-[0.24em] text-[#6F5A3A] mb-3"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                  ◎ Mochi 為你挑的今日商品
+                </p>
+                <div className="mb-4 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3">
+                  <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    根據你的命盤：{ziweiRecommendationMessage}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3">
+                  {ziweiRecommendedProducts.map(product => (
+                    <ProductCard key={product.slug} product={product} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
-      </div>
-    </div>
-  );
-
-  const renderProductRecommendationSection = (className = '') => (
-    <div className={`glass-panel rounded-xl p-4 border border-[#D1BE9B]/15 ${className}`}>
-      <p className="text-[14px] tracking-[0.18em] text-[#6F5A3A] mb-3"
-        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-        ◎ Mochi 為你挑的今日商品
-      </p>
-      <div className="mb-3 rounded-xl border border-[#D1BE9B]/15 bg-white/35 px-3 py-2.5">
-        <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
-          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-          根據你的命盤：{ziweiRecommendationMessage}
-        </p>
-      </div>
-      <div className="flex flex-col gap-2">
-        {(readingRecommendation
-          ? recommendForCategory(readingRecommendation.category)
-          : recommendForZiwei(selectedPalaceName, gender)
-        ).map(product => (
-          <ProductCard key={product.slug} product={product} />
-        ))}
       </div>
     </div>
   );
@@ -546,10 +548,6 @@ export default function ZiweiPage() {
               </div>
             </div>
 
-            <p className="text-sm italic text-[#31353A]/54 tracking-[0.15em]"
-              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-              「幫助運用自己的優勢及劣勢，及時把握機會跟改善近況。」
-            </p>
           </div>
 
           {!astrolabe ? (
@@ -785,8 +783,6 @@ export default function ZiweiPage() {
             <div className="animate-fade-in-up">
               <div className="flex flex-col gap-8">
               {renderInterpretationSection()}
-
-              {renderProductRecommendationSection()}
 
               {/* Birth info banner */}
               <div className="flex flex-wrap justify-center gap-3">

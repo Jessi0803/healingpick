@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'wouter';
+import { Streamdown } from 'streamdown';
 import PageLayout from '@/components/PageLayout';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { CatListening } from '@/components/CatElements';
@@ -122,7 +123,6 @@ function HowItWorksPanel() {
     {
       icon: '☀',
       label: '今日整體狀態',
-      desc: '看見今天最適合你的節奏，是該主動出擊、整理思緒，還是先把自己照顧好。',
     },
     {
       icon: '✦',
@@ -159,10 +159,12 @@ function HowItWorksPanel() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                   {item.label}
                 </p>
-                <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  {item.desc}
-                </p>
+                {item.desc && (
+                  <p className="text-[12px] leading-[1.7] text-[#31353A]/62 tracking-wide"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    {item.desc}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -590,10 +592,10 @@ export default function FortunePage() {
                                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                                       {item.label}
                                     </p>
-                                    <p className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider"
+                                    <div className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold"
                                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                                      {item.text}
-                                    </p>
+                                      <Streamdown>{item.text}</Streamdown>
+                                    </div>
                                   </div>
                                 </div>
                               ))}
@@ -608,10 +610,10 @@ export default function FortunePage() {
                                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                                     今日月相指引
                                   </p>
-                                  <p className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider italic"
+                                  <div className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider italic prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold"
                                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                                    {aiData.advice}
-                                  </p>
+                                    <Streamdown>{aiData.advice}</Streamdown>
+                                  </div>
                                 </div>
                               </div>
                             </div>

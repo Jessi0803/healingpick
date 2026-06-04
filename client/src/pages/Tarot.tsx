@@ -1278,41 +1278,42 @@ export default function TarotPage() {
                   </div>
                 )}
                 {llmInterpretation && (
-                  <div className="prose prose-sm max-w-none text-[13px] leading-[2.1] text-[#31353A]/80 tracking-wider
-                    prose-headings:font-normal prose-headings:tracking-[0.08em] prose-headings:text-[#A38D6B]
-                    prose-h1:text-[13px] prose-h1:font-semibold prose-h1:mt-5 prose-h1:mb-1.5 prose-h1:pb-1 prose-h1:border-b prose-h1:border-[#D1BE9B]/25
-                    prose-h3:text-[13px] prose-h3:font-semibold prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
-                    [&_h1]:!text-[13px] [&_h1]:!leading-[2.1] [&_h1]:!font-semibold [&_h1]:!tracking-[0.08em] [&_h1]:!text-[#A38D6B] [&_h1]:!mt-5 [&_h1]:!mb-1.5 [&_h1]:!pb-1 [&_h1]:!border-b [&_h1]:!border-[#D1BE9B]/25
-                    [&_h3]:!text-[13px] [&_h3]:!leading-[2.1] [&_h3]:!font-semibold [&_h3]:!tracking-[0.08em] [&_h3]:!text-[#A38D6B] [&_h3]:!mt-5 [&_h3]:!mb-1.5 [&_h3]:!pb-1 [&_h3]:!border-b [&_h3]:!border-[#D1BE9B]/25
-                    prose-p:my-1.5 prose-p:text-[#31353A]/80
-                    prose-strong:text-[#31353A]/90 prose-strong:font-medium
-                    prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
-                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                    <Streamdown>{llmInterpretation}</Streamdown>
+                  <div>
+                    <div className="prose prose-sm max-w-none text-[13px] leading-[2.1] text-[#31353A]/80 tracking-wider
+                      prose-headings:font-normal prose-headings:tracking-[0.08em] prose-headings:text-[#A38D6B]
+                      prose-h1:text-[13px] prose-h1:font-semibold prose-h1:mt-5 prose-h1:mb-1.5 prose-h1:pb-1 prose-h1:border-b prose-h1:border-[#D1BE9B]/25
+                      prose-h3:text-[13px] prose-h3:font-semibold prose-h3:mt-5 prose-h3:mb-1.5 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
+                      [&_h1]:!text-[13px] [&_h1]:!leading-[2.1] [&_h1]:!font-semibold [&_h1]:!tracking-[0.08em] [&_h1]:!text-[#A38D6B] [&_h1]:!mt-5 [&_h1]:!mb-1.5 [&_h1]:!pb-1 [&_h1]:!border-b [&_h1]:!border-[#D1BE9B]/25
+                      [&_h3]:!text-[13px] [&_h3]:!leading-[2.1] [&_h3]:!font-semibold [&_h3]:!tracking-[0.08em] [&_h3]:!text-[#A38D6B] [&_h3]:!mt-5 [&_h3]:!mb-1.5 [&_h3]:!pb-1 [&_h3]:!border-b [&_h3]:!border-[#D1BE9B]/25
+                      prose-p:my-1.5 prose-p:text-[#31353A]/80
+                      prose-strong:text-[#31353A]/90 prose-strong:font-medium
+                      prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      <Streamdown>{llmInterpretation}</Streamdown>
+                    </div>
+
+                    {recommendedProducts.length > 0 && (
+                      <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
+                        <p className="text-[14px] tracking-[0.24em] text-[#6F5A3A] mb-3"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                          ◎ Mochi 為你挑的今日商品
+                        </p>
+                        <div className="mb-4 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3">
+                          <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
+                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                            根據你的牌面：{tarotRecommendationMessage}
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          {recommendedProducts.map(product => (
+                            <ProductCard key={product.slug} product={product} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-
-              {/* Product recommendation */}
-              {recommendedProducts.length > 0 && (
-                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
-                  <p className="text-[14px] tracking-[0.2em] text-[#6F5A3A] mb-5 text-center"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                    ◎ Mochi 為你挑的今日商品
-                  </p>
-                  <div className="mb-5 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3 text-center">
-                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      根據你的牌面：{tarotRecommendationMessage}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    {recommendedProducts.map(product => (
-                      <ProductCard key={product.slug} product={product} />
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Paid follow-up */}
               {llmInterpretation && (
