@@ -415,7 +415,7 @@ export default function ZiweiPage() {
       <div className="mb-3 rounded-xl border border-[#D1BE9B]/15 bg-white/35 px-3 py-2.5">
         <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-          因為今天的訊息是：{ziweiRecommendationMessage}
+          根據你的命盤：{ziweiRecommendationMessage}
         </p>
         <p className="text-[11px] leading-[1.9] tracking-[0.07em] text-[#31353A]/70"
           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
