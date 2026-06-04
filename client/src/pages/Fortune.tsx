@@ -603,8 +603,8 @@ export default function FortunePage() {
                                 <div key={item.label} className="flex gap-3">
                                   <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">{item.icon}</span>
                                   <div>
-                                    <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-1"
-                                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                                    <p className="text-[12px] tracking-[0.2em] text-[#6F5A3A] mb-1"
+                                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                                       {item.label}
                                     </p>
                                     <div className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold"
@@ -621,8 +621,8 @@ export default function FortunePage() {
                               <div className="flex gap-3">
                                 <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">☽</span>
                                 <div>
-                                  <p className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-1"
-                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                                  <p className="text-[12px] tracking-[0.2em] text-[#6F5A3A] mb-1"
+                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                                     今日月相指引
                                   </p>
                                   <div className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider italic prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold"
