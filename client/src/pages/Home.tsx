@@ -320,17 +320,17 @@ export default function Home() {
 
           {/* Main title */}
           <h1
-            className="text-2xl md:text-4xl leading-[1.6] md:leading-[1.8] mb-3 tracking-[0.2em] font-extralight text-[#31353A]"
+            className="text-xl md:text-3xl leading-[1.6] md:leading-[1.8] mb-3 tracking-[0.2em] font-extralight text-[#31353A]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
           >
             有些心事
-            <span className="block text-xl md:text-2xl font-light text-[#31353A]/62 mt-2 tracking-[0.25em]">
+            <span className="block text-lg md:text-xl font-light text-[#31353A]/62 mt-2 tracking-[0.25em]">
               只需要一個溫柔的出口
             </span>
           </h1>
 
           <p
-            className="text-sm md:text-base text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8 italic"
+            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8 italic"
             style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}
           >
             "Some feelings only need a gentle place to rest."
@@ -400,7 +400,7 @@ export default function Home() {
               Our Services
             </span>
             <h2
-              className="text-2xl md:text-3xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
+              className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
             >
               靈性療癒的四種方式
@@ -485,7 +485,7 @@ export default function Home() {
               Crystal Altar
             </span>
             <h2
-              className="text-2xl md:text-3xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
+              className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
             >
               能量水晶
@@ -613,7 +613,7 @@ export default function Home() {
                 Tarot Reading
               </span>
               <h2
-                className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
+                className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 塔羅牌占卜
@@ -729,7 +729,7 @@ export default function Home() {
                 Zi Wei Dou Shu
               </span>
               <h2
-                className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
+                className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 紫微斗數命盤
@@ -773,7 +773,7 @@ export default function Home() {
                 Psychological Resonance
               </span>
               <h2
-                className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
+                className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 互動心理測驗
@@ -812,7 +812,7 @@ export default function Home() {
                 Energy Crystals
               </span>
               <h2
-                className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2"
+                className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
               >
                 能量商品精選
@@ -894,7 +894,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>Gentle Echoes</span>
-            <h2 className="text-2xl md:text-3xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>大家看完的感覺</h2>
+            <h2 className="text-xl md:text-2xl tracking-[0.18em] font-extralight text-[#31353A] mt-2" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>大家看完的感覺</h2>
             <p className="mt-3 text-[12px] leading-[1.9] tracking-[0.14em] text-[#31353A]/52 max-w-xl mx-auto"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               不一定會立刻有答案，但有時候光是看清楚一點，心情就差很多。

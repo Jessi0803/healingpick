@@ -359,7 +359,7 @@ export default function FortunePage() {
               Celestial Guidance
             </span>
             <div className="relative mt-3 mb-10 md:mb-8 flex justify-center items-center">
-              <h1 className="text-2xl md:text-3xl tracking-[0.2em] font-extralight text-[#31353A] m-0"
+              <h1 className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] m-0"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                 每日運勢
               </h1>

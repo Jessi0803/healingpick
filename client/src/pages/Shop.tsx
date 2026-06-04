@@ -48,7 +48,7 @@ export default function ShopPage() {
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               Energy Crystals
             </span>
-            <h1 className="text-2xl md:text-3xl tracking-[0.2em] font-extralight text-[#31353A] mt-3 mb-3"
+            <h1 className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3 mb-3"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               能量商品
             </h1>

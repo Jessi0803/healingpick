@@ -278,7 +278,7 @@ export default function QuizPage() {
                   Soul Archive
                   <span className="text-[#B89D68]">✦</span>
                 </span>
-                <h1 className="text-2xl md:text-4xl tracking-[0.24em] font-extralight text-[#2F3336] mt-5 mb-4"
+                <h1 className="text-xl md:text-3xl tracking-[0.24em] font-extralight text-[#2F3336] mt-5 mb-4"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   宇宙心理測驗
                 </h1>
