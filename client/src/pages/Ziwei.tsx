@@ -823,6 +823,10 @@ export default function ZiweiPage() {
               <div className="flex flex-col xl:flex-row gap-8 items-start">
                 {/* Chart grid */}
                 <div className="flex-1">
+                  <p className="mb-3 text-center text-[13px] tracking-[0.24em] text-[#8A7250]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                    ◎ 你的命盤
+                  </p>
                   <div
                     className="grid gap-1.5"
                     style={{ gridTemplateColumns: 'repeat(4, 1fr)', gridTemplateRows: 'repeat(4, auto)' }}
