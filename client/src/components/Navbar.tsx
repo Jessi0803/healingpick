@@ -122,13 +122,13 @@ export default function Navbar() {
             <CatSitting className="w-7 h-9 opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex-shrink-0" />
             <div className="flex flex-col items-start">
               <span
-                className="font-en-serif text-xl md:text-2xl tracking-[0.25em] font-light text-[#31353A]/92 group-hover:text-[#D1BE9B] transition-colors duration-300"
+                className="font-en-serif hidden md:block text-xl md:text-2xl tracking-[0.25em] font-light text-[#31353A]/92 group-hover:text-[#D1BE9B] transition-colors duration-300"
                 style={{ fontFamily: 'Cormorant Garamond, serif' }}
               >
                 Healing Pick
               </span>
               <span
-                className="text-[12px] tracking-[0.3em] text-[#31353A]/58 mt-0.5"
+                className="text-[12px] tracking-[0.3em] text-[#31353A]/82 md:text-[#31353A]/58 md:mt-0.5"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, fontSize: '12px' }}
               >
                 癒見好物
