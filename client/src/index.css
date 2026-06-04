@@ -101,6 +101,20 @@
   --sidebar-ring:        oklch(0.790 0.052 78);
 }
 
+.ziwei-interpretation p:has(> strong:only-child) {
+  margin-top: 1.1rem;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-serif-tc);
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: rgba(111, 90, 58, 0.94);
+}
+
+.ziwei-interpretation p:has(> strong:only-child) strong {
+  font-weight: 500;
+}
+
 /* ============================================================
    Global Base Styles
    ============================================================ */
