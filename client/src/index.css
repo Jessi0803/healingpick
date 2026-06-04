@@ -68,19 +68,19 @@
 
   /* Morandi Light Theme */
   --background:          oklch(0.978 0.006 75);
-  --foreground:          oklch(0.295 0.010 250);
+  --foreground:          oklch(0.245 0.012 250);
   --card:                oklch(0.965 0.008 75);
-  --card-foreground:     oklch(0.295 0.010 250);
+  --card-foreground:     oklch(0.245 0.012 250);
   --popover:             oklch(0.975 0.006 75);
-  --popover-foreground:  oklch(0.295 0.010 250);
+  --popover-foreground:  oklch(0.245 0.012 250);
   --primary:             oklch(0.700 0.060 78);
   --primary-foreground:  oklch(0.978 0.006 75);
   --secondary:           oklch(0.940 0.010 75);
-  --secondary-foreground:oklch(0.400 0.015 250);
+  --secondary-foreground:oklch(0.340 0.016 250);
   --muted:               oklch(0.950 0.008 75);
-  --muted-foreground:    oklch(0.430 0.015 250);
+  --muted-foreground:    oklch(0.340 0.016 250);
   --accent:              oklch(0.905 0.020 295);
-  --accent-foreground:   oklch(0.295 0.010 250);
+  --accent-foreground:   oklch(0.245 0.012 250);
   --destructive:         oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
   --border:              oklch(0.900 0.012 75);
@@ -92,11 +92,11 @@
   --chart-4:             oklch(0.850 0.030 75);
   --chart-5:             oklch(0.600 0.040 250);
   --sidebar:             oklch(0.965 0.008 75);
-  --sidebar-foreground:  oklch(0.295 0.010 250);
+  --sidebar-foreground:  oklch(0.245 0.012 250);
   --sidebar-primary:     oklch(0.700 0.060 78);
   --sidebar-primary-foreground: oklch(0.978 0.006 75);
   --sidebar-accent:      oklch(0.940 0.010 75);
-  --sidebar-accent-foreground: oklch(0.295 0.010 250);
+  --sidebar-accent-foreground: oklch(0.245 0.012 250);
   --sidebar-border:      oklch(0.900 0.012 75);
   --sidebar-ring:        oklch(0.790 0.052 78);
 }
@@ -260,6 +260,54 @@
 
   [class*="text-[18vw]"] {
     font-size: 23.04vw !important;
+  }
+
+  /*
+   * Global readability pass: the site uses many hard-coded Morandi text colors
+   * with low alpha values. Lift those alpha levels so every page reads darker
+   * without rewriting each component.
+   */
+  [class*="text-[#31353A]/35"],
+  [class*="text-[#31353A]/40"],
+  [class*="text-[#31353A]/42"] {
+    color: rgb(49 53 58 / 0.58) !important;
+  }
+
+  [class*="text-[#31353A]/45"],
+  [class*="text-[#31353A]/46"],
+  [class*="text-[#31353A]/48"],
+  [class*="text-[#31353A]/50"] {
+    color: rgb(49 53 58 / 0.66) !important;
+  }
+
+  [class*="text-[#31353A]/52"],
+  [class*="text-[#31353A]/54"],
+  [class*="text-[#31353A]/55"],
+  [class*="text-[#31353A]/58"],
+  [class*="text-[#31353A]/60"],
+  [class*="text-[#31353A]/62"] {
+    color: rgb(49 53 58 / 0.74) !important;
+  }
+
+  [class*="text-[#31353A]/64"],
+  [class*="text-[#31353A]/65"],
+  [class*="text-[#31353A]/68"],
+  [class*="text-[#31353A]/70"],
+  [class*="text-[#31353A]/72"] {
+    color: rgb(49 53 58 / 0.82) !important;
+  }
+
+  [class*="text-[#31353A]/75"],
+  [class*="text-[#31353A]/76"],
+  [class*="text-[#31353A]/78"],
+  [class*="text-[#31353A]/80"],
+  [class*="text-[#31353A]/82"] {
+    color: rgb(49 53 58 / 0.9) !important;
+  }
+
+  [class*="text-[#D1BE9B]/"],
+  [class*="text-[#A38D6B]/"] {
+    color: rgb(138 114 80 / 0.88) !important;
   }
 }
 
