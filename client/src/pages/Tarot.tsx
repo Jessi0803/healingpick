@@ -387,8 +387,8 @@ export default function TarotPage() {
   });
   const tarotWaitingMessage = useRotatingText(TAROT_WAITING_MESSAGES, interpretMutation.isPending);
 
-  const getReadingCardsPayload = () =>
-    drawnCards.map((d, i) => ({
+  const getReadingCardsPayload = (cards = drawnCards) =>
+    cards.map((d, i) => ({
       name: d.card.name,
       en: d.card.en,
       symbol: d.card.symbol,
@@ -397,6 +397,18 @@ export default function TarotPage() {
       position: SPREAD_POSITIONS[i].label,
       positionDesc: SPREAD_POSITIONS[i].desc,
     }));
+
+  const startReading = (cards = drawnCards) => {
+    setStep('reading');
+    setLlmInterpretation('');
+    setFollowUpQuestion('');
+    setFollowUpExchanges([]);
+    interpretMutation.mutate({
+      question,
+      questionType,
+      cards: getReadingCardsPayload(cards),
+    });
+  };
 
   const handleFollowUpSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -490,7 +502,7 @@ export default function TarotPage() {
       setDrawnCards(cards);
       setRevealedCards(new Set([0, 1, 2, 3, 4]));
       setSelectedCard(0);
-      setTimeout(() => setStep('spread'), 400);
+      setTimeout(() => startReading(cards), 400);
     }
   }
 
@@ -1143,17 +1155,7 @@ export default function TarotPage() {
                   {/* Reading button */}
                   {revealedCards.size >= 5 && (
                     <button
-                      onClick={() => {
-                        setStep('reading');
-                        setLlmInterpretation('');
-                        setFollowUpQuestion('');
-                        setFollowUpExchanges([]);
-                        interpretMutation.mutate({
-                          question,
-                          questionType,
-                          cards: getReadingCardsPayload(),
-                        });
-                      }}
+                      onClick={() => startReading()}
                       className="w-full mt-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       查看完整解讀
