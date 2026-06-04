@@ -51,11 +51,36 @@ const MAJOR_ARCANA = [
 
 // Star spread positions (5 cards)
 const SPREAD_POSITIONS = [
-  { id: 0, label: '第 1 張', desc: '你抽到的第一張牌' },
-  { id: 1, label: '第 2 張', desc: '你抽到的第二張牌' },
-  { id: 2, label: '第 3 張', desc: '你抽到的第三張牌' },
-  { id: 3, label: '第 4 張', desc: '你抽到的第四張牌' },
-  { id: 4, label: '第 5 張', desc: '你抽到的第五張牌' },
+  {
+    id: 0,
+    label: '第 1 張',
+    readingLabel: '中心能量',
+    desc: '代表你目前的核心狀態與問題所在',
+  },
+  {
+    id: 1,
+    label: '第 2 張',
+    readingLabel: '過去',
+    desc: '影響現況的過去事件或根源能量',
+  },
+  {
+    id: 2,
+    label: '第 3 張',
+    readingLabel: '現在',
+    desc: '目前正在發生的事件與你的實際狀態',
+  },
+  {
+    id: 3,
+    label: '第 4 張',
+    readingLabel: '未來',
+    desc: '即將展開的能量走向與可能的結果',
+  },
+  {
+    id: 4,
+    label: '第 5 張',
+    readingLabel: '建議',
+    desc: '塔羅給予你的行動指引與內在智慧',
+  },
 ];
 
 const TAROT_WAITING_MESSAGES = [
@@ -401,7 +426,7 @@ export default function TarotPage() {
       symbol: d.card.symbol,
       meaning: d.reversed ? d.card.reversed : d.card.meaning,
       reversed: d.reversed,
-      position: SPREAD_POSITIONS[i].label,
+      position: SPREAD_POSITIONS[i].readingLabel,
       positionDesc: SPREAD_POSITIONS[i].desc,
     }));
 
@@ -1273,7 +1298,7 @@ export default function TarotPage() {
                       onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
                       maxLength={300}
                       placeholder="例如：他現在還喜歡我嗎？我接下來該主動嗎？"
-                      className="min-h-[96px] resize-none rounded-2xl border border-[#D1BE9B]/20 bg-white/55 px-4 py-3 text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
+                      className="min-h-[72px] resize-none rounded-xl border border-[#D1BE9B]/20 bg-white/55 px-3.5 py-2.5 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
                     />
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
