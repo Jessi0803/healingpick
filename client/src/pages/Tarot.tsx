@@ -340,9 +340,12 @@ export default function TarotPage() {
     if (!isAuthenticated) {
       toast.error('登入 每日兩次免費占卜 🐾', {
         description: '登入後即可開始占卜，並保存你的解讀紀錄。',
+        action: {
+          label: '登入',
+          onClick: () => void login(),
+        },
         duration: 6000,
       });
-      void login();
       return;
     }
 
@@ -398,9 +401,12 @@ export default function TarotPage() {
       if (error.message === 'NOT_SIGNED_IN') {
         toast.error('登入 每日兩次免費占卜', {
           description: '登入後即可查看完整解讀，並保存你的占卜紀錄。',
+          action: {
+            label: '登入',
+            onClick: () => void login(),
+          },
           duration: 6000,
         });
-        void login();
         setStep('intro');
         return;
       }
@@ -435,9 +441,12 @@ export default function TarotPage() {
       if (error.message === 'NOT_SIGNED_IN') {
         toast.error('登入後可繼續追問', {
           description: '追問每次會消耗 1 點，登入後即可繼續。',
+          action: {
+            label: '登入',
+            onClick: () => void login(),
+          },
           duration: 6000,
         });
-        void login();
         return;
       }
 
@@ -472,9 +481,12 @@ export default function TarotPage() {
     if (!isAuthenticated) {
       toast.error('登入 每日兩次免費占卜', {
         description: '登入後即可查看完整解讀，並保存你的占卜紀錄。',
+        action: {
+          label: '登入',
+          onClick: () => void login(),
+        },
         duration: 6000,
       });
-      void login();
       return;
     }
 
@@ -500,9 +512,12 @@ export default function TarotPage() {
       if (!isAuthenticated) {
         toast.error('登入後可繼續追問', {
           description: '追問每次會消耗 1 點，登入後即可繼續。',
+          action: {
+            label: '登入',
+            onClick: () => void login(),
+          },
           duration: 6000,
         });
-        void login();
         return;
       }
 

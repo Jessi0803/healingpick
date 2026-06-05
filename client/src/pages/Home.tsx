@@ -173,9 +173,12 @@ export default function Home() {
     event.preventDefault();
     toast.error('登入 每日兩次免費占卜 🐾', {
       description: '登入後即可開始占卜，並保存你的解讀紀錄。',
+      action: {
+        label: '登入',
+        onClick: () => void login(),
+      },
       duration: 6000,
     });
-    void login();
   };
 
   const audioCtxRef = useRef<AudioContext | null>(null);
