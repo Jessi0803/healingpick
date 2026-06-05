@@ -14,6 +14,9 @@ import type {
   GetUserInfoWithJwtRequest,
   GetUserInfoWithJwtResponse,
 } from "./types/manusTypes";
+
+const SESSION_APP_ID_FALLBACK = "healingpick";
+
 // Utility function
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.length > 0;
@@ -171,7 +174,7 @@ class SDKServer {
     return this.signSession(
       {
         openId,
-        appId: ENV.appId,
+        appId: ENV.appId || SESSION_APP_ID_FALLBACK,
         name: options.name || "",
       },
       options
@@ -214,7 +217,6 @@ class SDKServer {
 
       if (
         !isNonEmptyString(openId) ||
-        !isNonEmptyString(appId) ||
         !isNonEmptyString(name)
       ) {
         console.warn("[Auth] Session payload missing required fields");
@@ -223,7 +225,7 @@ class SDKServer {
 
       return {
         openId,
-        appId,
+        appId: isNonEmptyString(appId) ? appId : SESSION_APP_ID_FALLBACK,
         name,
       };
     } catch (error) {
