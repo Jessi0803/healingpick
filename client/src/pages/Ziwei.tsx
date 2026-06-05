@@ -316,12 +316,9 @@ export default function ZiweiPage() {
       if (error.message === 'NOT_SIGNED_IN') {
         toast.error('登入 每日兩次免費占卜', {
           description: '登入後即可查看命盤解讀，並保存你的占卜紀錄。',
-          action: {
-            label: '登入',
-            onClick: () => void login(),
-          },
           duration: 6000,
         });
+        void login();
         return;
       }
 
@@ -352,12 +349,9 @@ export default function ZiweiPage() {
     if (!isAuthenticated) {
       toast.error('登入 每日兩次免費占卜 🐾', {
         description: '登入後即可查看命盤解讀，並保存你的占卜紀錄。',
-        action: {
-          label: '登入',
-          onClick: () => void login(),
-        },
         duration: 6000,
       });
+      void login();
       return;
     }
 

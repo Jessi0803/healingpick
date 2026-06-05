@@ -301,6 +301,14 @@ export default function FortunePage() {
   const credits = creditsQuery.data;
 
   function handleSignSelect(signId: string) {
+    if (!isAuthenticated) {
+      setSelectedSign(signId);
+      setHasClickedGenerate(false);
+      setUnlockDialogOpen(false);
+      void login();
+      return;
+    }
+
     if (selectedSign === signId) {
       setSelectedSign(null);
       setHasClickedGenerate(false);
