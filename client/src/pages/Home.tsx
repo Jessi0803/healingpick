@@ -10,14 +10,13 @@
  *   6. Shop Preview (能量商品)
  */
 
-import { useState, useRef, type MouseEvent } from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatPeeking } from '@/components/CatElements';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { PRODUCTS } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
-import { toast } from 'sonner';
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
@@ -154,7 +153,7 @@ const todayEnergy = dailyEnergyPool[new Date().getDay() % dailyEnergyPool.length
 export default function Home() {
   // The userAuth hooks provides authentication state
   // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
-  let { user, loading, error, isAuthenticated, login, logout } = useAuth();
+  let { user, loading, error, isAuthenticated, logout } = useAuth();
 
   const [activeCrystal, setActiveCrystal] = useState<string | null>(null);
   const [bodyBg, setBodyBg] = useState('');
@@ -164,21 +163,6 @@ export default function Home() {
   const handleBuyProduct = (productName: string) => {
     setSelectedProduct(productName);
     setIsContactOpen(true);
-  };
-
-  const divinationPaths = new Set(['/tarot', '/ziwei', '/fortune', '/fortune/daily']);
-  const handleDivinationLinkClick = (event: MouseEvent<HTMLElement>, href: string) => {
-    if (isAuthenticated || !divinationPaths.has(href)) return;
-
-    event.preventDefault();
-    toast.error('登入 每日兩次免費占卜 🐾', {
-      description: '登入後即可開始占卜，並保存你的解讀紀錄。',
-      action: {
-        label: '登入',
-        onClick: () => void login(),
-      },
-      duration: 6000,
-    });
   };
 
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -350,7 +334,7 @@ export default function Home() {
           </p>
 
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[20rem] sm:grid-cols-2">
-            <Link href="/tarot" onClick={(event) => handleDivinationLinkClick(event, '/tarot')}>
+            <Link href="/tarot">
               <button
                 className="w-full px-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
@@ -358,7 +342,7 @@ export default function Home() {
                 塔羅占卜
               </button>
             </Link>
-            <Link href="/ziwei" onClick={(event) => handleDivinationLinkClick(event, '/ziwei')}>
+            <Link href="/ziwei">
               <button
                 className="w-full px-4 py-3 text-xs tracking-[0.25em] border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
@@ -366,7 +350,7 @@ export default function Home() {
                 紫微斗數
               </button>
             </Link>
-            <Link href="/fortune" onClick={(event) => handleDivinationLinkClick(event, '/fortune')}>
+            <Link href="/fortune">
               <button
                 className="w-full px-4 py-3 text-xs tracking-[0.25em] border border-[#D1BE9B]/40 bg-[#D1BE9B]/18 text-[#8A7250] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
@@ -427,7 +411,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {features.map((f, i) => (
-              <Link key={f.href} href={f.href} onClick={(event) => handleDivinationLinkClick(event, f.href)}>
+              <Link key={f.href} href={f.href}>
                 <div
                   className="group relative p-6 rounded-xl border border-[#D1BE9B]/20 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)] animate-fade-in-up"
                   style={{
@@ -649,7 +633,7 @@ export default function Home() {
                   </span>
                 ))}
               </div>
-              <Link href="/tarot" onClick={(event) => handleDivinationLinkClick(event, '/tarot')}>
+              <Link href="/tarot">
                 <button
                   className="px-7 py-2.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
@@ -755,7 +739,7 @@ export default function Home() {
                 從命宮、財帛宮到夫妻宮，全面解析你的人生格局、
                 個性特質與流年運勢。
               </p>
-              <Link href="/ziwei" onClick={(event) => handleDivinationLinkClick(event, '/ziwei')}>
+              <Link href="/ziwei">
                 <button
                   className="px-7 py-2.5 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-transparent rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
