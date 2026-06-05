@@ -1457,7 +1457,7 @@ export default function TarotPage() {
                     </p>
                     <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      每次追問會消耗 1 點。Mochi 會基於同一份牌面，回答你更具體的延伸問題。
+                      每次追問會消耗 1 點。Mochi 會基於剛剛的牌面，給你一段補充回應。
                     </p>
                   </div>
 
@@ -1483,7 +1483,7 @@ export default function TarotPage() {
                       >
                         {followUpMutation.isPending
                           ? 'Mochi 正在看牌面...'
-                          : '送出追問（消耗 1 點）'}
+                          : '請 Mochi 回應（消耗 1 點）'}
                       </button>
                     </div>
                   </form>
@@ -1502,7 +1502,7 @@ export default function TarotPage() {
                           <div className="mb-3 flex flex-col gap-1">
                             <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                              Mochi 的深入回答
+                              Mochi 的補充回應
                             </p>
                             <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
                               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
