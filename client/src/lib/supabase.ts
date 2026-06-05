@@ -36,6 +36,27 @@ export async function getAccessToken(): Promise<string | null> {
   return data.session?.access_token ?? null;
 }
 
+/** Complete an OAuth redirect if Supabase returned with an authorization code. */
+export async function completeOAuthRedirect(): Promise<{ handled: boolean; ok: boolean; error?: string }> {
+  if (!supabase || typeof window === "undefined") return { handled: false, ok: true };
+
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get("code");
+  const error = url.searchParams.get("error_description") ?? url.searchParams.get("error");
+
+  if (error) return { handled: true, ok: false, error };
+  if (!code) return { handled: false, ok: true };
+
+  const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+  if (exchangeError) return { handled: true, ok: false, error: exchangeError.message };
+
+  url.searchParams.delete("code");
+  url.searchParams.delete("state");
+  window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+
+  return { handled: true, ok: true };
+}
+
 /** Start the Google sign-in redirect flow. */
 export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string }> {
   if (!supabase) return { ok: false, error: "Auth not configured" };

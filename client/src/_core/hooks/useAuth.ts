@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { signOut, supabase, supabaseEnabled } from "@/lib/supabase";
+import { completeOAuthRedirect, signOut, supabase, supabaseEnabled } from "@/lib/supabase";
 import { useCallback, useEffect, useMemo } from "react";
 
 type UseAuthOptions = {
@@ -18,13 +18,20 @@ export function useAuth(options?: UseAuthOptions) {
   // Refetch identity whenever the Supabase session changes (sign in / out).
   useEffect(() => {
     if (!supabase) return;
-    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+    const authClient = supabase;
+    const { data: sub } = authClient.auth.onAuthStateChange(() => {
       void utils.auth.me.invalidate();
     });
 
-    void supabase.auth.getSession().then(({ data }) => {
-      if (data.session) void utils.auth.me.invalidate();
-    });
+    void completeOAuthRedirect()
+      .catch((error) => {
+        console.warn("[Auth] OAuth redirect exchange failed", error);
+      })
+      .finally(() => {
+        void authClient.auth.getSession().then(({ data }) => {
+          if (data.session) void utils.auth.me.invalidate();
+        });
+      });
 
     return () => sub.subscription.unsubscribe();
   }, [utils]);
