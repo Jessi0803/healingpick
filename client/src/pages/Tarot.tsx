@@ -338,10 +338,10 @@ export default function TarotPage() {
   // from walking through the whole flow only to be blocked at the last step.
   const handleStart = () => {
     if (!isAuthenticated) {
-      toast.error('註冊登入後才能開始占卜 🐾', {
-        description: '建立帳號後會送免費占卜額度，也能保存你的解讀紀錄。',
+      toast.error('登入 每日兩次免費占卜 🐾', {
+        description: '登入後即可開始占卜，並保存你的解讀紀錄。',
         action: {
-          label: '註冊登入',
+          label: '登入',
           onClick: () => void login(),
         },
         duration: 6000,
@@ -399,10 +399,10 @@ export default function TarotPage() {
     },
     onError: (error) => {
       if (error.message === 'NOT_SIGNED_IN') {
-        toast.error('註冊登入後才能查看完整解讀', {
-          description: '登入後即可使用每日免費額度並保存紀錄。',
+        toast.error('登入 每日兩次免費占卜', {
+          description: '登入後即可查看完整解讀，並保存你的占卜紀錄。',
           action: {
-            label: '註冊登入',
+            label: '登入',
             onClick: () => void login(),
           },
           duration: 6000,
@@ -479,10 +479,10 @@ export default function TarotPage() {
 
   const startReading = (cards = drawnCards) => {
     if (!isAuthenticated) {
-      toast.error('註冊登入後才能查看完整解讀', {
-        description: '登入後即可使用每日免費額度並保存紀錄。',
+      toast.error('登入 每日兩次免費占卜', {
+        description: '登入後即可查看完整解讀，並保存你的占卜紀錄。',
         action: {
-          label: '註冊登入',
+          label: '登入',
           onClick: () => void login(),
         },
         duration: 6000,

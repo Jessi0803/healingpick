@@ -65,7 +65,7 @@ export default function BuyPage() {
             </h1>
             <p className="text-[12px] text-[#31353A]/54 tracking-wider"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-              每天可免費占卜 2 次，用完後每次解讀消耗 1 點
+              登入 每日兩次免費占卜，用完後每次解讀消耗 1 點
             </p>
           </div>
 
