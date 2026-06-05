@@ -46,6 +46,19 @@ export default function LoginDialog() {
     return () => window.removeEventListener("open-login", handler);
   }, []);
 
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = event instanceof CustomEvent ? event.detail : null;
+      setOpen(true);
+      setMode("login");
+      setError(translateAuthError(typeof detail === "string" ? detail : "登入失敗,請稍後再試"));
+      setInfo(null);
+      setCopiedUrl(false);
+    };
+    window.addEventListener("auth-error", handler);
+    return () => window.removeEventListener("auth-error", handler);
+  }, []);
+
   // Reset transient state whenever mode flips.
   useEffect(() => {
     setError(null);

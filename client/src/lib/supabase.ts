@@ -7,7 +7,14 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 export const supabaseEnabled = Boolean(url && anonKey);
 
 export const supabase: SupabaseClient | null = supabaseEnabled
-  ? createClient(url as string, anonKey as string)
+  ? createClient(url as string, anonKey as string, {
+      auth: {
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: "pkce",
+        persistSession: true,
+      },
+    })
   : null;
 
 export const IN_APP_BROWSER_LOGIN_MESSAGE =

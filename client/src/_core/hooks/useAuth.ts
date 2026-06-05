@@ -24,8 +24,16 @@ export function useAuth(options?: UseAuthOptions) {
     });
 
     void completeOAuthRedirect()
+      .then((result) => {
+        if (!result.ok && result.error && typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("auth-error", { detail: result.error }));
+        }
+      })
       .catch((error) => {
         console.warn("[Auth] OAuth redirect exchange failed", error);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("auth-error", { detail: String(error) }));
+        }
       })
       .finally(() => {
         void authClient.auth.getSession().then(({ data }) => {
