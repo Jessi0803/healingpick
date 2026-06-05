@@ -8,6 +8,7 @@ import { ENV } from "./env";
 import { sdk } from "./sdk";
 
 const LINE_STATE_COOKIE = "line_oauth_state";
+const LINE_RETURN_COOKIE = "line_oauth_return_to";
 const LINE_AUTH_URL = "https://access.line.me/oauth2/v2.1/authorize";
 const LINE_TOKEN_URL = "https://api.line.me/oauth2/v2.1/token";
 const LINE_PROFILE_URL = "https://api.line.me/v2/profile";
@@ -73,6 +74,14 @@ function getCookie(req: Request, key: string): string | undefined {
   return parsed[key];
 }
 
+function getSafeReturnTo(value: string | undefined): string {
+  if (!value) return "/";
+  if (!value.startsWith("/") || value.startsWith("//") || value.includes("\\") || value.includes("\n")) {
+    return "/";
+  }
+  return value;
+}
+
 export function registerLineRoutes(app: Express) {
   app.get("/api/line-session-debug", async (req: Request, res: Response) => {
     const sessionCookie = getCookie(req, COOKIE_NAME);
@@ -91,8 +100,13 @@ export function registerLineRoutes(app: Express) {
     if (!requireLineConfig(res)) return;
 
     const state = randomBytes(24).toString("hex");
+    const returnTo = getSafeReturnTo(getQueryParam(req, "return_to"));
     const cookieOptions = getSessionCookieOptions(req);
     res.cookie(LINE_STATE_COOKIE, state, {
+      ...cookieOptions,
+      maxAge: 10 * 60 * 1000,
+    });
+    res.cookie(LINE_RETURN_COOKIE, returnTo, {
       ...cookieOptions,
       maxAge: 10 * 60 * 1000,
     });
@@ -118,17 +132,20 @@ export function registerLineRoutes(app: Express) {
 
     if (error) {
       res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
+      res.clearCookie(LINE_RETURN_COOKIE, cookieOptions);
       res.redirect(302, `/?line_error=${encodeURIComponent(error)}`);
       return;
     }
 
     if (!code || !state || getCookie(req, LINE_STATE_COOKIE) !== state) {
       res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
+      res.clearCookie(LINE_RETURN_COOKIE, cookieOptions);
       res.redirect(302, "/?line_error=invalid_state");
       return;
     }
 
     try {
+      const returnTo = getSafeReturnTo(getCookie(req, LINE_RETURN_COOKIE));
       const body = new URLSearchParams({
         grant_type: "authorization_code",
         code,
@@ -188,11 +205,13 @@ export function registerLineRoutes(app: Express) {
       }
 
       res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
+      res.clearCookie(LINE_RETURN_COOKIE, cookieOptions);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
-      res.redirect(302, "/");
+      res.redirect(302, returnTo);
     } catch (callbackError) {
       console.error("[LINE] Callback failed", callbackError);
       res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
+      res.clearCookie(LINE_RETURN_COOKIE, cookieOptions);
       const code = callbackError instanceof LineCallbackError ? callbackError.code : "callback_failed";
       res.redirect(302, `/?line_error=${code}`);
     }

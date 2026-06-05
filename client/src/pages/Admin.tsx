@@ -24,6 +24,7 @@ function getReadingKind(row: Pick<AdminReadingRow, 'type' | 'inputData'>) {
     try {
       const parsed = JSON.parse(row.inputData) as { recordKind?: string };
       if (parsed.recordKind === 'tarot_followup') return '塔羅追問';
+      if (parsed.recordKind === 'ziwei_followup') return '紫微追問';
     } catch {
       // Older records may store plain text instead of JSON.
     }

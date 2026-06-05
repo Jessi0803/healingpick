@@ -71,7 +71,7 @@ export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string 
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: window.location.origin },
+    options: { redirectTo: window.location.href },
   });
   if (error) return { ok: false, error: error.message };
   return { ok: true };
@@ -80,7 +80,8 @@ export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string 
 /** Start the LINE sign-in redirect flow and prompt users to add the linked official account. */
 export async function signInWithLine(): Promise<{ ok: boolean; error?: string }> {
   if (typeof window === "undefined") return { ok: false, error: "Auth not configured" };
-  window.location.href = "/api/line-login";
+  const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  window.location.href = `/api/line-login?return_to=${encodeURIComponent(returnTo)}`;
   return { ok: true };
 }
 

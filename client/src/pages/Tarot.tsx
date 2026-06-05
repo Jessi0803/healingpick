@@ -328,6 +328,8 @@ const TAROT_RECOMMENDATION_MESSAGES: Record<string, string> = {
   other: '先看清真正困住你的核心，再決定下一步。',
 };
 
+const TAROT_PENDING_FOLLOW_UP_KEY = 'healingpick:tarot-pending-follow-up';
+
 export default function TarotPage() {
   const { isAuthenticated, login } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
@@ -377,6 +379,7 @@ export default function TarotPage() {
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
+  const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -445,12 +448,76 @@ export default function TarotPage() {
       positionDesc: SPREAD_POSITIONS[i].desc,
     }));
 
+  const submitFollowUp = useCallback((trimmedQuestion: string, creditState = creditsQuery.data) => {
+    if (!trimmedQuestion || !llmInterpretation || followUpMutation.isPending) return false;
+
+    if (creditState?.enabled) {
+      if (!isAuthenticated) {
+        setPendingFollowUpAfterLogin(true);
+        if (typeof window !== 'undefined') {
+          window.sessionStorage.setItem(TAROT_PENDING_FOLLOW_UP_KEY, JSON.stringify({
+            question,
+            questionType,
+            cards: getReadingCardsPayload(),
+            drawnCards,
+            interpretation: llmInterpretation,
+            followUpQuestion: trimmedQuestion,
+            readingRecommendation,
+          }));
+        }
+        toast.error('登入後可繼續追問', {
+          description: '登入後會回到這一頁，送出追問時才會消耗 1 點。',
+          action: {
+            label: '登入',
+            onClick: () => void login(),
+          },
+          duration: 6000,
+        });
+        void login();
+        return false;
+      }
+
+      if (creditState.credits <= 0) {
+        toast.error('點數不足', {
+          description: '追問每次會消耗 1 點，請先購買點數。',
+          action: {
+            label: '購買點數',
+            onClick: () => {
+              window.location.href = '/buy';
+            },
+          },
+          duration: 6000,
+        });
+        return false;
+      }
+    }
+
+    followUpMutation.mutate({
+      question,
+      questionType,
+      cards: getReadingCardsPayload(),
+      interpretation: llmInterpretation,
+      followUpQuestion: trimmedQuestion,
+    });
+    return true;
+  }, [
+    creditsQuery.data,
+    followUpMutation,
+    getReadingCardsPayload,
+    isAuthenticated,
+    llmInterpretation,
+    login,
+    question,
+    questionType,
+  ]);
+
   const startReading = (cards = drawnCards) => {
     setStep('reading');
     setLlmInterpretation('');
     setReadingRecommendation(null);
     setFollowUpQuestion('');
     setFollowUpExchanges([]);
+    setPendingFollowUpAfterLogin(false);
     interpretMutation.mutate({
       question,
       questionType,
@@ -463,43 +530,85 @@ export default function TarotPage() {
     const trimmedQuestion = followUpQuestion.trim();
     if (!trimmedQuestion || !llmInterpretation || followUpMutation.isPending) return;
 
-    const c = creditsQuery.data;
-    if (c?.enabled) {
-      if (!isAuthenticated) {
-        toast.error('登入後可繼續追問', {
-          description: '追問每次會消耗 1 點，登入後即可繼續。',
-          action: {
-            label: '登入',
-            onClick: () => void login(),
-          },
-          duration: 6000,
-        });
-        return;
-      }
+    submitFollowUp(trimmedQuestion);
+  };
 
-      if (c.credits <= 0) {
-        toast.error('點數不足', {
-          description: '追問每次會消耗 1 點，請先購買點數。',
-          action: {
-            label: '購買點數',
-            onClick: () => {
-              window.location.href = '/buy';
-            },
-          },
-          duration: 6000,
-        });
-        return;
-      }
+  useEffect(() => {
+    if (!pendingFollowUpAfterLogin || !isAuthenticated || followUpMutation.isPending) return;
+    const trimmedQuestion = followUpQuestion.trim();
+    if (!trimmedQuestion) {
+      setPendingFollowUpAfterLogin(false);
+      return;
     }
 
-    followUpMutation.mutate({
-      question,
-      questionType,
-      cards: getReadingCardsPayload(),
-      interpretation: llmInterpretation,
-      followUpQuestion: trimmedQuestion,
+    void creditsQuery.refetch().then((result) => {
+      const submitted = submitFollowUp(trimmedQuestion, result.data);
+      if (submitted || isAuthenticated) setPendingFollowUpAfterLogin(false);
     });
-  };
+  }, [
+    creditsQuery,
+    followUpMutation.isPending,
+    followUpQuestion,
+    isAuthenticated,
+    pendingFollowUpAfterLogin,
+    submitFollowUp,
+  ]);
+
+  useEffect(() => {
+    if (!isAuthenticated || followUpMutation.isPending || typeof window === 'undefined') return;
+
+    const raw = window.sessionStorage.getItem(TAROT_PENDING_FOLLOW_UP_KEY);
+    if (!raw) return;
+    window.sessionStorage.removeItem(TAROT_PENDING_FOLLOW_UP_KEY);
+
+    try {
+      const pending = JSON.parse(raw) as {
+        question?: string;
+        questionType?: string;
+        cards?: ReturnType<typeof getReadingCardsPayload>;
+        drawnCards?: ReturnType<typeof drawCards>;
+        interpretation?: string;
+        followUpQuestion?: string;
+        readingRecommendation?: ReadingRecommendation | null;
+      };
+      const trimmedQuestion = pending.followUpQuestion?.trim();
+      if (!trimmedQuestion || !pending.interpretation || !pending.cards?.length) return;
+
+      setStep('reading');
+      setQuestion(pending.question ?? '');
+      setQuestionType(pending.questionType ?? 'love');
+      setDrawnCards(pending.drawnCards ?? []);
+      setLlmInterpretation(pending.interpretation);
+      setReadingRecommendation(pending.readingRecommendation ?? null);
+      setFollowUpQuestion(trimmedQuestion);
+
+      void creditsQuery.refetch().then((result) => {
+        if (result.data?.enabled && result.data.credits <= 0) {
+          toast.error('點數不足', {
+            description: '追問每次會消耗 1 點，請先購買點數。',
+            action: {
+              label: '購買點數',
+              onClick: () => {
+                window.location.href = '/buy';
+              },
+            },
+            duration: 6000,
+          });
+          return;
+        }
+
+        followUpMutation.mutate({
+          question: pending.question ?? '',
+          questionType: pending.questionType ?? 'love',
+          cards: pending.cards ?? [],
+          interpretation: pending.interpretation ?? '',
+          followUpQuestion: trimmedQuestion,
+        });
+      });
+    } catch {
+      window.sessionStorage.removeItem(TAROT_PENDING_FOLLOW_UP_KEY);
+    }
+  }, [creditsQuery, followUpMutation, isAuthenticated]);
 
   // 開始持續洗牌動畫
   const handleStartShuffle = useCallback(() => {

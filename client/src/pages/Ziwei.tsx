@@ -9,7 +9,7 @@
  *   - AI interpretation
  */
 
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
@@ -272,6 +272,13 @@ type ReadingRecommendation = {
   reason: string;
 };
 
+type FollowUpExchange = {
+  question: string;
+  answer: string;
+};
+
+const ZIWEI_PENDING_FOLLOW_UP_KEY = 'healingpick:ziwei-pending-follow-up';
+
 export default function ZiweiPage() {
   const { isAuthenticated, login } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
@@ -286,6 +293,9 @@ export default function ZiweiPage() {
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
+  const [followUpQuestion, setFollowUpQuestion] = useState('');
+  const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
+  const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
   const formSectionRef = useRef<HTMLDivElement | null>(null);
   const focusAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -315,6 +325,45 @@ export default function ZiweiPage() {
     },
     onError: () => {
       toast.error('命盤排列失敗，請稍後再試');
+    },
+  });
+  const followUpMutation = trpc.ziwei.followUp.useMutation({
+    onSuccess: (data, variables) => {
+      setFollowUpExchanges(prev => [
+        ...prev,
+        {
+          question: variables.followUpQuestion,
+          answer: data.answer,
+        },
+      ]);
+      setFollowUpQuestion('');
+      void creditsQuery.refetch();
+    },
+    onError: (error) => {
+      if (error.message === 'NOT_SIGNED_IN') {
+        toast.error('登入後可繼續追問', {
+          description: '追問每次會消耗 1 點，登入後即可繼續。',
+          action: {
+            label: '登入',
+            onClick: () => void login(),
+          },
+          duration: 6000,
+        });
+        return;
+      }
+
+      if (error.message === 'INSUFFICIENT_CREDITS') {
+        toast.error('點數不足', {
+          description: '追問每次會消耗 1 點，請先購買點數。',
+          action: {
+            label: '購買點數',
+            onClick: () => {
+              window.location.href = '/buy';
+            },
+          },
+          duration: 6000,
+        });
+      }
     },
   });
   const ziweiWaitingMessage = useRotatingText(ZIWEI_WAITING_MESSAGES, interpretMutation.isPending);
@@ -347,6 +396,9 @@ export default function ZiweiPage() {
     setAstrolabe(null);
     setLlmInterpretation('');
     setReadingRecommendation(null);
+    setFollowUpQuestion('');
+    setFollowUpExchanges([]);
+    setPendingFollowUpAfterLogin(false);
     setSelectedPalaceName(null);
     interpretMutation.mutate({
       solarDate: birthDate,
@@ -355,6 +407,164 @@ export default function ZiweiPage() {
       focusArea: focusArea || undefined,
     });
   }
+
+  const submitFollowUp = useCallback((trimmedQuestion: string, creditState = creditsQuery.data) => {
+    if (!trimmedQuestion || !llmInterpretation || followUpMutation.isPending) return false;
+
+    if (creditState?.enabled) {
+      if (!isAuthenticated) {
+        setPendingFollowUpAfterLogin(true);
+        if (typeof window !== 'undefined') {
+          window.sessionStorage.setItem(ZIWEI_PENDING_FOLLOW_UP_KEY, JSON.stringify({
+            birthDate,
+            hourValue,
+            gender,
+            focusArea,
+            astrolabe,
+            interpretation: llmInterpretation,
+            followUpQuestion: trimmedQuestion,
+            readingRecommendation,
+          }));
+        }
+        toast.error('登入後可繼續追問', {
+          description: '登入後會回到這一頁，送出追問時才會消耗 1 點。',
+          action: {
+            label: '登入',
+            onClick: () => void login(),
+          },
+          duration: 6000,
+        });
+        void login();
+        return false;
+      }
+
+      if (creditState.credits <= 0) {
+        toast.error('點數不足', {
+          description: '追問每次會消耗 1 點，請先購買點數。',
+          action: {
+            label: '購買點數',
+            onClick: () => {
+              window.location.href = '/buy';
+            },
+          },
+          duration: 6000,
+        });
+        return false;
+      }
+    }
+
+    followUpMutation.mutate({
+      solarDate: birthDate,
+      timeIndex: parseInt(hourValue),
+      gender,
+      focusArea: focusArea || undefined,
+      interpretation: llmInterpretation,
+      followUpQuestion: trimmedQuestion,
+    });
+    return true;
+  }, [
+    birthDate,
+    creditsQuery.data,
+    focusArea,
+    followUpMutation,
+    gender,
+    hourValue,
+    isAuthenticated,
+    llmInterpretation,
+    login,
+  ]);
+
+  const handleFollowUpSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedQuestion = followUpQuestion.trim();
+    if (!trimmedQuestion || !llmInterpretation || followUpMutation.isPending) return;
+
+    submitFollowUp(trimmedQuestion);
+  };
+
+  useEffect(() => {
+    if (!pendingFollowUpAfterLogin || !isAuthenticated || followUpMutation.isPending) return;
+    const trimmedQuestion = followUpQuestion.trim();
+    if (!trimmedQuestion) {
+      setPendingFollowUpAfterLogin(false);
+      return;
+    }
+
+    void creditsQuery.refetch().then((result) => {
+      const submitted = submitFollowUp(trimmedQuestion, result.data);
+      if (submitted || isAuthenticated) setPendingFollowUpAfterLogin(false);
+    });
+  }, [
+    creditsQuery,
+    followUpMutation.isPending,
+    followUpQuestion,
+    isAuthenticated,
+    pendingFollowUpAfterLogin,
+    submitFollowUp,
+  ]);
+
+  useEffect(() => {
+    if (!isAuthenticated || followUpMutation.isPending || typeof window === 'undefined') return;
+
+    const raw = window.sessionStorage.getItem(ZIWEI_PENDING_FOLLOW_UP_KEY);
+    if (!raw) return;
+    window.sessionStorage.removeItem(ZIWEI_PENDING_FOLLOW_UP_KEY);
+
+    try {
+      const pending = JSON.parse(raw) as {
+        birthDate?: string;
+        hourValue?: string;
+        gender?: '男' | '女';
+        focusArea?: string;
+        astrolabe?: AstrolabeData | null;
+        interpretation?: string;
+        followUpQuestion?: string;
+        readingRecommendation?: ReadingRecommendation | null;
+      };
+      const trimmedQuestion = pending.followUpQuestion?.trim();
+      if (!trimmedQuestion || !pending.interpretation) return;
+
+      const nextBirthDate = pending.birthDate ?? birthDate;
+      const nextHourValue = pending.hourValue ?? hourValue;
+      const nextGender = pending.gender ?? gender;
+      const nextFocusArea = pending.focusArea ?? '';
+      setBirthDate(nextBirthDate);
+      setHourValue(nextHourValue);
+      setGender(nextGender);
+      setFocusArea(nextFocusArea);
+      setAstrolabe(pending.astrolabe ?? null);
+      setLlmInterpretation(pending.interpretation);
+      setReadingRecommendation(pending.readingRecommendation ?? null);
+      setFollowUpQuestion(trimmedQuestion);
+
+      void creditsQuery.refetch().then((result) => {
+        if (result.data?.enabled && result.data.credits <= 0) {
+          toast.error('點數不足', {
+            description: '追問每次會消耗 1 點，請先購買點數。',
+            action: {
+              label: '購買點數',
+              onClick: () => {
+                window.location.href = '/buy';
+              },
+            },
+            duration: 6000,
+          });
+          return;
+        }
+
+        followUpMutation.mutate({
+          solarDate: nextBirthDate,
+          timeIndex: parseInt(nextHourValue),
+          gender: nextGender,
+          focusArea: nextFocusArea || undefined,
+          interpretation: pending.interpretation ?? '',
+          followUpQuestion: trimmedQuestion,
+        });
+      });
+    } catch {
+      window.sessionStorage.removeItem(ZIWEI_PENDING_FOLLOW_UP_KEY);
+    }
+  }, [birthDate, creditsQuery, followUpMutation, gender, hourValue, isAuthenticated]);
 
   const selectedPalace = astrolabe?.palaces.find((p) => p.name === selectedPalaceName) ?? null;
   const soulPalaceName = astrolabe?.palaces.find((p) => p.name === '命宮')?.name ?? '命宮';
@@ -437,6 +647,76 @@ export default function ZiweiPage() {
                 </div>
               </div>
             )}
+
+            <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
+              <div className="flex flex-col gap-2 mb-4">
+                <p className="text-[13px] tracking-[0.2em] text-[#8A7250]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                  ◎ 想繼續問下去嗎
+                </p>
+                <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                  每次追問會消耗 1 點。Mochi 會基於同一份命盤，回答你更具體的延伸問題。
+                </p>
+              </div>
+
+              <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
+                <textarea
+                  value={followUpQuestion}
+                  onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
+                  maxLength={300}
+                  placeholder="例如：這段關係還有機會嗎？我近期工作該注意什麼？"
+                  className="min-h-[78px] resize-none rounded-xl border border-[#D1BE9B]/20 bg-white/55 px-3.5 py-2.5 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    {followUpQuestion.length}/300
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={!followUpQuestion.trim() || followUpMutation.isPending}
+                    className="px-6 py-2.5 text-[11px] tracking-[0.18em] bg-[#3D4144] text-[#FAF7F4] rounded-full transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 hover:bg-[#D1BE9B] hover:text-[#31353A]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    {followUpMutation.isPending
+                      ? 'Mochi 正在看命盤...'
+                      : '送出追問（消耗 1 點）'}
+                  </button>
+                </div>
+              </form>
+
+              {followUpMutation.isError && (
+                <p className="mt-3 text-[12px] tracking-[0.08em] text-[#EAA8AC]"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                  追問暫時無法送出，請稍後再試。
+                </p>
+              )}
+
+              {followUpExchanges.length > 0 && (
+                <div className="mt-5 flex flex-col gap-3">
+                  {followUpExchanges.map((item, index) => (
+                    <div key={`${index}-${item.question}`} className="rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
+                      <div className="mb-3 flex flex-col gap-1">
+                        <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          Mochi 的深入回答
+                        </p>
+                        <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
+                          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                          你的追問：{item.question}
+                        </p>
+                      </div>
+                      <p className="text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/78 whitespace-pre-line"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        {item.answer}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
