@@ -1,0 +1,157 @@
+import { randomBytes } from "node:crypto";
+import { COOKIE_NAME, ONE_YEAR_MS } from "../../shared/const";
+import { parse as parseCookieHeader } from "cookie";
+import type { Express, Request, Response } from "express";
+import * as db from "../db";
+import { getSessionCookieOptions } from "./cookies";
+import { ENV } from "./env";
+import { sdk } from "./sdk";
+
+const LINE_STATE_COOKIE = "line_oauth_state";
+const LINE_AUTH_URL = "https://access.line.me/oauth2/v2.1/authorize";
+const LINE_TOKEN_URL = "https://api.line.me/oauth2/v2.1/token";
+const LINE_PROFILE_URL = "https://api.line.me/v2/profile";
+
+type LineTokenResponse = {
+  access_token?: string;
+  token_type?: string;
+  expires_in?: number;
+  scope?: string;
+  id_token?: string;
+  error?: string;
+  error_description?: string;
+};
+
+type LineProfileResponse = {
+  userId?: string;
+  displayName?: string;
+  pictureUrl?: string;
+  statusMessage?: string;
+};
+
+function getPublicOrigin(req: Request) {
+  const proto = String(req.headers["x-forwarded-proto"] ?? req.protocol ?? "https")
+    .split(",")[0]
+    .trim();
+  const host = String(req.headers["x-forwarded-host"] ?? req.headers.host ?? "")
+    .split(",")[0]
+    .trim();
+  return `${proto}://${host}`;
+}
+
+function getRedirectUri(req: Request) {
+  return ENV.lineLoginRedirectUri || `${getPublicOrigin(req)}/api/line-callback`;
+}
+
+function requireLineConfig(res: Response) {
+  if (ENV.lineChannelId && ENV.lineChannelSecret) return true;
+  res.status(500).json({ error: "LINE login is not configured" });
+  return false;
+}
+
+function getQueryParam(req: Request, key: string): string | undefined {
+  const value = req.query[key];
+  return typeof value === "string" ? value : undefined;
+}
+
+function getCookie(req: Request, key: string): string | undefined {
+  const parsed = parseCookieHeader(req.headers.cookie ?? "");
+  return parsed[key];
+}
+
+export function registerLineRoutes(app: Express) {
+  app.get("/api/line-login", (req: Request, res: Response) => {
+    if (!requireLineConfig(res)) return;
+
+    const state = randomBytes(24).toString("hex");
+    const cookieOptions = getSessionCookieOptions(req);
+    res.cookie(LINE_STATE_COOKIE, state, {
+      ...cookieOptions,
+      maxAge: 10 * 60 * 1000,
+    });
+
+    const url = new URL(LINE_AUTH_URL);
+    url.searchParams.set("response_type", "code");
+    url.searchParams.set("client_id", ENV.lineChannelId);
+    url.searchParams.set("redirect_uri", getRedirectUri(req));
+    url.searchParams.set("state", state);
+    url.searchParams.set("scope", "profile openid");
+    url.searchParams.set("bot_prompt", "aggressive");
+
+    res.redirect(302, url.toString());
+  });
+
+  app.get("/api/line-callback", async (req: Request, res: Response) => {
+    if (!requireLineConfig(res)) return;
+
+    const code = getQueryParam(req, "code");
+    const state = getQueryParam(req, "state");
+    const error = getQueryParam(req, "error_description") ?? getQueryParam(req, "error");
+    const cookieOptions = getSessionCookieOptions(req);
+
+    if (error) {
+      res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
+      res.redirect(302, `/?line_error=${encodeURIComponent(error)}`);
+      return;
+    }
+
+    if (!code || !state || getCookie(req, LINE_STATE_COOKIE) !== state) {
+      res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
+      res.redirect(302, "/?line_error=invalid_state");
+      return;
+    }
+
+    try {
+      const body = new URLSearchParams({
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: getRedirectUri(req),
+        client_id: ENV.lineChannelId,
+        client_secret: ENV.lineChannelSecret,
+      });
+
+      const tokenResponse = await fetch(LINE_TOKEN_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body,
+      });
+      const tokenData = (await tokenResponse.json()) as LineTokenResponse;
+
+      if (!tokenResponse.ok || !tokenData.access_token) {
+        throw new Error(tokenData.error_description || tokenData.error || "LINE token exchange failed");
+      }
+
+      const profileResponse = await fetch(LINE_PROFILE_URL, {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      });
+      const profile = (await profileResponse.json()) as LineProfileResponse;
+
+      if (!profileResponse.ok || !profile.userId) {
+        throw new Error("LINE profile missing userId");
+      }
+
+      const openId = `line:${profile.userId}`;
+      const name = profile.displayName || "LINE user";
+      await db.upsertUser({
+        openId,
+        name,
+        email: null,
+        loginMethod: "line",
+        lastSignedIn: new Date(),
+      });
+
+      const sessionToken = await sdk.createSessionToken(openId, {
+        name,
+        expiresInMs: ONE_YEAR_MS,
+      });
+
+      res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      res.redirect(302, "/");
+    } catch (callbackError) {
+      console.error("[LINE] Callback failed", callbackError);
+      res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
+      res.redirect(302, "/?line_error=callback_failed");
+    }
+  });
+}

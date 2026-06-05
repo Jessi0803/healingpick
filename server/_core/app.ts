@@ -2,6 +2,7 @@ import "dotenv/config";
 import express, { type Express } from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
+import { registerLineRoutes } from "./line";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
@@ -16,6 +17,7 @@ export function createApp(): Express {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
+  registerLineRoutes(app);
   app.post("/api/gumroad-webhook", handleGumroadPing);
   app.use(
     "/api/trpc",

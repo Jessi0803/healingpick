@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
 import { getUserByOpenId, upsertUser } from "../db";
+import { sdk } from "./sdk";
 import { verifyAccessToken } from "./supabase";
 
 const IP_SALT = process.env.IP_HASH_SALT ?? "hp-anon-salt";
@@ -57,6 +58,9 @@ export async function createContext(
         }
         user = appUser ?? null;
       }
+    }
+    if (!user) {
+      user = await sdk.authenticateRequest(opts.req);
     }
   } catch {
     // Auth is optional for public procedures.

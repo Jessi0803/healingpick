@@ -16,4 +16,7 @@ export const ENV = {
   supabaseAnonKey: process.env.SUPABASE_ANON_KEY ?? "",
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
   gumroadWebhookSecret: process.env.GUMROAD_WEBHOOK_SECRET ?? "",
+  lineChannelId: process.env.LINE_CHANNEL_ID ?? "",
+  lineChannelSecret: process.env.LINE_CHANNEL_SECRET ?? "",
+  lineLoginRedirectUri: process.env.LINE_LOGIN_REDIRECT_URI ?? "",
 };
