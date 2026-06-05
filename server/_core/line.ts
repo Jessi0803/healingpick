@@ -29,6 +29,20 @@ type LineProfileResponse = {
   statusMessage?: string;
 };
 
+class LineCallbackError extends Error {
+  constructor(
+    readonly code:
+      | "token_failed"
+      | "profile_failed"
+      | "db_failed"
+      | "session_failed",
+    message: string,
+  ) {
+    super(message);
+    this.name = "LineCallbackError";
+  }
+}
+
 function getPublicOrigin(req: Request) {
   const proto = String(req.headers["x-forwarded-proto"] ?? req.protocol ?? "https")
     .split(",")[0]
@@ -118,7 +132,10 @@ export function registerLineRoutes(app: Express) {
       const tokenData = (await tokenResponse.json()) as LineTokenResponse;
 
       if (!tokenResponse.ok || !tokenData.access_token) {
-        throw new Error(tokenData.error_description || tokenData.error || "LINE token exchange failed");
+        throw new LineCallbackError(
+          "token_failed",
+          tokenData.error_description || tokenData.error || "LINE token exchange failed",
+        );
       }
 
       const profileResponse = await fetch(LINE_PROFILE_URL, {
@@ -127,23 +144,35 @@ export function registerLineRoutes(app: Express) {
       const profile = (await profileResponse.json()) as LineProfileResponse;
 
       if (!profileResponse.ok || !profile.userId) {
-        throw new Error("LINE profile missing userId");
+        throw new LineCallbackError("profile_failed", "LINE profile missing userId");
       }
 
       const openId = `line:${profile.userId}`;
       const name = profile.displayName || "LINE user";
-      await db.upsertUser({
-        openId,
-        name,
-        email: null,
-        loginMethod: "line",
-        lastSignedIn: new Date(),
-      });
+      try {
+        await db.upsertUser({
+          openId,
+          name,
+          email: null,
+          loginMethod: "line",
+          lastSignedIn: new Date(),
+        });
+      } catch (dbError) {
+        throw new LineCallbackError("db_failed", dbError instanceof Error ? dbError.message : String(dbError));
+      }
 
-      const sessionToken = await sdk.createSessionToken(openId, {
-        name,
-        expiresInMs: ONE_YEAR_MS,
-      });
+      let sessionToken: string;
+      try {
+        sessionToken = await sdk.createSessionToken(openId, {
+          name,
+          expiresInMs: ONE_YEAR_MS,
+        });
+      } catch (sessionError) {
+        throw new LineCallbackError(
+          "session_failed",
+          sessionError instanceof Error ? sessionError.message : String(sessionError),
+        );
+      }
 
       res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
@@ -151,7 +180,8 @@ export function registerLineRoutes(app: Express) {
     } catch (callbackError) {
       console.error("[LINE] Callback failed", callbackError);
       res.clearCookie(LINE_STATE_COOKIE, cookieOptions);
-      res.redirect(302, "/?line_error=callback_failed");
+      const code = callbackError instanceof LineCallbackError ? callbackError.code : "callback_failed";
+      res.redirect(302, `/?line_error=${code}`);
     }
   });
 }
