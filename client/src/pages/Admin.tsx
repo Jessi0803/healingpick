@@ -19,6 +19,18 @@ const typeLabels: Record<string, string> = {
   fortune: '每日運勢',
 };
 
+function getReadingKind(row: Pick<AdminReadingRow, 'type' | 'inputData'>) {
+  if (row.inputData) {
+    try {
+      const parsed = JSON.parse(row.inputData) as { recordKind?: string };
+      if (parsed.recordKind === 'tarot_followup') return '塔羅追問';
+    } catch {
+      // Older records may store plain text instead of JSON.
+    }
+  }
+  return typeLabels[row.type] ?? row.type;
+}
+
 type AdminUserRow = {
   id: number;
   name: string | null;
@@ -371,7 +383,7 @@ function ReadingsTable({ rows }: { rows: AdminReadingRow[] }) {
                   <span className={`rounded-full px-2 py-0.5 text-[10px] tracking-[0.1em] ${isVisitor(row) ? 'bg-[#C9837A]/12 text-[#C9837A]' : 'bg-[#A38D6B]/14 text-[#A38D6B]'}`}>
                     {isVisitor(row) ? '訪客' : '會員'}
                   </span>
-                  <span>{typeLabels[row.type] ?? row.type} · {readerLabel(row)}</span>
+                  <span>{getReadingKind(row)} · {readerLabel(row)}</span>
                 </div>
                 <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
                   {shortText(row.question || row.inputData, 120)}

@@ -385,7 +385,7 @@ export default function ZiweiPage() {
           <div className="mb-5 rounded-2xl border border-[#D1BE9B]/35 bg-[#FFFDF9] px-4 py-3 shadow-[0_8px_24px_rgba(209,190,155,0.12)]">
             <p className="mb-1.5 text-[11px] tracking-[0.22em] text-[#8A7250]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-              這次想看的重點：
+              這次想問的問題：
             </p>
             <p className="text-[13px] leading-[1.9] tracking-[0.08em] text-[#31353A]/86"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 350 }}>
@@ -743,16 +743,16 @@ export default function ZiweiPage() {
                 <div className="mb-6">
                   <label className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    想了解的面向（選填）
+                    想問的問題（選填）
                   </label>
                   <textarea
                     ref={focusAreaRef}
                     value={focusArea}
                     onChange={e => setFocusArea(e.target.value.slice(0, 300))}
                     maxLength={300}
-                    placeholder="例如：事業發展、感情婚姻、財富運勢…"
-                    rows={2}
-                    className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-2.5 text-xs text-[#31353A]/80 tracking-wider focus:outline-none focus:border-[#D1BE9B]/50 resize-none placeholder:text-[#31353A]/42"
+                    placeholder="例如：我現在適合換工作嗎？這段感情接下來該怎麼走？"
+                    rows={3}
+                    className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-3 text-xs leading-[1.9] text-[#31353A]/80 tracking-wider focus:outline-none focus:border-[#D1BE9B]/50 resize-none placeholder:text-[#31353A]/42"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
                   <div className="mt-1 text-right text-[10px] tracking-wider"

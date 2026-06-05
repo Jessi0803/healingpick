@@ -2,6 +2,7 @@ import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { invokeLLM, extractTextContent } from "../_core/llm";
 import { chargePaidCredit, chargeReading } from "../_core/credits";
+import { saveReading } from "../db";
 
 const cardSchema = z.object({
   name: z.string(),
@@ -279,6 +280,26 @@ ${input.followUpQuestion}
       const answer = rawContent
         ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
         : "Mochi 暫時讀不到這個追問，請稍後再試。";
+
+      const isMember = Boolean(ctx.user);
+      await saveReading({
+        userId: ctx.user?.id ?? null,
+        anonId: isMember ? null : ctx.anonId,
+        ipHash: isMember ? null : ctx.ipHash,
+        type: "tarot",
+        question: input.followUpQuestion,
+        inputData: JSON.stringify({
+          recordKind: "tarot_followup",
+          originalQuestion: input.question || null,
+          questionType: input.questionType,
+          cards: input.cards.map((card) => ({
+            name: card.name,
+            position: card.position,
+            reversed: card.reversed,
+          })),
+        }),
+        interpretation: answer,
+      });
 
       return { answer };
     }),
