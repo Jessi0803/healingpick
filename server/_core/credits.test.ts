@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TrpcContext } from "./context";
 import { chargeReading, isCreditsEnabled } from "./credits";
 import { isSupabaseConfigured } from "./supabase";
-import { spendForReading, spendVisitorFree } from "../db";
+import { spendForReading, spendPaidCredit } from "../db";
 
 vi.mock("./supabase", () => ({
   isSupabaseConfigured: vi.fn(),
@@ -10,12 +10,12 @@ vi.mock("./supabase", () => ({
 
 vi.mock("../db", () => ({
   spendForReading: vi.fn(),
-  spendVisitorFree: vi.fn(),
+  spendPaidCredit: vi.fn(),
 }));
 
 const mockIsSupabaseConfigured = vi.mocked(isSupabaseConfigured);
 const mockSpendForReading = vi.mocked(spendForReading);
-const mockSpendVisitorFree = vi.mocked(spendVisitorFree);
+const mockSpendPaidCredit = vi.mocked(spendPaidCredit);
 
 function baseContext(overrides: Partial<TrpcContext> = {}): TrpcContext {
   return {
@@ -71,7 +71,7 @@ describe("credits gating", () => {
     );
 
     expect(mockSpendForReading).toHaveBeenCalledWith(42, "tarot");
-    expect(mockSpendVisitorFree).not.toHaveBeenCalled();
+    expect(mockSpendPaidCredit).not.toHaveBeenCalled();
   });
 
   it("blocks signed-in users when free quota and credits are exhausted", async () => {
@@ -90,20 +90,19 @@ describe("credits gating", () => {
     });
   });
 
-  it("charges anonymous visitors against browser and IP quota", async () => {
-    mockSpendVisitorFree.mockResolvedValueOnce({
-      ok: true,
-      usedFree: true,
-      state: { credits: 0, freeRemaining: 1, dailyFreeQuota: 2 },
+  it("requires sign-in even when an anonymous visitor identity is present", async () => {
+    await expect(
+      chargeReading(baseContext({ anonId: "anon-123456", ipHash: "ip-hash" }), "fortune")
+    ).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+      message: "NOT_SIGNED_IN",
     });
 
-    await chargeReading(baseContext({ anonId: "anon-123456", ipHash: "ip-hash" }), "fortune");
-
-    expect(mockSpendVisitorFree).toHaveBeenCalledWith("anon-123456", "ip-hash");
     expect(mockSpendForReading).not.toHaveBeenCalled();
+    expect(mockSpendPaidCredit).not.toHaveBeenCalled();
   });
 
-  it("requires either a signed-in user or anonymous quota identity", async () => {
+  it("requires a signed-in user", async () => {
     await expect(chargeReading(baseContext(), "tarot")).rejects.toMatchObject({
       code: "UNAUTHORIZED",
       message: "NOT_SIGNED_IN",

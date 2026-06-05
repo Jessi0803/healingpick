@@ -23,7 +23,7 @@ const navLinks = [
   { label: '購買點數', href: '/buy' },
 ];
 
-const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、每日運勢用完免費額度後，每次解讀消耗 1 點。';
+const creditsHint = '登入會員每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、每日運勢用完免費額度後，每次解讀消耗 1 點。';
 
 export default function Navbar() {
   const { user, isAuthenticated, login, logout } = useAuth();
@@ -262,7 +262,7 @@ export default function Navbar() {
                     {credits?.enabled && (
                       <p className="text-[10px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                        免費額度每日 00:00 重置；用完後每次解讀消耗 1 點
+                        登入會員免費額度每日 00:00 重置；用完後每次解讀消耗 1 點
                       </p>
                     )}
                     <Link

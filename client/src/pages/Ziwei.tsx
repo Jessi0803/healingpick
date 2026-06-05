@@ -306,14 +306,39 @@ export default function ZiweiPage() {
       setAstrolabe(data.astrolabe as AstrolabeData);
       setLlmInterpretation(data.interpretation);
       setReadingRecommendation(data.recommendation ?? null);
-      // Record for members and logged-out visitors alike (server attributes by user / anon id).
       saveReadingMutation.mutate({
         type: 'ziwei',
         inputData: JSON.stringify({ solarDate: birthDate, timeIndex: parseInt(hourValue), gender }),
         interpretation: data.interpretation,
       });
     },
-    onError: () => {
+    onError: (error) => {
+      if (error.message === 'NOT_SIGNED_IN') {
+        toast.error('註冊登入後才能查看命盤解讀', {
+          description: '登入後即可使用每日免費額度並保存紀錄。',
+          action: {
+            label: '註冊登入',
+            onClick: () => void login(),
+          },
+          duration: 6000,
+        });
+        return;
+      }
+
+      if (error.message === 'INSUFFICIENT_CREDITS') {
+        toast.error('點數不足', {
+          description: '可購買點數繼續看,或等每日 00:00 免費額度重置。',
+          action: {
+            label: '購買點數',
+            onClick: () => {
+              window.location.href = '/buy';
+            },
+          },
+          duration: 6000,
+        });
+        return;
+      }
+
       toast.error('命盤排列失敗，請稍後再試');
     },
   });
@@ -324,20 +349,26 @@ export default function ZiweiPage() {
       toast.error('請輸入出生日期');
       return;
     }
+    if (!isAuthenticated) {
+      toast.error('註冊登入後才能查看命盤解讀 🐾', {
+        description: '建立帳號後會送免費占卜額度，也能保存你的解讀紀錄。',
+        action: {
+          label: '註冊登入',
+          onClick: () => void login(),
+        },
+        duration: 6000,
+      });
+      return;
+    }
+
     const c = creditsQuery.data;
     if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
       toast.error('今日免費額度已用完 🐾', {
-        description: isAuthenticated
-          ? '可購買點數繼續看,或等每日 00:00 免費額度重置'
-          : '註冊登入就能購買點數繼續看,或等每日 00:00 免費額度重置',
+        description: '可購買點數繼續看,或等每日 00:00 免費額度重置',
         action: {
-          label: isAuthenticated ? '購買點數' : '註冊登入',
+          label: '購買點數',
           onClick: () => {
-            if (isAuthenticated) {
-              window.location.href = '/buy';
-            } else {
-              void login();
-            }
+            window.location.href = '/buy';
           },
         },
         duration: 6000,
@@ -776,7 +807,7 @@ export default function ZiweiPage() {
                 {creditsQuery.data?.enabled && (
                   <p className="mt-3 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    每天免費 2 次，00:00 重置；用完後命盤解讀消耗 1 點。
+                    登入會員每天免費 2 次，00:00 重置；用完後命盤解讀消耗 1 點。
                   </p>
                 )}
               </div>

@@ -92,7 +92,7 @@ export default function BuyPage() {
                 </p>
                 <p className="mt-3 text-[11px] leading-[1.9] tracking-[0.12em] text-[#31353A]/48"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  免費額度每日 00:00 重置，已購買點數不會被清空；塔羅、紫微、每日運勢會先消耗免費額度，用完後每次扣 1 點。
+                  登入會員免費額度每日 00:00 重置，已購買點數不會被清空；塔羅、紫微、每日運勢會先消耗免費額度，用完後每次扣 1 點。
                 </p>
               </div>
 
