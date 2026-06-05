@@ -337,26 +337,20 @@ export default function TarotPage() {
   // Pre-check the user's remaining quota before letting them start. Saves them
   // from walking through the whole flow only to be blocked at the last step.
   const handleStart = () => {
-    if (!isAuthenticated) {
-      toast.error('註冊登入後才能開始占卜 🐾', {
-        description: '建立帳號後會送免費占卜額度，也能保存你的解讀紀錄。',
-        action: {
-          label: '註冊登入',
-          onClick: () => void login(),
-        },
-        duration: 6000,
-      });
-      return;
-    }
-
     const c = creditsQuery.data;
     if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
       toast.error('今日免費額度已用完 🐾', {
-        description: '可購買點數繼續算,或等每日 00:00 免費額度重置',
+        description: isAuthenticated
+          ? '可購買點數繼續算,或等每日 00:00 免費額度重置'
+          : '註冊登入就能購買點數繼續算,或等每日 00:00 免費額度重置',
         action: {
-          label: '購買點數',
+          label: isAuthenticated ? '購買點數' : '註冊登入',
           onClick: () => {
-            window.location.href = '/buy';
+            if (isAuthenticated) {
+              window.location.href = '/buy';
+            } else {
+              void login();
+            }
           },
         },
         duration: 6000,
@@ -390,39 +384,13 @@ export default function TarotPage() {
     onSuccess: (data) => {
       setLlmInterpretation(data.interpretation);
       setReadingRecommendation(data.recommendation ?? null);
+      // Record for members and logged-out visitors alike (server attributes by user / anon id).
       saveReadingMutation.mutate({
         type: 'tarot',
         question: question || undefined,
         inputData: JSON.stringify({ questionType, cards: drawnCards.map(c => ({ name: c.card.name, position: c.card.en, reversed: c.reversed })) }),
         interpretation: data.interpretation,
       });
-    },
-    onError: (error) => {
-      if (error.message === 'NOT_SIGNED_IN') {
-        toast.error('註冊登入後才能查看完整解讀', {
-          description: '登入後即可使用每日免費額度並保存紀錄。',
-          action: {
-            label: '註冊登入',
-            onClick: () => void login(),
-          },
-          duration: 6000,
-        });
-        setStep('intro');
-        return;
-      }
-
-      if (error.message === 'INSUFFICIENT_CREDITS') {
-        toast.error('點數不足', {
-          description: '可購買點數繼續算,或等每日 00:00 免費額度重置。',
-          action: {
-            label: '購買點數',
-            onClick: () => {
-              window.location.href = '/buy';
-            },
-          },
-          duration: 6000,
-        });
-      }
     },
   });
   const followUpMutation = trpc.tarot.followUp.useMutation({
@@ -478,18 +446,6 @@ export default function TarotPage() {
     }));
 
   const startReading = (cards = drawnCards) => {
-    if (!isAuthenticated) {
-      toast.error('註冊登入後才能查看完整解讀', {
-        description: '登入後即可使用每日免費額度並保存紀錄。',
-        action: {
-          label: '註冊登入',
-          onClick: () => void login(),
-        },
-        duration: 6000,
-      });
-      return;
-    }
-
     setStep('reading');
     setLlmInterpretation('');
     setReadingRecommendation(null);
@@ -866,7 +822,7 @@ export default function TarotPage() {
               {creditsQuery.data?.enabled && (
                 <p className="mt-3 text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  登入會員每天免費 2 次，00:00 重置；用完後完整解讀消耗 1 點。
+                  每天免費 2 次，00:00 重置；用完後完整解讀消耗 1 點。
                 </p>
               )}
             </div>

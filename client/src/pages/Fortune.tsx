@@ -290,7 +290,7 @@ function MoonPhaseBadge({ symbol, name }: { symbol: string; name: string }) {
 }
 
 export default function FortunePage() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [hasClickedGenerate, setHasClickedGenerate] = useState(false);
   const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
@@ -327,7 +327,7 @@ export default function FortunePage() {
       date: apiDateStr,
     },
     {
-      enabled: isAuthenticated && !!selectedSign && hasClickedGenerate,
+      enabled: !!selectedSign && hasClickedGenerate,
       staleTime: 1000 * 60 * 60 * 6, // 6 小時快取，同一天同一星座只呼叫一次
       retry: 1,
     }
@@ -335,7 +335,7 @@ export default function FortunePage() {
 
   // 儲存每日運勢紀錄（僅登入後，且同一星座同一天只儲一次）
   useEffect(() => {
-    if (!isAuthenticated || !dailyFortuneQuery.data) return;
+    if (!dailyFortuneQuery.data) return;
     const key = `${selectedSign}-${apiDateStr}`;
     if (savedFortuneRef.current === key) return;
     savedFortuneRef.current = key;
@@ -460,15 +460,7 @@ export default function FortunePage() {
                         Mochi 將結合今日月相能量，為你生成今天的整體、感情、事業與健康提醒。
                       </p>
 
-                      {!isAuthenticated ? (
-                        <button
-                          onClick={() => void login()}
-                          className="w-full rounded-full bg-[#3D4144] px-5 py-3.5 text-xs font-medium tracking-[0.25em] text-[#FAF7F4] shadow-sm transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
-                          style={{ fontFamily: 'Noto Serif TC, serif' }}
-                        >
-                          註冊登入後查看
-                        </button>
-                      ) : credits?.enabled && credits.freeRemaining <= 0 && credits.credits <= 0 ? (
+                      {credits?.enabled && credits.freeRemaining <= 0 && credits.credits <= 0 ? (
                         <Link href="/buy" className="block">
                           <button
                             onClick={() => setUnlockDialogOpen(false)}
@@ -494,7 +486,7 @@ export default function FortunePage() {
                       {credits?.enabled && (
                         <p className="mt-3 text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                          登入會員每日 00:00 重置免費額度；用完後每次解讀消耗 1 點。
+                          免費額度每日 00:00 重置；用完後每次解讀消耗 1 點。
                         </p>
                       )}
                     </div>

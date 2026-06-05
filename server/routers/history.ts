@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { protectedProcedure, router } from "../_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import {
   getReadingsByUser,
   saveReading,
@@ -17,9 +17,10 @@ export const historyRouter = router({
     }),
 
   /**
-   * 儲存占卜記錄。解讀需登入，因此紀錄一律歸到會員帳號。
+   * 儲存占卜記錄。登入會員以 userId 記錄；未登入訪客則以 anonId / ipHash 記錄，
+   * 讓後台也能看到訪客問過的問題與 AI 回答。
    */
-  saveReading: protectedProcedure
+  saveReading: publicProcedure
     .input(
       z.object({
         type: z.enum(["tarot", "ziwei", "fortune"]),
@@ -29,10 +30,11 @@ export const historyRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const isMember = Boolean(ctx.user);
       await saveReading({
-        userId: ctx.user.id,
-        anonId: null,
-        ipHash: null,
+        userId: ctx.user?.id ?? null,
+        anonId: isMember ? null : ctx.anonId,
+        ipHash: isMember ? null : ctx.ipHash,
         type: input.type,
         question: input.question ?? null,
         inputData: input.inputData ?? null,
