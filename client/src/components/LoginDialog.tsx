@@ -4,6 +4,7 @@ import {
   IN_APP_BROWSER_LOGIN_MESSAGE,
   sendPasswordResetEmail,
   signInWithGoogle,
+  signInWithLine,
   signInWithPassword,
   signUpWithPassword,
   supabaseEnabled,
@@ -242,6 +243,18 @@ export default function LoginDialog() {
               className="w-full py-3 text-[12px] tracking-[0.25em] border border-[#31353A]/30 text-[#31353A]/85 rounded-full hover:bg-[#31353A] hover:text-[#FAF7F4] transition-all duration-500"
               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}>
               使用 Google {mode === "register" ? "註冊" : "登入"}
+            </button>
+
+            <button
+              onClick={async () => {
+                setError(null);
+                setInfo(null);
+                const res = await signInWithLine();
+                if (!res.ok) setError(translateAuthError(res.error));
+              }}
+              className="mt-2 w-full py-3 text-[12px] tracking-[0.25em] border border-[#06C755]/45 bg-[#06C755] text-white rounded-full hover:bg-[#05B94F] transition-all duration-500"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}>
+              使用 LINE {mode === "register" ? "註冊" : "登入"}
             </button>
           </>
         )}

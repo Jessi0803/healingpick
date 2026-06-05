@@ -53,7 +53,8 @@ const ELEMENT_RECOMMENDATION_MESSAGES: Record<string, string> = {
 function getFortuneRecommendationMessage(element: string, advice?: string) {
   const trimmedAdvice = advice
     ?.trim()
-    .replace(/^(今天的提醒是|今天的提醒：|今天的提醒:|因為今天的訊息是|因為今天的訊息是：|因為今天的訊息是:)\s*/u, '');
+    .replace(/^(根據今天的提醒：|根據今天的提醒:|根據今天的提醒|今天的提醒是：|今天的提醒是:|今天的提醒是|今天的提醒：|今天的提醒:|因為今天的訊息是：|因為今天的訊息是:|因為今天的訊息是)\s*/u, '')
+    .replace(/[。．.]*$/u, '');
   if (trimmedAdvice) return trimmedAdvice;
   return ELEMENT_RECOMMENDATION_MESSAGES[element] ?? '先穩住自己，再做決定。';
 }
@@ -104,10 +105,10 @@ function ProductCard({ product }: { product: Product }) {
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
               為什麼適合你
             </p>
-            <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62"
+            <div className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62 prose prose-sm max-w-none prose-strong:text-[#31353A]/86 prose-strong:font-semibold [&_p]:!my-0 [&_p]:!text-[11px] [&_p]:!leading-relaxed"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-              {recommendationReason}
-            </p>
+              <Streamdown>{recommendationReason}</Streamdown>
+            </div>
           </div>
           <span className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
@@ -607,7 +608,7 @@ export default function FortunePage() {
                                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                                       {item.label}
                                     </p>
-                                    <div className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold"
+                                    <div className="text-[12.5px] leading-[2] text-[#31353A]/72 tracking-wider prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!text-[12.5px] [&_p]:!leading-[2]"
                                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                                       <Streamdown>{item.text}</Streamdown>
                                     </div>
@@ -625,7 +626,7 @@ export default function FortunePage() {
                                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                                     今日月相指引
                                   </p>
-                                  <div className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider italic prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold"
+                                  <div className="text-[12.5px] leading-[2] text-[#31353A]/72 tracking-wider italic prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!text-[12.5px] [&_p]:!leading-[2]"
                                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                                     <Streamdown>{aiData.advice}</Streamdown>
                                   </div>
@@ -641,10 +642,10 @@ export default function FortunePage() {
                                   ◎ Mochi 為你挑的今日商品
                                 </p>
                                 <div className="mb-4 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3">
-	                                  <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
-	                                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-	                                    根據今天的提醒：{getFortuneRecommendationMessage(selectedSignData.element, aiData?.advice)}
-	                                  </p>
+                                  <div className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70 prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!my-0 [&_p]:!text-[12px] [&_p]:!leading-[1.9]"
+                                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                    <Streamdown>{`根據今天的提醒：${getFortuneRecommendationMessage(selectedSignData.element, aiData?.advice)}`}</Streamdown>
+                                  </div>
                                   <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
                                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                                     所以推薦你：

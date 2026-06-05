@@ -413,7 +413,7 @@ export default function ZiweiPage() {
         )}
         {llmInterpretation && (
           <div>
-            <div className="ziwei-interpretation text-[13px] leading-[2.2] text-[#31353A]/75 tracking-wider"
+            <div className="ziwei-interpretation text-[12.5px] leading-[2.2] text-[#31353A]/75 tracking-wider"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               <Streamdown>{llmInterpretation}</Streamdown>
             </div>
