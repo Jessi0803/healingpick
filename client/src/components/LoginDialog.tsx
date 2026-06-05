@@ -20,7 +20,7 @@ const TITLE: Record<Mode, string> = {
 
 const SUBTITLE: Record<Mode, string> = {
   login: "歡迎回來,Mochi 在等你 🐾",
-  register: "登入 每日兩次免費占卜 🐾",
+  register: "註冊就送 5 點 + 每天 2 次免費占卜 🐾",
   forgot: "輸入你的 email,我們會寄重設密碼的連結給你",
 };
 

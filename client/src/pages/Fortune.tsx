@@ -466,7 +466,7 @@ export default function FortunePage() {
                           className="w-full rounded-full bg-[#3D4144] px-5 py-3.5 text-xs font-medium tracking-[0.25em] text-[#FAF7F4] shadow-sm transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
                           style={{ fontFamily: 'Noto Serif TC, serif' }}
                         >
-                          登入 每日兩次免費占卜
+                          註冊登入後查看
                         </button>
                       ) : credits?.enabled && credits.freeRemaining <= 0 && credits.credits <= 0 ? (
                         <Link href="/buy" className="block">

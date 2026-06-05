@@ -116,7 +116,7 @@ export default function Navbar() {
               className="text-[11px] tracking-[0.18em] text-[#8A7250]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
             >
-              登入 每日兩次免費占卜 🐾
+              註冊會員贈送五次免費占卜 🐾
             </span>
           ))}
         </div>
