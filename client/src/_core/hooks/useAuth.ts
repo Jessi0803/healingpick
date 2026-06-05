@@ -21,6 +21,11 @@ export function useAuth(options?: UseAuthOptions) {
     const { data: sub } = supabase.auth.onAuthStateChange(() => {
       void utils.auth.me.invalidate();
     });
+
+    void supabase.auth.getSession().then(({ data }) => {
+      if (data.session) void utils.auth.me.invalidate();
+    });
+
     return () => sub.subscription.unsubscribe();
   }, [utils]);
 
