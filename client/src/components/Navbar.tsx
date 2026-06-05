@@ -108,8 +108,21 @@ export default function Navbar() {
 
   return (
     <>
+      <div className="fixed top-0 left-0 right-0 z-[60] h-8 overflow-hidden border-b border-[#D1BE9B]/20 bg-[#FDFBF7]/88 backdrop-blur-md">
+        <div className="marquee-track flex h-full w-max items-center gap-10 whitespace-nowrap">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <span
+              key={index}
+              className="text-[11px] tracking-[0.18em] text-[#8A7250]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+            >
+              註冊會員贈送五次免費占卜 🐾
+            </span>
+          ))}
+        </div>
+      </div>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-8 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
             ? 'py-3 bg-white/70 backdrop-blur-xl border-b border-[#D1BE9B]/20 shadow-[0_2px_24px_rgba(209,190,155,0.08)]'
             : 'py-5 bg-white/10 backdrop-blur-md border-b border-white/20'
@@ -223,7 +236,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-28 bottom-0 z-40 lg:hidden">
+        <div className="fixed inset-x-0 top-36 bottom-0 z-40 lg:hidden">
           <div
             className="absolute inset-0 bg-[#3D4144]/20 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}

@@ -551,9 +551,19 @@
 }
 .tarot-pick-float { animation: tarotPickFloat 3.6s ease-in-out infinite; }
 
+@keyframes marqueeScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marqueeScroll 24s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   [style*="floatCard"],
-  .tarot-pick-float {
+  .tarot-pick-float,
+  .marquee-track {
     animation: none !important;
   }
 }

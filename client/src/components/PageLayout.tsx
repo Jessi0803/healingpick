@@ -449,7 +449,7 @@ export default function PageLayout({ children, className = '', noFooter = false 
         </span>
       </button>
 
-      <main className={`relative z-10 pt-20 page-enter ${className}`}>
+      <main className={`relative z-10 pt-28 page-enter ${className}`}>
         {children}
       </main>
 
