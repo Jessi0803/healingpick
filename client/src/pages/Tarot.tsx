@@ -1299,16 +1299,16 @@ export default function TarotPage() {
                 )}
                 {llmInterpretation && (
                   <div>
-                    <div className="prose prose-sm max-w-none text-[12.5px] leading-[2.1] text-[#31353A]/80 tracking-wider
+                    <div className="prose prose-sm max-w-none text-[14px] leading-[2.1] text-[#31353A]/80 tracking-wider
                       prose-headings:font-normal prose-headings:tracking-[0.08em] prose-headings:text-[#A38D6B]
-                      prose-h1:text-[14px] prose-h1:font-medium prose-h1:mt-8 prose-h1:mb-2 prose-h1:pb-1 prose-h1:border-b prose-h1:border-[#D1BE9B]/25
-                      prose-h2:text-[15px] prose-h2:font-medium prose-h2:mt-8 prose-h2:mb-2 prose-h2:pb-1 prose-h2:border-b prose-h2:border-[#D1BE9B]/25
-                      prose-h3:text-[14px] prose-h3:font-medium prose-h3:mt-8 prose-h3:mb-2 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
-                      [&_h1]:!text-[14px] [&_h1]:!leading-[2.1] [&_h1]:!font-medium [&_h1]:!tracking-[0.08em] [&_h1]:!text-[#A38D6B] [&_h1]:!mt-8 [&_h1]:!mb-2 [&_h1]:!pb-1 [&_h1]:!border-b [&_h1]:!border-[#D1BE9B]/25
-                      [&_h2]:!text-[15px] [&_h2]:!leading-[2.1] [&_h2]:!font-medium [&_h2]:!tracking-[0.08em] [&_h2]:!text-[#A38D6B] [&_h2]:!mt-8 [&_h2]:!mb-2 [&_h2]:!pb-1 [&_h2]:!border-b [&_h2]:!border-[#D1BE9B]/25
-                      [&_h3]:!text-[14px] [&_h3]:!leading-[2.1] [&_h3]:!font-medium [&_h3]:!tracking-[0.08em] [&_h3]:!text-[#A38D6B] [&_h3]:!mt-8 [&_h3]:!mb-2 [&_h3]:!pb-1 [&_h3]:!border-b [&_h3]:!border-[#D1BE9B]/25
+                      prose-h1:text-[16px] prose-h1:font-medium prose-h1:mt-8 prose-h1:mb-2 prose-h1:pb-1 prose-h1:border-b prose-h1:border-[#D1BE9B]/25
+                      prose-h2:text-[16px] prose-h2:font-medium prose-h2:mt-8 prose-h2:mb-2 prose-h2:pb-1 prose-h2:border-b prose-h2:border-[#D1BE9B]/25
+                      prose-h3:text-[15px] prose-h3:font-medium prose-h3:mt-8 prose-h3:mb-2 prose-h3:pb-1 prose-h3:border-b prose-h3:border-[#D1BE9B]/25
+                      [&_h1]:!text-[16px] [&_h1]:!leading-[2.1] [&_h1]:!font-medium [&_h1]:!tracking-[0.08em] [&_h1]:!text-[#A38D6B] [&_h1]:!mt-8 [&_h1]:!mb-2 [&_h1]:!pb-1 [&_h1]:!border-b [&_h1]:!border-[#D1BE9B]/25
+                      [&_h2]:!text-[16px] [&_h2]:!leading-[2.1] [&_h2]:!font-medium [&_h2]:!tracking-[0.08em] [&_h2]:!text-[#A38D6B] [&_h2]:!mt-8 [&_h2]:!mb-2 [&_h2]:!pb-1 [&_h2]:!border-b [&_h2]:!border-[#D1BE9B]/25
+                      [&_h3]:!text-[15px] [&_h3]:!leading-[2.1] [&_h3]:!font-medium [&_h3]:!tracking-[0.08em] [&_h3]:!text-[#A38D6B] [&_h3]:!mt-8 [&_h3]:!mb-2 [&_h3]:!pb-1 [&_h3]:!border-b [&_h3]:!border-[#D1BE9B]/25
                       prose-p:my-1.5 prose-p:text-[#31353A]/80
-                      [&_p]:!text-[12.5px]
+                      [&_p]:!text-[14px]
                       prose-strong:text-[#31353A]/90 prose-strong:font-medium
                       prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
