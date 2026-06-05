@@ -148,7 +148,7 @@ export const ziweiRouter = router({
       };
     }),
 
-  // 取得 AI 解讀（計算命盤 + LLM 解讀）
+  // 取得 mochi 解讀（計算命盤 + LLM 解讀）
   interpret: publicProcedure
     .input(
       z.object({

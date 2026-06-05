@@ -387,7 +387,7 @@ function ReadingsTable({ rows }: { rows: AdminReadingRow[] }) {
             <RecordBlock title="顧客問題" value={row.question} />
             <RecordBlock title="輸入資料" value={row.inputData} />
             <div className="md:col-span-2">
-              <RecordBlock title="AI 解讀" value={row.interpretation} maxHeight />
+              <RecordBlock title="mochi解讀" value={row.interpretation} maxHeight />
             </div>
           </div>
         </details>

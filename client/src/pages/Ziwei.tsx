@@ -408,7 +408,7 @@ export default function ZiweiPage() {
         {!interpretMutation.isPending && !interpretMutation.isError && !llmInterpretation && (
           <p className="text-[12px] text-[#31353A]/50 tracking-wider text-center py-4"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-            排盤完成後將自動生成 AI 命盤解讀
+            排盤完成後將自動生成 mochi 命盤解讀
           </p>
         )}
         {llmInterpretation && (
@@ -535,7 +535,7 @@ export default function ZiweiPage() {
                           {[
                             { icon: '📊', label: '生辰排盤', desc: '以 iztro 紫微斗數演算法，依生年月日時排出十二宮位' },
                             { icon: '✦', label: '星曜落點', desc: '計算主星、輔星在各宮位的座落與亮度' },
-                            { icon: '◈', label: 'Mochi解讀', desc: '將命盤資料與你關注的領域交給 Mochi，生成深度命盤解讀' },
+                            { icon: '◈', label: 'mochi解讀', desc: '將命盤資料與你關注的領域交給 Mochi，生成深度命盤解讀' },
                           ].map((s) => (
                             <div key={s.label} className="flex items-start gap-3 rounded-xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/55 px-3 py-3">
                               <div className="w-8 h-8 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-sm text-[#A38D6B]">
