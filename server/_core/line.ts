@@ -74,6 +74,19 @@ function getCookie(req: Request, key: string): string | undefined {
 }
 
 export function registerLineRoutes(app: Express) {
+  app.get("/api/line-session-debug", async (req: Request, res: Response) => {
+    const sessionCookie = getCookie(req, COOKIE_NAME);
+    const session = await sdk.verifySession(sessionCookie);
+    const user = session ? await db.getUserByOpenId(session.openId) : null;
+
+    res.json({
+      hasCookie: Boolean(sessionCookie),
+      sessionValid: Boolean(session),
+      userFound: Boolean(user),
+      openIdPrefix: session?.openId.split(":")[0] ?? null,
+    });
+  });
+
   app.get("/api/line-login", (req: Request, res: Response) => {
     if (!requireLineConfig(res)) return;
 
