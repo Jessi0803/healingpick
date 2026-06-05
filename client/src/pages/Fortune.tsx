@@ -468,7 +468,15 @@ export default function FortunePage() {
                         Mochi 將結合今日月相能量，為你生成今天的整體、感情、事業與健康提醒。
                       </p>
 
-                      {credits?.enabled && credits.freeRemaining <= 0 && credits.credits <= 0 ? (
+                      {!isAuthenticated ? (
+                        <button
+                          onClick={() => void login()}
+                          className="w-full rounded-full bg-[#3D4144] px-5 py-3.5 text-xs font-medium tracking-[0.25em] text-[#FAF7F4] shadow-sm transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                          style={{ fontFamily: 'Noto Serif TC, serif' }}
+                        >
+                          登入 每日兩次免費占卜
+                        </button>
+                      ) : credits?.enabled && credits.freeRemaining <= 0 && credits.credits <= 0 ? (
                         <Link href="/buy" className="block">
                           <button
                             onClick={() => setUnlockDialogOpen(false)}

@@ -17,6 +17,7 @@ import { CatPeeking } from '@/components/CatElements';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { PRODUCTS } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
+import { toast } from 'sonner';
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
@@ -170,6 +171,10 @@ export default function Home() {
     if (isAuthenticated || !divinationPaths.has(href)) return;
 
     event.preventDefault();
+    toast.error('登入 每日兩次免費占卜 🐾', {
+      description: '登入後即可開始占卜，並保存你的解讀紀錄。',
+      duration: 6000,
+    });
     void login();
   };
 

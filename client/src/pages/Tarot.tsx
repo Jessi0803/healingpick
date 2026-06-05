@@ -338,6 +338,10 @@ export default function TarotPage() {
   // from walking through the whole flow only to be blocked at the last step.
   const handleStart = () => {
     if (!isAuthenticated) {
+      toast.error('登入 每日兩次免費占卜 🐾', {
+        description: '登入後即可開始占卜，並保存你的解讀紀錄。',
+        duration: 6000,
+      });
       void login();
       return;
     }
@@ -392,6 +396,10 @@ export default function TarotPage() {
     },
     onError: (error) => {
       if (error.message === 'NOT_SIGNED_IN') {
+        toast.error('登入 每日兩次免費占卜', {
+          description: '登入後即可查看完整解讀，並保存你的占卜紀錄。',
+          duration: 6000,
+        });
         void login();
         setStep('intro');
         return;
@@ -425,6 +433,10 @@ export default function TarotPage() {
     },
     onError: (error) => {
       if (error.message === 'NOT_SIGNED_IN') {
+        toast.error('登入後可繼續追問', {
+          description: '追問每次會消耗 1 點，登入後即可繼續。',
+          duration: 6000,
+        });
         void login();
         return;
       }
@@ -458,6 +470,10 @@ export default function TarotPage() {
 
   const startReading = (cards = drawnCards) => {
     if (!isAuthenticated) {
+      toast.error('登入 每日兩次免費占卜', {
+        description: '登入後即可查看完整解讀，並保存你的占卜紀錄。',
+        duration: 6000,
+      });
       void login();
       return;
     }
@@ -482,6 +498,10 @@ export default function TarotPage() {
     const c = creditsQuery.data;
     if (c?.enabled) {
       if (!isAuthenticated) {
+        toast.error('登入後可繼續追問', {
+          description: '追問每次會消耗 1 點，登入後即可繼續。',
+          duration: 6000,
+        });
         void login();
         return;
       }
