@@ -54,32 +54,32 @@ const SPREAD_POSITIONS = [
   {
     id: 0,
     label: '第 1 張',
-    readingLabel: '中心能量',
-    desc: '代表你目前的核心狀態與問題所在',
+    readingLabel: '核心訊息',
+    desc: '這次問題最主要的牌面重點',
   },
   {
     id: 1,
     label: '第 2 張',
-    readingLabel: '過去',
-    desc: '影響現況的過去事件或根源能量',
+    readingLabel: '情緒狀態',
+    desc: '你或對方在這件事裡的真實感受',
   },
   {
     id: 2,
     label: '第 3 張',
-    readingLabel: '現在',
-    desc: '目前正在發生的事件與你的實際狀態',
+    readingLabel: '需要看清的盲點',
+    desc: '容易誤判、忽略或反覆卡住的地方',
   },
   {
     id: 3,
     label: '第 4 張',
-    readingLabel: '未來',
-    desc: '即將展開的能量走向與可能的結果',
+    readingLabel: '可能走向',
+    desc: '如果照目前狀態發展，較可能出現的方向',
   },
   {
     id: 4,
     label: '第 5 張',
-    readingLabel: '建議',
-    desc: '塔羅給予你的行動指引與內在智慧',
+    readingLabel: '行動提醒',
+    desc: '接下來可以觀察或實際採取的一小步',
   },
 ];
 
@@ -118,6 +118,35 @@ const CARD_IMAGES: Record<number, string> = {
   21: '/tarot/21.jpg',
 };
 
+const TAROT_CARD_IMAGE_URLS = Object.values(CARD_IMAGES);
+const preloadedTarotImages = new Set<string>();
+
+function preloadTarotCardImages(urls: string[]) {
+  if (typeof window === 'undefined') return Promise.resolve();
+
+  return Promise.all(urls.map((url) => {
+    if (preloadedTarotImages.has(url)) return Promise.resolve();
+
+    return new Promise<void>((resolve) => {
+      const image = new Image();
+      image.decoding = 'async';
+      image.onload = () => {
+        preloadedTarotImages.add(url);
+        resolve();
+      };
+      image.onerror = () => resolve();
+      image.src = url;
+    });
+  })).then(() => undefined);
+}
+
+function preloadTarotCardImagesWithTimeout(urls: string[], timeoutMs = 1200) {
+  return Promise.race([
+    preloadTarotCardImages(urls),
+    new Promise<void>((resolve) => window.setTimeout(resolve, timeoutMs)),
+  ]);
+}
+
 // Card face using real Rider-Waite-Smith images
 const CardFace = ({ card, reversed = false }: { card: typeof MAJOR_ARCANA[0]; reversed?: boolean }) => {
   const imgUrl = CARD_IMAGES[card.id];
@@ -131,7 +160,8 @@ const CardFace = ({ card, reversed = false }: { card: typeof MAJOR_ARCANA[0]; re
           src={imgUrl}
           alt={card.name}
           className="w-full h-full object-cover"
-          loading="lazy"
+          loading="eager"
+          decoding="async"
         />
       ) : (
         // Fallback SVG if image fails
@@ -418,6 +448,10 @@ export default function TarotPage() {
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
+  useEffect(() => {
+    void preloadTarotCardImages(TAROT_CARD_IMAGE_URLS);
+  }, []);
+
   const interpretMutation = trpc.tarot.interpret.useMutation({
     onSuccess: (data) => {
       setLlmInterpretation(data.interpretation);
@@ -691,10 +725,15 @@ export default function TarotPage() {
         card: shuffledDeck[i],
         reversed: Math.random() > 0.7,
       }));
+      const selectedImageUrls = cards
+        .map(({ card }) => CARD_IMAGES[card.id])
+        .filter(Boolean);
       setDrawnCards(cards);
       setRevealedCards(new Set([0, 1, 2, 3, 4]));
       setSelectedCard(0);
-      setTimeout(() => startReading(cards), 400);
+      void preloadTarotCardImagesWithTimeout(selectedImageUrls).then(() => {
+        startReading(cards);
+      });
     }
   }
 
