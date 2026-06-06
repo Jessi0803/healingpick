@@ -15,6 +15,13 @@
       "when": 1780501901575,
       "tag": "0001_square_sunset_bain",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780732800000,
+      "tag": "0002_add_app_settings",
+      "breakpoints": true
     }
   ]
 }

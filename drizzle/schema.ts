@@ -51,6 +51,21 @@ export type CreditTransaction = typeof creditTransactions.$inferSelect;
 export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
 
 /**
+ * Small key/value settings table for admin-controlled runtime options.
+ */
+export const appSettings = pgTable("app_settings", {
+  key: varchar("key", { length: 64 }).primaryKey(),
+  integerValue: integer("integerValue").notNull(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export type AppSetting = typeof appSettings.$inferSelect;
+export type InsertAppSetting = typeof appSettings.$inferInsert;
+
+/**
  * Per-browser free-quota tracking for visitors who haven't signed up yet.
  * The id is a UUID generated client-side and stored in localStorage + a
  * cookie header so the same browser is recognised across requests.

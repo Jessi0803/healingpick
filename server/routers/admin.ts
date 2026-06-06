@@ -1,7 +1,7 @@
 import { desc, eq, like, sql } from "drizzle-orm";
 import { z } from "zod";
 import { creditTransactions, readings, users } from "../../drizzle/schema";
-import { getDb } from "../db";
+import { DEFAULT_DAILY_FREE_QUOTA, getDailyFreeQuota, getDb, setDailyFreeQuota } from "../db";
 import { adminProcedure, router } from "../_core/trpc";
 
 const limitInput = z.object({
@@ -27,6 +27,9 @@ export const adminRouter = router({
             purchases: 0,
             creditsSold: 0,
           },
+          settings: {
+            dailyFreeQuota: DEFAULT_DAILY_FREE_QUOTA,
+          },
           users: [],
           orders: [],
           transactions: [],
@@ -48,6 +51,7 @@ export const adminRouter = router({
         orderRows,
         transactionRows,
         readingRows,
+        dailyFreeQuota,
       ] = await Promise.all([
           db.select({ count: sql<number>`count(*)` }).from(users),
           db.select({ count: sql<number>`count(*)` }).from(readings),
@@ -130,6 +134,7 @@ export const adminRouter = router({
             .leftJoin(users, eq(readings.userId, users.id))
             .orderBy(desc(readings.createdAt))
             .limit(limit),
+          getDailyFreeQuota(),
         ]);
 
       const purchaseStat = purchaseStats[0];
@@ -144,10 +149,23 @@ export const adminRouter = router({
           purchases: toNumber(purchaseStat?.count),
           creditsSold: toNumber(purchaseStat?.creditsSold),
         },
+        settings: {
+          dailyFreeQuota,
+        },
         users: userRows,
         orders: orderRows,
         transactions: transactionRows,
         readings: readingRows,
       };
+    }),
+  updateDailyFreeQuota: adminProcedure
+    .input(
+      z.object({
+        dailyFreeQuota: z.number().int().min(0).max(100),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const dailyFreeQuota = await setDailyFreeQuota(input.dailyFreeQuota);
+      return { dailyFreeQuota };
     }),
 });

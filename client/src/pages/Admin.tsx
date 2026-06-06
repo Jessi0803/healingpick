@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -110,14 +110,47 @@ export default function AdminPage() {
   const { user, loading } = useAuth({ redirectOnUnauthenticated: true });
   const [activeTab, setActiveTab] = useState<TabId>('users');
   const [query, setQuery] = useState('');
+  const [dailyFreeQuotaInput, setDailyFreeQuotaInput] = useState('');
+  const [settingsMessage, setSettingsMessage] = useState('');
 
   const dashboardQuery = trpc.admin.dashboard.useQuery(
     { limit: 150 },
     { enabled: user?.role === 'admin', refetchOnWindowFocus: true }
   );
+  const updateDailyFreeQuotaMutation = trpc.admin.updateDailyFreeQuota.useMutation({
+    onSuccess: (result) => {
+      setDailyFreeQuotaInput(String(result.dailyFreeQuota));
+      setSettingsMessage('已更新今日免費點數');
+      dashboardQuery.refetch();
+    },
+    onError: () => {
+      setSettingsMessage('更新失敗，請稍後再試');
+    },
+  });
 
   const normalizedQuery = query.trim().toLowerCase();
   const data = dashboardQuery.data;
+
+  useEffect(() => {
+    if (data?.settings.dailyFreeQuota != null && !updateDailyFreeQuotaMutation.isPending) {
+      setDailyFreeQuotaInput(String(data.settings.dailyFreeQuota));
+    }
+  }, [data?.settings.dailyFreeQuota, updateDailyFreeQuotaMutation.isPending]);
+
+  const handleDailyFreeQuotaSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = Number(dailyFreeQuotaInput.trim());
+    if (!dailyFreeQuotaInput.trim()) {
+      setSettingsMessage('請輸入 0 到 100 之間的整數');
+      return;
+    }
+    if (!Number.isInteger(value) || value < 0 || value > 100) {
+      setSettingsMessage('請輸入 0 到 100 之間的整數');
+      return;
+    }
+    setSettingsMessage('');
+    updateDailyFreeQuotaMutation.mutate({ dailyFreeQuota: value });
+  };
 
   const filteredUsers = useMemo(() => {
     const rows = data?.users ?? [];
@@ -236,6 +269,53 @@ export default function AdminPage() {
             <Metric label="Gumroad 訂單" value={data?.stats.purchases ?? 0} />
             <Metric label="售出點數" value={data?.stats.creditsSold ?? 0} />
           </div>
+
+          <form
+            onSubmit={handleDailyFreeQuotaSubmit}
+            className="mb-6 rounded-lg border border-[#D1BE9B]/20 bg-white/55 p-4 shadow-[0_12px_40px_rgba(49,53,58,0.05)]"
+          >
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  免費點數設定
+                </p>
+                <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
+                  設定會員與訪客每天可免費使用的占卜次數，目前為 {data?.settings.dailyFreeQuota ?? 2} 點。
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={dailyFreeQuotaInput}
+                  onChange={(event) => {
+                    setDailyFreeQuotaInput(event.target.value);
+                    setSettingsMessage('');
+                  }}
+                  className="w-full rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-2.5 text-xs tracking-[0.12em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60 sm:w-32"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                />
+                <button
+                  type="submit"
+                  disabled={updateDailyFreeQuotaMutation.isPending}
+                  className="rounded-lg border border-[#D1BE9B]/30 bg-[#31353A] px-4 py-2.5 text-xs tracking-[0.16em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-55"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  {updateDailyFreeQuotaMutation.isPending ? '儲存中' : '儲存'}
+                </button>
+              </div>
+            </div>
+            {settingsMessage && (
+              <p className={`mt-3 text-[11px] tracking-[0.12em] ${
+                updateDailyFreeQuotaMutation.isError ? 'text-[#C9837A]' : 'text-[#A38D6B]'
+              }`}>
+                {settingsMessage}
+              </p>
+            )}
+          </form>
 
           <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
             {tabs.map((tab) => (

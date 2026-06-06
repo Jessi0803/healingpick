@@ -5,6 +5,7 @@ import {
   InsertReading,
   InsertUser,
   anonymousSessions,
+  appSettings,
   creditTransactions,
   ipQuotas,
   readings,
@@ -34,10 +35,12 @@ export async function getDb(): Promise<Db | null> {
   return _db;
 }
 
-/** Number of free readings granted per day. */
-export const DAILY_FREE_QUOTA = 2;
+/** Fallback number of free readings granted per day. */
+export const DEFAULT_DAILY_FREE_QUOTA = 2;
+export const DAILY_FREE_QUOTA = DEFAULT_DAILY_FREE_QUOTA;
 /** Credits granted once when a user first signs up. */
 export const SIGNUP_BONUS_CREDITS = 5;
+const DAILY_FREE_QUOTA_KEY = "daily_free_quota";
 
 function taipeiDateKey(date: Date): string {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -136,6 +139,37 @@ export type CreditState = {
   dailyFreeQuota: number;
 };
 
+export async function getDailyFreeQuota(): Promise<number> {
+  const db = await getDb();
+  if (!db) return DEFAULT_DAILY_FREE_QUOTA;
+  try {
+    const rows = await db
+      .select({ integerValue: appSettings.integerValue })
+      .from(appSettings)
+      .where(eq(appSettings.key, DAILY_FREE_QUOTA_KEY))
+      .limit(1);
+    const value = rows[0]?.integerValue;
+    return Number.isInteger(value) && value >= 0 ? value : DEFAULT_DAILY_FREE_QUOTA;
+  } catch (error) {
+    console.warn("[Settings] Failed to read daily free quota:", error);
+    return DEFAULT_DAILY_FREE_QUOTA;
+  }
+}
+
+export async function setDailyFreeQuota(value: number): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database unavailable");
+  const normalized = Math.max(0, Math.min(100, Math.trunc(value)));
+  await db
+    .insert(appSettings)
+    .values({ key: DAILY_FREE_QUOTA_KEY, integerValue: normalized })
+    .onConflictDoUpdate({
+      target: appSettings.key,
+      set: { integerValue: normalized, updatedAt: new Date() },
+    });
+  return normalized;
+}
+
 /** Reset the daily free counter if we've crossed into a new day. */
 async function ensureFreshDay(userId: number) {
   const db = await getDb();
@@ -154,10 +188,11 @@ export async function getCreditState(userId: number): Promise<CreditState | null
   await ensureFreshDay(userId);
   const user = await getUserById(userId);
   if (!user) return null;
+  const dailyFreeQuota = await getDailyFreeQuota();
   return {
     credits: user.credits,
-    freeRemaining: Math.max(0, DAILY_FREE_QUOTA - user.freeUsedToday),
-    dailyFreeQuota: DAILY_FREE_QUOTA,
+    freeRemaining: Math.max(0, dailyFreeQuota - user.freeUsedToday),
+    dailyFreeQuota,
   };
 }
 
@@ -176,9 +211,10 @@ export async function spendForReading(userId: number, reason: string): Promise<S
   await ensureFreshDay(userId);
   const user = await getUserById(userId);
   if (!user) return { ok: false, reason: "no_db" };
+  const dailyFreeQuota = await getDailyFreeQuota();
 
   // 1) Free quota first.
-  if (user.freeUsedToday < DAILY_FREE_QUOTA) {
+  if (user.freeUsedToday < dailyFreeQuota) {
     await db
       .update(users)
       .set({ freeUsedToday: user.freeUsedToday + 1 })
@@ -286,10 +322,11 @@ export async function getAnonCreditState(anonId: string): Promise<CreditState | 
   const rows = await db.select().from(anonymousSessions).where(eq(anonymousSessions.anonId, anonId)).limit(1);
   const row = rows[0];
   const used = row?.freeUsedToday ?? 0;
+  const dailyFreeQuota = await getDailyFreeQuota();
   return {
     credits: 0,
-    freeRemaining: Math.max(0, DAILY_FREE_QUOTA - used),
-    dailyFreeQuota: DAILY_FREE_QUOTA,
+    freeRemaining: Math.max(0, dailyFreeQuota - used),
+    dailyFreeQuota,
   };
 }
 
@@ -311,8 +348,9 @@ export async function spendAnonFree(anonId: string): Promise<SpendResult> {
   const rows = await db.select().from(anonymousSessions).where(eq(anonymousSessions.anonId, anonId)).limit(1);
   const row = rows[0];
   if (!row) return { ok: false, reason: "no_db" };
+  const dailyFreeQuota = await getDailyFreeQuota();
 
-  if (row.freeUsedToday < DAILY_FREE_QUOTA) {
+  if (row.freeUsedToday < dailyFreeQuota) {
     await db
       .update(anonymousSessions)
       .set({ freeUsedToday: row.freeUsedToday + 1 })
@@ -381,8 +419,9 @@ export async function spendVisitorFree(
         ?.freeUsedToday ?? 0
     : 0;
   const ipUsed = ipHash ? await getIpUsed(ipHash) : 0;
+  const dailyFreeQuota = await getDailyFreeQuota();
 
-  if ((anonId && anonUsed >= DAILY_FREE_QUOTA) || (ipHash && ipUsed >= DAILY_FREE_QUOTA)) {
+  if ((anonId && anonUsed >= dailyFreeQuota) || (ipHash && ipUsed >= dailyFreeQuota)) {
     return { ok: false, reason: "insufficient" };
   }
 
@@ -404,8 +443,8 @@ export async function spendVisitorFree(
     usedFree: true,
     state: {
       credits: 0,
-      freeRemaining: Math.max(0, DAILY_FREE_QUOTA - Math.max(anonUsed + 1, ipUsed + 1)),
-      dailyFreeQuota: DAILY_FREE_QUOTA,
+      freeRemaining: Math.max(0, dailyFreeQuota - Math.max(anonUsed + 1, ipUsed + 1)),
+      dailyFreeQuota,
     },
   };
 }
@@ -425,10 +464,11 @@ export async function getVisitorCreditState(
     : 0;
   const ipUsed = ipHash ? await getIpUsed(ipHash) : 0;
   const used = Math.max(anonUsed, ipUsed);
+  const dailyFreeQuota = await getDailyFreeQuota();
   return {
     credits: 0,
-    freeRemaining: Math.max(0, DAILY_FREE_QUOTA - used),
-    dailyFreeQuota: DAILY_FREE_QUOTA,
+    freeRemaining: Math.max(0, dailyFreeQuota - used),
+    dailyFreeQuota,
   };
 }
 
