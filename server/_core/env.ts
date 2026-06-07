@@ -7,6 +7,11 @@ export const ENV = {
   isProduction: process.env.NODE_ENV === "production",
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+  aiProvider: process.env.AI_PROVIDER ?? "",
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? "",
+  anthropicApiUrl:
+    process.env.ANTHROPIC_API_URL ?? "https://api.anthropic.com/v1",
+  anthropicModel: process.env.ANTHROPIC_MODEL ?? "claude-3-5-sonnet-latest",
   geminiApiKey: process.env.GEMINI_API_KEY ?? "",
   geminiApiUrl:
     process.env.GEMINI_API_URL ??

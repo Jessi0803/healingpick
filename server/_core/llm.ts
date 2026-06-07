@@ -19,7 +19,12 @@ export type FileContent = {
   type: "file_url";
   file_url: {
     url: string;
-    mime_type?: "audio/mpeg" | "audio/wav" | "application/pdf" | "audio/mp4" | "video/mp4" ;
+    mime_type?:
+      | "audio/mpeg"
+      | "audio/wav"
+      | "application/pdf"
+      | "audio/mp4"
+      | "video/mp4";
   };
 };
 
@@ -104,11 +109,11 @@ export type InvokeResult = {
 export function extractTextContent(
   content: string | Array<{ type: string; text?: string }>
 ): string {
-  if (typeof content === 'string') return content;
+  if (typeof content === "string") return content;
   return content
-    .filter((c) => c.type === 'text' && typeof c.text === 'string')
-    .map((c) => c.text as string)
-    .join('');
+    .filter(c => c.type === "text" && typeof c.text === "string")
+    .map(c => c.text as string)
+    .join("");
 }
 
 export type JsonSchema = {
@@ -226,7 +231,20 @@ const normalizeToolChoice = (
 const resolveApiUrl = () =>
   `${ENV.geminiApiUrl.replace(/\/$/, "")}/chat/completions`;
 
+const resolveProvider = () => {
+  if (ENV.aiProvider) return ENV.aiProvider.toLowerCase();
+  if (ENV.anthropicApiKey) return "anthropic";
+  return "gemini";
+};
+
 const assertApiKey = () => {
+  if (resolveProvider() === "anthropic") {
+    if (!ENV.anthropicApiKey) {
+      throw new Error("ANTHROPIC_API_KEY is not configured");
+    }
+    return;
+  }
+
   if (!ENV.geminiApiKey) {
     throw new Error("GEMINI_API_KEY is not configured");
   }
@@ -277,8 +295,182 @@ const normalizeResponseFormat = ({
   };
 };
 
+const stringifyToolMessageContent = (message: Message): string =>
+  ensureArray(message.content)
+    .map(part => (typeof part === "string" ? part : JSON.stringify(part)))
+    .join("\n");
+
+const toAnthropicText = (part: MessageContent): string => {
+  if (typeof part === "string") return part;
+  if (part.type === "text") return part.text;
+  if (part.type === "image_url") return `[Image: ${part.image_url.url}]`;
+  if (part.type === "file_url") return `[File: ${part.file_url.url}]`;
+  return JSON.stringify(part);
+};
+
+const toAnthropicMessages = (
+  messages: Message[],
+  responseFormat:
+    | { type: "json_schema"; json_schema: JsonSchema }
+    | { type: "text" }
+    | { type: "json_object" }
+    | undefined
+) => {
+  const system: string[] = [];
+  const anthropicMessages: Array<{
+    role: "user" | "assistant";
+    content: string;
+  }> = [];
+
+  for (const message of messages) {
+    if (message.role === "system") {
+      system.push(ensureArray(message.content).map(toAnthropicText).join("\n"));
+      continue;
+    }
+
+    if (message.role === "assistant" || message.role === "user") {
+      anthropicMessages.push({
+        role: message.role,
+        content: ensureArray(message.content).map(toAnthropicText).join("\n"),
+      });
+      continue;
+    }
+
+    anthropicMessages.push({
+      role: "user",
+      content: stringifyToolMessageContent(message),
+    });
+  }
+
+  if (responseFormat?.type === "json_object") {
+    system.push(
+      "Return only valid JSON. Do not include markdown fences or explanatory text."
+    );
+  }
+
+  if (responseFormat?.type === "json_schema") {
+    system.push(
+      `Return only valid JSON matching this schema: ${JSON.stringify(responseFormat.json_schema.schema)}`
+    );
+  }
+
+  return {
+    system: system.length > 0 ? system.join("\n\n") : undefined,
+    messages: anthropicMessages,
+  };
+};
+
+const normalizeAnthropicText = (content: unknown): string => {
+  if (!Array.isArray(content)) return "";
+  return content
+    .map(part => {
+      if (
+        part &&
+        typeof part === "object" &&
+        "type" in part &&
+        part.type === "text" &&
+        "text" in part &&
+        typeof part.text === "string"
+      ) {
+        return part.text;
+      }
+      return "";
+    })
+    .join("");
+};
+
+const invokeAnthropic = async ({
+  messages,
+  maxTokens,
+  max_tokens,
+  responseFormat,
+  response_format,
+  outputSchema,
+  output_schema,
+}: InvokeParams): Promise<InvokeResult> => {
+  const normalizedResponseFormat = normalizeResponseFormat({
+    responseFormat,
+    response_format,
+    outputSchema,
+    output_schema,
+  });
+
+  const anthropicPayload = toAnthropicMessages(
+    messages,
+    normalizedResponseFormat
+  );
+  const payload: Record<string, unknown> = {
+    model: ENV.anthropicModel,
+    max_tokens: maxTokens ?? max_tokens ?? 8192,
+    messages: anthropicPayload.messages,
+  };
+
+  if (anthropicPayload.system) {
+    payload.system = anthropicPayload.system;
+  }
+
+  const response = await fetch(
+    `${ENV.anthropicApiUrl.replace(/\/$/, "")}/messages`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": ENV.anthropicApiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Anthropic invoke failed: ${response.status} ${response.statusText} – ${errorText}`
+    );
+  }
+
+  const data = (await response.json()) as {
+    id?: string;
+    model?: string;
+    content?: unknown;
+    stop_reason?: string | null;
+    usage?: {
+      input_tokens?: number;
+      output_tokens?: number;
+    };
+  };
+
+  const promptTokens = data.usage?.input_tokens ?? 0;
+  const completionTokens = data.usage?.output_tokens ?? 0;
+
+  return {
+    id: data.id ?? "",
+    created: Math.floor(Date.now() / 1000),
+    model: data.model ?? ENV.anthropicModel,
+    choices: [
+      {
+        index: 0,
+        message: {
+          role: "assistant",
+          content: normalizeAnthropicText(data.content),
+        },
+        finish_reason: data.stop_reason ?? null,
+      },
+    ],
+    usage: {
+      prompt_tokens: promptTokens,
+      completion_tokens: completionTokens,
+      total_tokens: promptTokens + completionTokens,
+    },
+  };
+};
+
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   assertApiKey();
+
+  if (resolveProvider() === "anthropic") {
+    return invokeAnthropic(params);
+  }
 
   const {
     messages,
