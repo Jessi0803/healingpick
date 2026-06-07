@@ -22,6 +22,13 @@
       "when": 1780732800000,
       "tag": "0002_add_app_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1780843085776,
+      "tag": "0003_add_reading_feedback",
+      "breakpoints": true
     }
   ]
 }

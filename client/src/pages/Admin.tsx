@@ -8,6 +8,7 @@ const tabs = [
   { id: 'orders', label: '訂單管理' },
   { id: 'inputs', label: '會員問答' },
   { id: 'visitors', label: '訪客問答' },
+  { id: 'feedback', label: '使用者回饋' },
   { id: 'transactions', label: '點數紀錄' },
 ] as const;
 
@@ -17,6 +18,11 @@ const typeLabels: Record<string, string> = {
   tarot: '塔羅',
   ziwei: '紫微',
   fortune: '每日運勢',
+};
+
+const feedbackSourceLabels: Record<string, string> = {
+  tarot: '塔羅回饋',
+  ziwei: '紫微回饋',
 };
 
 function getReadingKind(row: Pick<AdminReadingRow, 'type' | 'inputData'>) {
@@ -69,6 +75,19 @@ type AdminReadingRow = {
   createdAt: Date;
 };
 
+type AdminFeedbackRow = {
+  id: number;
+  userId: number | null;
+  anonId: string | null;
+  ipHash: string | null;
+  email: string | null;
+  name: string | null;
+  source: string;
+  message: string;
+  context: string | null;
+  createdAt: Date;
+};
+
 function formatDate(value: string | Date | null | undefined) {
   if (!value) return '—';
   return new Date(value).toLocaleString('zh-TW', {
@@ -89,7 +108,7 @@ function isVisitor(row: Pick<AdminReadingRow, 'userId'>) {
   return row.userId == null;
 }
 
-function readerLabel(row: Pick<AdminReadingRow, 'userId' | 'email' | 'name' | 'anonId' | 'ipHash'>) {
+function readerLabel(row: Pick<AdminReadingRow | AdminFeedbackRow, 'userId' | 'email' | 'name' | 'anonId' | 'ipHash'>) {
   if (row.userId != null) return row.email ?? row.name ?? `會員 #${row.userId}`;
   if (row.anonId) return `訪客 ${row.anonId.slice(0, 8)}`;
   if (row.ipHash) return `訪客 IP ${row.ipHash.slice(0, 8)}`;
@@ -112,6 +131,7 @@ export default function AdminPage() {
   const [query, setQuery] = useState('');
   const [dailyFreeQuotaInput, setDailyFreeQuotaInput] = useState('');
   const [settingsMessage, setSettingsMessage] = useState('');
+  const [userActionMessage, setUserActionMessage] = useState('');
 
   const dashboardQuery = trpc.admin.dashboard.useQuery(
     { limit: 150 },
@@ -125,6 +145,15 @@ export default function AdminPage() {
     },
     onError: () => {
       setSettingsMessage('更新失敗，請稍後再試');
+    },
+  });
+  const deleteUserMutation = trpc.admin.deleteUser.useMutation({
+    onSuccess: () => {
+      setUserActionMessage('已刪除會員');
+      dashboardQuery.refetch();
+    },
+    onError: (error) => {
+      setUserActionMessage(error.message || '刪除失敗，請稍後再試');
     },
   });
 
@@ -150,6 +179,16 @@ export default function AdminPage() {
     }
     setSettingsMessage('');
     updateDailyFreeQuotaMutation.mutate({ dailyFreeQuota: value });
+  };
+
+  const handleDeleteUser = (row: AdminUserRow) => {
+    if (row.role === 'admin' || row.id === user?.id) return;
+    const label = row.email ?? row.name ?? `會員 #${row.id}`;
+    const confirmed = window.confirm(`確定要刪除 ${label} 嗎？\n\n會刪除會員帳號資料，但保留既有問答、點數與訂單紀錄供後台稽核。`);
+    if (!confirmed) return;
+
+    setUserActionMessage('');
+    deleteUserMutation.mutate({ userId: row.id });
   };
 
   const filteredUsers = useMemo(() => {
@@ -200,6 +239,16 @@ export default function AdminPage() {
       )
     );
   }, [data?.transactions, normalizedQuery]);
+
+  const filteredFeedback = useMemo(() => {
+    const rows = data?.feedback ?? [];
+    if (!normalizedQuery) return rows;
+    return rows.filter((row) =>
+      [row.email, row.name, row.source, row.message, row.context, row.anonId].some((value) =>
+        (value ?? '').toLowerCase().includes(normalizedQuery)
+      )
+    );
+  }, [data?.feedback, normalizedQuery]);
 
   if (loading) {
     return (
@@ -261,11 +310,12 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-6 mb-6">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-7 mb-6">
             <Metric label="會員數" value={data?.stats.users ?? 0} />
             <Metric label="占卜紀錄" value={data?.stats.readings ?? 0} />
             <Metric label="訪客數" value={data?.stats.visitors ?? 0} />
             <Metric label="訪客問答" value={data?.stats.visitorReadings ?? 0} />
+            <Metric label="使用者回饋" value={data?.stats.feedback ?? 0} />
             <Metric label="Gumroad 訂單" value={data?.stats.purchases ?? 0} />
             <Metric label="售出點數" value={data?.stats.creditsSold ?? 0} />
           </div>
@@ -344,16 +394,63 @@ export default function AdminPage() {
             </div>
           ) : (
             <div className="rounded-lg border border-[#D1BE9B]/20 bg-white/55 shadow-[0_12px_40px_rgba(49,53,58,0.06)] overflow-hidden">
-              {activeTab === 'users' && <UsersTable rows={filteredUsers} />}
+              {activeTab === 'users' && (
+                <UsersTable
+                  rows={filteredUsers}
+                  currentUserId={user.id}
+                  isDeleting={deleteUserMutation.isPending}
+                  message={userActionMessage}
+                  onDelete={handleDeleteUser}
+                />
+              )}
               {activeTab === 'orders' && <OrdersTable rows={filteredOrders} />}
               {activeTab === 'inputs' && <ReadingsTable rows={memberReadings} />}
               {activeTab === 'visitors' && <ReadingsTable rows={visitorReadings} />}
+              {activeTab === 'feedback' && <FeedbackTable rows={filteredFeedback} />}
               {activeTab === 'transactions' && <TransactionsTable rows={filteredTransactions} />}
             </div>
           )}
         </div>
       </div>
     </PageLayout>
+  );
+}
+
+function FeedbackTable({ rows }: { rows: AdminFeedbackRow[] }) {
+  return (
+    <div className="divide-y divide-[#D1BE9B]/12">
+      {rows.length === 0 ? (
+        <div className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">沒有資料</div>
+      ) : rows.map((row) => (
+        <details key={row.id} className="group px-4 py-4">
+          <summary className="cursor-pointer list-none">
+            <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] tracking-[0.1em] ${isVisitor(row) ? 'bg-[#C9837A]/12 text-[#C9837A]' : 'bg-[#A38D6B]/14 text-[#A38D6B]'}`}>
+                    {isVisitor(row) ? '訪客' : '會員'}
+                  </span>
+                  <span>{feedbackSourceLabels[row.source] ?? row.source} · {readerLabel(row)}</span>
+                </div>
+                <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
+                  {shortText(row.message, 140)}
+                </div>
+              </div>
+              <div className="shrink-0 text-[11px] tracking-[0.1em] text-[#A38D6B]">
+                {formatDate(row.createdAt)}
+              </div>
+            </div>
+          </summary>
+          <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
+            <RecordBlock title="顧客身分" value={readerLabel(row)} />
+            <RecordBlock title="來源情境" value={row.context} />
+            <div className="md:col-span-2">
+              <RecordBlock title="回饋內容" value={row.message} maxHeight />
+            </div>
+          </div>
+        </details>
+      ))}
+    </div>
   );
 }
 
@@ -382,7 +479,19 @@ function EmptyRow({ colSpan }: { colSpan: number }) {
   );
 }
 
-function UsersTable({ rows }: { rows: AdminUserRow[] }) {
+function UsersTable({
+  rows,
+  currentUserId,
+  isDeleting,
+  message,
+  onDelete,
+}: {
+  rows: AdminUserRow[];
+  currentUserId: number;
+  isDeleting: boolean;
+  message: string;
+  onDelete: (row: AdminUserRow) => void;
+}) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[860px] text-left">
@@ -395,10 +504,20 @@ function UsersTable({ rows }: { rows: AdminUserRow[] }) {
             <th className="px-4 py-3 font-normal">今日免費已用</th>
             <th className="px-4 py-3 font-normal">註冊時間</th>
             <th className="px-4 py-3 font-normal">最後登入</th>
+            <th className="px-4 py-3 font-normal">操作</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
-          {rows.length === 0 ? <EmptyRow colSpan={7} /> : rows.map((row) => (
+          {message && (
+            <tr>
+              <td colSpan={8} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
+                {message}
+              </td>
+            </tr>
+          )}
+          {rows.length === 0 ? <EmptyRow colSpan={8} /> : rows.map((row) => {
+            const canDelete = row.role !== 'admin' && row.id !== currentUserId;
+            return (
             <tr key={row.id}>
               <td className="px-4 py-3">{row.id}</td>
               <td className="px-4 py-3">
@@ -410,8 +529,19 @@ function UsersTable({ rows }: { rows: AdminUserRow[] }) {
               <td className="px-4 py-3">{row.freeUsedToday}</td>
               <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
               <td className="px-4 py-3">{formatDate(row.lastSignedIn)}</td>
+              <td className="px-4 py-3">
+                <button
+                  type="button"
+                  disabled={!canDelete || isDeleting}
+                  onClick={() => onDelete(row)}
+                  className="rounded-md border border-[#C9837A]/25 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  刪除
+                </button>
+              </td>
             </tr>
-          ))}
+          )})}
         </tbody>
       </table>
     </div>

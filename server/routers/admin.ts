@@ -1,6 +1,7 @@
 import { desc, eq, like, sql } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { creditTransactions, readings, users } from "../../drizzle/schema";
+import { creditTransactions, readingFeedback, readings, users } from "../../drizzle/schema";
 import { DEFAULT_DAILY_FREE_QUOTA, getDailyFreeQuota, getDb, setDailyFreeQuota } from "../db";
 import { adminProcedure, router } from "../_core/trpc";
 
@@ -24,6 +25,7 @@ export const adminRouter = router({
             readings: 0,
             visitors: 0,
             visitorReadings: 0,
+            feedback: 0,
             purchases: 0,
             creditsSold: 0,
           },
@@ -34,6 +36,7 @@ export const adminRouter = router({
           orders: [],
           transactions: [],
           readings: [],
+          feedback: [],
         };
       }
 
@@ -46,11 +49,13 @@ export const adminRouter = router({
         userCount,
         readingCount,
         visitorStats,
+        feedbackCount,
         purchaseStats,
         userRows,
         orderRows,
         transactionRows,
         readingRows,
+        feedbackRows,
         dailyFreeQuota,
       ] = await Promise.all([
           db.select({ count: sql<number>`count(*)` }).from(users),
@@ -62,6 +67,7 @@ export const adminRouter = router({
             })
             .from(readings)
             .where(sql`${readings.userId} is null`),
+          db.select({ count: sql<number>`count(*)` }).from(readingFeedback),
           db
             .select({
               count: sql<number>`count(*)`,
@@ -134,6 +140,23 @@ export const adminRouter = router({
             .leftJoin(users, eq(readings.userId, users.id))
             .orderBy(desc(readings.createdAt))
             .limit(limit),
+          db
+            .select({
+              id: readingFeedback.id,
+              userId: readingFeedback.userId,
+              anonId: readingFeedback.anonId,
+              ipHash: readingFeedback.ipHash,
+              email: users.email,
+              name: users.name,
+              source: readingFeedback.source,
+              message: readingFeedback.message,
+              context: readingFeedback.context,
+              createdAt: readingFeedback.createdAt,
+            })
+            .from(readingFeedback)
+            .leftJoin(users, eq(readingFeedback.userId, users.id))
+            .orderBy(desc(readingFeedback.createdAt))
+            .limit(limit),
           getDailyFreeQuota(),
         ]);
 
@@ -146,6 +169,7 @@ export const adminRouter = router({
           readings: toNumber(readingCount[0]?.count),
           visitors: toNumber(visitorStat?.visitors),
           visitorReadings: toNumber(visitorStat?.readings),
+          feedback: toNumber(feedbackCount[0]?.count),
           purchases: toNumber(purchaseStat?.count),
           creditsSold: toNumber(purchaseStat?.creditsSold),
         },
@@ -156,6 +180,7 @@ export const adminRouter = router({
         orders: orderRows,
         transactions: transactionRows,
         readings: readingRows,
+        feedback: feedbackRows,
       };
     }),
   updateDailyFreeQuota: adminProcedure
@@ -167,5 +192,46 @@ export const adminRouter = router({
     .mutation(async ({ input }) => {
       const dailyFreeQuota = await setDailyFreeQuota(input.dailyFreeQuota);
       return { dailyFreeQuota };
+    }),
+  deleteUser: adminProcedure
+    .input(
+      z.object({
+        userId: z.number().int().positive(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (input.userId === ctx.user.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "不能刪除目前登入的管理員帳號",
+        });
+      }
+
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database unavailable",
+        });
+      }
+
+      const targetRows = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
+      const target = targetRows[0];
+      if (!target) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "找不到這個會員",
+        });
+      }
+
+      if (target.role === "admin") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "不能刪除管理員帳號",
+        });
+      }
+
+      await db.delete(users).where(eq(users.id, input.userId));
+      return { success: true } as const;
     }),
 });

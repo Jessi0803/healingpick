@@ -3,11 +3,13 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import {
   InsertReading,
+  InsertReadingFeedback,
   InsertUser,
   anonymousSessions,
   appSettings,
   creditTransactions,
   ipQuotas,
+  readingFeedback,
   readings,
   users,
 } from "../drizzle/schema";
@@ -478,6 +480,12 @@ export async function saveReading(data: InsertReading): Promise<void> {
   const db = await getDb();
   if (!db) return;
   await db.insert(readings).values(data);
+}
+
+export async function saveReadingFeedback(data: InsertReadingFeedback): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database unavailable");
+  await db.insert(readingFeedback).values(data);
 }
 
 export async function getReadingsByUser(userId: number, limit = 20) {
