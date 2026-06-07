@@ -11,7 +11,7 @@ export const ENV = {
   anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? "",
   anthropicApiUrl:
     process.env.ANTHROPIC_API_URL ?? "https://api.anthropic.com/v1",
-  anthropicModel: process.env.ANTHROPIC_MODEL ?? "claude-3-5-sonnet-latest",
+  anthropicModel: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6",
   geminiApiKey: process.env.GEMINI_API_KEY ?? "",
   geminiApiUrl:
     process.env.GEMINI_API_URL ??
