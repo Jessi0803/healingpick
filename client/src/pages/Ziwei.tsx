@@ -333,6 +333,7 @@ export default function ZiweiPage() {
   const [hourValue, setHourValue] = useState('0');
   const [gender, setGender] = useState<'男' | '女'>('女');
   const [focusArea, setFocusArea] = useState('');
+  const [partnerBirthDate, setPartnerBirthDate] = useState('');
   const [activeQuestionCategory, setActiveQuestionCategory] = useState<string | null>(null);
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
@@ -450,6 +451,7 @@ export default function ZiweiPage() {
       timeIndex: parseInt(hourValue),
       gender,
       focusArea: focusArea || undefined,
+      partnerSolarDate: partnerBirthDate || undefined,
     });
   }
 
@@ -1100,6 +1102,27 @@ export default function ZiweiPage() {
                     style={{ fontFamily: 'Cormorant Garamond, serif', color: focusArea.length >= 300 ? '#C9837A' : focusArea.length >= 250 ? '#A38D6B' : '#31353A66' }}>
                     {focusArea.length} / 300
                   </div>
+                </div>
+
+                {/* Partner birth date (optional, for relationship questions) */}
+                <div className="mb-6">
+                  <label className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    對方生日（選填，問感情用）
+                  </label>
+                  <input
+                    type="date"
+                    value={partnerBirthDate}
+                    onChange={e => setPartnerBirthDate(e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
+                    min="1900-01-01"
+                    className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-2.5 text-xs text-[#31353A]/80 tracking-wider focus:outline-none focus:border-[#D1BE9B]/50"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  />
+                  <p className="mt-1.5 text-[11px] text-[#31353A]/50 tracking-wider"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                    ✦ 只需年月日，不用時辰；填了問感情時會參考對方的個性方向
+                  </p>
                 </div>
 
                 <button
