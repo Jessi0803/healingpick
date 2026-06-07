@@ -2,17 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TrpcContext } from "./context";
 import { chargeReading, isCreditsEnabled } from "./credits";
 import { isSupabaseConfigured } from "./supabase";
-import { spendForReading, spendVisitorFree } from "../db";
+import { getVisitorCreditState, spendForReading, spendVisitorFree } from "../db";
 
 vi.mock("./supabase", () => ({
   isSupabaseConfigured: vi.fn(),
 }));
 
 vi.mock("../db", () => ({
+  getVisitorCreditState: vi.fn(),
   spendForReading: vi.fn(),
   spendVisitorFree: vi.fn(),
 }));
 
+const mockGetVisitorCreditState = vi.mocked(getVisitorCreditState);
 const mockIsSupabaseConfigured = vi.mocked(isSupabaseConfigured);
 const mockSpendForReading = vi.mocked(spendForReading);
 const mockSpendVisitorFree = vi.mocked(spendVisitorFree);
@@ -91,6 +93,11 @@ describe("credits gating", () => {
   });
 
   it("charges anonymous visitors against browser and IP quota", async () => {
+    mockGetVisitorCreditState.mockResolvedValueOnce({
+      credits: 0,
+      freeRemaining: 2,
+      dailyFreeQuota: 2,
+    });
     mockSpendVisitorFree.mockResolvedValueOnce({
       ok: true,
       usedFree: true,
@@ -99,8 +106,26 @@ describe("credits gating", () => {
 
     await chargeReading(baseContext({ anonId: "anon-123456", ipHash: "ip-hash" }), "fortune");
 
+    expect(mockGetVisitorCreditState).toHaveBeenCalledWith("anon-123456", "ip-hash");
     expect(mockSpendVisitorFree).toHaveBeenCalledWith("anon-123456", "ip-hash");
     expect(mockSpendForReading).not.toHaveBeenCalled();
+  });
+
+  it("requires login after the anonymous visitor has used a free reading", async () => {
+    mockGetVisitorCreditState.mockResolvedValueOnce({
+      credits: 0,
+      freeRemaining: 1,
+      dailyFreeQuota: 2,
+    });
+
+    await expect(
+      chargeReading(baseContext({ anonId: "anon-123456", ipHash: "ip-hash" }), "tarot")
+    ).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+      message: "LOGIN_REQUIRED_FOR_FREE_READING",
+    });
+
+    expect(mockSpendVisitorFree).not.toHaveBeenCalled();
   });
 
   it("requires either a signed-in user or anonymous quota identity", async () => {

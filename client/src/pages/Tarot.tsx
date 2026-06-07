@@ -395,6 +395,7 @@ const TAROT_RECOMMENDATION_MESSAGES: Record<string, string> = {
 };
 
 const TAROT_PENDING_FOLLOW_UP_KEY = 'healingpick:tarot-pending-follow-up';
+const TAROT_PENDING_READING_KEY = 'healingpick:tarot-pending-reading';
 
 export default function TarotPage() {
   const { isAuthenticated, login } = useAuth();
@@ -449,6 +450,40 @@ export default function TarotPage() {
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
+  const requireLoginForReading = (creditState = creditsQuery.data) => {
+    if (!creditState?.enabled || isAuthenticated) return false;
+    return creditState.freeRemaining < creditState.dailyFreeQuota;
+  };
+
+  const promptLoginForReading = () => {
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(TAROT_PENDING_READING_KEY, JSON.stringify({
+        question,
+        questionType,
+        activeQuestionCategory,
+      }));
+    }
+
+    toast.error('登入後可繼續占卜', {
+      description: '第一次可直接體驗；第二次免費占卜需要登入，登入後會回到這裡繼續洗牌。',
+      action: {
+        label: '登入',
+        onClick: () => void login(),
+      },
+      duration: 6000,
+    });
+    void login();
+  };
+
+  const handleContinueToShuffle = () => {
+    if (requireLoginForReading()) {
+      promptLoginForReading();
+      return;
+    }
+
+    setStep('shuffle');
+  };
+
   useEffect(() => {
     void preloadTarotCardImages(TAROT_CARD_IMAGE_URLS);
   }, []);
@@ -464,6 +499,31 @@ export default function TarotPage() {
         inputData: JSON.stringify({ questionType, cards: drawnCards.map(c => ({ name: c.card.name, position: c.card.en, reversed: c.reversed })) }),
         interpretation: data.interpretation,
       });
+    },
+    onError: (error) => {
+      if (error.message === 'LOGIN_REQUIRED_FOR_FREE_READING' || error.message === 'NOT_SIGNED_IN') {
+        promptLoginForReading();
+        return;
+      }
+
+      if (error.message === 'INSUFFICIENT_CREDITS' || error.message === 'ANON_QUOTA_EXHAUSTED') {
+        toast.error('今日免費額度已用完 🐾', {
+          description: isAuthenticated
+            ? '可購買點數繼續算，或等每日 00:00 免費額度重置'
+            : '登入後可繼續使用免費額度，或購買點數。',
+          action: {
+            label: isAuthenticated ? '購買點數' : '登入',
+            onClick: () => {
+              if (isAuthenticated) {
+                window.location.href = '/buy';
+              } else {
+                void login();
+              }
+            },
+          },
+          duration: 6000,
+        });
+      }
     },
   });
   const followUpMutation = trpc.tarot.followUp.useMutation({
@@ -679,6 +739,29 @@ export default function TarotPage() {
       window.sessionStorage.removeItem(TAROT_PENDING_FOLLOW_UP_KEY);
     }
   }, [creditsQuery, followUpMutation, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated || typeof window === 'undefined') return;
+
+    const raw = window.sessionStorage.getItem(TAROT_PENDING_READING_KEY);
+    if (!raw) return;
+    window.sessionStorage.removeItem(TAROT_PENDING_READING_KEY);
+
+    try {
+      const pending = JSON.parse(raw) as {
+        question?: string;
+        questionType?: string;
+        activeQuestionCategory?: string;
+      };
+      setQuestion(pending.question ?? '');
+      setQuestionType(pending.questionType ?? 'love');
+      setActiveQuestionCategory(pending.activeQuestionCategory ?? '');
+      setStep('shuffle');
+      void creditsQuery.refetch();
+    } catch {
+      window.sessionStorage.removeItem(TAROT_PENDING_READING_KEY);
+    }
+  }, [creditsQuery, isAuthenticated]);
 
   // 開始持續洗牌動畫
   const handleStartShuffle = useCallback(() => {
@@ -1087,7 +1170,7 @@ export default function TarotPage() {
                 </div>
 
                 <button
-                  onClick={() => setStep('shuffle')}
+                  onClick={handleContinueToShuffle}
                   className="w-full py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   繼續洗牌

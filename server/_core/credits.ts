@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { spendForReading, spendPaidCredit, spendVisitorFree } from "../db";
+import { getVisitorCreditState, spendForReading, spendPaidCredit, spendVisitorFree } from "../db";
 import type { TrpcContext } from "./context";
 import { isSupabaseConfigured } from "./supabase";
 
@@ -32,6 +32,11 @@ export async function chargeReading(ctx: TrpcContext, reason: string): Promise<v
   // Anonymous visitor — gated by BOTH browser-id and IP-hash quotas so the
   // limit can't be reset by clearing cookies / going incognito.
   if (ctx.anonId || ctx.ipHash) {
+    const state = await getVisitorCreditState(ctx.anonId, ctx.ipHash);
+    if (state && state.freeRemaining < state.dailyFreeQuota) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "LOGIN_REQUIRED_FOR_FREE_READING" });
+    }
+
     const result = await spendVisitorFree(ctx.anonId, ctx.ipHash);
     if (!result.ok) {
       if (result.reason === "no_db") return;

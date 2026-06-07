@@ -323,6 +323,7 @@ type FollowUpExchange = {
 };
 
 const ZIWEI_PENDING_FOLLOW_UP_KEY = 'healingpick:ziwei-pending-follow-up';
+const ZIWEI_PENDING_READING_KEY = 'healingpick:ziwei-pending-reading';
 
 export default function ZiweiPage() {
   const { isAuthenticated, login } = useAuth();
@@ -357,6 +358,68 @@ export default function ZiweiPage() {
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
+  type ZiweiReadingInput = {
+    birthDate: string;
+    hourValue: string;
+    gender: '男' | '女';
+    focusArea: string;
+    partnerBirthDate: string;
+    activeQuestionCategory: string | null;
+  };
+
+  const getReadingInput = (): ZiweiReadingInput => ({
+    birthDate,
+    hourValue,
+    gender,
+    focusArea,
+    partnerBirthDate,
+    activeQuestionCategory,
+  });
+
+  const requireLoginForReading = (creditState = creditsQuery.data) => {
+    if (!creditState?.enabled || isAuthenticated) return false;
+    return creditState.freeRemaining < creditState.dailyFreeQuota;
+  };
+
+  const promptLoginForReading = (input = getReadingInput()) => {
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(ZIWEI_PENDING_READING_KEY, JSON.stringify(input));
+    }
+
+    toast.error('登入後可繼續解讀', {
+      description: '第一次可直接體驗；第二次免費解讀需要登入，登入後會自動接著跑命盤。',
+      action: {
+        label: '登入',
+        onClick: () => void login(),
+      },
+      duration: 6000,
+    });
+    void login();
+  };
+
+  const runZiweiReading = (input: ZiweiReadingInput) => {
+    setBirthDate(input.birthDate);
+    setHourValue(input.hourValue);
+    setGender(input.gender);
+    setFocusArea(input.focusArea);
+    setPartnerBirthDate(input.partnerBirthDate);
+    setActiveQuestionCategory(input.activeQuestionCategory);
+    setAstrolabe(null);
+    setLlmInterpretation('');
+    setReadingRecommendation(null);
+    setFollowUpQuestion('');
+    setFollowUpExchanges([]);
+    setPendingFollowUpAfterLogin(false);
+    setSelectedPalaceName(null);
+    interpretMutation.mutate({
+      solarDate: input.birthDate,
+      timeIndex: parseInt(input.hourValue),
+      gender: input.gender,
+      focusArea: input.focusArea || undefined,
+      partnerSolarDate: input.partnerBirthDate || undefined,
+    });
+  };
+
   const interpretMutation = trpc.ziwei.interpret.useMutation({
     onSuccess: (data) => {
       setAstrolabe(data.astrolabe as AstrolabeData);
@@ -369,7 +432,32 @@ export default function ZiweiPage() {
         interpretation: data.interpretation,
       });
     },
-    onError: () => {
+    onError: (error) => {
+      if (error.message === 'LOGIN_REQUIRED_FOR_FREE_READING' || error.message === 'NOT_SIGNED_IN') {
+        promptLoginForReading();
+        return;
+      }
+
+      if (error.message === 'INSUFFICIENT_CREDITS' || error.message === 'ANON_QUOTA_EXHAUSTED') {
+        toast.error('今日免費額度已用完 🐾', {
+          description: isAuthenticated
+            ? '可購買點數繼續看，或等每日 00:00 免費額度重置'
+            : '登入後可繼續使用免費額度，或購買點數。',
+          action: {
+            label: isAuthenticated ? '購買點數' : '登入',
+            onClick: () => {
+              if (isAuthenticated) {
+                window.location.href = '/buy';
+              } else {
+                void login();
+              }
+            },
+          },
+          duration: 6000,
+        });
+        return;
+      }
+
       toast.error('命盤排列失敗，請稍後再試');
     },
   });
@@ -419,7 +507,13 @@ export default function ZiweiPage() {
       toast.error('請輸入出生日期');
       return;
     }
+    const input = getReadingInput();
     const c = creditsQuery.data;
+    if (requireLoginForReading(c)) {
+      promptLoginForReading(input);
+      return;
+    }
+
     if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
       toast.error('今日免費額度已用完 🐾', {
         description: isAuthenticated
@@ -439,20 +533,8 @@ export default function ZiweiPage() {
       });
       return;
     }
-    setAstrolabe(null);
-    setLlmInterpretation('');
-    setReadingRecommendation(null);
-    setFollowUpQuestion('');
-    setFollowUpExchanges([]);
-    setPendingFollowUpAfterLogin(false);
-    setSelectedPalaceName(null);
-    interpretMutation.mutate({
-      solarDate: birthDate,
-      timeIndex: parseInt(hourValue),
-      gender,
-      focusArea: focusArea || undefined,
-      partnerSolarDate: partnerBirthDate || undefined,
-    });
+
+    runZiweiReading(input);
   }
 
   const submitFollowUp = useCallback((trimmedQuestion: string, creditState = creditsQuery.data) => {
@@ -612,6 +694,30 @@ export default function ZiweiPage() {
       window.sessionStorage.removeItem(ZIWEI_PENDING_FOLLOW_UP_KEY);
     }
   }, [birthDate, creditsQuery, followUpMutation, gender, hourValue, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated || interpretMutation.isPending || typeof window === 'undefined') return;
+
+    const raw = window.sessionStorage.getItem(ZIWEI_PENDING_READING_KEY);
+    if (!raw) return;
+    window.sessionStorage.removeItem(ZIWEI_PENDING_READING_KEY);
+
+    try {
+      const pending = JSON.parse(raw) as Partial<ZiweiReadingInput>;
+      const input: ZiweiReadingInput = {
+        birthDate: pending.birthDate ?? birthDate,
+        hourValue: pending.hourValue ?? hourValue,
+        gender: pending.gender ?? gender,
+        focusArea: pending.focusArea ?? '',
+        partnerBirthDate: pending.partnerBirthDate ?? '',
+        activeQuestionCategory: pending.activeQuestionCategory ?? null,
+      };
+      void creditsQuery.refetch();
+      runZiweiReading(input);
+    } catch {
+      window.sessionStorage.removeItem(ZIWEI_PENDING_READING_KEY);
+    }
+  }, [birthDate, creditsQuery, gender, hourValue, interpretMutation.isPending, isAuthenticated]);
 
   const selectedPalace = astrolabe?.palaces.find((p) => p.name === selectedPalaceName) ?? null;
   const soulPalaceName = astrolabe?.palaces.find((p) => p.name === '命宮')?.name ?? '命宮';
