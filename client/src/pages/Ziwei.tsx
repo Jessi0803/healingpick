@@ -18,6 +18,7 @@ import { Streamdown } from 'streamdown';
 import { toast } from 'sonner';
 import { CatListening, CatPeeking } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import ReadingFeedback from '@/components/ReadingFeedback';
 import { recommendForCategory, recommendForZiwei, type RecommendationCategory } from '@/data/recommend';
 import { getProductRecommendationReason, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
@@ -746,6 +747,16 @@ export default function ZiweiPage() {
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               <Streamdown>{llmInterpretation}</Streamdown>
             </div>
+
+            <ReadingFeedback
+              source="ziwei"
+              context={[
+                `生日：${birthDate}`,
+                `時辰索引：${hourValue}`,
+                `性別：${gender}`,
+                focusArea.trim() ? `問題：${focusArea.trim()}` : null,
+              ].filter(Boolean).join('；')}
+            />
 
             {ziweiRecommendedProducts.length > 0 && (
               <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">

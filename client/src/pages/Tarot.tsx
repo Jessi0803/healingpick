@@ -18,6 +18,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { Streamdown } from 'streamdown';
 import { CatWaving, CatListening } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import ReadingFeedback from '@/components/ReadingFeedback';
 import { Mail } from 'lucide-react';
 import { recommendForCategory, recommendForTarot, type RecommendationCategory } from '@/data/recommend';
 import { getProductRecommendationReason, type Product } from '@/data/products';
@@ -1497,6 +1498,11 @@ export default function TarotPage() {
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       <Streamdown>{llmInterpretation}</Streamdown>
                     </div>
+
+                    <ReadingFeedback
+                      source="tarot"
+                      context={question.trim() ? `問題：${question.trim()}` : '未填寫具體問題'}
+                    />
 
                     {recommendedProducts.length > 0 && (
                       <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
