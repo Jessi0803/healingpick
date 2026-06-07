@@ -14,6 +14,7 @@ export function useAuth(options?: UseAuthOptions) {
     retry: false,
     refetchOnWindowFocus: false,
   });
+  const logoutMutation = trpc.auth.logout.useMutation();
 
   // Refetch identity whenever the Supabase session changes (sign in / out).
   useEffect(() => {
@@ -53,9 +54,10 @@ export function useAuth(options?: UseAuthOptions) {
 
   const logout = useCallback(async () => {
     await signOut();
+    await logoutMutation.mutateAsync();
     utils.auth.me.setData(undefined, null);
     await utils.auth.me.invalidate();
-  }, [utils]);
+  }, [logoutMutation, utils]);
 
   const state = useMemo(
     () => ({
