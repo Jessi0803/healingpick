@@ -250,6 +250,22 @@ ${ZIWEI_PRIVATE_MESSAGE_STYLE}
       const extracted = extractRecommendation(textContent);
       const interpretation = cleanZiweiInterpretation(extracted.interpretation);
 
+      const isMember = Boolean(ctx.user);
+      await saveReading({
+        userId: ctx.user?.id ?? null,
+        anonId: isMember ? null : ctx.anonId,
+        ipHash: isMember ? null : ctx.ipHash,
+        type: "ziwei",
+        question: focusArea || null,
+        inputData: JSON.stringify({
+          recordKind: "ziwei",
+          solarDate,
+          timeIndex,
+          gender,
+        }),
+        interpretation,
+      });
+
       return {
         success: true,
         interpretation,
