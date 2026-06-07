@@ -50,12 +50,40 @@ const ELEMENT_RECOMMENDATION_MESSAGES: Record<string, string> = {
   水: '先照顧情緒，再做判斷。',
 };
 
-function getFortuneRecommendationMessage(element: string, advice?: string) {
-  const trimmedAdvice = advice
-    ?.trim()
-    .replace(/^(根據今天的提醒：|根據今天的提醒:|根據今天的提醒|今天的提醒是：|今天的提醒是:|今天的提醒是|今天的提醒：|今天的提醒:|因為今天的訊息是：|因為今天的訊息是:|因為今天的訊息是)\s*/u, '')
-    .replace(/[。．.]*$/u, '');
-  if (trimmedAdvice) return trimmedAdvice;
+type FortuneRecommendationSource = {
+  overallScore?: number;
+  loveScore?: number;
+  careerScore?: number;
+  healthScore?: number;
+};
+
+const FORTUNE_ELEMENT_THEMES: Record<string, string> = {
+  火: '行動節奏',
+  土: '生活節奏',
+  風: '想法和溝通',
+  水: '情緒狀態',
+};
+
+function getFortuneRecommendationMessage(
+  element: string,
+  fortune?: FortuneRecommendationSource | null
+) {
+  if (fortune) {
+    const focusAreas = [
+      { label: '整體節奏', score: fortune.overallScore },
+      { label: '感情互動', score: fortune.loveScore },
+      { label: '工作財務', score: fortune.careerScore },
+      { label: '身體狀態', score: fortune.healthScore },
+    ].filter((item): item is { label: string; score: number } => typeof item.score === 'number');
+
+    const focus = focusAreas.sort((a, b) => a.score - b.score)[0];
+    if (focus) {
+      const theme = FORTUNE_ELEMENT_THEMES[element] ?? '今天的節奏';
+      const action = focus.score >= 8 ? '順著好的狀態往前推進' : `先把${theme}調穩`;
+      return `今天重點在${focus.label}，${action}`;
+    }
+  }
+
   return ELEMENT_RECOMMENDATION_MESSAGES[element] ?? '先穩住自己，再做決定。';
 }
 
@@ -644,7 +672,7 @@ export default function FortunePage() {
                                 <div className="mb-4 rounded-2xl border border-[#D1BE9B]/15 bg-white/35 px-4 py-3">
                                   <div className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70 prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!my-0 [&_p]:!text-[12px] [&_p]:!leading-[1.9]"
                                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                                    <Streamdown>{`根據今天的提醒：${getFortuneRecommendationMessage(selectedSignData.element, aiData?.advice)}`}</Streamdown>
+                                    <Streamdown>{`根據今天的提醒：${getFortuneRecommendationMessage(selectedSignData.element, aiData)}`}</Streamdown>
                                   </div>
                                   <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/70"
                                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
