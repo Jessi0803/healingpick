@@ -80,7 +80,7 @@ describe("createContext", () => {
       openId: "new-supabase-user",
       email: "new@example.com",
       name: "New User",
-      loginMethod: "google",
+      loginMethod: "email",
     } as Awaited<ReturnType<typeof upsertUser>>);
 
     const ctx = await createContext(createOptions({ authorization: "Bearer token-456" }));
@@ -89,7 +89,7 @@ describe("createContext", () => {
       openId: "new-supabase-user",
       email: "new@example.com",
       name: "New User",
-      loginMethod: "google",
+      loginMethod: "email",
     });
     expect(ctx.user?.id).toBe(10);
   });

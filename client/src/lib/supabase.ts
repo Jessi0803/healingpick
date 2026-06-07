@@ -17,25 +17,6 @@ export const supabase: SupabaseClient | null = supabaseEnabled
     })
   : null;
 
-export const IN_APP_BROWSER_LOGIN_MESSAGE =
-  "目前的瀏覽器無法使用 Google 登入。請點右下角選單，選擇「在 Safari 開啟」或「在 Chrome 開啟」後再登入。";
-
-function isInAppBrowser(): boolean {
-  if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent.toLowerCase();
-  return [
-    "line/",
-    "instagram",
-    "fban",
-    "fbav",
-    "fb_iab",
-    "messenger",
-    "micromessenger",
-    "tiktok",
-    "gsa/",
-  ].some((token) => ua.includes(token));
-}
-
 /** Current Supabase access token (JWT) for authorising tRPC calls, or null. */
 export async function getAccessToken(): Promise<string | null> {
   if (!supabase) return null;
@@ -62,19 +43,6 @@ export async function completeOAuthRedirect(): Promise<{ handled: boolean; ok: b
   window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
 
   return { handled: true, ok: true };
-}
-
-/** Start the Google sign-in redirect flow. */
-export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string }> {
-  if (!supabase) return { ok: false, error: "Auth not configured" };
-  if (isInAppBrowser()) return { ok: false, error: IN_APP_BROWSER_LOGIN_MESSAGE };
-
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: { redirectTo: window.location.href },
-  });
-  if (error) return { ok: false, error: error.message };
-  return { ok: true };
 }
 
 /** Start the LINE sign-in redirect flow and prompt users to add the linked official account. */

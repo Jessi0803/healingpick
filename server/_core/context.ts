@@ -53,7 +53,7 @@ export async function createContext(
               openId: identity.id,
               email: identity.email ?? undefined,
               name: identity.name ?? undefined,
-              loginMethod: "google",
+              loginMethod: "email",
             })) ?? undefined;
         }
         user = appUser ?? null;

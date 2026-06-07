@@ -44,7 +44,7 @@ export function useAuth(options?: UseAuthOptions) {
     return () => sub.subscription.unsubscribe();
   }, [utils]);
 
-  // Open the global LoginDialog so the user can pick Google or Email.
+  // Open the global LoginDialog so the user can pick LINE or Email.
   const login = useCallback(async () => {
     if (typeof window !== "undefined") {
       window.dispatchEvent(new Event("open-login"));

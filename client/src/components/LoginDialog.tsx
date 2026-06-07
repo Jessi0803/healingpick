@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
-  IN_APP_BROWSER_LOGIN_MESSAGE,
   sendPasswordResetEmail,
-  signInWithGoogle,
   signInWithLine,
   signInWithPassword,
   signUpWithPassword,
@@ -32,7 +30,6 @@ export default function LoginDialog() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [copiedUrl, setCopiedUrl] = useState(false);
 
   useEffect(() => {
     const handler = () => {
@@ -40,7 +37,6 @@ export default function LoginDialog() {
       setMode("login");
       setError(null);
       setInfo(null);
-      setCopiedUrl(false);
     };
     window.addEventListener("open-login", handler);
     return () => window.removeEventListener("open-login", handler);
@@ -53,7 +49,6 @@ export default function LoginDialog() {
       setMode("login");
       setError(translateAuthError(typeof detail === "string" ? detail : "登入失敗,請稍後再試"));
       setInfo(null);
-      setCopiedUrl(false);
     };
     window.addEventListener("auth-error", handler);
     return () => window.removeEventListener("auth-error", handler);
@@ -63,7 +58,6 @@ export default function LoginDialog() {
   useEffect(() => {
     setError(null);
     setInfo(null);
-    setCopiedUrl(false);
   }, [mode]);
 
   if (!supabaseEnabled) return null;
@@ -109,24 +103,6 @@ export default function LoginDialog() {
       }
       setInfo(`重設密碼連結已寄到 ${email}\n打開信點連結就能設一組新密碼。`);
     }
-  };
-
-  const handleCopyCurrentUrl = async () => {
-    const currentUrl = window.location.href;
-    try {
-      await navigator.clipboard.writeText(currentUrl);
-    } catch {
-      const input = document.createElement("textarea");
-      input.value = currentUrl;
-      input.setAttribute("readonly", "");
-      input.style.position = "fixed";
-      input.style.left = "-9999px";
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand("copy");
-      document.body.removeChild(input);
-    }
-    setCopiedUrl(true);
   };
 
   return (
@@ -204,16 +180,6 @@ export default function LoginDialog() {
                   <p className="text-[11px] text-[#C9837A] tracking-wider">
                     {error}
                   </p>
-                  {error === IN_APP_BROWSER_LOGIN_MESSAGE && (
-                    <button
-                      type="button"
-                      onClick={handleCopyCurrentUrl}
-                      className="mt-3 rounded-full border border-[#D1BE9B]/45 bg-white/55 px-4 py-2 text-[11px] tracking-[0.18em] text-[#8A7250] transition-all duration-300 hover:border-[#A38D6B]/70 hover:bg-white/80 hover:text-[#31353A]"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                    >
-                      {copiedUrl ? "已複製網址" : "複製網址"}
-                    </button>
-                  )}
                 </div>
               )}
             </form>
@@ -258,17 +224,6 @@ export default function LoginDialog() {
               使用 LINE {mode === "register" ? "註冊" : "登入"}
             </button>
 
-            <button
-              onClick={async () => {
-                setError(null);
-                setInfo(null);
-                const res = await signInWithGoogle();
-                if (!res.ok) setError(translateAuthError(res.error));
-              }}
-              className="mt-2 w-full py-3 text-[12px] tracking-[0.25em] border border-[#31353A]/30 text-[#31353A]/85 rounded-full hover:bg-[#31353A] hover:text-[#FAF7F4] transition-all duration-500"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}>
-              使用 Google {mode === "register" ? "註冊" : "登入"}
-            </button>
           </>
         )}
       </DialogContent>
