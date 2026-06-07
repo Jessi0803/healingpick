@@ -53,8 +53,10 @@ export function useAuth(options?: UseAuthOptions) {
   }, []);
 
   const logout = useCallback(async () => {
-    await signOut();
-    await logoutMutation.mutateAsync();
+    await Promise.allSettled([
+      signOut(),
+      logoutMutation.mutateAsync(),
+    ]);
     utils.auth.me.setData(undefined, null);
     await utils.auth.me.invalidate();
   }, [logoutMutation, utils]);

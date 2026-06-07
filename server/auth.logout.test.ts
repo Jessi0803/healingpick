@@ -29,7 +29,9 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: CookieCall[] }
     user,
     req: {
       protocol: "https",
-      headers: {},
+      headers: {
+        host: "healingpick.com",
+      },
     } as TrpcContext["req"],
     res: {
       clearCookie: (name: string, options: Record<string, unknown>) => {
@@ -49,8 +51,8 @@ describe("auth.logout", () => {
     const result = await caller.auth.logout();
 
     expect(result).toEqual({ success: true });
-    expect(clearedCookies).toHaveLength(1);
-    expect(clearedCookies[0]?.name).toBe(COOKIE_NAME);
+    expect(clearedCookies).toHaveLength(6);
+    expect(clearedCookies.every(cookie => cookie.name === COOKIE_NAME)).toBe(true);
     expect(clearedCookies[0]?.options).toMatchObject({
       maxAge: -1,
       secure: true,
@@ -58,5 +60,21 @@ describe("auth.logout", () => {
       httpOnly: true,
       path: "/",
     });
+    expect(clearedCookies.map(cookie => cookie.options.domain)).toEqual([
+      undefined,
+      undefined,
+      "healingpick.com",
+      "healingpick.com",
+      ".healingpick.com",
+      ".healingpick.com",
+    ]);
+    expect(clearedCookies.map(cookie => cookie.options.sameSite)).toEqual([
+      "lax",
+      "none",
+      "lax",
+      "none",
+      "lax",
+      "none",
+    ]);
   });
 });
