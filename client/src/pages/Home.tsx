@@ -147,6 +147,18 @@ const dailyEnergyPool = [
 ];
 const todayEnergy = dailyEnergyPool[new Date().getDay() % dailyEnergyPool.length];
 
+function getDailyDivinationCount() {
+  const today = new Date();
+  const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+  let seed = 0;
+
+  for (let i = 0; i < dateKey.length; i++) {
+    seed = (seed * 31 + dateKey.charCodeAt(i)) % 100000;
+  }
+
+  return 23 + (seed % 74);
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -205,6 +217,7 @@ export default function Home() {
   }
 
   const activeData = activeCrystal ? altarData[activeCrystal] : null;
+  const dailyDivinationCount = getDailyDivinationCount();
 
   function scrollToTestimonials() {
     document.getElementById('testimonials-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -332,6 +345,23 @@ export default function Home() {
           >
             "A small universe for feelings to rest."
           </p>
+
+          <div
+            className="mx-auto mb-7 inline-flex items-center gap-3 rounded-full border border-[#D1BE9B]/30 bg-white/35 px-4 py-2 text-[#31353A]/64 shadow-[0_8px_28px_rgba(209,190,155,0.12)] backdrop-blur-md"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+          >
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#D1BE9B]/45 opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#D1BE9B]" />
+            </span>
+            <span className="text-[11px] tracking-[0.18em]">
+              今天已有
+              <span className="mx-1.5 text-[15px] tracking-[0.08em] text-[#8A7250]">
+                {dailyDivinationCount}
+              </span>
+              人來占卜
+            </span>
+          </div>
 
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[20rem] sm:grid-cols-2">
             <Link href="/tarot">
