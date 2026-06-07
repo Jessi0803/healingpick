@@ -617,6 +617,81 @@ export default function ZiweiPage() {
   const ziweiRecommendedProducts = readingRecommendation
     ? recommendForCategory(readingRecommendation.category)
     : recommendForZiwei(selectedPalaceName, gender);
+  const renderFollowUpSection = () => {
+    if (!llmInterpretation) return null;
+
+    return (
+      <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20">
+        <div className="flex flex-col gap-2 mb-4">
+          <p className="text-[13px] tracking-[0.2em] text-[#8A7250]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+            ◎ 想繼續問下去嗎
+          </p>
+          <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            每次追問會消耗 1 點。Mochi 會基於同一份命盤，回答你更具體的延伸問題。
+          </p>
+        </div>
+
+        <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
+          <textarea
+            value={followUpQuestion}
+            onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
+            maxLength={300}
+            placeholder="例如：這段關係還有機會嗎？我近期工作該注意什麼？"
+            className="min-h-[78px] resize-none rounded-xl border border-[#D1BE9B]/20 bg-white/55 px-3.5 py-2.5 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+          />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
+              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+              {followUpQuestion.length}/300
+            </span>
+            <button
+              type="submit"
+              disabled={!followUpQuestion.trim() || followUpMutation.isPending}
+              className="px-6 py-2.5 text-[11px] tracking-[0.18em] bg-[#3D4144] text-[#FAF7F4] rounded-full transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 hover:bg-[#D1BE9B] hover:text-[#31353A]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+            >
+              {followUpMutation.isPending
+                ? 'Mochi 正在看命盤...'
+                : '請 Mochi 回應（消耗 1 點）'}
+            </button>
+          </div>
+        </form>
+
+        {followUpMutation.isError && (
+          <p className="mt-3 text-[12px] tracking-[0.08em] text-[#EAA8AC]"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            追問暫時無法送出，請稍後再試。
+          </p>
+        )}
+
+        {followUpExchanges.length > 0 && (
+          <div className="mt-5 flex flex-col gap-3">
+            {followUpExchanges.map((item, index) => (
+              <div key={`${index}-${item.question}`} className="rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
+                <div className="mb-3 flex flex-col gap-1">
+                  <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    Mochi 的深入回答
+                  </p>
+                  <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    你的追問：{item.question}
+                  </p>
+                </div>
+                <p className="text-[13px] leading-[2.05] tracking-[0.08em] text-[#31353A]/78 whitespace-pre-wrap"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                  {item.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
   const renderInterpretationSection = (className = '') => (
     <div className={className}>
       <div className="flex items-center gap-3 mb-2 px-1">
@@ -667,7 +742,7 @@ export default function ZiweiPage() {
         )}
         {llmInterpretation && (
           <div>
-            <div className="ziwei-interpretation text-[12.5px] leading-[2.2] text-[#31353A]/75 tracking-wider"
+            <div className="ziwei-interpretation text-[12.5px] leading-[2.2] text-[#31353A]/75 tracking-wider [&_p]:my-3"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               <Streamdown>{llmInterpretation}</Streamdown>
             </div>
@@ -692,75 +767,6 @@ export default function ZiweiPage() {
               </div>
             )}
 
-            <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
-              <div className="flex flex-col gap-2 mb-4">
-                <p className="text-[13px] tracking-[0.2em] text-[#8A7250]"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  ◎ 想繼續問下去嗎
-                </p>
-                <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  每次追問會消耗 1 點。Mochi 會基於同一份命盤，回答你更具體的延伸問題。
-                </p>
-              </div>
-
-              <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
-                <textarea
-                  value={followUpQuestion}
-                  onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
-                  maxLength={300}
-                  placeholder="例如：這段關係還有機會嗎？我近期工作該注意什麼？"
-                  className="min-h-[78px] resize-none rounded-xl border border-[#D1BE9B]/20 bg-white/55 px-3.5 py-2.5 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                />
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                  <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
-                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                    {followUpQuestion.length}/300
-                  </span>
-                  <button
-                    type="submit"
-                    disabled={!followUpQuestion.trim() || followUpMutation.isPending}
-                    className="px-6 py-2.5 text-[11px] tracking-[0.18em] bg-[#3D4144] text-[#FAF7F4] rounded-full transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 hover:bg-[#D1BE9B] hover:text-[#31353A]"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  >
-                    {followUpMutation.isPending
-                      ? 'Mochi 正在看命盤...'
-                      : '送出追問（消耗 1 點）'}
-                  </button>
-                </div>
-              </form>
-
-              {followUpMutation.isError && (
-                <p className="mt-3 text-[12px] tracking-[0.08em] text-[#EAA8AC]"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                  追問暫時無法送出，請稍後再試。
-                </p>
-              )}
-
-              {followUpExchanges.length > 0 && (
-                <div className="mt-5 flex flex-col gap-3">
-                  {followUpExchanges.map((item, index) => (
-                    <div key={`${index}-${item.question}`} className="rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
-                      <div className="mb-3 flex flex-col gap-1">
-                        <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          Mochi 的深入回答
-                        </p>
-                        <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
-                          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                          你的追問：{item.question}
-                        </p>
-                      </div>
-                      <p className="text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/78 whitespace-pre-line"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        {item.answer}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         )}
       </div>
@@ -1119,6 +1125,7 @@ export default function ZiweiPage() {
             <div className="animate-fade-in-up">
               <div className="flex flex-col gap-8">
               {renderInterpretationSection()}
+              {renderFollowUpSection()}
 
               {/* Birth info banner */}
               <div className="flex flex-wrap justify-center gap-3">
