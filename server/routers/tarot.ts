@@ -23,6 +23,10 @@ const recommendationSchema = z.object({
 type ProductRecommendation = z.infer<typeof recommendationSchema>;
 
 const EXAMPLE2_MESSAGE_STYLE = `請完全照「範例2」那種私訊解讀感來寫：
+- 你不是在寫塔羅文章，你是在 LINE 裡回朋友。
+- 使用者問什麼，你第一句就直接回答什麼。
+- 牌只放在背後判斷，不要把牌義詞寫出來。
+- 不要寫抽象心靈句，要寫現實互動畫面。
 - 像真人在 LINE 裡認真回朋友，不像顧問報告、占卜文章、心靈粉專。
 - 第一行必須直接回答使用者問的事，控制在 35 個中文字以內；不要只寫泛泛的「有機會」「可以喔」「會變好」。
 - 第一行要帶到使用者問題裡的核心對象或動作，例如占卜網站、顧客、回來、喜歡用、追問、購買、復合、聯絡；讓人一看就知道你有回答到問題。
