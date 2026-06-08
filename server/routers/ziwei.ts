@@ -322,40 +322,50 @@ ${EXAMPLE2_MESSAGE_STYLE}
         })
         .join("\n");
 
-      const systemPrompt = `你是「Mochi」，正在根據同一份紫微命盤解讀回答追問。
-
+      const systemPrompt = `你是一位精通紫微斗數的命理師。
 ${EXAMPLE2_MESSAGE_STYLE}
+只針對使用者想問的那一件事回答，整段直接寫完，不分段落、不加小標、不寫 Markdown 粗體。禁止寒暄開場，第一行就直接回答問題。`;
 
-追問回答規則：
-- 正文 260-440 字，第一段直接回答追問。
-- 不重新排命盤，不假裝有新的出生資料。
-- 可以引用命宮、身宮、主星、宮位或原解讀中的 2-3 個重點，但要翻成白話。
-- 最後給 1-2 個今天或這週能做的小動作。
-- 不要使用 Markdown 標題、編號或項目符號。`;
+      const userPrompt = `你是一位精通紫微斗數的命理師，請根據以下命盤資訊，提供白話、具體且溫柔的命盤解讀。
 
-      const userPrompt = `使用者出生資料：
+【基本資料】
 - 陽曆生日：${data.solarDate}
+- 農曆生日：${data.lunarDate}
+- 四柱：${data.chineseDate}
 - 出生時辰：${data.time}（${data.timeRange}）
 - 性別：${input.gender}
+- 生肖：${data.zodiac}
+- 星座：${data.sign}
 - 命宮地支：${data.earthlyBranchOfSoulPalace}
 - 身宮地支：${data.earthlyBranchOfBodyPalace}
 - 命主：${data.soul}
 - 身主：${data.body}
 - 五行局：${data.fiveElementsClass}
 
-十二宮位摘要：
+【十二宮位星曜分佈】
 ${palaceSummary}
 
-原本想問的問題：
-${input.focusArea || "（未填寫具體問題）"}
-
-剛剛的完整紫微解讀：
-${input.interpretation}
-
-使用者現在追問：
+【想問的問題】
 ${input.followUpQuestion}
 
-請只基於上面這份命盤與原解讀，回答這次追問。`;
+【上一輪原本想問的問題】
+${input.focusArea || "（未填寫具體問題）"}
+
+【上一輪完整紫微解讀】
+${input.interpretation}
+
+請先判斷使用者想了解的問題主要屬於哪一類：感情、工作、財運、人際家庭、自我狀態、整體方向。
+如果【想問的問題】已經很明確，例如感情、工作、財運、家人相處，請集中回答該主題，不要硬加入無關面向。
+如果沒有特別填寫，或問題很模糊，才用 2-3 個面向整理，例如工作、感情、財務或自我狀態。
+
+${EXAMPLE2_MESSAGE_STYLE}
+
+這次是完整命盤解讀，請用上面範例那種 LINE 私訊語感寫，整體 300-480 字：
+- 只針對使用者想問的那一件事回答，整段一路講完，不要分段落、不要編號、不要加任何小標。
+- 第一行就直接回答使用者問的事（是／有機會／他現在還想…但…／近期會不會），不要先鋪氣氛，也不要寒暄；禁止「你好」「哈囉」「嗨」「Mochi 看到你的命盤」這種開場。
+- 先給答案，再用短句講命盤原因和會發生的現實畫面，最後收在一個這週能做的小動作，不要寫泛泛祝福。
+- 如果使用者沒有填具體問題，第一行先用一句話點出他命盤最該看見的方向，再順著講下去。
+- 不要用 Markdown 標題、粗體、項目符號或編號，只用自然換行。`;
 
       const response = await invokeLLM({
         messages: [
@@ -366,7 +376,9 @@ ${input.followUpQuestion}
 
       const rawContent = response.choices?.[0]?.message?.content;
       const answer = rawContent
-        ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+        ? cleanZiweiInterpretation(
+            extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+          )
         : "Mochi 暫時讀不到這個追問，請稍後再試。";
 
       const isMember = Boolean(ctx.user);
