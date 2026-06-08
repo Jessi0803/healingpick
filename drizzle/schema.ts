@@ -2,6 +2,7 @@ import { integer, pgEnum, pgTable, serial, text, timestamp, varchar } from "driz
 
 export const roleEnum = pgEnum("role", ["user", "admin"]);
 export const readingTypeEnum = pgEnum("reading_type", ["tarot", "ziwei", "fortune"]);
+export const feedbackSourceEnum = pgEnum("feedback_source", ["tarot", "ziwei"]);
 
 /**
  * Core user table backing auth + credits.
@@ -116,6 +117,21 @@ export const readings = pgTable("readings", {
 
 export type Reading = typeof readings.$inferSelect;
 export type InsertReading = typeof readings.$inferInsert;
+
+/**
+ * Customer feedback submitted after tarot / ziwei readings.
+ */
+export const feedbacks = pgTable("feedbacks", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId"),
+  source: feedbackSourceEnum("source").notNull(),
+  message: text("message").notNull(),
+  context: text("context"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Feedback = typeof feedbacks.$inferSelect;
+export type InsertFeedback = typeof feedbacks.$inferInsert;
 
 /**
  * Treehole session records (comfort conversations).

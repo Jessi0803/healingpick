@@ -1,7 +1,7 @@
 import { desc, eq, like, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { creditTransactions, readings, users } from "../../drizzle/schema";
+import { creditTransactions, feedbacks, readings, users } from "../../drizzle/schema";
 import { DEFAULT_DAILY_FREE_QUOTA, getDailyFreeQuota, getDb, setDailyFreeQuota } from "../db";
 import { adminProcedure, router } from "../_core/trpc";
 
@@ -11,6 +11,27 @@ const limitInput = z.object({
 
 function toNumber(value: unknown): number {
   return Number(value ?? 0);
+}
+
+async function ensureFeedbacksTable(db: Awaited<ReturnType<typeof getDb>>) {
+  if (!db) return;
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."feedback_source" AS ENUM ('tarot', 'ziwei');
+    EXCEPTION
+      WHEN duplicate_object THEN null;
+    END $$;
+  `);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS "feedbacks" (
+      "id" serial PRIMARY KEY NOT NULL,
+      "userId" integer,
+      "source" "feedback_source" NOT NULL,
+      "message" text NOT NULL,
+      "context" text,
+      "createdAt" timestamp DEFAULT now() NOT NULL
+    )
+  `);
 }
 
 export const adminRouter = router({
@@ -39,6 +60,7 @@ export const adminRouter = router({
       }
 
       const limit = input?.limit ?? 100;
+      await ensureFeedbacksTable(db);
 
       // Distinct visitor key: prefer the anon session id, fall back to the hashed IP.
       const visitorKey = sql<string>`coalesce('anon:' || ${readings.anonId}, 'ip:' || ${readings.ipHash})`;
@@ -52,6 +74,7 @@ export const adminRouter = router({
         orderRows,
         transactionRows,
         readingRows,
+        feedbackRows,
         dailyFreeQuota,
       ] = await Promise.all([
           db.select({ count: sql<number>`count(*)` }).from(users),
@@ -135,6 +158,21 @@ export const adminRouter = router({
             .leftJoin(users, eq(readings.userId, users.id))
             .orderBy(desc(readings.createdAt))
             .limit(limit),
+          db
+            .select({
+              id: feedbacks.id,
+              userId: feedbacks.userId,
+              email: users.email,
+              name: users.name,
+              source: feedbacks.source,
+              message: feedbacks.message,
+              context: feedbacks.context,
+              createdAt: feedbacks.createdAt,
+            })
+            .from(feedbacks)
+            .leftJoin(users, eq(feedbacks.userId, users.id))
+            .orderBy(desc(feedbacks.createdAt))
+            .limit(limit),
           getDailyFreeQuota(),
         ]);
 
@@ -157,6 +195,7 @@ export const adminRouter = router({
         orders: orderRows,
         transactions: transactionRows,
         readings: readingRows,
+        feedbacks: feedbackRows,
       };
     }),
   updateDailyFreeQuota: adminProcedure

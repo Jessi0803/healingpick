@@ -8,6 +8,7 @@ const tabs = [
   { id: 'orders', label: '訂單管理' },
   { id: 'inputs', label: '會員問答' },
   { id: 'visitors', label: '訪客問答' },
+  { id: 'feedbacks', label: '顧客回饋' },
   { id: 'transactions', label: '點數紀錄' },
 ] as const;
 
@@ -69,6 +70,17 @@ type AdminReadingRow = {
   createdAt: Date;
 };
 
+type AdminFeedbackRow = {
+  id: number;
+  userId: number | null;
+  email: string | null;
+  name: string | null;
+  source: 'tarot' | 'ziwei';
+  message: string;
+  context: string | null;
+  createdAt: Date;
+};
+
 function formatDate(value: string | Date | null | undefined) {
   if (!value) return '—';
   return new Date(value).toLocaleString('zh-TW', {
@@ -94,6 +106,11 @@ function readerLabel(row: Pick<AdminReadingRow, 'userId' | 'email' | 'name' | 'a
   if (row.anonId) return `訪客 ${row.anonId.slice(0, 8)}`;
   if (row.ipHash) return `訪客 IP ${row.ipHash.slice(0, 8)}`;
   return '訪客';
+}
+
+function feedbackReaderLabel(row: Pick<AdminFeedbackRow, 'userId' | 'email' | 'name'>) {
+  if (row.userId != null) return row.email ?? row.name ?? `會員 #${row.userId}`;
+  return '未登入使用者';
 }
 
 function reasonLabel(reason: string) {
@@ -224,6 +241,16 @@ export default function AdminPage() {
       )
     );
   }, [data?.transactions, normalizedQuery]);
+
+  const filteredFeedbacks = useMemo(() => {
+    const rows = data?.feedbacks ?? [];
+    if (!normalizedQuery) return rows;
+    return rows.filter((row) =>
+      [row.email, row.name, row.source, typeLabels[row.source], row.message, row.context, String(row.userId)].some((value) =>
+        (value ?? '').toLowerCase().includes(normalizedQuery)
+      )
+    );
+  }, [data?.feedbacks, normalizedQuery]);
 
   if (loading) {
     return (
@@ -380,6 +407,7 @@ export default function AdminPage() {
               {activeTab === 'orders' && <OrdersTable rows={filteredOrders} />}
               {activeTab === 'inputs' && <ReadingsTable rows={memberReadings} />}
               {activeTab === 'visitors' && <ReadingsTable rows={visitorReadings} />}
+              {activeTab === 'feedbacks' && <FeedbacksTable rows={filteredFeedbacks} />}
               {activeTab === 'transactions' && <TransactionsTable rows={filteredTransactions} />}
             </div>
           )}
@@ -582,6 +610,45 @@ function ReadingsTable({ rows }: { rows: AdminReadingRow[] }) {
             <RecordBlock title="輸入資料" value={row.inputData} />
             <div className="md:col-span-2">
               <RecordBlock title="mochi解讀" value={row.interpretation} maxHeight />
+            </div>
+          </div>
+        </details>
+      ))}
+    </div>
+  );
+}
+
+function FeedbacksTable({ rows }: { rows: AdminFeedbackRow[] }) {
+  return (
+    <div className="divide-y divide-[#D1BE9B]/12">
+      {rows.length === 0 ? (
+        <div className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">沒有資料</div>
+      ) : rows.map((row) => (
+        <details key={row.id} className="group px-4 py-4">
+          <summary className="cursor-pointer list-none">
+            <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
+                  <span className="rounded-full bg-[#A38D6B]/14 px-2 py-0.5 text-[10px] tracking-[0.1em] text-[#A38D6B]">
+                    {typeLabels[row.source] ?? row.source}
+                  </span>
+                  <span>{feedbackReaderLabel(row)}</span>
+                </div>
+                <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
+                  {shortText(row.message, 120)}
+                </div>
+              </div>
+              <div className="shrink-0 text-[11px] tracking-[0.1em] text-[#A38D6B]">
+                {formatDate(row.createdAt)}
+              </div>
+            </div>
+          </summary>
+          <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
+            <RecordBlock title="顧客身分" value={feedbackReaderLabel(row)} />
+            <RecordBlock title="來源" value={typeLabels[row.source] ?? row.source} />
+            <RecordBlock title="情境" value={row.context} />
+            <div className="md:col-span-2">
+              <RecordBlock title="回饋內容" value={row.message} maxHeight />
             </div>
           </div>
         </details>
