@@ -326,7 +326,7 @@ const ZIWEI_PENDING_FOLLOW_UP_KEY = 'healingpick:ziwei-pending-follow-up';
 const ZIWEI_PENDING_GENERATE_KEY = 'healingpick:ziwei-pending-generate';
 const FOLLOW_UP_LOGIN_PROMPT = {
   title: '登入後繼續追問',
-  subtitle: 'Mochi 先幫你把問題收好。登入後會回到這一頁繼續問；新朋友註冊送 5 點，可以多算幾次 🐾',
+  subtitle: '新朋友註冊送 5 點，可以多算幾次 🐾',
 };
 const REPEAT_READING_LOGIN_PROMPT = {
   title: '登入後繼續看命盤',
