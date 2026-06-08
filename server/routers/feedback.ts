@@ -25,15 +25,6 @@ export const feedbackRouter = router({
         ? `${ctx.user.email ?? ctx.user.id} (${ctx.user.id})`
         : "未登入使用者";
 
-      await saveReadingFeedback({
-        userId: ctx.user?.id ?? null,
-        anonId: ctx.anonId,
-        ipHash: ctx.ipHash,
-        source: input.source,
-        message: input.message,
-        context: input.context ?? null,
-      });
-
       const notificationPayload = {
         title: `新的${sourceLabel}回饋`,
         content: [
@@ -46,10 +37,32 @@ export const feedbackRouter = router({
         ].filter(Boolean).join("\n"),
       };
 
+      const saved = await saveReadingFeedback({
+        userId: ctx.user?.id ?? null,
+        anonId: ctx.anonId,
+        ipHash: ctx.ipHash,
+        source: input.source,
+        message: input.message,
+        context: input.context ?? null,
+      }).then(
+        () => true,
+        (error) => {
+          console.warn("[Feedback] Failed to save feedback; attempting owner notification:", error);
+          return false;
+        }
+      );
+
       const delivered = await notifyOwner(notificationPayload).catch((error) => {
-        console.warn("[Feedback] Saved feedback, but owner notification failed:", error);
+        const prefix = saved
+          ? "[Feedback] Saved feedback, but owner notification failed:"
+          : "[Feedback] Failed to notify owner after feedback save failed:";
+        console.warn(prefix, error);
         return false;
       });
+
+      if (!saved && !delivered) {
+        throw new Error("Feedback delivery failed");
+      }
 
       return { success: true, notified: delivered } as const;
     }),
