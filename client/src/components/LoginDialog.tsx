@@ -12,6 +12,11 @@ import {
 
 type Mode = "login" | "register" | "forgot";
 
+type LoginPromptDetail = {
+  title?: string;
+  subtitle?: string;
+};
+
 const TITLE: Record<Mode, string> = {
   login: "登入",
   register: "建立帳號",
@@ -27,6 +32,8 @@ const SUBTITLE: Record<Mode, string> = {
 export default function LoginDialog() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("login");
+  const [customTitle, setCustomTitle] = useState<string | null>(null);
+  const [customSubtitle, setCustomSubtitle] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -35,9 +42,12 @@ export default function LoginDialog() {
   const [copiedUrl, setCopiedUrl] = useState(false);
 
   useEffect(() => {
-    const handler = () => {
+    const handler = (event: Event) => {
+      const detail = event instanceof CustomEvent ? (event.detail as LoginPromptDetail | null) : null;
       setOpen(true);
       setMode("login");
+      setCustomTitle(typeof detail?.title === "string" ? detail.title : null);
+      setCustomSubtitle(typeof detail?.subtitle === "string" ? detail.subtitle : null);
       setError(null);
       setInfo(null);
       setCopiedUrl(false);
@@ -51,6 +61,8 @@ export default function LoginDialog() {
       const detail = event instanceof CustomEvent ? event.detail : null;
       setOpen(true);
       setMode("login");
+      setCustomTitle(null);
+      setCustomSubtitle(null);
       setError(translateAuthError(typeof detail === "string" ? detail : "登入失敗,請稍後再試"));
       setInfo(null);
       setCopiedUrl(false);
@@ -65,6 +77,13 @@ export default function LoginDialog() {
     setInfo(null);
     setCopiedUrl(false);
   }, [mode]);
+
+  useEffect(() => {
+    if (!open) {
+      setCustomTitle(null);
+      setCustomSubtitle(null);
+    }
+  }, [open]);
 
   if (!supabaseEnabled) return null;
 
@@ -134,11 +153,11 @@ export default function LoginDialog() {
       <DialogContent className="sm:max-w-sm bg-[#FAF7F4] border border-[#D1BE9B]/30">
         <DialogTitle className="text-center text-[15px] tracking-[0.25em] font-extralight text-[#31353A]"
           style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}>
-          {TITLE[mode]}
+          {mode === "login" && customTitle ? customTitle : TITLE[mode]}
         </DialogTitle>
         <DialogDescription className="text-center text-[11px] tracking-wider text-[#31353A]/60 mt-1 mb-3 whitespace-pre-line"
           style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}>
-          {SUBTITLE[mode]}
+          {mode === "login" && customSubtitle ? customSubtitle : SUBTITLE[mode]}
         </DialogDescription>
 
         {info ? (

@@ -395,6 +395,15 @@ const TAROT_RECOMMENDATION_MESSAGES: Record<string, string> = {
 };
 
 const TAROT_PENDING_FOLLOW_UP_KEY = 'healingpick:tarot-pending-follow-up';
+const TAROT_PENDING_START_KEY = 'healingpick:tarot-pending-start';
+const FOLLOW_UP_LOGIN_PROMPT = {
+  title: '登入後繼續追問',
+  subtitle: 'Mochi 先幫你把問題收好。登入後會回到這一頁繼續問；新朋友註冊送 5 點，可以多算幾次 🐾',
+};
+const REPEAT_READING_LOGIN_PROMPT = {
+  title: '登入後繼續占卜',
+  subtitle: 'Mochi 幫你把這次想問的事留著。登入後會回到這一頁繼續算；新朋友註冊送 5 點，可以多算幾次 🐾',
+};
 
 export default function TarotPage() {
   const { isAuthenticated, login } = useAuth();
@@ -406,6 +415,18 @@ export default function TarotPage() {
   // from walking through the whole flow only to be blocked at the last step.
   const handleStart = () => {
     const c = creditsQuery.data;
+    if (
+      c?.enabled &&
+      !isAuthenticated &&
+      ((c.dailyFreeQuota > 0 && c.freeRemaining < c.dailyFreeQuota) || c.freeRemaining <= 0)
+    ) {
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem(TAROT_PENDING_START_KEY, '1');
+      }
+      setPendingStartAfterLogin(true);
+      void login(REPEAT_READING_LOGIN_PROMPT);
+      return;
+    }
     if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
       toast.error('今日免費額度已用完 🐾', {
         description: isAuthenticated
@@ -445,11 +466,10 @@ export default function TarotPage() {
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
+  const [pendingStartAfterLogin, setPendingStartAfterLogin] = useState(false);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
-
-  const saveReadingMutation = trpc.history.saveReading.useMutation();
 
   useEffect(() => {
     void preloadTarotCardImages(TAROT_CARD_IMAGE_URLS);
@@ -462,13 +482,15 @@ export default function TarotPage() {
       window.requestAnimationFrame(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       });
-      // Record for members and logged-out visitors alike (server attributes by user / anon id).
-      saveReadingMutation.mutate({
-        type: 'tarot',
-        question: question || undefined,
-        inputData: JSON.stringify({ questionType, cards: drawnCards.map(c => ({ name: c.card.name, position: c.card.en, reversed: c.reversed })) }),
-        interpretation: data.interpretation,
-      });
+    },
+    onError: (error) => {
+      if (error.message === 'NOT_SIGNED_IN') {
+        if (typeof window !== 'undefined') {
+          window.sessionStorage.setItem(TAROT_PENDING_START_KEY, '1');
+        }
+        setPendingStartAfterLogin(true);
+        void login(REPEAT_READING_LOGIN_PROMPT);
+      }
     },
   });
   const followUpMutation = trpc.tarot.followUp.useMutation({
@@ -502,20 +524,13 @@ export default function TarotPage() {
       completedFollowUpRequestKeysRef.current.delete(requestKey);
 
       if (error.message === 'NOT_SIGNED_IN') {
-        toast.error('登入後可繼續追問', {
-          description: '追問每次會消耗 1 點，登入後即可繼續。',
-          action: {
-            label: '登入',
-            onClick: () => void login(),
-          },
-          duration: 6000,
-        });
+        void login(FOLLOW_UP_LOGIN_PROMPT);
         return;
       }
 
       if (error.message === 'INSUFFICIENT_CREDITS') {
-        toast.error('點數不足', {
-          description: '追問每次會消耗 1 點，請先購買點數。',
+        toast.error('可用次數不足', {
+          description: '可以先購買點數，或稍後再回來問 Mochi。',
           action: {
             label: '購買點數',
             onClick: () => {
@@ -573,21 +588,13 @@ export default function TarotPage() {
             readingRecommendation,
           }));
         }
-        toast.error('登入後可繼續追問', {
-          description: '送出追問時才會消耗 1 點。',
-          action: {
-            label: '登入',
-            onClick: () => void login(),
-          },
-          duration: 6000,
-        });
-        void login();
+        void login(FOLLOW_UP_LOGIN_PROMPT);
         return false;
       }
 
       // Auth may have just changed, so the credits query can briefly still
       // reflect the previous visitor/session. Let the server be the source of
-      // truth for paid-credit balance and surface INSUFFICIENT_CREDITS there.
+      // truth for available quota and surface INSUFFICIENT_CREDITS there.
     }
 
     const cards = getReadingCardsPayload();
@@ -671,6 +678,16 @@ export default function TarotPage() {
     pendingFollowUpAfterLogin,
     submitFollowUp,
   ]);
+
+  useEffect(() => {
+    if (!isAuthenticated || typeof window === 'undefined') return;
+    const hasPendingStart = pendingStartAfterLogin || window.sessionStorage.getItem(TAROT_PENDING_START_KEY) === '1';
+    if (!hasPendingStart) return;
+
+    window.sessionStorage.removeItem(TAROT_PENDING_START_KEY);
+    setPendingStartAfterLogin(false);
+    setStep('question');
+  }, [isAuthenticated, pendingStartAfterLogin]);
 
   useEffect(() => {
     if (!isAuthenticated || followUpMutation.isPending || typeof window === 'undefined') return;
@@ -1587,7 +1604,7 @@ export default function TarotPage() {
                     </p>
                     <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      每次追問會消耗 1 點。Mochi 會基於剛剛的牌面，給你一段補充回應。
+                      Mochi 會基於剛剛的牌面，給你一段更貼近問題的補充回應。
                     </p>
                   </div>
 
@@ -1613,7 +1630,7 @@ export default function TarotPage() {
                       >
                         {followUpMutation.isPending
                           ? 'Mochi 正在看牌面...'
-                          : '請 Mochi 回應（消耗 1 點）'}
+                          : '請 Mochi 回應'}
                       </button>
                     </div>
                   </form>

@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../_core/trpc";
-import { chargePaidCredit, chargeReading } from "../_core/credits";
+import { chargeReading } from "../_core/credits";
 import { invokeLLM, extractTextContent } from "../_core/llm";
 import { astro } from "iztro";
 import { t, translateChineseDate } from "./ziwei-locale";
-import { saveReading } from "../db";
+import { getVisitorCreditState, saveReading } from "../db";
 
 const recommendationSchema = z.object({
   category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
@@ -13,6 +14,14 @@ const recommendationSchema = z.object({
 });
 
 type ProductRecommendation = z.infer<typeof recommendationSchema>;
+
+async function requireLoginAfterFirstVisitorReading(ctx: { user: unknown; anonId: string | null; ipHash: string | null }) {
+  if (ctx.user) return;
+  const state = await getVisitorCreditState(ctx.anonId, ctx.ipHash);
+  if (state && state.dailyFreeQuota > 0 && state.freeRemaining < state.dailyFreeQuota) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+  }
+}
 
 const EXAMPLE2_MESSAGE_STYLE = `你是「Mochi」，在 LINE 裡親自回覆求問者的命理師。請完全照下面這幾則真實回覆的語感、節奏與寫法來寫。
 
@@ -190,6 +199,7 @@ export const ziweiRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      await requireLoginAfterFirstVisitorReading(ctx);
       await chargeReading(ctx, "ziwei");
 
       const { solarDate, timeIndex, gender, focusArea } = input;
@@ -294,7 +304,7 @@ ${EXAMPLE2_MESSAGE_STYLE}
     }),
 
   /**
-   * 追問：每次扣 1 點，不消耗每日免費額度。
+   * 追問：需登入，先消耗每日免費額度，用完後扣 1 點。
    */
   followUp: publicProcedure
     .input(
@@ -308,7 +318,10 @@ ${EXAMPLE2_MESSAGE_STYLE}
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await chargePaidCredit(ctx, "ziwei_followup");
+      if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+      }
+      await chargeReading(ctx, "ziwei_followup");
 
       const astrolabe = astro.bySolar(input.solarDate, input.timeIndex, input.gender, true, "zh_TW");
       const data = serializeAstrolabe(astrolabe);

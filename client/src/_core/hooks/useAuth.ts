@@ -6,6 +6,11 @@ type UseAuthOptions = {
   redirectOnUnauthenticated?: boolean;
 };
 
+type LoginPromptOptions = {
+  title?: string;
+  subtitle?: string;
+};
+
 export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false } = options ?? {};
   const utils = trpc.useUtils();
@@ -45,9 +50,9 @@ export function useAuth(options?: UseAuthOptions) {
   }, [utils]);
 
   // Open the global LoginDialog so the user can pick Google or Email.
-  const login = useCallback(async () => {
+  const login = useCallback(async (prompt?: LoginPromptOptions) => {
     if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("open-login"));
+      window.dispatchEvent(new CustomEvent("open-login", { detail: prompt }));
     }
   }, []);
 

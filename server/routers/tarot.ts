@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../_core/trpc";
 import { invokeLLM, extractTextContent } from "../_core/llm";
-import { chargePaidCredit, chargeReading } from "../_core/credits";
-import { saveReading } from "../db";
+import { chargeReading } from "../_core/credits";
+import { getVisitorCreditState, saveReading } from "../db";
 
 const cardSchema = z.object({
   name: z.string(),
@@ -21,6 +22,14 @@ const recommendationSchema = z.object({
 });
 
 type ProductRecommendation = z.infer<typeof recommendationSchema>;
+
+async function requireLoginAfterFirstVisitorReading(ctx: { user: unknown; anonId: string | null; ipHash: string | null }) {
+  if (ctx.user) return;
+  const state = await getVisitorCreditState(ctx.anonId, ctx.ipHash);
+  if (state && state.dailyFreeQuota > 0 && state.freeRemaining < state.dailyFreeQuota) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+  }
+}
 
 const READING_STYLE = `你是「Mochi」，在 LINE 裡親自回覆求問者的塔羅占卜師。請完全照下面這幾則真實回覆的語感、節奏與寫法來寫。
 
@@ -176,6 +185,7 @@ export const tarotRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      await requireLoginAfterFirstVisitorReading(ctx);
       await chargeReading(ctx, "tarot");
 
       const cardsSummary = input.cards
@@ -227,11 +237,30 @@ ${cardsSummary}
           interpretation,
         }));
 
+      const isMember = Boolean(ctx.user);
+      await saveReading({
+        userId: ctx.user?.id ?? null,
+        anonId: isMember ? null : ctx.anonId,
+        ipHash: isMember ? null : ctx.ipHash,
+        type: "tarot",
+        question: input.question || null,
+        inputData: JSON.stringify({
+          recordKind: "tarot",
+          questionType: input.questionType,
+          cards: input.cards.map((card) => ({
+            name: card.name,
+            position: card.position,
+            reversed: card.reversed,
+          })),
+        }),
+        interpretation,
+      });
+
       return { interpretation, recommendation: finalRecommendation };
     }),
 
   /**
-   * 追問：每次扣 1 點，不消耗每日免費額度。
+   * 追問：需登入，先消耗每日免費額度，用完後扣 1 點。
    */
   followUp: publicProcedure
     .input(
@@ -246,7 +275,10 @@ ${cardsSummary}
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await chargePaidCredit(ctx, "tarot_followup");
+      if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+      }
+      await chargeReading(ctx, "tarot_followup");
 
       const cardsSummary = input.cards
         .map(

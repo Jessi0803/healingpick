@@ -323,6 +323,15 @@ type FollowUpExchange = {
 };
 
 const ZIWEI_PENDING_FOLLOW_UP_KEY = 'healingpick:ziwei-pending-follow-up';
+const ZIWEI_PENDING_GENERATE_KEY = 'healingpick:ziwei-pending-generate';
+const FOLLOW_UP_LOGIN_PROMPT = {
+  title: '登入後繼續追問',
+  subtitle: 'Mochi 先幫你把問題收好。登入後會回到這一頁繼續問；新朋友註冊送 5 點，可以多算幾次 🐾',
+};
+const REPEAT_READING_LOGIN_PROMPT = {
+  title: '登入後繼續看命盤',
+  subtitle: 'Mochi 幫你把這次想看的方向留著。登入後會回到這一頁繼續排盤；新朋友註冊送 5 點，可以多算幾次 🐾',
+};
 
 export default function ZiweiPage() {
   const { isAuthenticated, login } = useAuth();
@@ -357,7 +366,16 @@ export default function ZiweiPage() {
     });
   };
 
-  const saveReadingMutation = trpc.history.saveReading.useMutation();
+  const savePendingGenerate = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    window.sessionStorage.setItem(ZIWEI_PENDING_GENERATE_KEY, JSON.stringify({
+      birthDate,
+      hourValue,
+      gender,
+      focusArea,
+      partnerBirthDate,
+    }));
+  }, [birthDate, focusArea, gender, hourValue, partnerBirthDate]);
 
   const interpretMutation = trpc.ziwei.interpret.useMutation({
     onSuccess: (data) => {
@@ -367,14 +385,13 @@ export default function ZiweiPage() {
       window.requestAnimationFrame(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       });
-      // Record for members and logged-out visitors alike (server attributes by user / anon id).
-      saveReadingMutation.mutate({
-        type: 'ziwei',
-        inputData: JSON.stringify({ solarDate: birthDate, timeIndex: parseInt(hourValue), gender }),
-        interpretation: data.interpretation,
-      });
     },
-    onError: () => {
+    onError: (error) => {
+      if (error.message === 'NOT_SIGNED_IN') {
+        savePendingGenerate();
+        void login(REPEAT_READING_LOGIN_PROMPT);
+        return;
+      }
       toast.error('命盤排列失敗，請稍後再試');
     },
   });
@@ -411,20 +428,13 @@ export default function ZiweiPage() {
       completedFollowUpRequestKeysRef.current.delete(requestKey);
 
       if (error.message === 'NOT_SIGNED_IN') {
-        toast.error('登入後可繼續追問', {
-          description: '追問每次會消耗 1 點，登入後即可繼續。',
-          action: {
-            label: '登入',
-            onClick: () => void login(),
-          },
-          duration: 6000,
-        });
+        void login(FOLLOW_UP_LOGIN_PROMPT);
         return;
       }
 
       if (error.message === 'INSUFFICIENT_CREDITS') {
-        toast.error('點數不足', {
-          description: '追問每次會消耗 1 點，請先購買點數。',
+        toast.error('可用次數不足', {
+          description: '可以先購買點數，或稍後再回來問 Mochi。',
           action: {
             label: '購買點數',
             onClick: () => {
@@ -461,6 +471,15 @@ export default function ZiweiPage() {
       return;
     }
     const c = creditsQuery.data;
+    if (
+      c?.enabled &&
+      !isAuthenticated &&
+      ((c.dailyFreeQuota > 0 && c.freeRemaining < c.dailyFreeQuota) || c.freeRemaining <= 0)
+    ) {
+      savePendingGenerate();
+      void login(REPEAT_READING_LOGIN_PROMPT);
+      return;
+    }
     if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
       toast.error('今日免費額度已用完 🐾', {
         description: isAuthenticated
@@ -514,21 +533,13 @@ export default function ZiweiPage() {
             readingRecommendation,
           }));
         }
-        toast.error('登入後可繼續追問', {
-          description: '登入後會回到這一頁，送出追問時才會消耗 1 點。',
-          action: {
-            label: '登入',
-            onClick: () => void login(),
-          },
-          duration: 6000,
-        });
-        void login();
+        void login(FOLLOW_UP_LOGIN_PROMPT);
         return false;
       }
 
       // Auth may have just changed, so the credits query can briefly still
       // reflect the previous visitor/session. Let the server be the source of
-      // truth for paid-credit balance and surface INSUFFICIENT_CREDITS there.
+      // truth for available quota and surface INSUFFICIENT_CREDITS there.
     }
 
     const timeIndex = parseInt(hourValue);
@@ -577,6 +588,52 @@ export default function ZiweiPage() {
 
     submitFollowUp(trimmedQuestion);
   };
+
+  useEffect(() => {
+    if (!isAuthenticated || interpretMutation.isPending || typeof window === 'undefined') return;
+
+    const raw = window.sessionStorage.getItem(ZIWEI_PENDING_GENERATE_KEY);
+    if (!raw) return;
+    window.sessionStorage.removeItem(ZIWEI_PENDING_GENERATE_KEY);
+
+    try {
+      const pending = JSON.parse(raw) as {
+        birthDate?: string;
+        hourValue?: string;
+        gender?: '男' | '女';
+        focusArea?: string;
+        partnerBirthDate?: string;
+      };
+      const nextBirthDate = pending.birthDate || birthDate;
+      const nextHourValue = pending.hourValue || hourValue;
+      const nextGender = pending.gender || gender;
+      const nextFocusArea = pending.focusArea ?? '';
+      const nextPartnerBirthDate = pending.partnerBirthDate ?? '';
+
+      setBirthDate(nextBirthDate);
+      setHourValue(nextHourValue);
+      setGender(nextGender);
+      setFocusArea(nextFocusArea);
+      setPartnerBirthDate(nextPartnerBirthDate);
+      setAstrolabe(null);
+      setLlmInterpretation('');
+      setReadingRecommendation(null);
+      setFollowUpQuestion('');
+      setFollowUpExchanges([]);
+      setPendingFollowUpAfterLogin(false);
+      setSelectedPalaceName(null);
+
+      interpretMutation.mutate({
+        solarDate: nextBirthDate,
+        timeIndex: parseInt(nextHourValue),
+        gender: nextGender,
+        focusArea: nextFocusArea || undefined,
+        partnerSolarDate: nextPartnerBirthDate || undefined,
+      });
+    } catch {
+      window.sessionStorage.removeItem(ZIWEI_PENDING_GENERATE_KEY);
+    }
+  }, [birthDate, gender, hourValue, interpretMutation, interpretMutation.isPending, isAuthenticated]);
 
   useEffect(() => {
     if (!pendingFollowUpAfterLogin || !isAuthenticated || followUpMutation.isPending) return;
@@ -689,7 +746,7 @@ export default function ZiweiPage() {
           </p>
           <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
             style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-            每次追問會消耗 1 點。Mochi 會基於同一份命盤，回答你更具體的延伸問題。
+            Mochi 會基於同一份命盤，回答你更具體的延伸問題。
           </p>
         </div>
 
@@ -715,7 +772,7 @@ export default function ZiweiPage() {
             >
               {followUpMutation.isPending
                 ? 'Mochi 正在看命盤...'
-                : '請 Mochi 回應（消耗 1 點）'}
+                : '請 Mochi 回應'}
             </button>
           </div>
         </form>
