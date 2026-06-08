@@ -79,7 +79,7 @@ export default function BuyPage() {
                 onClick={() => login()}
                 className="px-8 py-3 text-[12px] tracking-[0.25em] bg-[#31353A] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                使用 Google 登入
+                登入
               </button>
             </div>
           ) : (
