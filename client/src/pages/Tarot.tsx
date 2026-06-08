@@ -459,6 +459,9 @@ export default function TarotPage() {
     onSuccess: (data) => {
       setLlmInterpretation(data.interpretation);
       setReadingRecommendation(data.recommendation ?? null);
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      });
       // Record for members and logged-out visitors alike (server attributes by user / anon id).
       saveReadingMutation.mutate({
         type: 'tarot',
