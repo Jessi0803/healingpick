@@ -485,19 +485,9 @@ export default function ZiweiPage() {
         return false;
       }
 
-      if (creditState.credits <= 0) {
-        toast.error('點數不足', {
-          description: '追問每次會消耗 1 點，請先購買點數。',
-          action: {
-            label: '購買點數',
-            onClick: () => {
-              window.location.href = '/buy';
-            },
-          },
-          duration: 6000,
-        });
-        return false;
-      }
+      // Auth may have just changed, so the credits query can briefly still
+      // reflect the previous visitor/session. Let the server be the source of
+      // truth for paid-credit balance and surface INSUFFICIENT_CREDITS there.
     }
 
     followUpMutation.mutate({
@@ -585,20 +575,6 @@ export default function ZiweiPage() {
       setFollowUpQuestion(trimmedQuestion);
 
       void creditsQuery.refetch().then((result) => {
-        if (result.data?.enabled && result.data.credits <= 0) {
-          toast.error('點數不足', {
-            description: '追問每次會消耗 1 點，請先購買點數。',
-            action: {
-              label: '購買點數',
-              onClick: () => {
-                window.location.href = '/buy';
-              },
-            },
-            duration: 6000,
-          });
-          return;
-        }
-
         followUpMutation.mutate({
           solarDate: nextBirthDate,
           timeIndex: parseInt(nextHourValue),

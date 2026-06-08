@@ -446,6 +446,8 @@ export default function TarotPage() {
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
+  const followUpRequestInFlightRef = useRef<string | null>(null);
+  const completedFollowUpRequestKeysRef = useRef(new Set<string>());
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -468,6 +470,14 @@ export default function TarotPage() {
   });
   const followUpMutation = trpc.tarot.followUp.useMutation({
     onSuccess: (data, variables) => {
+      const requestKey = JSON.stringify([
+        variables.question,
+        variables.questionType,
+        variables.followUpQuestion,
+        variables.interpretation,
+        variables.cards.map(card => `${card.position}:${card.name}:${card.reversed}`).join('|'),
+      ]);
+      completedFollowUpRequestKeysRef.current.add(requestKey);
       setFollowUpExchanges(prev => [
         ...prev,
         {
@@ -478,7 +488,16 @@ export default function TarotPage() {
       setFollowUpQuestion('');
       void creditsQuery.refetch();
     },
-    onError: (error) => {
+    onError: (error, variables) => {
+      const requestKey = JSON.stringify([
+        variables.question,
+        variables.questionType,
+        variables.followUpQuestion,
+        variables.interpretation,
+        variables.cards.map(card => `${card.position}:${card.name}:${card.reversed}`).join('|'),
+      ]);
+      completedFollowUpRequestKeysRef.current.delete(requestKey);
+
       if (error.message === 'NOT_SIGNED_IN') {
         toast.error('登入後可繼續追問', {
           description: '追問每次會消耗 1 點，登入後即可繼續。',
@@ -502,6 +521,22 @@ export default function TarotPage() {
           },
           duration: 6000,
         });
+      }
+    },
+    onSettled: (_data, _error, variables) => {
+      if (!variables) {
+        followUpRequestInFlightRef.current = null;
+        return;
+      }
+      const requestKey = JSON.stringify([
+        variables.question,
+        variables.questionType,
+        variables.followUpQuestion,
+        variables.interpretation,
+        variables.cards.map(card => `${card.position}:${card.name}:${card.reversed}`).join('|'),
+      ]);
+      if (followUpRequestInFlightRef.current === requestKey) {
+        followUpRequestInFlightRef.current = null;
       }
     },
   });
@@ -536,7 +571,7 @@ export default function TarotPage() {
           }));
         }
         toast.error('登入後可繼續追問', {
-          description: '登入後會回到這一頁，送出追問時才會消耗 1 點。',
+          description: '送出追問時才會消耗 1 點。',
           action: {
             label: '登入',
             onClick: () => void login(),
@@ -547,25 +582,31 @@ export default function TarotPage() {
         return false;
       }
 
-      if (creditState.credits <= 0) {
-        toast.error('點數不足', {
-          description: '追問每次會消耗 1 點，請先購買點數。',
-          action: {
-            label: '購買點數',
-            onClick: () => {
-              window.location.href = '/buy';
-            },
-          },
-          duration: 6000,
-        });
-        return false;
-      }
+      // Auth may have just changed, so the credits query can briefly still
+      // reflect the previous visitor/session. Let the server be the source of
+      // truth for paid-credit balance and surface INSUFFICIENT_CREDITS there.
     }
+
+    const cards = getReadingCardsPayload();
+    const requestKey = JSON.stringify([
+      question,
+      questionType,
+      trimmedQuestion,
+      llmInterpretation,
+      cards.map(card => `${card.position}:${card.name}:${card.reversed}`).join('|'),
+    ]);
+    if (
+      followUpRequestInFlightRef.current === requestKey ||
+      completedFollowUpRequestKeysRef.current.has(requestKey)
+    ) {
+      return true;
+    }
+    followUpRequestInFlightRef.current = requestKey;
 
     followUpMutation.mutate({
       question,
       questionType,
-      cards: getReadingCardsPayload(),
+      cards,
       interpretation: llmInterpretation,
       followUpQuestion: trimmedQuestion,
     });
@@ -611,6 +652,10 @@ export default function TarotPage() {
       return;
     }
 
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.removeItem(TAROT_PENDING_FOLLOW_UP_KEY);
+    }
+
     void creditsQuery.refetch().then((result) => {
       const submitted = submitFollowUp(trimmedQuestion, result.data);
       if (submitted || isAuthenticated) setPendingFollowUpAfterLogin(false);
@@ -653,24 +698,26 @@ export default function TarotPage() {
       setFollowUpQuestion(trimmedQuestion);
 
       void creditsQuery.refetch().then((result) => {
-        if (result.data?.enabled && result.data.credits <= 0) {
-          toast.error('點數不足', {
-            description: '追問每次會消耗 1 點，請先購買點數。',
-            action: {
-              label: '購買點數',
-              onClick: () => {
-                window.location.href = '/buy';
-              },
-            },
-            duration: 6000,
-          });
+        const cards = pending.cards ?? [];
+        const requestKey = JSON.stringify([
+          pending.question ?? '',
+          pending.questionType ?? 'love',
+          trimmedQuestion,
+          pending.interpretation ?? '',
+          cards.map(card => `${card.position}:${card.name}:${card.reversed}`).join('|'),
+        ]);
+        if (
+          followUpRequestInFlightRef.current === requestKey ||
+          completedFollowUpRequestKeysRef.current.has(requestKey)
+        ) {
           return;
         }
+        followUpRequestInFlightRef.current = requestKey;
 
         followUpMutation.mutate({
           question: pending.question ?? '',
           questionType: pending.questionType ?? 'love',
-          cards: pending.cards ?? [],
+          cards,
           interpretation: pending.interpretation ?? '',
           followUpQuestion: trimmedQuestion,
         });
