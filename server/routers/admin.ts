@@ -7,31 +7,11 @@ import { adminProcedure, router } from "../_core/trpc";
 
 const limitInput = z.object({
   limit: z.number().int().min(1).max(200).default(100),
+  tab: z.enum(["users", "orders", "inputs", "visitors", "feedbacks", "transactions"]).default("users"),
 });
 
 function toNumber(value: unknown): number {
   return Number(value ?? 0);
-}
-
-async function ensureFeedbacksTable(db: Awaited<ReturnType<typeof getDb>>) {
-  if (!db) return;
-  await db.execute(sql`
-    DO $$ BEGIN
-      CREATE TYPE "public"."feedback_source" AS ENUM ('tarot', 'ziwei');
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
-  `);
-  await db.execute(sql`
-    CREATE TABLE IF NOT EXISTS "feedbacks" (
-      "id" serial PRIMARY KEY NOT NULL,
-      "userId" integer,
-      "source" "feedback_source" NOT NULL,
-      "message" text NOT NULL,
-      "context" text,
-      "createdAt" timestamp DEFAULT now() NOT NULL
-    )
-  `);
 }
 
 export const adminRouter = router({
@@ -60,10 +40,11 @@ export const adminRouter = router({
       }
 
       const limit = input?.limit ?? 100;
-      await ensureFeedbacksTable(db);
+      const tab = input?.tab ?? "users";
 
       // Distinct visitor key: prefer the anon session id, fall back to the hashed IP.
       const visitorKey = sql<string>`coalesce('anon:' || ${readings.anonId}, 'ip:' || ${readings.ipHash})`;
+      const emptyQuery = Promise.resolve([]);
 
       const [
         userCount,
@@ -93,7 +74,7 @@ export const adminRouter = router({
             })
             .from(creditTransactions)
             .where(like(creditTransactions.reason, "gumroad:%")),
-          db
+          tab === "users" ? db
             .select({
               id: users.id,
               name: users.name,
@@ -108,8 +89,8 @@ export const adminRouter = router({
             })
             .from(users)
             .orderBy(desc(users.createdAt))
-            .limit(limit),
-          db
+            .limit(limit) : emptyQuery,
+          tab === "orders" ? db
             .select({
               id: creditTransactions.id,
               userId: creditTransactions.userId,
@@ -124,8 +105,8 @@ export const adminRouter = router({
             .leftJoin(users, eq(creditTransactions.userId, users.id))
             .where(like(creditTransactions.reason, "gumroad:%"))
             .orderBy(desc(creditTransactions.createdAt))
-            .limit(limit),
-          db
+            .limit(limit) : emptyQuery,
+          tab === "transactions" ? db
             .select({
               id: creditTransactions.id,
               userId: creditTransactions.userId,
@@ -139,8 +120,8 @@ export const adminRouter = router({
             .from(creditTransactions)
             .leftJoin(users, eq(creditTransactions.userId, users.id))
             .orderBy(desc(creditTransactions.createdAt))
-            .limit(limit),
-          db
+            .limit(limit) : emptyQuery,
+          tab === "inputs" || tab === "visitors" ? db
             .select({
               id: readings.id,
               userId: readings.userId,
@@ -157,8 +138,8 @@ export const adminRouter = router({
             .from(readings)
             .leftJoin(users, eq(readings.userId, users.id))
             .orderBy(desc(readings.createdAt))
-            .limit(limit),
-          db
+            .limit(limit) : emptyQuery,
+          tab === "feedbacks" ? db
             .select({
               id: feedbacks.id,
               userId: feedbacks.userId,
@@ -172,7 +153,7 @@ export const adminRouter = router({
             .from(feedbacks)
             .leftJoin(users, eq(feedbacks.userId, users.id))
             .orderBy(desc(feedbacks.createdAt))
-            .limit(limit),
+            .limit(limit) : emptyQuery,
           getDailyFreeQuota(),
         ]);
 

@@ -134,7 +134,7 @@ export default function AdminPage() {
   const [userActionMessage, setUserActionMessage] = useState('');
 
   const dashboardQuery = trpc.admin.dashboard.useQuery(
-    { limit: 150 },
+    { limit: 150, tab: activeTab },
     { enabled: user?.role === 'admin', refetchOnWindowFocus: true }
   );
   const updateDailyFreeQuotaMutation = trpc.admin.updateDailyFreeQuota.useMutation({
