@@ -99,6 +99,7 @@ function readerLabel(row: Pick<AdminReadingRow, 'userId' | 'email' | 'name' | 'a
 function reasonLabel(reason: string) {
   if (reason === 'signup_bonus') return '註冊贈點';
   if (reason === 'admin_topup') return '管理員加值';
+  if (reason === 'admin_adjustment') return '管理員調整';
   if (reason.startsWith('gumroad:')) return 'Gumroad 訂單';
   if (reason === 'tarot') return '塔羅扣點';
   if (reason === 'ziwei') return '紫微扣點';
@@ -108,10 +109,12 @@ function reasonLabel(reason: string) {
 
 export default function AdminPage() {
   const { user, loading } = useAuth({ redirectOnUnauthenticated: true });
+  const utils = trpc.useUtils();
   const [activeTab, setActiveTab] = useState<TabId>('users');
   const [query, setQuery] = useState('');
   const [dailyFreeQuotaInput, setDailyFreeQuotaInput] = useState('');
   const [settingsMessage, setSettingsMessage] = useState('');
+  const [userActionMessage, setUserActionMessage] = useState('');
 
   const dashboardQuery = trpc.admin.dashboard.useQuery(
     { limit: 150 },
@@ -125,6 +128,18 @@ export default function AdminPage() {
     },
     onError: () => {
       setSettingsMessage('更新失敗，請稍後再試');
+    },
+  });
+  const updateUserCreditsMutation = trpc.admin.updateUserCredits.useMutation({
+    onSuccess: async (result) => {
+      setUserActionMessage(`已更新會員 #${result.userId} 點數為 ${result.credits}`);
+      await Promise.all([
+        dashboardQuery.refetch(),
+        utils.credits.state.invalidate(),
+      ]);
+    },
+    onError: (error) => {
+      setUserActionMessage(error.message || '點數更新失敗，請稍後再試');
     },
   });
 
@@ -150,6 +165,15 @@ export default function AdminPage() {
     }
     setSettingsMessage('');
     updateDailyFreeQuotaMutation.mutate({ dailyFreeQuota: value });
+  };
+
+  const handleUpdateUserCredits = (row: AdminUserRow, credits: number) => {
+    const label = row.email ?? row.name ?? `會員 #${row.id}`;
+    const confirmed = window.confirm(`確定要將 ${label} 的點數調整為 ${credits} 嗎？`);
+    if (!confirmed) return;
+
+    setUserActionMessage('');
+    updateUserCreditsMutation.mutate({ userId: row.id, credits });
   };
 
   const filteredUsers = useMemo(() => {
@@ -344,7 +368,15 @@ export default function AdminPage() {
             </div>
           ) : (
             <div className="rounded-lg border border-[#D1BE9B]/20 bg-white/55 shadow-[0_12px_40px_rgba(49,53,58,0.06)] overflow-hidden">
-              {activeTab === 'users' && <UsersTable rows={filteredUsers} />}
+              {activeTab === 'users' && (
+                <UsersTable
+                  rows={filteredUsers}
+                  adjustingUserId={updateUserCreditsMutation.variables?.userId ?? null}
+                  isAdjusting={updateUserCreditsMutation.isPending}
+                  message={userActionMessage}
+                  onUpdateCredits={handleUpdateUserCredits}
+                />
+              )}
               {activeTab === 'orders' && <OrdersTable rows={filteredOrders} />}
               {activeTab === 'inputs' && <ReadingsTable rows={memberReadings} />}
               {activeTab === 'visitors' && <ReadingsTable rows={visitorReadings} />}
@@ -382,10 +414,34 @@ function EmptyRow({ colSpan }: { colSpan: number }) {
   );
 }
 
-function UsersTable({ rows }: { rows: AdminUserRow[] }) {
+function UsersTable({
+  rows,
+  adjustingUserId,
+  isAdjusting,
+  message,
+  onUpdateCredits,
+}: {
+  rows: AdminUserRow[];
+  adjustingUserId: number | null;
+  isAdjusting: boolean;
+  message: string;
+  onUpdateCredits: (row: AdminUserRow, credits: number) => void;
+}) {
+  const [creditInputs, setCreditInputs] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    setCreditInputs((current) => {
+      const next: Record<number, string> = {};
+      for (const row of rows) {
+        next[row.id] = current[row.id] ?? String(row.credits);
+      }
+      return next;
+    });
+  }, [rows]);
+
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[860px] text-left">
+      <table className="w-full min-w-[980px] text-left">
         <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
           <tr>
             <th className="px-4 py-3 font-normal">ID</th>
@@ -398,7 +454,25 @@ function UsersTable({ rows }: { rows: AdminUserRow[] }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
-          {rows.length === 0 ? <EmptyRow colSpan={7} /> : rows.map((row) => (
+          {message && (
+            <tr>
+              <td colSpan={7} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
+                {message}
+              </td>
+            </tr>
+          )}
+          {rows.length === 0 ? <EmptyRow colSpan={7} /> : rows.map((row) => {
+            const inputValue = creditInputs[row.id] ?? String(row.credits);
+            const parsedCredits = Number(inputValue.trim());
+            const canSaveCredits =
+              inputValue.trim() !== '' &&
+              Number.isInteger(parsedCredits) &&
+              parsedCredits >= 0 &&
+              parsedCredits <= 100000 &&
+              parsedCredits !== row.credits &&
+              !isAdjusting;
+            const isRowAdjusting = isAdjusting && adjustingUserId === row.id;
+            return (
             <tr key={row.id}>
               <td className="px-4 py-3">{row.id}</td>
               <td className="px-4 py-3">
@@ -406,12 +480,39 @@ function UsersTable({ rows }: { rows: AdminUserRow[] }) {
                 <div className="mt-1 text-[11px] text-[#31353A]/42">{row.name ?? row.loginMethod ?? '—'}</div>
               </td>
               <td className="px-4 py-3">{row.role}</td>
-              <td className="px-4 py-3">{row.credits}</td>
+              <td className="px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min={0}
+                    max={100000}
+                    step={1}
+                    value={inputValue}
+                    onChange={(event) => {
+                      setCreditInputs((current) => ({
+                        ...current,
+                        [row.id]: event.target.value,
+                      }));
+                    }}
+                    className="w-24 rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-1.5 text-xs text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  />
+                  <button
+                    type="button"
+                    disabled={!canSaveCredits}
+                    onClick={() => onUpdateCredits(row, parsedCredits)}
+                    className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    {isRowAdjusting ? '儲存中' : '儲存'}
+                  </button>
+                </div>
+              </td>
               <td className="px-4 py-3">{row.freeUsedToday}</td>
               <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
               <td className="px-4 py-3">{formatDate(row.lastSignedIn)}</td>
             </tr>
-          ))}
+          )})}
         </tbody>
       </table>
     </div>

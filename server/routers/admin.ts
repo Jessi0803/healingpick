@@ -1,4 +1,5 @@
 import { desc, eq, like, sql } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { creditTransactions, readings, users } from "../../drizzle/schema";
 import { DEFAULT_DAILY_FREE_QUOTA, getDailyFreeQuota, getDb, setDailyFreeQuota } from "../db";
@@ -167,5 +168,58 @@ export const adminRouter = router({
     .mutation(async ({ input }) => {
       const dailyFreeQuota = await setDailyFreeQuota(input.dailyFreeQuota);
       return { dailyFreeQuota };
+    }),
+  updateUserCredits: adminProcedure
+    .input(
+      z.object({
+        userId: z.number().int().positive(),
+        credits: z.number().int().min(0).max(100000),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database unavailable",
+        });
+      }
+
+      const targetRows = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
+      const target = targetRows[0];
+      if (!target) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "找不到這個會員",
+        });
+      }
+
+      const delta = input.credits - target.credits;
+      if (delta === 0) {
+        return { userId: input.userId, credits: target.credits };
+      }
+
+      const updated = await db
+        .update(users)
+        .set({ credits: input.credits })
+        .where(eq(users.id, input.userId))
+        .returning();
+
+      const user = updated[0];
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "找不到這個會員",
+        });
+      }
+
+      await db.insert(creditTransactions).values({
+        userId: user.id,
+        amount: delta,
+        reason: "admin_adjustment",
+        balanceAfter: user.credits,
+      });
+
+      return { userId: user.id, credits: user.credits };
     }),
 });
