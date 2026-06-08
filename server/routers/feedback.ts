@@ -34,8 +34,11 @@ export const feedbackRouter = router({
           "回饋內容：",
           input.message,
         ].filter(Boolean).join("\n"),
+      }).catch((error) => {
+        console.warn("[Feedback] Failed to notify owner:", error);
+        return false;
       });
 
-      return { success: delivered } as const;
+      return { success: true, notified: delivered } as const;
     }),
 });
