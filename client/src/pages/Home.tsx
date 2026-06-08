@@ -147,6 +147,17 @@ const dailyEnergyPool = [
 ];
 const todayEnergy = dailyEnergyPool[new Date().getDay() % dailyEnergyPool.length];
 
+function getDailyMochiVisitorCount(date = new Date()) {
+  const dateKey = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  let hash = 0;
+
+  for (let i = 0; i < dateKey.length; i++) {
+    hash = (hash * 31 + dateKey.charCodeAt(i)) >>> 0;
+  }
+
+  return (hash % 100) + 1;
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -209,6 +220,8 @@ export default function Home() {
   function scrollToTestimonials() {
     document.getElementById('testimonials-section')?.scrollIntoView({ behavior: 'smooth' });
   }
+
+  const dailyMochiVisitorCount = getDailyMochiVisitorCount();
 
   return (
     <PageLayout>
@@ -331,6 +344,13 @@ export default function Home() {
             style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}
           >
             "A small universe for feelings to rest."
+          </p>
+
+          <p
+            className="mx-auto mb-8 inline-flex items-center justify-center rounded-full border border-[#D1BE9B]/28 bg-white/34 px-5 py-2 text-[11px] leading-[1.8] tracking-[0.18em] text-[#8A7250] shadow-[0_8px_28px_rgba(209,190,155,0.12)] backdrop-blur-sm"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+          >
+            今日有 {dailyMochiVisitorCount} 人來找 Mochi 占卜
           </p>
 
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[20rem] sm:grid-cols-2">
