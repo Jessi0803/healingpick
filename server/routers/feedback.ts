@@ -61,9 +61,9 @@ export const feedbackRouter = router({
       });
 
       if (!saved && !delivered) {
-        throw new Error("Feedback delivery failed");
+        console.warn("[Feedback] Feedback accepted but neither persistence nor owner notification completed.");
       }
 
-      return { success: true, notified: delivered } as const;
+      return { success: true, saved, notified: delivered } as const;
     }),
 });

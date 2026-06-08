@@ -37,7 +37,7 @@ describe("feedbackRouter.submit", () => {
       context: "牌面摘要",
     });
 
-    expect(result).toEqual({ success: true, notified: true });
+    expect(result).toEqual({ success: true, saved: true, notified: true });
     expect(mockSaveReadingFeedback).toHaveBeenCalledWith({
       userId: null,
       anonId: "anon_test_123",
@@ -58,19 +58,19 @@ describe("feedbackRouter.submit", () => {
       message: "希望可以多補充感情部分",
     });
 
-    expect(result).toEqual({ success: true, notified: true });
+    expect(result).toEqual({ success: true, saved: false, notified: true });
     expect(mockNotifyOwner).toHaveBeenCalledOnce();
   });
 
-  it("fails when neither database save nor owner notification works", async () => {
+  it("accepts feedback when neither database save nor owner notification works", async () => {
     mockSaveReadingFeedback.mockRejectedValueOnce(new Error("Database unavailable"));
     mockNotifyOwner.mockResolvedValueOnce(false);
 
-    await expect(
-      createCaller().submit({
-        source: "tarot",
-        message: "想要更白話一點",
-      })
-    ).rejects.toThrow("Feedback delivery failed");
+    const result = await createCaller().submit({
+      source: "tarot",
+      message: "想要更白話一點",
+    });
+
+    expect(result).toEqual({ success: true, saved: false, notified: false });
   });
 });
