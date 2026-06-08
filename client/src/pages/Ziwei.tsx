@@ -342,6 +342,8 @@ export default function ZiweiPage() {
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
+  const followUpRequestInFlightRef = useRef<string | null>(null);
+  const completedFollowUpRequestKeysRef = useRef(new Set<string>());
   const formSectionRef = useRef<HTMLDivElement | null>(null);
   const focusAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -375,6 +377,15 @@ export default function ZiweiPage() {
   });
   const followUpMutation = trpc.ziwei.followUp.useMutation({
     onSuccess: (data, variables) => {
+      const requestKey = JSON.stringify([
+        variables.solarDate,
+        variables.timeIndex,
+        variables.gender,
+        variables.focusArea ?? '',
+        variables.followUpQuestion,
+        variables.interpretation,
+      ]);
+      completedFollowUpRequestKeysRef.current.add(requestKey);
       setFollowUpExchanges(prev => [
         ...prev,
         {
@@ -385,7 +396,17 @@ export default function ZiweiPage() {
       setFollowUpQuestion('');
       void creditsQuery.refetch();
     },
-    onError: (error) => {
+    onError: (error, variables) => {
+      const requestKey = JSON.stringify([
+        variables.solarDate,
+        variables.timeIndex,
+        variables.gender,
+        variables.focusArea ?? '',
+        variables.followUpQuestion,
+        variables.interpretation,
+      ]);
+      completedFollowUpRequestKeysRef.current.delete(requestKey);
+
       if (error.message === 'NOT_SIGNED_IN') {
         toast.error('登入後可繼續追問', {
           description: '追問每次會消耗 1 點，登入後即可繼續。',
@@ -409,6 +430,23 @@ export default function ZiweiPage() {
           },
           duration: 6000,
         });
+      }
+    },
+    onSettled: (_data, _error, variables) => {
+      if (!variables) {
+        followUpRequestInFlightRef.current = null;
+        return;
+      }
+      const requestKey = JSON.stringify([
+        variables.solarDate,
+        variables.timeIndex,
+        variables.gender,
+        variables.focusArea ?? '',
+        variables.followUpQuestion,
+        variables.interpretation,
+      ]);
+      if (followUpRequestInFlightRef.current === requestKey) {
+        followUpRequestInFlightRef.current = null;
       }
     },
   });
@@ -490,11 +528,29 @@ export default function ZiweiPage() {
       // truth for paid-credit balance and surface INSUFFICIENT_CREDITS there.
     }
 
+    const timeIndex = parseInt(hourValue);
+    const nextFocusArea = focusArea || undefined;
+    const requestKey = JSON.stringify([
+      birthDate,
+      timeIndex,
+      gender,
+      nextFocusArea ?? '',
+      trimmedQuestion,
+      llmInterpretation,
+    ]);
+    if (
+      followUpRequestInFlightRef.current === requestKey ||
+      completedFollowUpRequestKeysRef.current.has(requestKey)
+    ) {
+      return true;
+    }
+    followUpRequestInFlightRef.current = requestKey;
+
     followUpMutation.mutate({
       solarDate: birthDate,
-      timeIndex: parseInt(hourValue),
+      timeIndex,
       gender,
-      focusArea: focusArea || undefined,
+      focusArea: nextFocusArea,
       interpretation: llmInterpretation,
       followUpQuestion: trimmedQuestion,
     });
@@ -525,6 +581,10 @@ export default function ZiweiPage() {
     if (!trimmedQuestion) {
       setPendingFollowUpAfterLogin(false);
       return;
+    }
+
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.removeItem(ZIWEI_PENDING_FOLLOW_UP_KEY);
     }
 
     void creditsQuery.refetch().then((result) => {
@@ -575,11 +635,29 @@ export default function ZiweiPage() {
       setFollowUpQuestion(trimmedQuestion);
 
       void creditsQuery.refetch().then((result) => {
+        const timeIndex = parseInt(nextHourValue);
+        const nextFocusAreaValue = nextFocusArea || undefined;
+        const requestKey = JSON.stringify([
+          nextBirthDate,
+          timeIndex,
+          nextGender,
+          nextFocusAreaValue ?? '',
+          trimmedQuestion,
+          pending.interpretation ?? '',
+        ]);
+        if (
+          followUpRequestInFlightRef.current === requestKey ||
+          completedFollowUpRequestKeysRef.current.has(requestKey)
+        ) {
+          return;
+        }
+        followUpRequestInFlightRef.current = requestKey;
+
         followUpMutation.mutate({
           solarDate: nextBirthDate,
-          timeIndex: parseInt(nextHourValue),
+          timeIndex,
           gender: nextGender,
-          focusArea: nextFocusArea || undefined,
+          focusArea: nextFocusAreaValue,
           interpretation: pending.interpretation ?? '',
           followUpQuestion: trimmedQuestion,
         });
