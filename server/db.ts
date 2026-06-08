@@ -41,6 +41,7 @@ export const DAILY_FREE_QUOTA = DEFAULT_DAILY_FREE_QUOTA;
 /** Credits granted once when a user first signs up. */
 export const SIGNUP_BONUS_CREDITS = 5;
 const DAILY_FREE_QUOTA_KEY = "daily_free_quota";
+let appSettingsReady = false;
 
 function taipeiDateKey(date: Date): string {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -139,10 +140,28 @@ export type CreditState = {
   dailyFreeQuota: number;
 };
 
+async function ensureAppSettingsTable(db: Db) {
+  if (appSettingsReady) return;
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS "app_settings" (
+      "key" varchar(64) PRIMARY KEY NOT NULL,
+      "integerValue" integer NOT NULL,
+      "updatedAt" timestamp DEFAULT now() NOT NULL
+    )
+  `);
+  await db.execute(sql`
+    INSERT INTO "app_settings" ("key", "integerValue")
+    VALUES (${DAILY_FREE_QUOTA_KEY}, ${DEFAULT_DAILY_FREE_QUOTA})
+    ON CONFLICT ("key") DO NOTHING
+  `);
+  appSettingsReady = true;
+}
+
 export async function getDailyFreeQuota(): Promise<number> {
   const db = await getDb();
   if (!db) return DEFAULT_DAILY_FREE_QUOTA;
   try {
+    await ensureAppSettingsTable(db);
     const rows = await db
       .select({ integerValue: appSettings.integerValue })
       .from(appSettings)
@@ -160,6 +179,7 @@ export async function setDailyFreeQuota(value: number): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error("Database unavailable");
   const normalized = Math.max(0, Math.min(100, Math.trunc(value)));
+  await ensureAppSettingsTable(db);
   await db
     .insert(appSettings)
     .values({ key: DAILY_FREE_QUOTA_KEY, integerValue: normalized })
