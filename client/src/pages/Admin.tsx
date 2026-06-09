@@ -138,10 +138,13 @@ export default function AdminPage() {
     { enabled: user?.role === 'admin', refetchOnWindowFocus: true }
   );
   const updateDailyFreeQuotaMutation = trpc.admin.updateDailyFreeQuota.useMutation({
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       setDailyFreeQuotaInput(String(result.dailyFreeQuota));
       setSettingsMessage('已更新今日免費點數');
-      dashboardQuery.refetch();
+      await Promise.all([
+        dashboardQuery.refetch(),
+        utils.credits.state.invalidate(),
+      ]);
     },
     onError: () => {
       setSettingsMessage('更新失敗，請稍後再試');
