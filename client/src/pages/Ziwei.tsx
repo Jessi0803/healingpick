@@ -31,6 +31,16 @@ const ZIWEI_WAITING_MESSAGES = [
   '快好了，正在整理適合你現在的方向...',
 ];
 
+const ZIWEI_FOLLOW_UP_WAITING_MESSAGES = [
+  'Mochi 正在把命盤再攤開看一次...',
+  '這題有點細，Mochi 正在慢慢對宮位...',
+  '正在把剛剛的命盤訊息和你的追問放在一起看...',
+  'Mochi 好像看到一個小重點了...',
+  '再等一下下，Mochi 正在整理成好懂的話...',
+  '命盤裡的小線索正在排隊，Mochi 幫你翻譯中...',
+  '這個追問很重要，Mochi 會看仔細一點...',
+];
+
 // ─── Product Card ─────────────────────────────────────────────────────────────
 function ProductCard({ product }: { product: Product }) {
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
@@ -464,6 +474,10 @@ export default function ZiweiPage() {
     },
   });
   const ziweiWaitingMessage = useRotatingText(ZIWEI_WAITING_MESSAGES, interpretMutation.isPending);
+  const ziweiFollowUpWaitingMessage = useRotatingText(
+    ZIWEI_FOLLOW_UP_WAITING_MESSAGES,
+    followUpMutation.isPending
+  );
 
   function handleGenerate() {
     if (!birthDate) {
@@ -772,7 +786,7 @@ export default function ZiweiPage() {
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
             >
               {followUpMutation.isPending
-                ? 'Mochi 正在看命盤...'
+                ? ziweiFollowUpWaitingMessage
                 : '請 Mochi 回應'}
             </button>
           </div>

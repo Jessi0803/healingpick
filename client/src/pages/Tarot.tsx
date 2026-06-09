@@ -92,6 +92,16 @@ const TAROT_WAITING_MESSAGES = [
   '快好了，正在把建議整理得更具體一點...',
 ];
 
+const TAROT_FOLLOW_UP_WAITING_MESSAGES = [
+  'Mochi 正在把牌牌攤開來看...',
+  '這題有點細，Mochi 正在慢慢讀...',
+  '正在把剛剛的訊息和你的追問放在一起看...',
+  'Mochi 好像看到一點小線索了...',
+  '再等一下下，Mochi 正在整理成好懂的話...',
+  '牌面正在說悄悄話，Mochi 幫你翻譯中...',
+  '這個追問很重要，Mochi 會看仔細一點...',
+];
+
 // Rider-Waite-Smith Tarot card images (public domain), self-hosted in
 // client/public/tarot to avoid Wikimedia hotlink rate-limiting (HTTP 429).
 const CARD_IMAGES: Record<number, string> = {
@@ -560,6 +570,10 @@ export default function TarotPage() {
     },
   });
   const tarotWaitingMessage = useRotatingText(TAROT_WAITING_MESSAGES, interpretMutation.isPending);
+  const tarotFollowUpWaitingMessage = useRotatingText(
+    TAROT_FOLLOW_UP_WAITING_MESSAGES,
+    followUpMutation.isPending
+  );
 
   const getReadingCardsPayload = (cards = drawnCards) =>
     cards.map((d, i) => ({
@@ -1630,7 +1644,7 @@ export default function TarotPage() {
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                       >
                         {followUpMutation.isPending
-                          ? 'Mochi 正在看牌面...'
+                          ? tarotFollowUpWaitingMessage
                           : '請 Mochi 回應'}
                       </button>
                     </div>
