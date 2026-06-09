@@ -34,6 +34,10 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [location, setLocation] = useLocation();
+  const freeQuotaLabel =
+    credits?.enabled && credits.dailyFreeQuota > 0
+      ? `今日剩 ${credits.freeRemaining}/${credits.dailyFreeQuota}`
+      : '';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -168,7 +172,7 @@ export default function Navbar() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     🐾 {credits.credits} 點
-                    {credits.freeRemaining > 0 ? ` · 今日免費 ${credits.freeRemaining}` : ''}
+                    {freeQuotaLabel ? ` · ${freeQuotaLabel}` : ''}
                   </Link>
                 )}
                 <Link
@@ -205,11 +209,11 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="hidden lg:flex items-center gap-3">
-                {credits?.enabled && credits.freeRemaining > 0 && (
+                {freeQuotaLabel && (
                   <span className="text-xs tracking-[0.15em] text-[#A38D6B]"
                     title={creditsHint}
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    🐾 今日免費 {credits.freeRemaining}
+                    🐾 {freeQuotaLabel}
                   </span>
                 )}
                 <button
@@ -256,7 +260,7 @@ export default function Navbar() {
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                       >
                         🐾 {credits.credits} 點
-                        {credits.freeRemaining > 0 ? ` · 今日免費 ${credits.freeRemaining}` : ''}
+                        {freeQuotaLabel ? ` · ${freeQuotaLabel}` : ''}
                       </Link>
                     )}
                     {credits?.enabled && (

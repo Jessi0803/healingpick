@@ -21,6 +21,7 @@ export default function BuyPage() {
     refetchOnWindowFocus: true,
   });
   const credits = creditsQuery.data;
+  const dailyFreeQuota = credits?.dailyFreeQuota ?? 2;
   const isAdmin = user?.role === 'admin';
 
   const [topupEmail, setTopupEmail] = useState('');
@@ -65,7 +66,7 @@ export default function BuyPage() {
             </h1>
             <p className="text-[12px] text-[#31353A]/54 tracking-wider"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-              每天可免費占卜 2 次，用完後每次解讀消耗 1 點
+              每天可免費占卜 {dailyFreeQuota} 次，用完後每次解讀消耗 1 點
             </p>
           </div>
 
@@ -88,7 +89,7 @@ export default function BuyPage() {
                 <p className="text-[12px] tracking-[0.2em] text-[#A38D6B]"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   目前餘額 <span className="text-[#31353A]/85 text-base">{credits?.credits ?? 0}</span> 點
-                  {credits && credits.freeRemaining > 0 && ` · 今日還有 ${credits.freeRemaining} 次免費`}
+                  {credits && credits.dailyFreeQuota > 0 && ` · 今日還有 ${credits.freeRemaining}/${credits.dailyFreeQuota} 次免費`}
                 </p>
                 <p className="mt-3 text-[11px] leading-[1.9] tracking-[0.12em] text-[#31353A]/48"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
