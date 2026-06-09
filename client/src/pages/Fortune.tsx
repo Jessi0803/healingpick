@@ -19,6 +19,11 @@ import { recommendForFortune } from '@/data/recommend';
 import { getProductRecommendationReason, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
 
+const REPEAT_READING_LOGIN_PROMPT = {
+  title: '登入後繼續查看',
+  subtitle: 'Mochi 幫你把這次想看的運勢留著。新朋友註冊送 5 點，可以多看幾次 🐾',
+};
+
 // ─── Zodiac Signs ─────────────────────────────────────────────────────────────
 const ZODIAC_SIGNS = [
   { id: 'aries',       name: '牡羊座', en: 'Aries',       symbol: '♈', dates: '3/21–4/19',  element: '火', color: '#C09898' },
@@ -318,7 +323,7 @@ function MoonPhaseBadge({ symbol, name }: { symbol: string; name: string }) {
 }
 
 export default function FortunePage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [hasClickedGenerate, setHasClickedGenerate] = useState(false);
   const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
@@ -501,6 +506,15 @@ export default function FortunePage() {
                       ) : (
                         <button
                           onClick={() => {
+                            if (
+                              credits?.enabled &&
+                              !isAuthenticated &&
+                              credits.dailyFreeQuota > 0 &&
+                              credits.freeRemaining < credits.dailyFreeQuota
+                            ) {
+                              void login(REPEAT_READING_LOGIN_PROMPT);
+                              return;
+                            }
                             setHasClickedGenerate(true);
                             setUnlockDialogOpen(false);
                           }}

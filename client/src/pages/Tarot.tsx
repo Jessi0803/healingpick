@@ -418,7 +418,8 @@ export default function TarotPage() {
     if (
       c?.enabled &&
       !isAuthenticated &&
-      ((c.dailyFreeQuota > 0 && c.freeRemaining < c.dailyFreeQuota) || c.freeRemaining <= 0)
+      c.dailyFreeQuota > 0 &&
+      c.freeRemaining < c.dailyFreeQuota
     ) {
       if (typeof window !== 'undefined') {
         window.sessionStorage.setItem(TAROT_PENDING_START_KEY, '1');
@@ -427,7 +428,7 @@ export default function TarotPage() {
       void login(REPEAT_READING_LOGIN_PROMPT);
       return;
     }
-    if (c?.enabled && c.freeRemaining <= 0 && c.credits <= 0) {
+    if (c?.enabled && (isAuthenticated || c.dailyFreeQuota > 0) && c.freeRemaining <= 0 && c.credits <= 0) {
       toast.error('今日免費額度已用完 🐾', {
         description: isAuthenticated
           ? '可購買點數繼續算,或等每日 00:00 免費額度重置'

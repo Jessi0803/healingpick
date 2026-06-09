@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../_core/trpc";
 import { chargeReading } from "../_core/credits";
+import { getVisitorCreditState } from "../db";
 import { invokeLLM, extractTextContent } from "../_core/llm";
 
 // ─── 月相計算 ──────────────────────────────────────────────────────────────────
@@ -101,6 +103,14 @@ type FortuneResult = z.infer<typeof fortuneResultSchema>;
 type MoonPhase = ReturnType<typeof getMoonPhase>;
 type ZodiacTraits = (typeof ZODIAC_TRAITS)[string];
 
+async function requireLoginAfterFirstVisitorReading(ctx: { user: unknown; anonId: string | null; ipHash: string | null }) {
+  if (ctx.user) return;
+  const state = await getVisitorCreditState(ctx.anonId, ctx.ipHash);
+  if (state && state.dailyFreeQuota > 0 && state.freeRemaining < state.dailyFreeQuota) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+  }
+}
+
 function extractJsonObject(content: string) {
   const trimmed = content
     .trim()
@@ -184,6 +194,7 @@ export const fortuneRouter = router({
       })
     )
     .query(async ({ input, ctx }) => {
+      await requireLoginAfterFirstVisitorReading(ctx);
       await chargeReading(ctx, "fortune");
 
       // 計算月相
