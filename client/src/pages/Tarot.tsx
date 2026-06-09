@@ -419,7 +419,7 @@ export default function TarotPage() {
       c?.enabled &&
       !isAuthenticated &&
       c.dailyFreeQuota > 0 &&
-      c.freeRemaining < c.dailyFreeQuota
+      c.freeRemaining <= 0
     ) {
       if (typeof window !== 'undefined') {
         window.sessionStorage.setItem(TAROT_PENDING_START_KEY, '1');

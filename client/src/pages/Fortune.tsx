@@ -510,7 +510,7 @@ export default function FortunePage() {
                               credits?.enabled &&
                               !isAuthenticated &&
                               credits.dailyFreeQuota > 0 &&
-                              credits.freeRemaining < credits.dailyFreeQuota
+                              credits.freeRemaining <= 0
                             ) {
                               void login(REPEAT_READING_LOGIN_PROMPT);
                               return;

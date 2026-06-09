@@ -475,7 +475,7 @@ export default function ZiweiPage() {
       c?.enabled &&
       !isAuthenticated &&
       c.dailyFreeQuota > 0 &&
-      c.freeRemaining < c.dailyFreeQuota
+      c.freeRemaining <= 0
     ) {
       savePendingGenerate();
       void login(REPEAT_READING_LOGIN_PROMPT);

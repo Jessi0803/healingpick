@@ -106,7 +106,7 @@ type ZodiacTraits = (typeof ZODIAC_TRAITS)[string];
 async function requireLoginAfterFirstVisitorReading(ctx: { user: unknown; anonId: string | null; ipHash: string | null }) {
   if (ctx.user) return;
   const state = await getVisitorCreditState(ctx.anonId, ctx.ipHash);
-  if (state && state.dailyFreeQuota > 0 && state.freeRemaining < state.dailyFreeQuota) {
+  if (state && state.dailyFreeQuota > 0 && state.freeRemaining <= 0) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
   }
 }

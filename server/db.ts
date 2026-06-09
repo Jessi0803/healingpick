@@ -36,7 +36,7 @@ export async function getDb(): Promise<Db | null> {
 }
 
 /** Fallback number of free readings granted per day. */
-export const DEFAULT_DAILY_FREE_QUOTA = 2;
+export const DEFAULT_DAILY_FREE_QUOTA = 1;
 export const DAILY_FREE_QUOTA = DEFAULT_DAILY_FREE_QUOTA;
 /** Credits granted once when a user first signs up. */
 export const SIGNUP_BONUS_CREDITS = 5;
@@ -168,7 +168,9 @@ export async function getDailyFreeQuota(): Promise<number> {
       .where(eq(appSettings.key, DAILY_FREE_QUOTA_KEY))
       .limit(1);
     const value = rows[0]?.integerValue;
-    return Number.isInteger(value) && value >= 0 ? value : DEFAULT_DAILY_FREE_QUOTA;
+    return Number.isInteger(value) && value >= 0
+      ? Math.min(value, DEFAULT_DAILY_FREE_QUOTA)
+      : DEFAULT_DAILY_FREE_QUOTA;
   } catch (error) {
     console.warn("[Settings] Failed to read daily free quota:", error);
     return DEFAULT_DAILY_FREE_QUOTA;
@@ -178,7 +180,7 @@ export async function getDailyFreeQuota(): Promise<number> {
 export async function setDailyFreeQuota(value: number): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error("Database unavailable");
-  const normalized = Math.max(0, Math.min(100, Math.trunc(value)));
+  const normalized = DEFAULT_DAILY_FREE_QUOTA;
   await ensureAppSettingsTable(db);
   await db
     .insert(appSettings)

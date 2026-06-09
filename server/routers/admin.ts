@@ -182,7 +182,7 @@ export const adminRouter = router({
   updateDailyFreeQuota: adminProcedure
     .input(
       z.object({
-        dailyFreeQuota: z.number().int().min(0).max(100),
+        dailyFreeQuota: z.number().int().min(1).max(1),
       })
     )
     .mutation(async ({ input }) => {

@@ -176,11 +176,11 @@ export default function AdminPage() {
     event.preventDefault();
     const value = Number(dailyFreeQuotaInput.trim());
     if (!dailyFreeQuotaInput.trim()) {
-      setSettingsMessage('請輸入 0 到 100 之間的整數');
+      setSettingsMessage('每日免費額度固定為 1 次');
       return;
     }
-    if (!Number.isInteger(value) || value < 0 || value > 100) {
-      setSettingsMessage('請輸入 0 到 100 之間的整數');
+    if (!Number.isInteger(value) || value !== 1) {
+      setSettingsMessage('每日免費額度固定為 1 次');
       return;
     }
     setSettingsMessage('');
@@ -335,14 +335,14 @@ export default function AdminPage() {
                   免費點數設定
                 </p>
                 <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
-                  設定會員與訪客每天可免費使用的占卜次數，目前為 {data?.settings.dailyFreeQuota ?? 2} 點。
+                  會員與訪客每天固定可免費使用 1 次，目前為 {data?.settings.dailyFreeQuota ?? 1} 點。
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input
                   type="number"
-                  min={0}
-                  max={100}
+                  min={1}
+                  max={1}
                   step={1}
                   value={dailyFreeQuotaInput}
                   onChange={(event) => {
