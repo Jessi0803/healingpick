@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
-import { getUserByOpenId, upsertUser } from "../db";
+import { getPreferredUserByEmail, getUserByOpenId, touchUserSignInById, upsertUser } from "../db";
 import { sdk } from "./sdk";
 import { verifyAccessToken } from "./supabase";
 
@@ -47,7 +47,14 @@ export async function createContext(
       if (identity) {
         // Read first; only create (with signup bonus) on first sign-in.
         let appUser = await getUserByOpenId(identity.id);
-        if (!appUser) {
+        const preferredUser = identity.email ? await getPreferredUserByEmail(identity.email) : undefined;
+        if (preferredUser && preferredUser.id !== appUser?.id) {
+          appUser = await touchUserSignInById(preferredUser.id, {
+            email: identity.email ?? preferredUser.email,
+            name: identity.name ?? preferredUser.name,
+            loginMethod: preferredUser.loginMethod ?? "email",
+          });
+        } else if (!appUser) {
           appUser =
             (await upsertUser({
               openId: identity.id,

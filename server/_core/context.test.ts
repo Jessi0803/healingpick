@@ -1,19 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createContext } from "./context";
 import { verifyAccessToken } from "./supabase";
-import { getUserByOpenId, upsertUser } from "../db";
+import { getPreferredUserByEmail, getUserByOpenId, touchUserSignInById, upsertUser } from "../db";
 
 vi.mock("./supabase", () => ({
   verifyAccessToken: vi.fn(),
 }));
 
 vi.mock("../db", () => ({
+  getPreferredUserByEmail: vi.fn(),
   getUserByOpenId: vi.fn(),
+  touchUserSignInById: vi.fn(),
   upsertUser: vi.fn(),
 }));
 
 const mockVerifyAccessToken = vi.mocked(verifyAccessToken);
+const mockGetPreferredUserByEmail = vi.mocked(getPreferredUserByEmail);
 const mockGetUserByOpenId = vi.mocked(getUserByOpenId);
+const mockTouchUserSignInById = vi.mocked(touchUserSignInById);
 const mockUpsertUser = vi.mocked(upsertUser);
 
 function createOptions(headers: Record<string, string | string[] | undefined> = {}) {
@@ -53,6 +57,7 @@ describe("createContext", () => {
       email: "user@example.com",
       name: "User",
     });
+    mockGetPreferredUserByEmail.mockResolvedValueOnce(undefined);
     mockGetUserByOpenId.mockResolvedValueOnce({
       id: 9,
       openId: "supabase-user",
@@ -68,6 +73,81 @@ describe("createContext", () => {
     expect(ctx.user?.id).toBe(9);
   });
 
+  it("reuses an existing app user with the same email when the auth id is new", async () => {
+    mockVerifyAccessToken.mockResolvedValueOnce({
+      id: "new-provider-id",
+      email: "user@example.com",
+      name: "Provider Name",
+    });
+    mockGetUserByOpenId.mockResolvedValueOnce(undefined);
+    mockGetPreferredUserByEmail.mockResolvedValueOnce({
+      id: 12,
+      openId: "line:owner",
+      email: "user@example.com",
+      name: "Existing User",
+      loginMethod: "line",
+    } as Awaited<ReturnType<typeof getPreferredUserByEmail>>);
+    mockTouchUserSignInById.mockResolvedValueOnce({
+      id: 12,
+      openId: "line:owner",
+      email: "user@example.com",
+      name: "Existing User",
+      loginMethod: "line",
+    } as Awaited<ReturnType<typeof touchUserSignInById>>);
+
+    const ctx = await createContext(createOptions({ authorization: "Bearer token-789" }));
+
+    expect(mockGetPreferredUserByEmail).toHaveBeenCalledWith("user@example.com");
+    expect(mockTouchUserSignInById).toHaveBeenCalledWith(12, {
+      email: "user@example.com",
+      name: "Provider Name",
+      loginMethod: "line",
+    });
+    expect(mockUpsertUser).not.toHaveBeenCalled();
+    expect(ctx.user?.id).toBe(12);
+  });
+
+  it("prefers the canonical email user when the bearer token matches a duplicate user", async () => {
+    mockVerifyAccessToken.mockResolvedValueOnce({
+      id: "duplicate-provider-id",
+      email: "user@example.com",
+      name: "Provider Name",
+    });
+    mockGetUserByOpenId.mockResolvedValueOnce({
+      id: 14,
+      openId: "duplicate-provider-id",
+      email: "user@example.com",
+      name: "Duplicate User",
+      loginMethod: "email",
+      role: "user",
+    } as Awaited<ReturnType<typeof getUserByOpenId>>);
+    mockGetPreferredUserByEmail.mockResolvedValueOnce({
+      id: 12,
+      openId: "line:owner",
+      email: "user@example.com",
+      name: "Admin User",
+      loginMethod: "line",
+      role: "admin",
+    } as Awaited<ReturnType<typeof getPreferredUserByEmail>>);
+    mockTouchUserSignInById.mockResolvedValueOnce({
+      id: 12,
+      openId: "line:owner",
+      email: "user@example.com",
+      name: "Admin User",
+      loginMethod: "line",
+      role: "admin",
+    } as Awaited<ReturnType<typeof touchUserSignInById>>);
+
+    const ctx = await createContext(createOptions({ authorization: "Bearer token-duplicate" }));
+
+    expect(mockTouchUserSignInById).toHaveBeenCalledWith(12, {
+      email: "user@example.com",
+      name: "Provider Name",
+      loginMethod: "line",
+    });
+    expect(ctx.user?.id).toBe(12);
+  });
+
   it("creates an app user on first authenticated sign-in", async () => {
     mockVerifyAccessToken.mockResolvedValueOnce({
       id: "new-supabase-user",
@@ -75,6 +155,7 @@ describe("createContext", () => {
       name: "New User",
     });
     mockGetUserByOpenId.mockResolvedValueOnce(undefined);
+    mockGetPreferredUserByEmail.mockResolvedValueOnce(undefined);
     mockUpsertUser.mockResolvedValueOnce({
       id: 10,
       openId: "new-supabase-user",
