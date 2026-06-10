@@ -243,10 +243,10 @@ export default function LoginDialog() {
               使用 LINE {mode === "register" ? "註冊" : "登入"}
             </button>
 
-            <div className="mt-3 rounded-2xl border border-[#D1BE9B]/25 bg-white/45 px-4 py-3">
-              <p className="text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/68"
+            <div className="mt-3 rounded-2xl border border-[#D1BE9B]/18 bg-white/32 px-4 py-3">
+              <p className="text-[10.5px] leading-[1.75] tracking-[0.06em] text-[#31353A]/48"
                 style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}>
-                使用 LINE 登入時,Healing Pick 會向 LINE 取得你的公開個人資料與 email。email 只用於建立與登入會員帳戶、辨識是否與既有 email 帳戶為同一位顧客、合併你的點數、占卜紀錄與訂單資料,以及寄送帳戶、訂單或點數相關通知。我們不會公開、販售或任意分享你的 email。點擊「使用 LINE 登入」即表示你同意上述用途。
+                使用 LINE 登入時,Healing Pick 會取得你的公開個人資料與 email。email 僅用於會員登入、辨識同一帳戶,以及合併點數、占卜紀錄與訂單通知；不會公開或販售。點擊「使用 LINE 登入」即表示你同意上述用途。
               </p>
             </div>
           </>
