@@ -15,6 +15,7 @@ import { ENV } from "./_core/env";
 
 type Db = ReturnType<typeof drizzle>;
 let _db: Db | null = null;
+let userProfileColumnsReady = false;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 // Uses postgres-js against Supabase's pooled connection (prepare:false is
@@ -27,6 +28,7 @@ export async function getDb(): Promise<Db | null> {
         ssl: "require",
       });
       _db = drizzle(client);
+      await ensureUserProfileColumns(_db);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -42,6 +44,20 @@ export const DAILY_FREE_QUOTA = DEFAULT_DAILY_FREE_QUOTA;
 export const SIGNUP_BONUS_CREDITS = 5;
 const DAILY_FREE_QUOTA_KEY = "daily_free_quota";
 let appSettingsReady = false;
+
+async function ensureUserProfileColumns(db: Db) {
+  if (userProfileColumnsReady) return;
+  await db.execute(sql`
+    ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "birthDate" varchar(10)
+  `);
+  await db.execute(sql`
+    ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "birthTime" varchar(16)
+  `);
+  await db.execute(sql`
+    ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "gender" varchar(16)
+  `);
+  userProfileColumnsReady = true;
+}
 
 function taipeiDateKey(date: Date): string {
   const parts = new Intl.DateTimeFormat("en-US", {
