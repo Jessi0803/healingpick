@@ -66,6 +66,21 @@ export default function LoginDialog() {
     return () => window.removeEventListener("auth-error", handler);
   }, []);
 
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const lineError = url.searchParams.get("line_error");
+    if (!lineError) return;
+
+    setOpen(true);
+    setMode("login");
+    setCustomTitle(null);
+    setCustomSubtitle(null);
+    setError(translateLineError(lineError));
+    setInfo(null);
+    url.searchParams.delete("line_error");
+    window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+  }, []);
+
   // Reset transient state whenever mode flips.
   useEffect(() => {
     setError(null);
@@ -275,4 +290,21 @@ function translateAuthError(msg: string | undefined): string {
     return "請求太頻繁,請等一下再試";
   }
   return msg;
+}
+
+function translateLineError(msg: string): string {
+  const lower = decodeURIComponent(msg).toLowerCase();
+  if (lower.includes("scope") || lower.includes("email")) {
+    return "LINE email 權限尚未通過，請先關閉 email 權限開關或等 LINE 審核完成";
+  }
+  if (lower.includes("invalid_state")) {
+    return "LINE 登入逾時，請重新點一次 LINE 登入";
+  }
+  if (lower.includes("token_failed")) {
+    return "LINE 登入驗證失敗，請確認 LINE Channel 設定";
+  }
+  if (lower.includes("db_failed")) {
+    return "會員資料暫時無法建立，請稍後再試";
+  }
+  return "LINE 登入失敗，請稍後再試";
 }

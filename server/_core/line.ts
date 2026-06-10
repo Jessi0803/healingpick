@@ -96,15 +96,20 @@ async function getVerifiedLineEmail(idToken: string | undefined, expectedUserId:
   if (!ENV.lineLoginRequestEmail) return null;
   if (!idToken) return null;
 
-  const { payload } = await jwtVerify(idToken, LINE_JWKS, {
-    issuer: LINE_ISSUER,
-    audience: ENV.lineChannelId,
-  });
-  const claims = payload as LineIdTokenClaims;
-  if (claims.sub !== expectedUserId) return null;
-  if (claims.email_verified === false) return null;
-  if (typeof claims.email !== "string" || !claims.email.includes("@")) return null;
-  return claims.email.trim().toLowerCase();
+  try {
+    const { payload } = await jwtVerify(idToken, LINE_JWKS, {
+      issuer: LINE_ISSUER,
+      audience: ENV.lineChannelId,
+    });
+    const claims = payload as LineIdTokenClaims;
+    if (claims.sub !== expectedUserId) return null;
+    if (claims.email_verified === false) return null;
+    if (typeof claims.email !== "string" || !claims.email.includes("@")) return null;
+    return claims.email.trim().toLowerCase();
+  } catch (error) {
+    console.warn("[LINE] Failed to verify email id_token; continuing without email", error);
+    return null;
+  }
 }
 
 export function registerLineRoutes(app: Express) {
