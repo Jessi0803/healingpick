@@ -5,7 +5,7 @@
  * Requires login.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
@@ -25,13 +25,69 @@ const TYPE_ICONS: Record<string, string> = {
   fortune: '☀',
 };
 
+const HOURS = [
+  { label: '子時 (23:00-01:00)', value: '0' },
+  { label: '丑時 (01:00-03:00)', value: '1' },
+  { label: '寅時 (03:00-05:00)', value: '2' },
+  { label: '卯時 (05:00-07:00)', value: '3' },
+  { label: '辰時 (07:00-09:00)', value: '4' },
+  { label: '巳時 (09:00-11:00)', value: '5' },
+  { label: '午時 (11:00-13:00)', value: '6' },
+  { label: '未時 (13:00-15:00)', value: '7' },
+  { label: '申時 (15:00-17:00)', value: '8' },
+  { label: '酉時 (17:00-19:00)', value: '9' },
+  { label: '戌時 (19:00-21:00)', value: '10' },
+  { label: '亥時 (21:00-23:00)', value: '11' },
+] as const;
+
+type HourValue = typeof HOURS[number]['value'];
+
+function isHourValue(value: string | null | undefined): value is HourValue {
+  return HOURS.some((hour) => hour.value === value);
+}
+
 export default function HistoryPage() {
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, refresh } = useAuth();
+  const utils = trpc.useUtils();
+  const [profileName, setProfileName] = useState('');
+  const [profileBirthDate, setProfileBirthDate] = useState('');
+  const [profileBirthTime, setProfileBirthTime] = useState<HourValue | ''>('');
+  const [profileGender, setProfileGender] = useState<'男' | '女' | ''>('');
+  const [profileMessage, setProfileMessage] = useState<string | null>(null);
 
   const readingsQuery = trpc.history.getReadings.useQuery(
     { limit: 20 },
     { enabled: isAuthenticated }
   );
+  const updateProfileMutation = trpc.auth.updateProfile.useMutation({
+    onSuccess: async (updatedUser) => {
+      utils.auth.me.setData(undefined, updatedUser);
+      await refresh();
+      setProfileMessage('已儲存會員資料');
+    },
+    onError: () => {
+      setProfileMessage('暫時無法儲存，請稍後再試');
+    },
+  });
+
+  useEffect(() => {
+    if (!user) return;
+    setProfileName(user.name ?? '');
+    setProfileBirthDate(user.birthDate ?? '');
+    setProfileBirthTime(isHourValue(user.birthTime) ? user.birthTime : '');
+    setProfileGender(user.gender === '男' || user.gender === '女' ? user.gender : '');
+  }, [user]);
+
+  const handleProfileSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setProfileMessage(null);
+    updateProfileMutation.mutate({
+      name: profileName.trim() || null,
+      birthDate: profileBirthDate || null,
+      birthTime: profileBirthTime || null,
+      gender: profileGender || null,
+    });
+  };
 
   // Loading state
   if (authLoading) {
@@ -98,6 +154,110 @@ export default function HistoryPage() {
               "Every reading is a conversation with the universe."
             </p>
           </div>
+
+          {/* Profile */}
+          <form
+            onSubmit={handleProfileSubmit}
+            className="glass-panel rounded-2xl border border-[#D1BE9B]/20 p-5 mb-8 animate-fade-in-up"
+          >
+            <div className="flex flex-col gap-1 mb-5">
+              <p className="text-[12px] tracking-[0.22em] text-[#8A7250]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                會員資料
+              </p>
+              <p className="text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/48"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                這些資料會作為紫微排盤的預設值，之後可以少填一點。
+              </p>
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[11px] tracking-[0.18em] text-[#31353A]/54"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  暱稱
+                </span>
+                <input
+                  value={profileName}
+                  onChange={(event) => setProfileName(event.target.value.slice(0, 60))}
+                  placeholder="想讓 Mochi 怎麼稱呼你"
+                  className="rounded-xl border border-[#D1BE9B]/22 bg-white/50 px-3.5 py-2.5 text-[12px] tracking-[0.08em] text-[#31353A]/78 outline-none transition-colors placeholder:text-[#31353A]/30 focus:border-[#D1BE9B]/55"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                />
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[11px] tracking-[0.18em] text-[#31353A]/54"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  陽曆生日
+                </span>
+                <input
+                  type="date"
+                  value={profileBirthDate}
+                  onChange={(event) => setProfileBirthDate(event.target.value)}
+                  min="1900-01-01"
+                  max={new Date().toISOString().split('T')[0]}
+                  className="rounded-xl border border-[#D1BE9B]/22 bg-white/50 px-3.5 py-2.5 text-[12px] tracking-[0.08em] text-[#31353A]/78 outline-none transition-colors focus:border-[#D1BE9B]/55"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                />
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[11px] tracking-[0.18em] text-[#31353A]/54"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  出生時辰
+                </span>
+                <select
+                  value={profileBirthTime}
+                  onChange={(event) => {
+                    const nextValue = event.target.value;
+                    setProfileBirthTime(isHourValue(nextValue) ? nextValue : '');
+                  }}
+                  className="rounded-xl border border-[#D1BE9B]/22 bg-white/50 px-3.5 py-2.5 text-[12px] tracking-[0.08em] text-[#31353A]/78 outline-none transition-colors focus:border-[#D1BE9B]/55"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                >
+                  <option value="">尚未填寫</option>
+                  {HOURS.map((hour) => (
+                    <option key={hour.value} value={hour.value}>{hour.label}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[11px] tracking-[0.18em] text-[#31353A]/54"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  性別
+                </span>
+                <select
+                  value={profileGender}
+                  onChange={(event) => setProfileGender(event.target.value as '男' | '女' | '')}
+                  className="rounded-xl border border-[#D1BE9B]/22 bg-white/50 px-3.5 py-2.5 text-[12px] tracking-[0.08em] text-[#31353A]/78 outline-none transition-colors focus:border-[#D1BE9B]/55"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                >
+                  <option value="">尚未填寫</option>
+                  <option value="女">女命</option>
+                  <option value="男">男命</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className={`min-h-4 text-[11px] tracking-[0.1em] ${
+                profileMessage?.includes('無法') ? 'text-[#C9837A]' : 'text-[#31353A]/45'
+              }`}
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                {profileMessage ?? ''}
+              </p>
+              <button
+                type="submit"
+                disabled={updateProfileMutation.isPending}
+                className="rounded-full bg-[#3D4144] px-6 py-2.5 text-[11px] tracking-[0.18em] text-[#FAF7F4] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-45"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                {updateProfileMutation.isPending ? '儲存中' : '儲存資料'}
+              </button>
+            </div>
+          </form>
 
           {/* Readings Content */}
           <div>

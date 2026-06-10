@@ -344,7 +344,7 @@ const REPEAT_READING_LOGIN_PROMPT = {
 };
 
 export default function ZiweiPage() {
-  const { isAuthenticated, login } = useAuth();
+  const { user, isAuthenticated, login } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
     refetchOnWindowFocus: true,
   });
@@ -363,8 +363,17 @@ export default function ZiweiPage() {
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
+  const appliedProfileDefaultsRef = useRef(false);
   const formSectionRef = useRef<HTMLDivElement | null>(null);
   const focusAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    if (appliedProfileDefaultsRef.current || !user) return;
+    appliedProfileDefaultsRef.current = true;
+    if (user.birthDate) setBirthDate(user.birthDate);
+    if (user.birthTime) setHourValue(user.birthTime);
+    if (user.gender === '男' || user.gender === '女') setGender(user.gender);
+  }, [user]);
 
   const handlePopularQuestionClick = (prompt: string) => {
     setFocusArea(prompt.slice(0, 300));

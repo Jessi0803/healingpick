@@ -150,6 +150,24 @@ export async function touchUserSignInById(
   return getUserById(id);
 }
 
+export async function updateUserProfile(
+  id: number,
+  values: Pick<InsertUser, "name" | "birthDate" | "birthTime" | "gender">,
+) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db
+    .update(users)
+    .set({
+      name: values.name ?? null,
+      birthDate: values.birthDate ?? null,
+      birthTime: values.birthTime ?? null,
+      gender: values.gender ?? null,
+    })
+    .where(eq(users.id, id));
+  return getUserById(id);
+}
+
 // ─── Credits ──────────────────────────────────────────────────────────────────
 
 export type CreditState = {

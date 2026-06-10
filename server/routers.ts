@@ -1,7 +1,9 @@
 import { COOKIE_NAME } from "../shared/const";
+import { z } from "zod";
+import * as db from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { tarotRouter } from "./routers/tarot";
 import { ziweiRouter } from "./routers/ziwei";
 import { fortuneRouter } from "./routers/fortune";
@@ -16,6 +18,17 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
+    updateProfile: protectedProcedure
+      .input(z.object({
+        name: z.string().trim().max(60).nullable(),
+        birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+        birthTime: z.enum(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]).nullable(),
+        gender: z.enum(["男", "女"]).nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const updated = await db.updateUserProfile(ctx.user.id, input);
+        return updated ?? ctx.user;
+      }),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
