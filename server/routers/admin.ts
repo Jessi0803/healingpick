@@ -242,4 +242,45 @@ export const adminRouter = router({
 
       return { userId: user.id, credits: user.credits };
     }),
+  deleteUser: adminProcedure
+    .input(
+      z.object({
+        userId: z.number().int().positive(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database unavailable",
+        });
+      }
+
+      if (ctx.user.id === input.userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "不能刪除目前登入中的管理員帳號",
+        });
+      }
+
+      const deleted = await db
+        .delete(users)
+        .where(eq(users.id, input.userId))
+        .returning({
+          id: users.id,
+          email: users.email,
+          name: users.name,
+        });
+
+      const user = deleted[0];
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "找不到這個會員",
+        });
+      }
+
+      return user;
+    }),
 });

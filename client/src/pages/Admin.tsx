@@ -162,6 +162,16 @@ export default function AdminPage() {
       setUserActionMessage(error.message || '點數更新失敗，請稍後再試');
     },
   });
+  const deleteUserMutation = trpc.admin.deleteUser.useMutation({
+    onSuccess: async (result) => {
+      const label = result.email ?? result.name ?? `會員 #${result.id}`;
+      setUserActionMessage(`已刪除 ${label}`);
+      await dashboardQuery.refetch();
+    },
+    onError: (error) => {
+      setUserActionMessage(error.message || '刪除會員失敗，請稍後再試');
+    },
+  });
 
   const normalizedQuery = query.trim().toLowerCase();
   const data = dashboardQuery.data;
@@ -194,6 +204,17 @@ export default function AdminPage() {
 
     setUserActionMessage('');
     updateUserCreditsMutation.mutate({ userId: row.id, credits });
+  };
+
+  const handleDeleteUser = (row: AdminUserRow) => {
+    const label = row.email ?? row.name ?? `會員 #${row.id}`;
+    const confirmed = window.confirm(
+      `確定要刪除 ${label} 嗎？\n\n這會移除會員帳號，但既有訂單、點數紀錄與問答紀錄會保留在後台。`
+    );
+    if (!confirmed) return;
+
+    setUserActionMessage('');
+    deleteUserMutation.mutate({ userId: row.id });
   };
 
   const filteredUsers = useMemo(() => {
@@ -403,8 +424,12 @@ export default function AdminPage() {
                   rows={filteredUsers}
                   adjustingUserId={updateUserCreditsMutation.variables?.userId ?? null}
                   isAdjusting={updateUserCreditsMutation.isPending}
+                  deletingUserId={deleteUserMutation.variables?.userId ?? null}
+                  isDeleting={deleteUserMutation.isPending}
                   message={userActionMessage}
+                  currentUserId={user.id}
                   onUpdateCredits={handleUpdateUserCredits}
+                  onDeleteUser={handleDeleteUser}
                 />
               )}
               {activeTab === 'orders' && <OrdersTable rows={filteredOrders} />}
@@ -449,14 +474,22 @@ function UsersTable({
   rows,
   adjustingUserId,
   isAdjusting,
+  deletingUserId,
+  isDeleting,
   message,
+  currentUserId,
   onUpdateCredits,
+  onDeleteUser,
 }: {
   rows: AdminUserRow[];
   adjustingUserId: number | null;
   isAdjusting: boolean;
+  deletingUserId: number | null;
+  isDeleting: boolean;
   message: string;
+  currentUserId: number;
   onUpdateCredits: (row: AdminUserRow, credits: number) => void;
+  onDeleteUser: (row: AdminUserRow) => void;
 }) {
   const [creditInputs, setCreditInputs] = useState<Record<number, string>>({});
 
@@ -472,7 +505,7 @@ function UsersTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[980px] text-left">
+      <table className="w-full min-w-[1080px] text-left">
         <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
           <tr>
             <th className="px-4 py-3 font-normal">ID</th>
@@ -482,17 +515,18 @@ function UsersTable({
             <th className="px-4 py-3 font-normal">今日免費已用</th>
             <th className="px-4 py-3 font-normal">註冊時間</th>
             <th className="px-4 py-3 font-normal">最後登入</th>
+            <th className="px-4 py-3 font-normal">操作</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
           {message && (
             <tr>
-              <td colSpan={7} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
+              <td colSpan={8} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
                 {message}
               </td>
             </tr>
           )}
-          {rows.length === 0 ? <EmptyRow colSpan={7} /> : rows.map((row) => {
+          {rows.length === 0 ? <EmptyRow colSpan={8} /> : rows.map((row) => {
             const inputValue = creditInputs[row.id] ?? String(row.credits);
             const parsedCredits = Number(inputValue.trim());
             const canSaveCredits =
@@ -503,6 +537,8 @@ function UsersTable({
               parsedCredits !== row.credits &&
               !isAdjusting;
             const isRowAdjusting = isAdjusting && adjustingUserId === row.id;
+            const isCurrentUser = row.id === currentUserId;
+            const isRowDeleting = isDeleting && deletingUserId === row.id;
             return (
             <tr key={row.id}>
               <td className="px-4 py-3">{row.id}</td>
@@ -542,6 +578,18 @@ function UsersTable({
               <td className="px-4 py-3">{row.freeUsedToday}</td>
               <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
               <td className="px-4 py-3">{formatDate(row.lastSignedIn)}</td>
+              <td className="px-4 py-3">
+                <button
+                  type="button"
+                  disabled={isCurrentUser || isDeleting}
+                  onClick={() => onDeleteUser(row)}
+                  className="rounded-md border border-[#C9837A]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
+                  title={isCurrentUser ? '不能刪除目前登入中的管理員帳號' : '刪除會員'}
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  {isRowDeleting ? '刪除中' : '刪除'}
+                </button>
+              </td>
             </tr>
           )})}
         </tbody>
