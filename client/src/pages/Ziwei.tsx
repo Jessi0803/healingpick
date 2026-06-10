@@ -879,16 +879,6 @@ export default function ZiweiPage() {
               <Streamdown>{llmInterpretation}</Streamdown>
             </div>
 
-            <ReadingFeedback
-              source="ziwei"
-              context={[
-                `生日：${birthDate}`,
-                `時辰索引：${hourValue}`,
-                `性別：${gender}`,
-                focusArea.trim() ? `問題：${focusArea.trim()}` : null,
-              ].filter(Boolean).join('；')}
-            />
-
             {ziweiRecommendedProducts.length > 0 && (
               <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
                 <p className="text-[14px] tracking-[0.24em] text-[#6F5A3A] mb-3"
@@ -914,6 +904,22 @@ export default function ZiweiPage() {
       </div>
     </div>
   );
+
+  const renderFeedbackSection = () => {
+    if (!llmInterpretation) return null;
+
+    return (
+      <ReadingFeedback
+        source="ziwei"
+        context={[
+          `生日：${birthDate}`,
+          `時辰索引：${hourValue}`,
+          `性別：${gender}`,
+          focusArea.trim() ? `問題：${focusArea.trim()}` : null,
+        ].filter(Boolean).join('；')}
+      />
+    );
+  };
 
   return (
     <PageLayout>
@@ -1289,6 +1295,7 @@ export default function ZiweiPage() {
               <div className="flex flex-col gap-8">
               {renderInterpretationSection()}
               {renderFollowUpSection()}
+              {renderFeedbackSection()}
 
               {/* Birth info banner */}
               <div className="flex flex-wrap justify-center gap-3">

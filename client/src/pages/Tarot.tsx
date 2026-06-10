@@ -1581,11 +1581,6 @@ export default function TarotPage() {
                       <Streamdown>{llmInterpretation}</Streamdown>
                     </div>
 
-                    <ReadingFeedback
-                      source="tarot"
-                      context={question.trim() ? `問題：${question.trim()}` : '未填寫具體問題'}
-                    />
-
                     {recommendedProducts.length > 0 && (
                       <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
                         <p className="text-[14px] tracking-[0.24em] text-[#6F5A3A] mb-3"
@@ -1680,6 +1675,13 @@ export default function TarotPage() {
                     </div>
                   )}
                 </div>
+              )}
+
+              {llmInterpretation && (
+                <ReadingFeedback
+                  source="tarot"
+                  context={question.trim() ? `問題：${question.trim()}` : '未填寫具體問題'}
+                />
               )}
 
               {/* Actions */}
