@@ -243,8 +243,8 @@ export default function LoginDialog() {
               使用 LINE {mode === "register" ? "註冊" : "登入"}
             </button>
 
-            <div className="mt-3 rounded-2xl border border-[#D1BE9B]/12 bg-white/24 px-4 py-3">
-              <p className="text-[9.5px] leading-[1.7] tracking-[0.05em] text-[#31353A]/36"
+            <div className="mt-3 rounded-2xl border border-[#D1BE9B]/8 bg-white/18 px-4 py-2.5">
+              <p className="text-[8.5px] leading-[1.65] tracking-[0.04em] text-[#31353A]/28"
                 style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}>
                 使用 LINE 登入時,Healing Pick 會取得你的公開個人資料與 email。email 僅用於會員登入、辨識同一帳戶、合併點數與占卜紀錄；不會公開或販售。點擊登入即表示同意上述用途。
               </p>
