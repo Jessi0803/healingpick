@@ -132,6 +132,24 @@ export async function getUserByEmail(email: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function touchUserSignInById(
+  id: number,
+  values: Pick<InsertUser, "name" | "email" | "loginMethod">,
+) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db
+    .update(users)
+    .set({
+      name: values.name ?? null,
+      email: values.email ?? null,
+      loginMethod: values.loginMethod ?? null,
+      lastSignedIn: new Date(),
+    })
+    .where(eq(users.id, id));
+  return getUserById(id);
+}
+
 // ─── Credits ──────────────────────────────────────────────────────────────────
 
 export type CreditState = {

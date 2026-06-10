@@ -24,4 +24,5 @@ export const ENV = {
   lineChannelId: process.env.LINE_CHANNEL_ID ?? "",
   lineChannelSecret: process.env.LINE_CHANNEL_SECRET ?? "",
   lineLoginRedirectUri: process.env.LINE_LOGIN_REDIRECT_URI ?? "",
+  lineLoginRequestEmail: process.env.LINE_LOGIN_REQUEST_EMAIL === "true",
 };

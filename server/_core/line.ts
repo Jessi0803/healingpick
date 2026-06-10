@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../../shared/const";
 import { parse as parseCookieHeader } from "cookie";
 import type { Express, Request, Response } from "express";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { ENV } from "./env";
@@ -12,6 +13,8 @@ const LINE_RETURN_COOKIE = "line_oauth_return_to";
 const LINE_AUTH_URL = "https://access.line.me/oauth2/v2.1/authorize";
 const LINE_TOKEN_URL = "https://api.line.me/oauth2/v2.1/token";
 const LINE_PROFILE_URL = "https://api.line.me/v2/profile";
+const LINE_ISSUER = "https://access.line.me";
+const LINE_JWKS = createRemoteJWKSet(new URL("https://api.line.me/oauth2/v2.1/certs"));
 
 type LineTokenResponse = {
   access_token?: string;
@@ -28,6 +31,13 @@ type LineProfileResponse = {
   displayName?: string;
   pictureUrl?: string;
   statusMessage?: string;
+};
+
+type LineIdTokenClaims = {
+  sub?: string;
+  name?: string;
+  email?: string;
+  email_verified?: boolean;
 };
 
 class LineCallbackError extends Error {
@@ -82,6 +92,21 @@ function getSafeReturnTo(value: string | undefined): string {
   return value;
 }
 
+async function getVerifiedLineEmail(idToken: string | undefined, expectedUserId: string): Promise<string | null> {
+  if (!ENV.lineLoginRequestEmail) return null;
+  if (!idToken) return null;
+
+  const { payload } = await jwtVerify(idToken, LINE_JWKS, {
+    issuer: LINE_ISSUER,
+    audience: ENV.lineChannelId,
+  });
+  const claims = payload as LineIdTokenClaims;
+  if (claims.sub !== expectedUserId) return null;
+  if (claims.email_verified === false) return null;
+  if (typeof claims.email !== "string" || !claims.email.includes("@")) return null;
+  return claims.email.trim().toLowerCase();
+}
+
 export function registerLineRoutes(app: Express) {
   app.get("/api/line-session-debug", async (req: Request, res: Response) => {
     const sessionCookie = getCookie(req, COOKIE_NAME);
@@ -116,7 +141,7 @@ export function registerLineRoutes(app: Express) {
     url.searchParams.set("client_id", ENV.lineChannelId);
     url.searchParams.set("redirect_uri", getRedirectUri(req));
     url.searchParams.set("state", state);
-    url.searchParams.set("scope", "profile openid");
+    url.searchParams.set("scope", ENV.lineLoginRequestEmail ? "profile openid email" : "profile openid");
     url.searchParams.set("bot_prompt", "aggressive");
 
     res.redirect(302, url.toString());
@@ -179,21 +204,33 @@ export function registerLineRoutes(app: Express) {
 
       const openId = `line:${profile.userId}`;
       const name = profile.displayName || "LINE user";
+      const email = await getVerifiedLineEmail(tokenData.id_token, profile.userId);
+      let sessionOpenId = openId;
       try {
-        await db.upsertUser({
-          openId,
-          name,
-          email: null,
-          loginMethod: "line",
-          lastSignedIn: new Date(),
-        });
+        const existingUser = email ? await db.getUserByEmail(email) : undefined;
+        if (existingUser) {
+          await db.touchUserSignInById(existingUser.id, {
+            name: existingUser.name ?? name,
+            email,
+            loginMethod: existingUser.loginMethod ?? "line",
+          });
+          sessionOpenId = existingUser.openId;
+        } else {
+          await db.upsertUser({
+            openId,
+            name,
+            email,
+            loginMethod: "line",
+            lastSignedIn: new Date(),
+          });
+        }
       } catch (dbError) {
         throw new LineCallbackError("db_failed", dbError instanceof Error ? dbError.message : String(dbError));
       }
 
       let sessionToken: string;
       try {
-        sessionToken = await sdk.createSessionToken(openId, {
+        sessionToken = await sdk.createSessionToken(sessionOpenId, {
           name,
           expiresInMs: ONE_YEAR_MS,
         });
