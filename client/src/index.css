@@ -336,6 +336,61 @@
    SOUL EASE Utility Classes
    ============================================================ */
 
+/* Paper-grain overlay — a single film of texture over the whole site
+   removes the flat digital feel; kept faint enough to never read as dirt */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grainFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grainFilter)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* ── Night-sky band ──
+   Moonlit interlude section: deep indigo with a gold moon-glow at the
+   top edge and a faint lavender wash rising from the bottom corner */
+.night-sky-section {
+  border-top: 1px solid rgba(209, 190, 155, 0.22);
+  border-bottom: 1px solid rgba(209, 190, 155, 0.22);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(209, 190, 155, 0.10), transparent 70%),
+    radial-gradient(ellipse 50% 42% at 88% 100%, rgba(155, 141, 192, 0.16), transparent 70%),
+    linear-gradient(180deg, #23263a 0%, #282b42 52%, #202332 100%);
+}
+
+.night-stardust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(250, 247, 244, 0.5) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(209, 190, 155, 0.42) 0 1px, transparent 1.7px),
+    radial-gradient(circle, rgba(250, 247, 244, 0.26) 0 0.8px, transparent 1.3px);
+  background-position: 12% 24%, 54% 66%, 82% 12%;
+  background-size: 120px 120px, 160px 160px, 90px 90px;
+  opacity: 0.55;
+}
+
+.night-star {
+  position: absolute;
+  pointer-events: none;
+  color: rgba(209, 190, 155, 0.6);
+  animation: nightStarTwinkle 5.5s ease-in-out infinite;
+}
+
+@keyframes nightStarTwinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.9); }
+  50%      { opacity: 0.7; transform: scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .night-star {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
 /* Aurora flowing background */
 @keyframes auroraFlow {
   0%   { background-position: 0% 50%; }
@@ -356,18 +411,18 @@
   animation: auroraFlow 22s ease infinite;
 }
 
-/* Glass morphism panel */
+/* Glass morphism panel — saturate lets the colors behind glow through the frost */
 .glass-panel {
   background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.55);
 }
 
 .glass-panel-dark {
   background: rgba(61, 65, 68, 0.06);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid rgba(209, 190, 155, 0.18);
 }
 
