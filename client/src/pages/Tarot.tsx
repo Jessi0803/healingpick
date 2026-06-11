@@ -350,6 +350,16 @@ const QUESTION_PROMPTS: Record<string, string[]> = {
     '這段關係還有復合的可能嗎？',
     '我近期會遇到適合的新對象嗎？',
     '我在愛裡需要調整的課題是什麼？',
+    '他還會再主動找我嗎？',
+    '這段關係現在最真實的狀態是什麼？',
+    '我對這個人是不是想太多了？',
+    '我們之間還有沒有值得努力的空間？',
+    '我該怎麼讓自己在感情裡更穩定？',
+    '這個人適合進入我的生活嗎？',
+    '我和他的緣分目前走到哪裡了？',
+    '我該放慢腳步，還是勇敢表達？',
+    '這段感情接下來三個月會有變化嗎？',
+    '我真正想從這段關係裡得到什麼？',
   ],
   career: [
     '我現在適合換工作或調整方向嗎？',
@@ -362,6 +372,16 @@ const QUESTION_PROMPTS: Record<string, string[]> = {
     '我適合創業、接案，還是穩定上班？',
     '近期工作上會出現新的轉機嗎？',
     '我該怎麼提升自己在工作中的價值？',
+    '我現在的工作壓力真正來自哪裡？',
+    '我該不該向主管提出自己的想法？',
+    '這個合作或邀約對我有幫助嗎？',
+    '我適合轉換跑道或學新技能嗎？',
+    '我目前的努力會被看見嗎？',
+    '我在職場裡最需要補強的是什麼？',
+    '接下來面試或求職運勢如何？',
+    '我該怎麼面對職場上的不安感？',
+    '現在適合主動爭取更好的待遇嗎？',
+    '我未來三個月工作重點是什麼？',
   ],
   wealth: [
     '最近財務和安全感該注意什麼？',
@@ -374,6 +394,16 @@ const QUESTION_PROMPTS: Record<string, string[]> = {
     '這筆花費或合作值得我投入嗎？',
     '我該如何改善自己的金錢安全感？',
     '接下來三個月財務上要注意什麼？',
+    '我最近適合做比較大的金錢決定嗎？',
+    '這個投資方向目前對我有利嗎？',
+    '我該怎麼讓收入更穩定？',
+    '我現在的財務盲點是什麼？',
+    '我適合和別人談金錢合作嗎？',
+    '我該先增加收入，還是先整理支出？',
+    '近期有沒有需要避免的破財點？',
+    '我對金錢的焦慮真正來自哪裡？',
+    '這個副業方向值得我長期經營嗎？',
+    '我該如何提升自己吸引資源的能力？',
   ],
   growth: [
     '我現在真正卡住的原因是什麼？',
@@ -386,6 +416,16 @@ const QUESTION_PROMPTS: Record<string, string[]> = {
     '我近期適合培養哪一種能力？',
     '我該如何面對目前的迷惘感？',
     '我下一步最適合做的小改變是什麼？',
+    '我現在最需要放下的是什麼？',
+    '我該怎麼和過去的自己和解？',
+    '我最近反覆焦慮的核心原因是什麼？',
+    '我該如何重新建立生活節奏？',
+    '我目前最需要相信自己的哪一點？',
+    '我該怎麼讓內心更安定？',
+    '我適合開始一個新的生活習慣嗎？',
+    '我現在最需要被提醒的一句話是什麼？',
+    '我該如何停止被別人的期待影響？',
+    '接下來我適合把能量放在哪裡？',
   ],
   other: [
     '我現在最需要看清楚什麼？',
@@ -398,6 +438,16 @@ const QUESTION_PROMPTS: Record<string, string[]> = {
     '這件事背後真正想提醒我什麼？',
     '我近期最容易忽略的訊息是什麼？',
     '如果我往前一步，可能會遇到什麼？',
+    '這件事現在最好的處理方式是什麼？',
+    '我該繼續觀察，還是做出決定？',
+    '目前這個狀況對我最大的提醒是什麼？',
+    '我是不是該換一個角度看這件事？',
+    '這個人或這件事值得我投入心力嗎？',
+    '我現在最該保護自己的哪一部分？',
+    '我近期會遇到什麼新的機會嗎？',
+    '這個選擇可能帶我走向哪裡？',
+    '我該如何讓事情慢慢回到正軌？',
+    '今天牌想給我的核心訊息是什麼？',
   ],
 };
 
@@ -928,18 +978,21 @@ export default function TarotPage() {
               點選帶入
             </span>
           </div>
-          <div className="animate-fade-in-up grid gap-2 sm:grid-cols-2">
-            {activeCategory.questions.map(prompt => (
-              <button
-                key={prompt}
-                type="button"
-                onClick={() => handlePopularQuestionClick(prompt, activeCategory.id, nextStep)}
-                className="min-h-[54px] w-full rounded-xl border border-[#D1BE9B]/14 bg-white/62 px-3 py-2.5 text-left text-[11.5px] leading-[1.65] tracking-[0.06em] text-[#31353A]/72 transition-all duration-200 hover:border-[#D1BE9B]/55 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              >
-                {prompt}
-              </button>
-            ))}
+          <div className="relative">
+            <div className="animate-fade-in-up grid max-h-[318px] gap-2 overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin] [scrollbar-color:#D1BE9B66_transparent]">
+              {activeCategory.questions.map(prompt => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => handlePopularQuestionClick(prompt, activeCategory.id, nextStep)}
+                  className="min-h-[54px] w-full rounded-xl border border-[#D1BE9B]/14 bg-white/62 px-3 py-2.5 text-left text-[11.5px] leading-[1.65] tracking-[0.06em] text-[#31353A]/72 transition-all duration-200 hover:border-[#D1BE9B]/55 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+            <div className="pointer-events-none absolute bottom-0 left-0 right-1 h-10 rounded-b-xl bg-gradient-to-t from-[#FFFDF8] to-transparent" />
           </div>
         </div>
       </div>
