@@ -1065,23 +1065,19 @@ export default function TarotPage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     你最近想問哪一件事？
                   </h2>
-                  <p className="mt-2 text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/58"
-                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                    點一題最接近你的狀態，或自己寫下想問的事。
-                  </p>
                 </div>
 
                 {renderPopularQuestions()}
 
                 <div className="mt-5 mb-5 border-t border-[#D1BE9B]/14 pt-5">
                   <div className="mb-2 flex items-center justify-between gap-3">
-                    <p className="text-[12px] tracking-[0.22em] text-[#8A7250]"
+                    <p className="text-[13px] tracking-[0.18em] text-[#6F5A3A]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                       你的問題
                     </p>
-                    <span className="text-[10px] tracking-[0.14em] text-[#D1BE9B]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      可再修改
+                    <span className="rounded-full border border-[#D1BE9B]/40 bg-[#D1BE9B]/16 px-2.5 py-1 text-[10.5px] tracking-[0.12em] text-[#8A7250]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                      可自行修改
                     </span>
                   </div>
                   <textarea
