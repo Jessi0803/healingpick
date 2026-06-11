@@ -439,23 +439,20 @@ export default function PageLayout({ children, className = '', noFooter = false 
         onClick={toggleMusic}
         aria-label={isMusicPlaying ? '暫停背景音樂' : '播放背景音樂'}
         title={isMusicPlaying ? '暫停背景音樂' : '播放背景音樂'}
-        className={`group fixed bottom-5 left-5 z-50 flex min-h-11 items-center gap-2 rounded-full border px-4 py-2 shadow-[0_10px_28px_rgba(49,53,58,0.16)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/55 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF7F4] active:scale-95 ${
+        className={`music-toggle-button group fixed bottom-5 left-5 z-50 flex h-11 w-11 items-center justify-center rounded-full border shadow-[0_10px_28px_rgba(49,53,58,0.16)] backdrop-blur-md transition-[transform,background-color,border-color,color,box-shadow] duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/55 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF7F4] active:scale-95 ${
           isMusicPlaying
             ? 'border-[#D1BE9B]/55 bg-[#D1BE9B]/25 text-[#806844]'
-            : 'border-[#D1BE9B]/30 bg-[#FDFBF7]/80 text-[#927A56] hover:border-[#D1BE9B]/55 hover:bg-[#FDFBF7]/95'
+            : 'music-toggle-button--idle border-[#D1BE9B]/30 bg-[#FDFBF7]/80 text-[#927A56] hover:border-[#D1BE9B]/55 hover:bg-[#FDFBF7]/95'
         }`}
       >
         <span className="sr-only">{isMusicPlaying ? '暫停背景音樂' : '播放背景音樂'}</span>
         <span
           aria-hidden="true"
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors ${
-            isMusicPlaying ? 'bg-[#FDFBF7]/70' : 'bg-[#D1BE9B]/14 group-hover:bg-[#D1BE9B]/20'
+          className={`music-toggle-glyph flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors ${
+            isMusicPlaying ? 'bg-[#FDFBF7]/70' : 'music-toggle-glyph--idle bg-[#D1BE9B]/14 group-hover:bg-[#D1BE9B]/20'
           }`}
         >
           {isMusicPlaying ? <Volume2 className="h-4 w-4" /> : <Music2 className="h-4 w-4" />}
-        </span>
-        <span className="whitespace-nowrap font-serif-tc text-[12px] tracking-[0.16em]">
-          {isMusicPlaying ? '音樂播放中' : '播放音樂'}
         </span>
       </button>
 

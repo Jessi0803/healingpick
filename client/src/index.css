@@ -391,6 +391,49 @@
   font-family: 'Cormorant Garamond', serif;
 }
 
+/* Music toggle affordance */
+.music-toggle-button {
+  position: fixed;
+}
+
+.music-toggle-glyph--idle {
+  animation: musicToggleNudge 4.8s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+.music-toggle-button--idle::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  z-index: -1;
+  border-radius: 999px;
+  border: 1px solid rgba(209, 190, 155, 0.44);
+  opacity: 0;
+  transform: scale(0.88);
+  animation: musicToggleHalo 4.8s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+
+@keyframes musicToggleNudge {
+  0%, 74%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  78% { transform: translate3d(0, -1px, 0) rotate(-5deg); }
+  82% { transform: translate3d(1px, 0, 0) rotate(4deg); }
+  86% { transform: translate3d(-1px, 0, 0) rotate(-3deg); }
+  90% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+@keyframes musicToggleHalo {
+  0%, 70%, 100% { opacity: 0; transform: scale(0.88); }
+  76% { opacity: 0.42; transform: scale(1); }
+  96% { opacity: 0; transform: scale(1.42); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-toggle-button--idle,
+  .music-toggle-glyph--idle,
+  .music-toggle-button--idle::after {
+    animation: none;
+  }
+}
+
 /* Slow rotation animation */
 @keyframes slowRotate {
   from { transform: rotate(0deg); }
