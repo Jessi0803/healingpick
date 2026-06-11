@@ -20,7 +20,7 @@ import { CatListening, CatPeeking } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ReadingFeedback from '@/components/ReadingFeedback';
 import { recommendForCategory, recommendForZiwei, type RecommendationCategory } from '@/data/recommend';
-import { getProductRecommendationReason, type Product } from '@/data/products';
+import { getContextualRecommendationReason, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
 
 const ZIWEI_WAITING_MESSAGES = [
@@ -42,9 +42,18 @@ const ZIWEI_FOLLOW_UP_WAITING_MESSAGES = [
 ];
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({
+  product,
+  context,
+  role = 'primary',
+}: {
+  product: Product;
+  context?: string;
+  role?: 'primary' | 'secondary';
+}) {
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
-  const recommendationReason = getProductRecommendationReason(product);
+  const recommendationReason = getContextualRecommendationReason(product, context, role);
+  const roleLabel = role === 'primary' ? '最呼應此刻' : '想加強也可看';
   return (
     <Link href={`/shop/${product.slug}`}>
       <div className="flex flex-col sm:flex-row gap-3 p-3 rounded-xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
@@ -53,10 +62,16 @@ function ProductCard({ product }: { product: Product }) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-1 mb-1">
-            <p className="text-[11px] tracking-[0.12em] text-[#31353A]/86 truncate"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              {product.name}
-            </p>
+            <div className="min-w-0">
+              <span className="text-[9px] tracking-[0.12em] px-1.5 py-0.5 rounded-full bg-white/70 text-[#6F5A3A] border border-[#D1BE9B]/20"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {roleLabel}
+              </span>
+              <p className="text-[11px] tracking-[0.12em] text-[#31353A]/86 truncate mt-1"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {product.name}
+              </p>
+            </div>
             <p className="text-[11px] font-light text-[#D1BE9B] flex-shrink-0"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               NT$ {product.price.toLocaleString()}
@@ -73,7 +88,7 @@ function ProductCard({ product }: { product: Product }) {
           <div className="mb-1.5 rounded-lg border border-[#D1BE9B]/15 bg-[#F8F4EC]/45 px-2.5 py-2">
             <p className="text-[9px] tracking-[0.14em] text-[#A38D6B] mb-1"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              為什麼適合你
+              為什麼 Mochi 想到它
             </p>
             <p className="text-[10px] leading-relaxed tracking-[0.06em] text-[#31353A]/62"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
@@ -82,7 +97,7 @@ function ProductCard({ product }: { product: Product }) {
           </div>
           <span className="text-[10px] tracking-[0.12em] text-[#A38D6B]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-            查看商品 →
+            看看這款商品 →
           </span>
         </div>
       </div>
@@ -901,8 +916,13 @@ export default function ZiweiPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">
-                  {ziweiRecommendedProducts.map(product => (
-                    <ProductCard key={product.slug} product={product} />
+                  {ziweiRecommendedProducts.map((product, index) => (
+                    <ProductCard
+                      key={product.slug}
+                      product={product}
+                      context={ziweiRecommendationMessage}
+                      role={index === 0 ? 'primary' : 'secondary'}
+                    />
                   ))}
                 </div>
               </div>

@@ -485,7 +485,7 @@ export default function CatCompanion() {
                       className="w-full text-[10.5px] font-medium tracking-[0.2em] py-2 rounded-full bg-[#3D4144] hover:bg-[#D1BE9B] text-[#FAF7F4] hover:text-[#31353A] transition-all duration-300 active:scale-95 cursor-pointer shadow-sm text-center"
                       style={{ fontFamily: 'Noto Serif TC, serif' }}
                     >
-                      立即諮詢購買 ♡
+                      問問適不適合我 ♡
                     </button>
                     <button
                       onClick={resetQuiz}

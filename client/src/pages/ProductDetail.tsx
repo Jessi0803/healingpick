@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'wouter';
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
-import { findProduct } from '@/data/products';
+import { findProduct, getProductFitSummary } from '@/data/products';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import ContactDialog from '@/components/ContactDialog';
 
@@ -137,11 +137,22 @@ export default function ProductDetailPage() {
                 ୨୧ ───────── ୨୧
               </div>
 
+              <div className="mb-4 rounded-2xl border border-[#D1BE9B]/20 bg-white/45 px-4 py-3">
+                <p className="text-[10px] tracking-[0.22em] text-[#A38D6B] mb-1"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  適合此刻的你
+                </p>
+                <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/68"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                  {getProductFitSummary(product)}
+                </p>
+              </div>
+
               <button
                 onClick={handleBuy}
                 className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95 shadow-md shadow-[#3D4144]/10 hover:shadow-[#D1BE9B]/20"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                立即諮詢購買 ♡
+                問問這款適不適合我 ♡
               </button>
 
               {/* Quick feature highlights — keeps the right column visually

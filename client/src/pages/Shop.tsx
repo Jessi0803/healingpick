@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
-import { PRODUCTS, CATEGORY_OPTIONS } from '@/data/products';
+import { PRODUCTS, CATEGORY_OPTIONS, getProductFitSummary } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
 const SORT_OPTIONS = [
@@ -146,6 +146,10 @@ export default function ShopPage() {
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                         {product.subtitle}
                       </p>
+                      <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62 mb-2 min-h-[2.75em]"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        {getProductFitSummary(product)}
+                      </p>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-sm text-[#A38D6B]"
                           style={{ fontFamily: 'Cormorant Garamond, serif' }}>
@@ -167,7 +171,7 @@ export default function ShopPage() {
                   className="w-full py-2 text-[10px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light mt-auto"
                   style={{ fontFamily: 'Noto Serif TC, serif' }}
                 >
-                  立即諮詢購買 ♡
+                  問問適不適合我 ♡
                 </button>
               </div>
             ))}

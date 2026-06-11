@@ -898,7 +898,7 @@ export default function Home() {
                   className="w-full py-2 text-[10px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light mt-auto"
                   style={{ fontFamily: 'Noto Serif TC, serif' }}
                 >
-                  立即諮詢購買 ♡
+                  問問適不適合我 ♡
                 </button>
               </div>
             ))}

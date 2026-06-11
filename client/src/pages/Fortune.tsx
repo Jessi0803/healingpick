@@ -16,7 +16,7 @@ import { CatListening } from '@/components/CatElements';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { recommendForFortune } from '@/data/recommend';
-import { getProductRecommendationReason, type Product } from '@/data/products';
+import { getContextualRecommendationReason, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
 
 const REPEAT_READING_LOGIN_PROMPT = {
@@ -93,9 +93,18 @@ function getFortuneRecommendationMessage(
 }
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({
+  product,
+  context,
+  role = 'primary',
+}: {
+  product: Product;
+  context?: string;
+  role?: 'primary' | 'secondary';
+}) {
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
-  const recommendationReason = getProductRecommendationReason(product);
+  const recommendationReason = getContextualRecommendationReason(product, context, role);
+  const roleLabel = role === 'primary' ? '最呼應此刻' : '想加強也可看';
   return (
     <Link href={`/shop/${product.slug}`}>
       <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
@@ -111,6 +120,10 @@ function ProductCard({ product }: { product: Product }) {
                   {product.tag}
                 </span>
               )}
+              <span className="text-[10px] tracking-[0.15em] px-1.5 py-0.5 rounded-full bg-white/70 text-[#6F5A3A] border border-[#D1BE9B]/20"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {roleLabel}
+              </span>
               <p className="text-[12px] tracking-[0.12em] text-[#31353A]/86 mt-0.5 truncate"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {product.name}
@@ -136,7 +149,7 @@ function ProductCard({ product }: { product: Product }) {
           <div className="mb-2 rounded-xl border border-[#D1BE9B]/15 bg-[#F8F4EC]/45 px-3 py-2">
             <p className="text-[10px] tracking-[0.18em] text-[#A38D6B] mb-1"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              為什麼適合你
+              為什麼 Mochi 想到它
             </p>
             <div className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62 prose prose-sm max-w-none prose-strong:text-[#31353A]/86 prose-strong:font-semibold [&_p]:!my-0 [&_p]:!text-[11px] [&_p]:!leading-relaxed"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
@@ -145,7 +158,7 @@ function ProductCard({ product }: { product: Product }) {
           </div>
           <span className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-            查看商品 →
+            看看這款商品 →
           </span>
         </div>
       </div>
@@ -694,8 +707,13 @@ export default function FortunePage() {
                                   </p>
                                 </div>
                                 <div className="flex flex-col gap-3">
-                                  {recommendForFortune(selectedSignData.element).map(product => (
-                                    <ProductCard key={product.slug} product={product} />
+                                  {recommendForFortune(selectedSignData.element).map((product, index) => (
+                                    <ProductCard
+                                      key={product.slug}
+                                      product={product}
+                                      context={getFortuneRecommendationMessage(selectedSignData.element, aiData)}
+                                      role={index === 0 ? 'primary' : 'secondary'}
+                                    />
                                   ))}
                                 </div>
                               </div>

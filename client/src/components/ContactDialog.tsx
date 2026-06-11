@@ -2,7 +2,7 @@
  * SOUL EASE | Mochi．crystal — Contact Dialog Component
  * Design: Wabi-Sabi Luxe × Morandi Oat Milk — Premium Contact Portal
  */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface ContactDialogProps {
@@ -12,6 +12,11 @@ interface ContactDialogProps {
 }
 
 export default function ContactDialog({ isOpen, onClose, productName }: ContactDialogProps) {
+  const [copied, setCopied] = useState(false);
+  const inquiryMessage = productName
+    ? `我想詢問「${productName}」，想知道它適不適合我最近的狀態。`
+    : '我想請 Mochi 幫我看看，哪一款商品比較適合我最近的狀態。';
+
   // Prevent body scrolling when open
   useEffect(() => {
     if (isOpen) {
@@ -23,6 +28,19 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
       document.body.style.overflow = '';
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) setCopied(false);
+  }, [isOpen]);
+
+  const handleCopyMessage = async () => {
+    try {
+      await navigator.clipboard.writeText(inquiryMessage);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -52,12 +70,12 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
         
         <h3 className="text-base md:text-lg tracking-[0.18em] text-[#31353A] mt-2 mb-1.5"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-          選擇您的諮詢方式
+          先問問這款適不適合你
         </h3>
         
         <p className="text-[11.5px] text-[#31353A]/62 tracking-wider mb-4"
           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-          Mochi 小幫手將於 24 小時內親自為您服務 ⊹ ࣪ ˖
+          不確定也沒關係，可以先把最近的狀態告訴我們 ⊹ ࣪ ˖
         </p>
 
         {/* Dynamic Product Indicator */}
@@ -70,6 +88,25 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
           </div>
         )}
 
+        <div className="mb-5 rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-4 py-3 text-left">
+          <p className="text-[10px] tracking-[0.18em] text-[#A38D6B] mb-1.5"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            可以直接傳這句
+          </p>
+          <p className="text-[11.5px] leading-[1.8] tracking-[0.06em] text-[#31353A]/72 mb-3"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            {inquiryMessage}
+          </p>
+          <button
+            type="button"
+            onClick={handleCopyMessage}
+            className="w-full py-2 text-[10px] tracking-[0.18em] rounded-full border border-[#D1BE9B]/30 bg-[#FAF7F4]/80 text-[#A38D6B] hover:bg-[#D1BE9B]/12 transition-all duration-300 active:scale-95 cursor-pointer"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+          >
+            {copied ? '已複製訊息' : '複製詢問訊息'}
+          </button>
+        </div>
+
         <div className="flex flex-col gap-3 relative z-10">
           <a
             href="https://line.me/R/ti/p/%40180itfru"
@@ -79,7 +116,7 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
             className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] hover:bg-[#D1BE9B] hover:text-[#31353A] rounded-full transition-all duration-500 flex items-center justify-center gap-2 shadow-sm font-light active:scale-95 cursor-pointer text-center"
             style={{ fontFamily: 'Noto Serif TC, serif' }}
           >
-            <span>💚</span> 官方 LINE 諮詢 ♡
+            <span>💚</span> LINE 問問適不適合我
           </a>
           
           <a
@@ -90,7 +127,7 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
             className="w-full py-3.5 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/40 hover:bg-[#3D4144] hover:text-[#FAF7F4] hover:border-[#3D4144] rounded-full transition-all duration-500 flex items-center justify-center gap-2 shadow-sm font-light active:scale-95 text-[#31353A] cursor-pointer text-center"
             style={{ fontFamily: 'Noto Serif TC, serif' }}
           >
-            <span>📸</span> Instagram 私訊 ⟡
+            <span>📸</span> IG 私訊詢問 ⟡
           </a>
         </div>
         

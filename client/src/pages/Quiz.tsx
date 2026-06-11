@@ -7,7 +7,7 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import { QUIZZES, Quiz, QuizQuestion } from '@/data/quizzes';
-import { findProduct } from '@/data/products';
+import { findProduct, getContextualRecommendationReason } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
 const ARCHIVE_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
@@ -220,9 +220,6 @@ export default function QuizPage() {
 
   const theme = getQuizTheme();
   const recommendedProduct = quizResult ? findProduct(quizResult.crystalSlug) : undefined;
-  const recommendedProductSuitedFor = recommendedProduct
-    ? `適合：${recommendedProduct.suitedFor.slice(0, 3).join('、')}`
-    : '';
   const resultHealingImage = getResultHealingImage(activeQuiz?.slug, quizResult?.key);
 
   return (
@@ -552,7 +549,7 @@ export default function QuizPage() {
                         </p>
                         <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/60 mb-3 line-clamp-2"
                           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                          {recommendedProductSuitedFor}
+                          {getContextualRecommendationReason(recommendedProduct, quizResult.title)}
                         </p>
                         <div className="flex items-center justify-center sm:justify-start gap-3">
                           <span className="text-sm text-[#A38D6B]"
@@ -576,7 +573,7 @@ export default function QuizPage() {
                           className="w-full py-2.5 px-6 text-[10.5px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light select-none cursor-pointer"
                           style={{ fontFamily: 'Noto Serif TC, serif' }}
                         >
-                          立即諮詢購買 ♡
+                          問問這款適不適合我 ♡
                         </button>
                       </div>
                     </div>

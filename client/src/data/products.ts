@@ -19,6 +19,12 @@ export interface Product {
   price: number;
   originalPrice: number | null;
   tag: string | null;
+  /** Short, customer-facing fit cue for shop cards. */
+  fitSummary: string;
+  /** Gentle recommendation copy used after readings. */
+  gentleRecommendation: string;
+  /** Secondary recommendation copy when shown as a paired option. */
+  pairingReason: string;
   /** All photos under /products/<slug>/ */
   images: string[];
   /** Cover image (= images[0]). Kept so existing card code still works. */
@@ -48,6 +54,11 @@ export const PRODUCTS: Product[] = [
     price: 1280,
     originalPrice: null,
     tag: '療癒',
+    fitSummary: '適合最近很累、想找回安全感的你',
+    gentleRecommendation:
+      '微光守護狐偏向安定與界線感，如果你最近也想先把自己穩住，它可以是一個安靜陪在身邊的小提醒。',
+    pairingReason:
+      '如果你想把安全感與自我保護再加強一點，微光守護狐會是比較溫柔、穩定的陪伴選擇。',
     images: imgs('glimmer-fox', 4),
     img: '/products/glimmer-fox/1.jpg',
     features: [
@@ -87,6 +98,11 @@ export const PRODUCTS: Product[] = [
     price: 980,
     originalPrice: 1280,
     tag: '熱銷',
+    fitSummary: '適合想提升魅力、人緣與好運的你',
+    gentleRecommendation:
+      '心願九尾狐偏向魅力、人緣與心願感，如果你最近也在期待新的連結或機會，它可以陪你把注意力放回自己的光。',
+    pairingReason:
+      '如果你想讓關係、人緣或願望能量更柔和地被看見，心願九尾狐會是一個可以考慮的小加強。',
     images: imgs('wish-fox', 8),
     img: '/products/wish-fox/1.jpg',
     features: [
@@ -127,6 +143,11 @@ export const PRODUCTS: Product[] = [
     price: 600,
     originalPrice: null,
     tag: '推薦',
+    fitSummary: '適合需要開始行動、給自己一點信心的你',
+    gentleRecommendation:
+      '勇氣小貓偏向信心與行動力，如果你最近也想給自己一點開始的力量，它可以是一個放在身邊的小陪伴。',
+    pairingReason:
+      '如果你想把想法慢慢落到行動上，勇氣小貓會更像一個提醒你先踏出一小步的陪伴。',
     images: imgs('courage-cat', 6),
     img: '/products/courage-cat/1.jpg',
     features: [
@@ -166,6 +187,11 @@ export const PRODUCTS: Product[] = [
     price: 660,
     originalPrice: null,
     tag: '新品',
+    fitSummary: '適合心裡有願望、想溫柔守住期待的你',
+    gentleRecommendation:
+      '願望小兔偏向新的開始與柔軟信念，如果你最近也有想好好照顧的期待，它可以陪你把願望慢慢放穩。',
+    pairingReason:
+      '如果你想替心裡那個還沒說出口的願望留一個位置，願望小兔會是很輕柔的加強選擇。',
     images: imgs('wish-bunny', 5),
     img: '/products/wish-bunny/1.jpg',
     features: [
@@ -205,6 +231,11 @@ export const PRODUCTS: Product[] = [
     price: 430,
     originalPrice: null,
     tag: '精選',
+    fitSummary: '適合想太多、需要放鬆與釐清的你',
+    gentleRecommendation:
+      '靜心之光偏向放鬆、釐清與慢下來，如果你最近也覺得思緒太滿，它可以提醒你先回到自己的呼吸。',
+    pairingReason:
+      '如果你想把情緒和節奏再整理清楚一點，靜心之光會是適合放在桌邊或床邊的小提醒。',
     images: imgs('calm-light', 8),
     img: '/products/calm-light/1.jpg',
     features: [
@@ -244,6 +275,11 @@ export const PRODUCTS: Product[] = [
     price: 260,
     originalPrice: null,
     tag: '靈感',
+    fitSummary: '適合正在找方向、想重新相信直覺的你',
+    gentleRecommendation:
+      '月光守護之翼偏向直覺、守護與方向感，如果你最近也在確認下一步，它可以陪你安靜聽見心裡的聲音。',
+    pairingReason:
+      '如果你想把直覺與方向感再打開一點，月光守護之翼會是比較輕盈的加強陪伴。',
     images: imgs('moonlight-wings', 3),
     img: '/products/moonlight-wings/1.jpg',
     features: [
@@ -283,6 +319,11 @@ export const PRODUCTS: Product[] = [
     price: 780,
     originalPrice: null,
     tag: '招財',
+    fitSummary: '適合工作、金錢、事業正在重新累積的你',
+    gentleRecommendation:
+      '財運礦偏向豐盛、機會與行動力，如果你最近也在整理金錢或工作節奏，它可以提醒你相信自己值得更多。',
+    pairingReason:
+      '如果你想把工作、金錢與自我價值的能量再聚焦一點，財運礦會是比較有行動感的加強選擇。',
     images: imgs('wealth-stone', 8),
     img: '/products/wealth-stone/1.jpg',
     features: [
@@ -354,6 +395,30 @@ export function getProductRecommendationReason(product: Product): string {
     CATEGORY_RECOMMENDATION_REASONS[product.category] ??
     '這款商品適合陪你把今天的提醒落在生活裡，成為一個能看見、能觸碰的小小支持。'
   );
+}
+
+export function getProductFitSummary(product: Product): string {
+  return product.fitSummary;
+}
+
+function trimContext(context?: string): string | null {
+  if (!context) return null;
+  const normalized = context.replace(/\s+/g, ' ').replace(/[。.!！?？]+$/g, '').trim();
+  if (!normalized) return null;
+  return normalized.length > 42 ? `${normalized.slice(0, 42)}...` : normalized;
+}
+
+export function getContextualRecommendationReason(
+  product: Product,
+  context?: string,
+  role: 'primary' | 'secondary' = 'primary',
+): string {
+  const contextText = trimContext(context);
+  const opening = contextText
+    ? `你這次的訊息裡，有「${contextText}」的提醒。`
+    : '如果你最近也有類似的感覺，';
+  const body = role === 'secondary' ? product.pairingReason : product.gentleRecommendation;
+  return `${opening}${body}`;
 }
 
 export const CATEGORY_OPTIONS: { id: string; label: string }[] = [
