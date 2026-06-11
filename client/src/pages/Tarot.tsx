@@ -476,7 +476,7 @@ export default function TarotPage() {
   const [step, setStep] = useState<Step>('intro');
   const [question, setQuestion] = useState('');
   const [questionType, setQuestionType] = useState('love');
-  const [activeQuestionCategory, setActiveQuestionCategory] = useState('');
+  const [activeQuestionCategory, setActiveQuestionCategory] = useState('love');
   const [drawnCards, setDrawnCards] = useState<ReturnType<typeof drawCards>>([]);
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
@@ -871,65 +871,84 @@ export default function TarotPage() {
     if (nextStep) setStep(nextStep);
   };
 
-  const renderPopularQuestions = (nextStep?: Step) => (
-    <div className="rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60 px-4 py-4">
-      <p className="text-[12px] tracking-[0.3em] text-[#8A7250]"
-        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-        ◎ 熱門問題
-      </p>
-      <p className="mt-2 mb-3 text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide"
-        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-        不知道怎麼問也沒關係，可以點開每個分類看細項，再選一題改成自己的情況。
-      </p>
-      <div className="grid grid-cols-1 gap-2.5">
-        {QUESTION_CATEGORIES.map((category) => {
-          const isOpen = activeQuestionCategory === category.id;
+  const renderPopularQuestions = (nextStep?: Step) => {
+    const activeCategory =
+      QUESTION_CATEGORIES.find(category => category.id === activeQuestionCategory) ??
+      QUESTION_CATEGORIES[0];
 
-          return (
-            <div key={category.id} className="overflow-hidden rounded-xl border border-[#D1BE9B]/14 bg-white/38">
+    return (
+      <div className="rounded-[28px] border border-[#D1BE9B]/18 bg-white/45 px-4 py-5 shadow-[0_14px_42px_rgba(209,190,155,0.12)] md:px-6 md:py-6 text-left">
+        <div className="mb-4 text-center">
+          <p className="text-[11px] tracking-[0.34em] text-[#D1BE9B] uppercase"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            Popular Questions
+          </p>
+          <h2 className="mt-2 text-lg md:text-xl tracking-[0.18em] text-[#31353A]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            你最近想問哪一件事？
+          </h2>
+          <p className="mt-2 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            先選一個分類，再點一題熱門問題。也可以帶到下一步後改成自己的情況。
+          </p>
+        </div>
+
+        <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
+          {QUESTION_CATEGORIES.map((category) => {
+            const isActive = activeCategory.id === category.id;
+
+            return (
               <button
+                key={category.id}
                 type="button"
-                onClick={() => setActiveQuestionCategory(isOpen ? '' : category.id)}
-                className={`flex w-full items-center justify-between gap-2 px-3 py-3 text-left transition-all duration-200 ${
-                  isOpen ? 'bg-[#D1BE9B]/10' : 'hover:bg-white/45'
+                onClick={() => setActiveQuestionCategory(category.id)}
+                className={`flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl border px-2 py-2 text-center transition-all duration-200 active:scale-[0.98] ${
+                  isActive
+                    ? 'border-[#D1BE9B]/70 bg-[#D1BE9B]/16 text-[#8A7250] shadow-sm'
+                    : 'border-[#D1BE9B]/18 bg-[#FAF7F4]/45 text-[#31353A]/62 hover:border-[#D1BE9B]/45 hover:bg-white/60'
                 }`}
-                aria-expanded={isOpen}
+                aria-pressed={isActive}
               >
-                <span className="flex min-w-0 items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/12 text-[11px] text-[#A38D6B]">
-                    {category.icon}
-                  </span>
-                  <span className="text-[11px] tracking-[0.16em] text-[#8A7250]"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                    {category.label}
-                  </span>
+                <span className={`text-[16px] leading-none ${isActive ? 'text-[#A38D6B]' : 'text-[#D1BE9B]'}`}>
+                  {category.icon}
                 </span>
-                <span className={`text-[13px] text-[#A38D6B] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
-                  ˅
+                <span className="text-[11px] tracking-[0.13em]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: isActive ? 500 : 300 }}>
+                  {category.label}
                 </span>
               </button>
+            );
+          })}
+        </div>
 
-              {isOpen && (
-                <div className="animate-fade-in-up grid gap-2 border-t border-[#D1BE9B]/10 px-2.5 py-2.5">
-                  {category.questions.map(prompt => (
-                    <button
-                      key={prompt}
-                      type="button"
-                      onClick={() => handlePopularQuestionClick(prompt, category.id, nextStep)}
-                      className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {prompt}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        <div className="rounded-2xl border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 p-3 md:p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-[12px] tracking-[0.22em] text-[#8A7250]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+              {activeCategory.icon} {activeCategory.label}熱門問題
+            </p>
+            <span className="text-[10px] tracking-[0.16em] text-[#D1BE9B]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              點選帶入
+            </span>
+          </div>
+          <div className="animate-fade-in-up grid gap-2 sm:grid-cols-2">
+            {activeCategory.questions.map(prompt => (
+              <button
+                key={prompt}
+                type="button"
+                onClick={() => handlePopularQuestionClick(prompt, activeCategory.id, nextStep)}
+                className="min-h-[54px] w-full rounded-xl border border-[#D1BE9B]/14 bg-white/62 px-3 py-2.5 text-left text-[11.5px] leading-[1.65] tracking-[0.06em] text-[#31353A]/72 transition-all duration-200 hover:border-[#D1BE9B]/55 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <PageLayout>
@@ -1044,6 +1063,10 @@ export default function TarotPage() {
                 </p>
               </div>
 
+              <div className="max-w-3xl mx-auto mb-10">
+                {renderPopularQuestions('question')}
+              </div>
+
               {/* Spread image — showcase a few RWS cards */}
               <div className="flex justify-center items-end gap-3 mb-10">
                 {[
@@ -1086,10 +1109,6 @@ export default function TarotPage() {
                   如果你最近一直反覆想同一件事，卻怎麼想都想不出答案，很適合抽一次塔羅。<br/><br/>
                   它會幫你看見現在卡住的原因、你忽略的盲點，以及這件事接下來可以怎麼面對。
                 </p>
-              </div>
-
-              <div className="max-w-2xl mx-auto mb-8">
-                {renderPopularQuestions('question')}
               </div>
 
               <button
