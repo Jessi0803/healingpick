@@ -1065,9 +1065,25 @@ export default function TarotPage() {
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     你最近想問哪一件事？
                   </h2>
+                  <p className="mt-2 text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/58"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    點一題最接近你的狀態，或自己寫下想問的事。
+                  </p>
                 </div>
 
-                <div className="mb-5">
+                {renderPopularQuestions()}
+
+                <div className="mt-5 mb-5 border-t border-[#D1BE9B]/14 pt-5">
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <p className="text-[12px] tracking-[0.22em] text-[#8A7250]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                      你的問題
+                    </p>
+                    <span className="text-[10px] tracking-[0.14em] text-[#D1BE9B]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      可再修改
+                    </span>
+                  </div>
                   <textarea
                     value={question}
                     onChange={e => setQuestion(e.target.value.slice(0, 300))}
@@ -1085,12 +1101,10 @@ export default function TarotPage() {
 
                 <button
                   onClick={handleStart}
-                  className="mb-5 w-full py-3 text-xs tracking-[0.24em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                  className="w-full py-3 text-xs tracking-[0.24em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   帶著這個問題抽牌
                 </button>
-
-                {renderPopularQuestions()}
 
                 {creditsQuery.data?.enabled && (
                   <p className="mt-4 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
