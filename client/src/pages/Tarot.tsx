@@ -887,13 +887,9 @@ export default function TarotPage() {
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             你最近想問哪一件事？
           </h2>
-          <p className="mt-2 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
-            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-            先選一個分類，再點一題熱門問題。也可以帶到下一步後改成自己的情況。
-          </p>
         </div>
 
-        <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
+        <div className="mb-4 grid grid-cols-2 gap-1.5 rounded-2xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/42 p-1.5 sm:grid-cols-5">
           {QUESTION_CATEGORIES.map((category) => {
             const isActive = activeCategory.id === category.id;
 
@@ -902,17 +898,17 @@ export default function TarotPage() {
                 key={category.id}
                 type="button"
                 onClick={() => setActiveQuestionCategory(category.id)}
-                className={`flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl border px-2 py-2 text-center transition-all duration-200 active:scale-[0.98] ${
+                className={`flex min-h-[38px] items-center justify-center gap-1.5 rounded-xl border px-2 py-1.5 text-center transition-all duration-200 active:scale-[0.98] ${
                   isActive
-                    ? 'border-[#D1BE9B]/70 bg-[#D1BE9B]/16 text-[#8A7250] shadow-sm'
-                    : 'border-[#D1BE9B]/18 bg-[#FAF7F4]/45 text-[#31353A]/62 hover:border-[#D1BE9B]/45 hover:bg-white/60'
+                    ? 'border-[#D1BE9B]/60 bg-white/78 text-[#8A7250] shadow-sm'
+                    : 'border-transparent bg-transparent text-[#31353A]/58 hover:bg-white/50 hover:text-[#8A7250]'
                 }`}
                 aria-pressed={isActive}
               >
-                <span className={`text-[16px] leading-none ${isActive ? 'text-[#A38D6B]' : 'text-[#D1BE9B]'}`}>
+                <span className={`text-[13px] leading-none ${isActive ? 'text-[#A38D6B]' : 'text-[#D1BE9B]/70'}`}>
                   {category.icon}
                 </span>
-                <span className="text-[11px] tracking-[0.13em]"
+                <span className="text-[10.5px] tracking-[0.12em]"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: isActive ? 500 : 300 }}>
                   {category.label}
                 </span>
