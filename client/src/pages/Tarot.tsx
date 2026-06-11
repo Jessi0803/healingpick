@@ -284,7 +284,7 @@ function ProductCard({
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {roleLabel}
               </span>
-              <p className="text-[12px] tracking-[0.12em] text-[#31353A]/86 mt-0.5 truncate"
+              <p className="text-[15px] tracking-[0.08em] text-[#31353A]/88 mt-1 truncate"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {product.name}
               </p>
@@ -307,11 +307,11 @@ function ProductCard({
             ))}
           </div>
           <div className="mb-2 rounded-xl border border-[#D1BE9B]/15 bg-[#F8F4EC]/45 px-3 py-2">
-            <p className="text-[10px] tracking-[0.18em] text-[#A38D6B] mb-1"
+            <p className="text-[12px] tracking-[0.14em] text-[#A38D6B] mb-1"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
               為什麼 Mochi 想到它
             </p>
-            <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62"
+            <p className="text-[13px] leading-[1.85] tracking-[0.05em] text-[#31353A]/68"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               {recommendationReason}
             </p>
