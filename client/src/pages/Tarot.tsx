@@ -973,8 +973,8 @@ export default function TarotPage() {
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
               {activeCategory.icon} {activeCategory.label}熱門問題
             </p>
-            <span className="text-[10px] tracking-[0.16em] text-[#D1BE9B]"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            <span className="text-[10px] tracking-[0.16em] text-[#A38D6B]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
               向下滑看更多 ↓
             </span>
           </div>
