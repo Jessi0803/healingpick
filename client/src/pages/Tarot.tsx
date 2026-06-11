@@ -191,52 +191,65 @@ const CardFace = ({ card, reversed = false }: { card: typeof MAJOR_ARCANA[0]; re
   );
 };
 
-// Card back — soft linen texture with golden mandala
+// Card back — branded moon seal with layered frame
 const CardBack = () => (
-  <svg viewBox="0 0 120 200" fill="none" className="w-full h-full">
+  <svg viewBox="0 0 120 200" fill="none" className="w-full h-full drop-shadow-[0_12px_24px_rgba(49,53,58,0.18)]">
     {/* Solid fills only — no gradient/defs, which can render transparent
         inside the 3D flip container (preserve-3d + backface-visibility). */}
-    <rect width="120" height="200" rx="8" fill="#C1AD89" />
+    <rect width="120" height="200" rx="11" fill="#31353A" />
+    <rect x="4" y="4" width="112" height="192" rx="9" fill="#3D4144" />
+    <rect x="8" y="8" width="104" height="184" rx="7" fill="#4A4641" fillOpacity="0.32" />
     {/* Soft centre halo, layered translucent discs instead of a gradient */}
-    <circle cx="60" cy="100" r="46" fill="#EFE3C6" fillOpacity="0.16" />
-    <circle cx="60" cy="100" r="34" fill="#F3E9CF" fillOpacity="0.18" />
+    <circle cx="60" cy="100" r="50" fill="#D1BE9B" fillOpacity="0.10" />
+    <circle cx="60" cy="100" r="36" fill="#F3E7CC" fillOpacity="0.12" />
     {/* Frames */}
-    <rect x="5" y="5" width="110" height="190" rx="6" stroke="#F3E7CC" strokeWidth="1" opacity="0.9" />
-    <rect x="9" y="9" width="102" height="182" rx="4" stroke="#F3E7CC" strokeWidth="0.5" strokeDasharray="2 2.5" opacity="0.65" />
+    <rect x="6" y="6" width="108" height="188" rx="8" stroke="#F3E7CC" strokeWidth="1.2" opacity="0.88" />
+    <rect x="12" y="12" width="96" height="176" rx="5" stroke="#D1BE9B" strokeWidth="0.7" strokeDasharray="2.4 3" opacity="0.75" />
+    <path d="M26 25 H94 M26 175 H94" stroke="#F3E7CC" strokeWidth="0.7" strokeLinecap="round" opacity="0.55" />
+    <path d="M25 26 V66 M95 26 V66 M25 134 V174 M95 134 V174" stroke="#F3E7CC" strokeWidth="0.7" strokeLinecap="round" opacity="0.45" />
+    {/* Corner moons */}
+    {[[24, 25], [96, 25], [24, 175], [96, 175]].map(([x, y], i) => (
+      <g key={`moon-${i}`} opacity="0.78">
+        <circle cx={x} cy={y} r="3.6" fill="#F8F0DC" />
+        <circle cx={x + (i % 2 === 0 ? 1.6 : -1.6)} cy={y - 0.4} r="3.5" fill="#3D4144" />
+      </g>
+    ))}
     {/* Sunburst rays */}
     {Array.from({ length: 24 }).map((_, i) => {
       const a = (i * 15 * Math.PI) / 180;
       return (
         <line key={`r${i}`}
-          x1={60 + 19 * Math.cos(a)} y1={100 + 19 * Math.sin(a)}
-          x2={60 + 41 * Math.cos(a)} y2={100 + 41 * Math.sin(a)}
-          stroke="#F3E7CC" strokeWidth={i % 2 ? 0.3 : 0.6} strokeOpacity="0.5" />
+          x1={60 + 18 * Math.cos(a)} y1={100 + 18 * Math.sin(a)}
+          x2={60 + 43 * Math.cos(a)} y2={100 + 43 * Math.sin(a)}
+          stroke="#F3E7CC" strokeWidth={i % 2 ? 0.35 : 0.72} strokeOpacity="0.62" />
       );
     })}
     {/* Concentric rings */}
-    <circle cx="60" cy="100" r="41" stroke="#F3E7CC" strokeWidth="0.8" opacity="0.8" fill="none" />
-    <circle cx="60" cy="100" r="31" stroke="#F3E7CC" strokeWidth="0.5" opacity="0.65" fill="none" />
-    <circle cx="60" cy="100" r="17" stroke="#F5EAD5" strokeWidth="0.8" fill="#F8F0DC" fillOpacity="0.18" />
+    <circle cx="60" cy="100" r="44" stroke="#D1BE9B" strokeWidth="0.9" opacity="0.85" fill="none" />
+    <circle cx="60" cy="100" r="33" stroke="#F3E7CC" strokeWidth="0.55" opacity="0.68" fill="none" />
+    <circle cx="60" cy="100" r="20" stroke="#F5EAD5" strokeWidth="0.9" fill="#F8F0DC" fillOpacity="0.12" />
     {/* Inner petals */}
     {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
       const rad = (deg * Math.PI) / 180;
       return (
         <line key={`p${i}`}
-          x1={60 + 6 * Math.cos(rad)} y1={100 + 6 * Math.sin(rad)}
-          x2={60 + 17 * Math.cos(rad)} y2={100 + 17 * Math.sin(rad)}
-          stroke="#F8F0DC" strokeWidth="0.7" strokeOpacity="0.8" />
+          x1={60 + 7 * Math.cos(rad)} y1={100 + 7 * Math.sin(rad)}
+          x2={60 + 20 * Math.cos(rad)} y2={100 + 20 * Math.sin(rad)}
+          stroke="#F8F0DC" strokeWidth="0.75" strokeOpacity="0.84" />
       );
     })}
     {/* Centre moon disc */}
-    <circle cx="60" cy="100" r="5.5" fill="#F8F0DC" fillOpacity="0.85" />
+    <circle cx="60" cy="100" r="8.5" fill="#F8F0DC" fillOpacity="0.88" />
+    <circle cx="63.2" cy="98" r="8.2" fill="#3D4144" fillOpacity="0.95" />
+    <circle cx="60" cy="100" r="2.2" fill="#D1BE9B" fillOpacity="0.85" />
     {/* Scattered stars */}
-    {[[60, 64], [60, 136], [37, 100], [83, 100], [44, 78], [76, 122], [76, 78], [44, 122]].map(([x, y], i) => (
+    {[[60, 60], [60, 140], [34, 100], [86, 100], [43, 76], [77, 124], [77, 76], [43, 124], [36, 52], [84, 148]].map(([x, y], i) => (
       <path key={`s${i}`}
         d={`M${x} ${y - 2.4} L${x + 0.7} ${y - 0.7} L${x + 2.4} ${y} L${x + 0.7} ${y + 0.7} L${x} ${y + 2.4} L${x - 0.7} ${y + 0.7} L${x - 2.4} ${y} L${x - 0.7} ${y - 0.7} Z`}
         fill="#F8F1DE" fillOpacity="0.9" />
     ))}
     {/* Brand text */}
-    <text x="60" y="187" textAnchor="middle" fontSize="7.68" fill="#F3E7CC" fillOpacity="0.7"
+    <text x="60" y="184" textAnchor="middle" fontSize="7.68" fill="#F3E7CC" fillOpacity="0.72"
       fontFamily="Cormorant Garamond, serif" letterSpacing="2.5" fontStyle="italic">
       Healing Pick
     </text>
@@ -1308,12 +1321,16 @@ export default function TarotPage() {
                 </h2>
                 <p className="mt-2 text-[15px] text-[#31353A]/58 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200, fontSize: '15px' }}>
-                  {isShufflingActive ? '牌正在洗動中⋯⋯心中默想問題，按下停止' : '深呼吸，讓心靜下來，準備好後按下開始洗牌'}
+                  {isShufflingActive ? '牌正在流動中，心裡默念你的問題；感覺到了就停下' : '深呼吸三次，把問題放在心裡，準備好後開始洗牌'}
                 </p>
               </div>
 
               {/* Shuffling card animation */}
-              <div className="relative flex justify-center items-center mb-12" style={{ height: '200px' }}>
+              <div className="relative flex justify-center items-center mb-12" style={{ height: '220px' }}>
+                <div className={`absolute w-52 h-52 rounded-full border border-[#D1BE9B]/18 transition-all duration-700 ${
+                  isShufflingActive ? 'scale-110 opacity-100 shadow-[0_0_42px_rgba(209,190,155,0.20)]' : 'scale-95 opacity-50'
+                }`} />
+                <div className="absolute w-32 h-32 rounded-full bg-[#D1BE9B]/8 blur-2xl" />
                 {Array.from({ length: 9 }).map((_, i) => {
                   const angle = isShufflingActive
                     ? ((shuffleFrame * 18 + i * 40) % 360)
@@ -1325,11 +1342,12 @@ export default function TarotPage() {
                   return (
                     <div
                       key={i}
-                      className="absolute w-16 h-24"
+                      className="absolute w-[66px] h-[110px] md:w-[74px] md:h-[123px] drop-shadow-[0_12px_18px_rgba(49,53,58,0.24)]"
                       style={{
                         transform: `translate(${tx}px, ${ty}px) rotate(${rot}deg)`,
                         transition: isShufflingActive ? 'transform 0.12s linear' : 'transform 0.5s cubic-bezier(0.23,1,0.32,1)',
                         zIndex: i,
+                        opacity: isShufflingActive ? 0.72 + (i % 3) * 0.1 : 1,
                       }}
                     >
                       <CardBack />
@@ -1387,7 +1405,7 @@ export default function TarotPage() {
                 </h2>
                 <p className="mt-3 text-[12px] text-[#31353A]/58 tracking-wider"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  跟隨直覺，點選讓你感應到的牌
+                  憑直覺選 5 張，不用想太久
                 </p>
 
                 {/* 位置進度：讓使用者知道每一張代表哪個位置 */}
@@ -1447,21 +1465,30 @@ export default function TarotPage() {
                     <div
                       key={deckIdx}
                       onClick={() => handlePickCard(deckIdx)}
-                      className={`relative cursor-pointer transition-all duration-300 ${
+                      className={`group relative cursor-pointer transition-all duration-300 ${
                         isPicked
                           ? 'opacity-95 scale-95 pointer-events-none'
-                          : 'hover:scale-110 hover:-translate-y-2 hover:drop-shadow-[0_8px_20px_rgba(209,190,155,0.5)]'
+                          : 'hover:scale-110 hover:-translate-y-2 hover:drop-shadow-[0_12px_26px_rgba(209,190,155,0.52)]'
                       }`}
                     >
                       <div
-                        className="w-full aspect-[3/5] tarot-pick-float"
+                        className="relative w-full aspect-[3/5] tarot-pick-float rounded-[11px]"
                         style={{ animationDelay: `${(deckIdx % 11) * 0.18}s` }}
                       >
                         <CardBack />
+                        {!isPicked && (
+                          <div className="pointer-events-none absolute inset-0 rounded-[11px] border border-[#F3E7CC]/0 transition-all duration-300 group-hover:border-[#F3E7CC]/80 group-hover:shadow-[0_0_0_3px_rgba(209,190,155,0.16)]" />
+                        )}
+                        {!isPicked && (
+                          <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#F8F0DC]/92 px-2.5 py-1 text-[10px] tracking-[0.16em] text-[#3D4144] opacity-0 shadow-[0_8px_18px_rgba(49,53,58,0.22)] transition-all duration-300 group-hover:opacity-100"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                            選這張
+                          </div>
+                        )}
                       </div>
                       {isPicked && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg bg-[#3D4144]/55 backdrop-blur-[1px] animate-fade-in-up">
-                          <span className="w-5 h-5 rounded-full bg-[#D1BE9B] text-white text-[11px] flex items-center justify-center">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-[11px] border border-[#F3E7CC]/70 bg-[#31353A]/72 shadow-[0_0_0_3px_rgba(209,190,155,0.12)] backdrop-blur-[1px] animate-fade-in-up">
+                          <span className="w-6 h-6 rounded-full bg-[#D1BE9B] text-white text-[11px] flex items-center justify-center shadow-[0_4px_12px_rgba(209,190,155,0.45)]">
                             {pickOrder + 1}
                           </span>
                           <span className="text-[11px] tracking-[0.1em] text-white/95 px-1 text-center leading-tight"
@@ -1852,25 +1879,30 @@ function CardSlot({
 
   return (
     <div
-      className={`w-28 h-40 cursor-pointer transition-all duration-300 ${
-        isSelected ? 'scale-110 drop-shadow-[0_4px_16px_rgba(209,190,155,0.5)]' : 'hover:scale-105'
+      className={`group relative w-28 h-40 cursor-pointer transition-all duration-300 ${
+        isSelected ? 'scale-110 drop-shadow-[0_10px_28px_rgba(209,190,155,0.48)]' : 'hover:scale-105 hover:-translate-y-1'
       }`}
       onClick={() => onReveal(idx)}
       style={{ perspective: '600px' }}
     >
+      <div className={`pointer-events-none absolute -inset-1 rounded-[14px] border transition-all duration-300 ${
+        isSelected
+          ? 'border-[#D1BE9B]/70 bg-[#D1BE9B]/10'
+          : 'border-transparent group-hover:border-[#D1BE9B]/35'
+      }`} />
       <div
-        className="w-full h-full transition-all duration-700"
+        className="relative w-full h-full transition-all duration-700"
         style={{
           transformStyle: 'preserve-3d',
           transform: revealed ? 'rotateY(180deg)' : 'rotateY(0deg)',
         }}
       >
         {/* Back */}
-        <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden' }}>
+        <div className="absolute inset-0 rounded-[11px]" style={{ backfaceVisibility: 'hidden' }}>
           <CardBack />
         </div>
         {/* Front */}
-        <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+        <div className="absolute inset-0 rounded-[11px] drop-shadow-[0_10px_24px_rgba(49,53,58,0.16)]" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
           {drawn && <CardFace card={drawn.card} reversed={drawn.reversed} />}
         </div>
       </div>
