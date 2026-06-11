@@ -975,7 +975,7 @@ export default function TarotPage() {
             </p>
             <span className="text-[10px] tracking-[0.16em] text-[#D1BE9B]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              點選帶入
+              向下滑看更多 ↓
             </span>
           </div>
           <div className="relative">
