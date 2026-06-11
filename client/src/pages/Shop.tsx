@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
-import { PRODUCTS, CATEGORY_OPTIONS, getProductFitSummary } from '@/data/products';
+import { PRODUCTS, CATEGORY_OPTIONS, getProductFitSummary, getProductImageStyle } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
 const SORT_OPTIONS = [
@@ -113,7 +113,8 @@ export default function ShopPage() {
                       <img
                         src={product.img}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700"
+                        style={getProductImageStyle(product)}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       {product.tag && (

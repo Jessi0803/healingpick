@@ -25,6 +25,10 @@ export interface Product {
   gentleRecommendation: string;
   /** Secondary recommendation copy when shown as a paired option. */
   pairingReason: string;
+  /** Display zoom for product photos, keeping the image frame size unchanged. */
+  imageZoom: number;
+  /** Display focus point for cropped product photos. */
+  imagePosition: string;
   /** All photos under /products/<slug>/ */
   images: string[];
   /** Cover image (= images[0]). Kept so existing card code still works. */
@@ -59,6 +63,8 @@ export const PRODUCTS: Product[] = [
       '微光守護狐偏向安定與界線感，如果你最近也想先把自己穩住，它可以是一個安靜陪在身邊的小提醒。',
     pairingReason:
       '如果你想把安全感與自我保護再加強一點，微光守護狐會是比較溫柔、穩定的陪伴選擇。',
+    imageZoom: 1.2,
+    imagePosition: 'center center',
     images: imgs('glimmer-fox', 4),
     img: '/products/glimmer-fox/1.jpg',
     features: [
@@ -103,6 +109,8 @@ export const PRODUCTS: Product[] = [
       '心願九尾狐偏向魅力、人緣與心願感，如果你最近也在期待新的連結或機會，它可以陪你把注意力放回自己的光。',
     pairingReason:
       '如果你想讓關係、人緣或願望能量更柔和地被看見，心願九尾狐會是一個可以考慮的小加強。',
+    imageZoom: 1.2,
+    imagePosition: 'center center',
     images: imgs('wish-fox', 8),
     img: '/products/wish-fox/1.jpg',
     features: [
@@ -148,6 +156,8 @@ export const PRODUCTS: Product[] = [
       '勇氣小貓偏向信心與行動力，如果你最近也想給自己一點開始的力量，它可以是一個放在身邊的小陪伴。',
     pairingReason:
       '如果你想把想法慢慢落到行動上，勇氣小貓會更像一個提醒你先踏出一小步的陪伴。',
+    imageZoom: 1.24,
+    imagePosition: 'center center',
     images: imgs('courage-cat', 6),
     img: '/products/courage-cat/1.jpg',
     features: [
@@ -192,6 +202,8 @@ export const PRODUCTS: Product[] = [
       '願望小兔偏向新的開始與柔軟信念，如果你最近也有想好好照顧的期待，它可以陪你把願望慢慢放穩。',
     pairingReason:
       '如果你想替心裡那個還沒說出口的願望留一個位置，願望小兔會是很輕柔的加強選擇。',
+    imageZoom: 1.22,
+    imagePosition: 'center center',
     images: imgs('wish-bunny', 5),
     img: '/products/wish-bunny/1.jpg',
     features: [
@@ -236,6 +248,8 @@ export const PRODUCTS: Product[] = [
       '靜心之光偏向放鬆、釐清與慢下來，如果你最近也覺得思緒太滿，它可以提醒你先回到自己的呼吸。',
     pairingReason:
       '如果你想把情緒和節奏再整理清楚一點，靜心之光會是適合放在桌邊或床邊的小提醒。',
+    imageZoom: 1.18,
+    imagePosition: 'center center',
     images: imgs('calm-light', 8),
     img: '/products/calm-light/1.jpg',
     features: [
@@ -280,6 +294,8 @@ export const PRODUCTS: Product[] = [
       '月光守護之翼偏向直覺、守護與方向感，如果你最近也在確認下一步，它可以陪你安靜聽見心裡的聲音。',
     pairingReason:
       '如果你想把直覺與方向感再打開一點，月光守護之翼會是比較輕盈的加強陪伴。',
+    imageZoom: 1.26,
+    imagePosition: 'center center',
     images: imgs('moonlight-wings', 3),
     img: '/products/moonlight-wings/1.jpg',
     features: [
@@ -324,6 +340,8 @@ export const PRODUCTS: Product[] = [
       '財運礦偏向豐盛、機會與行動力，如果你最近也在整理金錢或工作節奏，它可以提醒你相信自己值得更多。',
     pairingReason:
       '如果你想把工作、金錢與自我價值的能量再聚焦一點，財運礦會是比較有行動感的加強選擇。',
+    imageZoom: 1.16,
+    imagePosition: 'center center',
     images: imgs('wealth-stone', 8),
     img: '/products/wealth-stone/1.jpg',
     features: [
@@ -399,6 +417,18 @@ export function getProductRecommendationReason(product: Product): string {
 
 export function getProductFitSummary(product: Product): string {
   return product.fitSummary;
+}
+
+export function getProductImageStyle(product: Product): {
+  objectPosition: string;
+  transform: string;
+  transformOrigin: string;
+} {
+  return {
+    objectPosition: product.imagePosition,
+    transform: `scale(${product.imageZoom})`,
+    transformOrigin: product.imagePosition,
+  };
 }
 
 function trimContext(context?: string): string | null {

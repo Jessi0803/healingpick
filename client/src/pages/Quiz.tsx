@@ -7,7 +7,7 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import { QUIZZES, Quiz, QuizQuestion } from '@/data/quizzes';
-import { findProduct, getContextualRecommendationReason } from '@/data/products';
+import { findProduct, getContextualRecommendationReason, getProductImageStyle } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
 const ARCHIVE_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
@@ -528,7 +528,8 @@ export default function QuizPage() {
                           <img
                             src={recommendedProduct.img}
                             alt={recommendedProduct.name}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover transition-transform duration-500"
+                            style={getProductImageStyle(recommendedProduct)}
                           />
                         </div>
                       </Link>

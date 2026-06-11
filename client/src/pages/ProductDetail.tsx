@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'wouter';
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
-import { findProduct, getProductFitSummary } from '@/data/products';
+import { findProduct, getProductFitSummary, getProductImageStyle } from '@/data/products';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import ContactDialog from '@/components/ContactDialog';
 
@@ -70,6 +70,7 @@ export default function ProductDetailPage() {
                   src={product.images[activeImage] ?? product.img}
                   alt={product.name}
                   className="w-full h-full object-cover transition-all duration-500"
+                  style={getProductImageStyle(product)}
                 />
                 {product.tag && (
                   <span className="absolute top-4 left-4 text-[10px] tracking-[0.15em] px-3 py-1 rounded-full bg-[#D1BE9B]/90 text-[#31353A] shadow-sm"
@@ -90,7 +91,7 @@ export default function ProductDetailPage() {
                           : 'border-[#D1BE9B]/25 opacity-75 hover:opacity-100'
                       }`}
                     >
-                      <img src={src} alt="" className="w-full h-full object-cover" />
+                      <img src={src} alt="" className="w-full h-full object-cover" style={getProductImageStyle(product)} />
                     </button>
                   ))}
                 </div>

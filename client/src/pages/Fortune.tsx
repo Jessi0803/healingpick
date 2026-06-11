@@ -16,7 +16,7 @@ import { CatListening } from '@/components/CatElements';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { recommendForFortune } from '@/data/recommend';
-import { getContextualRecommendationReason, type Product } from '@/data/products';
+import { getContextualRecommendationReason, getProductImageStyle, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
 
 const REPEAT_READING_LOGIN_PROMPT = {
@@ -109,7 +109,7 @@ function ProductCard({
     <Link href={`/shop/${product.slug}`}>
       <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
         <div className="w-full h-52 sm:w-32 sm:h-32 rounded-xl overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
-          <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+          <img src={product.img} alt={product.name} className="w-full h-full object-cover" style={getProductImageStyle(product)} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">

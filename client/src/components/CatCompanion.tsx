@@ -10,7 +10,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'wouter';
-import { PRODUCTS, Product } from '../data/products';
+import { PRODUCTS, Product, getProductImageStyle } from '../data/products';
 import ContactDialog from './ContactDialog';
 
 type Pearl = {
@@ -451,6 +451,7 @@ export default function CatCompanion() {
                       src={recommendedProduct.img} 
                       alt={recommendedProduct.name} 
                       className="w-11 h-11 object-cover rounded-lg border border-[#D1BE9B]/15 flex-shrink-0" 
+                      style={getProductImageStyle(recommendedProduct)}
                     />
                     <div className="min-w-0 flex-1">
                       <h5 className="text-[12px] font-medium tracking-[0.1em] text-[#31353A] truncate animate-fade-in" style={{ fontFamily: 'Noto Serif TC, serif' }}>

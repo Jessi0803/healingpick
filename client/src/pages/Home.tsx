@@ -15,7 +15,7 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatPeeking } from '@/components/CatElements';
 import { useAuth } from '@/_core/hooks/useAuth';
-import { PRODUCTS } from '@/data/products';
+import { PRODUCTS, getProductImageStyle } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
@@ -858,7 +858,8 @@ export default function Home() {
                       <img
                         src={p.img}
                         alt={p.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700"
+                        style={getProductImageStyle(p)}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       {p.tag && (
