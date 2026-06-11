@@ -470,7 +470,7 @@ export default function TarotPage() {
       });
       return;
     }
-    setStep('question');
+    setStep('shuffle');
   };
 
   const [step, setStep] = useState<Step>('intro');
@@ -714,7 +714,7 @@ export default function TarotPage() {
 
     window.sessionStorage.removeItem(TAROT_PENDING_START_KEY);
     setPendingStartAfterLogin(false);
-    setStep('question');
+    setStep('shuffle');
   }, [isAuthenticated, pendingStartAfterLogin]);
 
   useEffect(() => {
@@ -877,16 +877,16 @@ export default function TarotPage() {
       QUESTION_CATEGORIES[0];
 
     return (
-      <div className="rounded-[28px] border border-[#D1BE9B]/18 bg-white/45 px-4 py-5 shadow-[0_14px_42px_rgba(209,190,155,0.12)] md:px-6 md:py-6 text-left">
+      <div className="border-t border-[#D1BE9B]/14 pt-5 text-left">
         <div className="mb-4 text-center">
           <p className="text-[11px] tracking-[0.34em] text-[#D1BE9B] uppercase"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             Popular Questions
           </p>
-          <h2 className="mt-2 text-lg md:text-xl tracking-[0.18em] text-[#31353A]"
+          <h3 className="mt-2 text-sm md:text-base tracking-[0.18em] text-[#31353A]"
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-            你最近想問哪一件事？
-          </h2>
+            熱門問題
+          </h3>
         </div>
 
         <div className="mb-4 grid grid-cols-2 gap-1.5 rounded-2xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/42 p-1.5 sm:grid-cols-5">
@@ -1059,8 +1059,45 @@ export default function TarotPage() {
                 </p>
               </div>
 
-              <div className="max-w-3xl mx-auto mb-10">
-                {renderPopularQuestions('question')}
+              <div className="max-w-3xl mx-auto mb-10 rounded-[30px] border border-[#D1BE9B]/18 bg-white/45 p-5 text-left shadow-[0_14px_42px_rgba(209,190,155,0.12)] md:p-7">
+                <div className="mb-5 text-center">
+                  <h2 className="text-lg md:text-xl tracking-[0.18em] text-[#31353A]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    你最近想問哪一件事？
+                  </h2>
+                </div>
+
+                <div className="mb-5">
+                  <textarea
+                    value={question}
+                    onChange={e => setQuestion(e.target.value.slice(0, 300))}
+                    maxLength={300}
+                    placeholder="例如：我跟他還有機會嗎？&#10;例如：我現在適合換工作嗎？"
+                    rows={3}
+                    className="w-full bg-[#FFFDF8]/70 border border-[#D1BE9B]/25 rounded-2xl px-4 py-3 text-[12px] text-[#31353A]/80 tracking-wider leading-[1.9] resize-none focus:outline-none focus:border-[#D1BE9B]/55 placeholder:text-[#31353A]/42"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  />
+                  <div className="mt-1 text-right text-[10px] tracking-wider"
+                    style={{ fontFamily: 'Cormorant Garamond, serif', color: question.length >= 300 ? '#C9837A' : question.length >= 250 ? '#A38D6B' : '#31353A66' }}>
+                    {question.length} / 300
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleStart}
+                  className="mb-5 w-full py-3 text-xs tracking-[0.24em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  帶著這個問題抽牌
+                </button>
+
+                {renderPopularQuestions()}
+
+                {creditsQuery.data?.enabled && (
+                  <p className="mt-4 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                    每天免費 2 次，00:00 重置；用完後完整解讀消耗 1 點。
+                  </p>
+                )}
               </div>
 
               {/* Spread image — showcase a few RWS cards */}
@@ -1107,18 +1144,6 @@ export default function TarotPage() {
                 </p>
               </div>
 
-              <button
-                onClick={handleStart}
-                className="px-10 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                開始占卜
-              </button>
-              {creditsQuery.data?.enabled && (
-                <p className="mt-3 text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  每天免費 2 次，00:00 重置；用完後完整解讀消耗 1 點。
-                </p>
-              )}
             </div>
           )}
 
