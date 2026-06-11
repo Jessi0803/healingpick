@@ -136,6 +136,16 @@ const QUESTION_CATEGORIES = [
       '我什麼時候比較容易遇到穩定的緣分？',
       '我在婚姻或長期伴侶關係裡要注意什麼？',
       '我該如何改善自己在感情裡的不安全感？',
+      '我在感情裡是不是太容易委屈自己？',
+      '我和這個人適合進入長期關係嗎？',
+      '我該如何判斷對方是不是真的適合我？',
+      '我容易因為什麼原因錯過好緣分？',
+      '我感情裡最需要被療癒的部分是什麼？',
+      '我適合主動追求，還是等待關係自然發展？',
+      '我目前的桃花品質如何？',
+      '我該如何讓自己在關係裡更有安全感？',
+      '這段關係會帶給我成長還是消耗？',
+      '我未來適合早婚、晚婚，還是先專注自己？',
     ],
   },
   {
@@ -152,6 +162,16 @@ const QUESTION_CATEGORIES = [
       '我工作上的貴人通常會從哪裡出現？',
       '我現在事業上最需要補強的是什麼？',
       '我接下來幾年工作運勢的重點是什麼？',
+      '我適合創業或經營個人品牌嗎？',
+      '我現在工作上的壓力來源主要是什麼？',
+      '我該繼續累積經驗，還是準備轉換跑道？',
+      '我命盤裡適合發揮的專長是什麼？',
+      '我容易在職場上遇到什麼盲點？',
+      '我適合和人合作，還是自己掌握節奏？',
+      '我近期有沒有升遷或被看見的機會？',
+      '我目前的事業運需要注意哪些人事問題？',
+      '我適合投入哪種產業或工作型態？',
+      '我該如何讓自己的努力更容易有成果？',
     ],
   },
   {
@@ -168,6 +188,16 @@ const QUESTION_CATEGORIES = [
       '我在金錢安全感上的盲點是什麼？',
       '我適合和別人合作賺錢嗎？',
       '我未來財務規劃最該注意哪個方向？',
+      '我現在適合增加收入，還是先降低支出？',
+      '我命盤裡的財運優勢是什麼？',
+      '我容易因為什麼心態影響財運？',
+      '我適合長期投資還是短期機會？',
+      '我近期是否適合做大型金錢決定？',
+      '我的財帛宮透露我該怎麼累積安全感？',
+      '我適合把錢花在哪些能讓自己成長的地方？',
+      '我會不會太容易替別人承擔金錢壓力？',
+      '我接下來一年財運的重點是什麼？',
+      '我該如何建立更穩定的理財節奏？',
     ],
   },
   {
@@ -184,6 +214,16 @@ const QUESTION_CATEGORIES = [
       '我近期最需要學會的課題是什麼？',
       '我該如何把壓力轉成前進的力量？',
       '我接下來適合培養哪一種生活習慣？',
+      '我內在真正渴望的是什麼？',
+      '我該如何停止一直懷疑自己？',
+      '我目前最需要放下哪種舊模式？',
+      '我適合用什麼方式整理情緒？',
+      '我命盤裡最容易被低估的能力是什麼？',
+      '我現在該先照顧身體、情緒還是目標？',
+      '我該如何讓自己更有行動力？',
+      '我容易因為什麼原因停在原地？',
+      '我接下來三個月最適合專注什麼？',
+      '我該如何活得更像真正的自己？',
     ],
   },
   {
@@ -200,6 +240,16 @@ const QUESTION_CATEGORIES = [
       '我最近身心狀態最需要照顧哪裡？',
       '我人生下一個重要轉折可能在哪裡？',
       '我現在最該先處理哪一件事？',
+      '我接下來一年整體運勢的主題是什麼？',
+      '我現在做這個決定會帶來什麼影響？',
+      '我適合留在原本環境，還是往外發展？',
+      '我該如何分辨貴人和消耗我的人？',
+      '我最近反覆遇到的問題代表什麼功課？',
+      '我命盤裡哪個宮位現在最值得注意？',
+      '我目前適合主動改變，還是先觀察？',
+      '我有哪些天生資源還沒有好好使用？',
+      '我該怎麼看待最近的不確定感？',
+      '如果只能先調整一件事，會是什麼？',
     ],
   },
 ];
@@ -392,12 +442,94 @@ export default function ZiweiPage() {
 
   const handlePopularQuestionClick = (prompt: string) => {
     setFocusArea(prompt.slice(0, 300));
+    const matchedCategory = QUESTION_CATEGORIES.find((category) =>
+      category.questions.includes(prompt)
+    );
+    if (matchedCategory) setActiveQuestionCategory(matchedCategory.label);
     window.requestAnimationFrame(() => {
       formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       window.setTimeout(() => {
         focusAreaRef.current?.focus({ preventScroll: true });
       }, 450);
     });
+  };
+
+  const renderPopularQuestions = () => {
+    const activeCategory =
+      QUESTION_CATEGORIES.find(category => category.label === activeQuestionCategory) ??
+      QUESTION_CATEGORIES[0];
+
+    return (
+      <div className="text-left">
+        <div className="mb-4 text-center">
+          <p className="text-[11px] tracking-[0.34em] text-[#D1BE9B] uppercase"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            Popular Questions
+          </p>
+          <h3 className="mt-2 text-base md:text-lg tracking-[0.18em] text-[#31353A]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            熱門問題
+          </h3>
+        </div>
+
+        <div className="mb-4 grid grid-cols-5 gap-1 rounded-2xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/42 p-1 sm:gap-1.5 sm:p-1.5">
+          {QUESTION_CATEGORIES.map((category) => {
+            const isActive = activeCategory.label === category.label;
+
+            return (
+              <button
+                key={category.label}
+                type="button"
+                onClick={() => setActiveQuestionCategory(category.label)}
+                className={`flex min-h-[34px] items-center justify-center gap-1 rounded-xl border px-1 py-1.5 text-center transition-all duration-200 active:scale-[0.98] sm:min-h-[38px] sm:gap-1.5 sm:px-2 ${
+                  isActive
+                    ? 'border-[#D1BE9B]/60 bg-white/78 text-[#8A7250] shadow-sm'
+                    : 'border-transparent bg-transparent text-[#31353A]/58 hover:bg-white/50 hover:text-[#8A7250]'
+                }`}
+                aria-pressed={isActive}
+              >
+                <span className={`text-[13px] leading-none ${isActive ? 'text-[#A38D6B]' : 'text-[#D1BE9B]/70'}`}>
+                  {category.icon}
+                </span>
+                <span className="text-[10px] tracking-[0.08em] sm:text-[10.5px] sm:tracking-[0.12em]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: isActive ? 500 : 300 }}>
+                  {category.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="rounded-2xl border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 p-3 md:p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-[12px] tracking-[0.22em] text-[#8A7250]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+              {activeCategory.icon} {activeCategory.label}熱門問題
+            </p>
+            <span className="text-[10px] tracking-[0.16em] text-[#A38D6B]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+              向下滑看更多 ↓
+            </span>
+          </div>
+          <div className="relative">
+            <div className="animate-fade-in-up grid max-h-[318px] gap-2 overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin] [scrollbar-color:#D1BE9B66_transparent]">
+              {activeCategory.questions.map(prompt => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => handlePopularQuestionClick(prompt)}
+                  className="min-h-[54px] w-full rounded-xl border border-[#D1BE9B]/14 bg-white/62 px-3 py-2.5 text-left text-[11.5px] leading-[1.65] tracking-[0.06em] text-[#31353A]/72 transition-all duration-200 hover:border-[#D1BE9B]/55 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+            <div className="pointer-events-none absolute bottom-0 left-0 right-1 h-10 rounded-b-xl bg-gradient-to-t from-[#FFFDF8] to-transparent" />
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const savePendingGenerate = useCallback(() => {
@@ -1071,110 +1203,23 @@ export default function ZiweiPage() {
 
           {!astrolabe ? (
             /* ── FORM ──────────────────────────────────────────────────────── */
-            <div className="max-w-lg mx-auto animate-fade-in-up">
-              {/* Why it matters */}
-              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/20 bg-white/45">
-                <p className="text-[12px] tracking-[0.3em] text-[#8A7250] mb-3 text-center"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  ◎ 為什麼值得算一次
-                </p>
-                <div className="flex flex-col gap-3">
-                  {[
-                    {
-                      icon: '☽',
-                      label: '想知道自己真正適合怎麼走嗎？',
-                      desc: '紫微命盤會幫你看見自己天生比較擅長什麼、容易在哪裡耗力，以及現在適合怎麼調整。',
-                    },
-                    {
-                      icon: '◈',
-                      label: '不是只給答案',
-                      desc: '讓你知道下一步可以怎麼走、適合怎麼發揮、怎麼累積資源、什麼時候該衝、什麼時候該穩。',
-                    },
-                  ].map((s) => (
-                    <div key={s.label} className="flex items-start gap-3 rounded-xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/55 px-3 py-3">
-                      <div className="w-8 h-8 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-sm text-[#A38D6B]">
-                        {s.icon}
-                      </div>
-                      <div>
-                        <p className="text-[11px] tracking-[0.18em] text-[#8A7250] mb-1"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                          {s.label}
-                        </p>
-                        <p className="text-[12px] leading-[1.75] text-[#31353A]/64 tracking-wide"
-                          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                          {s.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-4 px-5 py-4 rounded-2xl border border-[#D1BE9B]/16 bg-[#FAF7F4]/60">
-                <div className="mb-2">
-                  <p className="text-[12px] tracking-[0.3em] text-[#8A7250]"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                    ◎ 熱門問題
+            <div className="max-w-2xl mx-auto animate-fade-in-up">
+              <div className="mb-5 rounded-[28px] border border-[#D1BE9B]/18 bg-white/45 p-5 text-left shadow-[0_14px_42px_rgba(209,190,155,0.12)] md:p-6">
+                <div className="mb-5 text-center">
+                  <h2 className="text-lg md:text-xl tracking-[0.18em] text-[#31353A]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    你想先看哪一件事？
+                  </h2>
+                  <p className="mt-2 text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/62"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    選一題最接近的狀態，下面可以再改成自己的問題。
                   </p>
                 </div>
-                <p className="text-[12px] leading-[1.8] text-[#31353A]/58 tracking-wide mb-3"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                  不知道怎麼問也沒關係，可以點開每個分類看細項，再選一題改成自己的情況。
-                </p>
-                <div className="grid grid-cols-1 gap-2.5">
-                  {QUESTION_CATEGORIES.map((category) => {
-                    const isOpen = activeQuestionCategory === category.label;
 
-                    return (
-                      <div key={category.label} className="overflow-hidden rounded-xl border border-[#D1BE9B]/14 bg-white/38">
-                        <button
-                          type="button"
-                          onClick={() => setActiveQuestionCategory(isOpen ? null : category.label)}
-                          className={`flex w-full items-center justify-between gap-2 px-3 py-3 text-left transition-all duration-200 ${
-                            isOpen ? 'bg-[#D1BE9B]/10' : 'hover:bg-white/45'
-                          }`}
-                          aria-expanded={isOpen}
-                        >
-                          <span className="flex min-w-0 items-center gap-2">
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/12 text-[11px] text-[#A38D6B]">
-                              {category.icon}
-                            </span>
-                            <span className="text-[11px] tracking-[0.18em] text-[#8A7250]"
-                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                              {category.label}
-                            </span>
-                            <span className="hidden text-[10px] tracking-[0.08em] text-[#31353A]/42 sm:inline"
-                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                              {category.questions.length} 題
-                            </span>
-                          </span>
-                          <span className={`text-[13px] text-[#A38D6B] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
-                            ˅
-                          </span>
-                        </button>
-
-                        {isOpen && (
-                          <div className="animate-fade-in-up grid gap-2 border-t border-[#D1BE9B]/10 px-2.5 py-2.5">
-                            {category.questions.map(prompt => (
-                              <button
-                                key={prompt}
-                                type="button"
-                                  onClick={() => handlePopularQuestionClick(prompt)}
-                                className="w-full rounded-lg border border-[#D1BE9B]/14 bg-[#FFFDF8]/58 px-3 py-2 text-left text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/68 transition-all duration-200 hover:border-[#D1BE9B]/50 hover:bg-[#D1BE9B]/10 hover:text-[#8A7250] active:scale-[0.99]"
-                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                              >
-                                {prompt}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                {renderPopularQuestions()}
               </div>
 
-              <div ref={formSectionRef} className="glass-panel scroll-mt-24 rounded-2xl p-8 border border-[#D1BE9B]/20">
+              <div ref={formSectionRef} className="glass-panel scroll-mt-24 rounded-2xl p-6 md:p-8 border border-[#D1BE9B]/20">
                 <h2 className="text-sm tracking-[0.2em] text-[#31353A]/82 mb-6 text-center"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   輸入生辰資料
@@ -1248,9 +1293,14 @@ export default function ZiweiPage() {
 
                 {/* Focus area (optional) */}
                 <div className="mb-6">
-                  <label className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    想問的問題（選填）
+                  <label className="mb-2 flex items-center justify-between gap-3"
+                    style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                    <span className="text-[13px] tracking-[0.2em] text-[#8A7250] font-normal">
+                      你的問題
+                    </span>
+                    <span className="rounded-full border border-[#D1BE9B]/30 bg-[#D1BE9B]/12 px-2.5 py-1 text-[11px] tracking-[0.12em] text-[#8A7250]">
+                      可自行修改
+                    </span>
                   </label>
                   <textarea
                     ref={focusAreaRef}
