@@ -466,10 +466,6 @@ export default function ZiweiPage() {
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             Popular Questions
           </p>
-          <h3 className="mt-2 text-base md:text-lg tracking-[0.18em] text-[#31353A]"
-            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-            熱門問題
-          </h3>
         </div>
 
         <div className="mb-4 grid grid-cols-5 gap-1 rounded-2xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/42 p-1 sm:gap-1.5 sm:p-1.5">
@@ -504,7 +500,7 @@ export default function ZiweiPage() {
           <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-[12px] tracking-[0.22em] text-[#8A7250]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-              {activeCategory.icon} {activeCategory.label}熱門問題
+              {activeCategory.icon} {activeCategory.label}
             </p>
             <span className="text-[10px] tracking-[0.16em] text-[#A38D6B]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
