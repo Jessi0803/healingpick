@@ -307,18 +307,13 @@ export default function Home() {
         </div>
 
         <div className="max-w-3xl z-10 animate-fade-in-up -mt-16 md:-mt-24">
-          {/* Badge */}
-          <div className="mb-5 flex justify-center items-center gap-2 text-[#D1BE9B]/80">
-            <svg className="w-4 h-4" viewBox="0 0 100 100" fill="none">
-              <path d="M50 10 L53 43 L86 46 L53 49 L50 82 L47 49 L14 46 L47 43 Z" fill="currentColor" />
-            </svg>
-            <span className="text-[11px] tracking-[0.4em] text-[#31353A]/54 font-light"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-              SACRED CRYSTAL ALTAR
-            </span>
-            <svg className="w-4 h-4" viewBox="0 0 100 100" fill="none">
-              <path d="M50 10 L53 43 L86 46 L53 49 L50 82 L47 49 L14 46 L47 43 Z" fill="currentColor" />
-            </svg>
+          {/* Mochi portrait */}
+          <div className="mb-4 flex translate-y-4 justify-center">
+            <img
+              src="/cat.png"
+              alt="Mochi"
+              className="h-28 w-auto object-contain drop-shadow-[0_14px_28px_rgba(163,141,107,0.22)] md:h-32"
+            />
           </div>
 
           {/* Main title */}
