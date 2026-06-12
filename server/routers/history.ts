@@ -4,6 +4,7 @@ import {
   getReadingsByUser,
   saveReading,
 } from "../db";
+import { buildReadingSummary } from "../_core/readingMemory";
 
 export const historyRouter = router({
   /**
@@ -31,6 +32,14 @@ export const historyRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const isMember = Boolean(ctx.user);
+      const summary = isMember
+        ? await buildReadingSummary({
+            type: input.type,
+            question: input.question,
+            inputData: input.inputData,
+            interpretation: input.interpretation,
+          })
+        : null;
       await saveReading({
         userId: ctx.user?.id ?? null,
         anonId: isMember ? null : ctx.anonId,
@@ -39,6 +48,7 @@ export const historyRouter = router({
         question: input.question ?? null,
         inputData: input.inputData ?? null,
         interpretation: input.interpretation ?? null,
+        summary,
       });
       return { success: true };
     }),

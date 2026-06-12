@@ -6,6 +6,7 @@ import { invokeLLM, extractTextContent } from "../_core/llm";
 import { astro } from "iztro";
 import { t, translateChineseDate } from "./ziwei-locale";
 import { getVisitorCreditState, saveReading } from "../db";
+import { buildReadingSummary, getMemberMemoryContext } from "../_core/readingMemory";
 
 const recommendationSchema = z.object({
   category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
@@ -218,6 +219,7 @@ export const ziweiRouter = router({
           return `【${p.name}】${p.heavenlyStem}${p.earthlyBranch}｜主星：${majorStarNames || "空宮"}${minorStarNames ? `｜輔星：${minorStarNames}` : ""}${p.isBodyPalace ? "（身宮）" : ""}`;
         })
         .join("\n");
+      const memberMemoryContext = await getMemberMemoryContext(ctx.user);
 
       const prompt = `你是一位精通紫微斗數的命理師，請根據以下命盤資訊，提供白話、具體且溫柔的命盤解讀。
 
@@ -240,6 +242,7 @@ ${palaceSummary}
 
 ${focusArea ? `【想問的問題】\n${focusArea}\n` : ""}
 ${partnerSolarDate ? `【對方的陽曆生日（只有年月日，沒有時辰）】\n${partnerSolarDate}\n請依這個生日判斷對方的生肖、星座與大致個性、相處風格，當作這段關係的輔助參考。\n因為沒有時辰，不要假裝排了對方的完整命盤，也不要硬講對方的宮位或主星；主盤還是以求問者本人的命盤為主，對方生日只是輔助方向。\n` : ""}
+${memberMemoryContext}
 
 請先判斷使用者想了解的問題主要屬於哪一類：感情、工作、財運、人際家庭、自我狀態、整體方向。
 如果【想問的問題】已經很明確，例如感情、工作、財運、家人相處，請集中回答該主題，不要硬加入無關面向。
@@ -280,19 +283,29 @@ ${EXAMPLE2_MESSAGE_STYLE}
       const interpretation = cleanZiweiInterpretation(extracted.interpretation);
 
       const isMember = Boolean(ctx.user);
+      const inputData = JSON.stringify({
+        recordKind: "ziwei",
+        solarDate,
+        timeIndex,
+        gender,
+      });
+      const summary = isMember
+        ? await buildReadingSummary({
+            type: "ziwei",
+            question: focusArea,
+            inputData,
+            interpretation,
+          })
+        : null;
       await saveReading({
         userId: ctx.user?.id ?? null,
         anonId: isMember ? null : ctx.anonId,
         ipHash: isMember ? null : ctx.ipHash,
         type: "ziwei",
         question: focusArea || null,
-        inputData: JSON.stringify({
-          recordKind: "ziwei",
-          solarDate,
-          timeIndex,
-          gender,
-        }),
+        inputData,
         interpretation,
+        summary,
       });
 
       return {
@@ -334,6 +347,7 @@ ${EXAMPLE2_MESSAGE_STYLE}
           return `【${p.name}】${p.heavenlyStem}${p.earthlyBranch}｜主星：${majorStarNames || "空宮"}${minorStarNames ? `｜輔星：${minorStarNames}` : ""}${p.isBodyPalace ? "（身宮）" : ""}`;
         })
         .join("\n");
+      const memberMemoryContext = await getMemberMemoryContext(ctx.user);
 
       const systemPrompt = `你是一位精通紫微斗數的命理師。
 ${EXAMPLE2_MESSAGE_STYLE}
@@ -366,6 +380,7 @@ ${input.focusArea || "（未填寫具體問題）"}
 
 【上一輪完整紫微解讀】
 ${input.interpretation}
+${memberMemoryContext}
 
 請先判斷使用者想了解的問題主要屬於哪一類：感情、工作、財運、人際家庭、自我狀態、整體方向。
 如果【想問的問題】已經很明確，例如感情、工作、財運、家人相處，請集中回答該主題，不要硬加入無關面向。
@@ -395,20 +410,28 @@ ${EXAMPLE2_MESSAGE_STYLE}
         : "Mochi 暫時讀不到這個追問，請稍後再試。";
 
       const isMember = Boolean(ctx.user);
+      const inputData = JSON.stringify({
+        recordKind: "ziwei_followup",
+        originalFocusArea: input.focusArea || null,
+        solarDate: input.solarDate,
+        timeIndex: input.timeIndex,
+        gender: input.gender,
+      });
+      const summary = await buildReadingSummary({
+        type: "ziwei",
+        question: input.followUpQuestion,
+        inputData,
+        interpretation: answer,
+      });
       await saveReading({
         userId: ctx.user?.id ?? null,
         anonId: isMember ? null : ctx.anonId,
         ipHash: isMember ? null : ctx.ipHash,
         type: "ziwei",
         question: input.followUpQuestion,
-        inputData: JSON.stringify({
-          recordKind: "ziwei_followup",
-          originalFocusArea: input.focusArea || null,
-          solarDate: input.solarDate,
-          timeIndex: input.timeIndex,
-          gender: input.gender,
-        }),
+        inputData,
         interpretation: answer,
+        summary,
       });
 
       return { answer };

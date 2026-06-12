@@ -16,6 +16,7 @@ import { ENV } from "./_core/env";
 type Db = ReturnType<typeof drizzle>;
 let _db: Db | null = null;
 let userProfileColumnsReady = false;
+let readingSummaryColumnReady = false;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 // Uses postgres-js against Supabase's pooled connection (prepare:false is
@@ -29,6 +30,7 @@ export async function getDb(): Promise<Db | null> {
       });
       _db = drizzle(client);
       await ensureUserProfileColumns(_db);
+      await ensureReadingSummaryColumn(_db);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -57,6 +59,14 @@ async function ensureUserProfileColumns(db: Db) {
     ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "gender" varchar(16)
   `);
   userProfileColumnsReady = true;
+}
+
+async function ensureReadingSummaryColumn(db: Db) {
+  if (readingSummaryColumnReady) return;
+  await db.execute(sql`
+    ALTER TABLE "readings" ADD COLUMN IF NOT EXISTS "summary" text
+  `);
+  readingSummaryColumnReady = true;
 }
 
 function taipeiDateKey(date: Date): string {
@@ -574,6 +584,22 @@ export async function getReadingsByUser(userId: number, limit = 20) {
     .select()
     .from(readings)
     .where(eq(readings.userId, userId))
+    .orderBy(desc(readings.createdAt))
+    .limit(limit);
+}
+
+export async function getRecentReadingSummariesByUser(userId: number, limit = 5) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({
+      type: readings.type,
+      question: readings.question,
+      summary: readings.summary,
+      createdAt: readings.createdAt,
+    })
+    .from(readings)
+    .where(sql`${readings.userId} = ${userId} AND ${readings.summary} IS NOT NULL AND ${readings.summary} <> ''`)
     .orderBy(desc(readings.createdAt))
     .limit(limit);
 }

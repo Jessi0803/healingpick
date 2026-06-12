@@ -4,6 +4,7 @@ import { publicProcedure, router } from "../_core/trpc";
 import { invokeLLM, extractTextContent } from "../_core/llm";
 import { chargeReading } from "../_core/credits";
 import { getVisitorCreditState, saveReading } from "../db";
+import { buildReadingSummary, getMemberMemoryContext } from "../_core/readingMemory";
 
 const cardSchema = z.object({
   name: z.string(),
@@ -194,6 +195,7 @@ export const tarotRouter = router({
             `${i + 1}. 位置「${c.position}」（${c.positionDesc}）：${c.name}（${c.en}）${c.reversed ? "【逆位】" : "【正位】"} — ${c.reversed ? "逆位含義：" + c.meaning : "含義：" + c.meaning}`
         )
         .join("\n");
+      const memberMemoryContext = await getMemberMemoryContext(ctx.user);
 
       const systemPrompt = `${READING_STYLE}
 
@@ -211,6 +213,7 @@ message 不要包含「今天的訊息是」，reason 不要提商品名稱。`;
 
 五牌陣星形牌陣：
 ${cardsSummary}
+${memberMemoryContext}
 
 請根據以上五張牌，用上面範例那種 LINE 私訊語感寫完整解讀。
 只針對「求問者的問題」這一件事回答，第一行先直接回答，再展開原因和畫面。
@@ -238,22 +241,32 @@ ${cardsSummary}
         }));
 
       const isMember = Boolean(ctx.user);
+      const inputData = JSON.stringify({
+        recordKind: "tarot",
+        questionType: input.questionType,
+        cards: input.cards.map((card) => ({
+          name: card.name,
+          position: card.position,
+          reversed: card.reversed,
+        })),
+      });
+      const summary = isMember
+        ? await buildReadingSummary({
+            type: "tarot",
+            question: input.question,
+            inputData,
+            interpretation,
+          })
+        : null;
       await saveReading({
         userId: ctx.user?.id ?? null,
         anonId: isMember ? null : ctx.anonId,
         ipHash: isMember ? null : ctx.ipHash,
         type: "tarot",
         question: input.question || null,
-        inputData: JSON.stringify({
-          recordKind: "tarot",
-          questionType: input.questionType,
-          cards: input.cards.map((card) => ({
-            name: card.name,
-            position: card.position,
-            reversed: card.reversed,
-          })),
-        }),
+        inputData,
         interpretation,
+        summary,
       });
 
       return { interpretation, recommendation: finalRecommendation };
@@ -286,6 +299,7 @@ ${cardsSummary}
             `${i + 1}. 位置「${c.position}」（${c.positionDesc}）：${c.name}（${c.en}）${c.reversed ? "【逆位】" : "【正位】"} — ${c.reversed ? "逆位含義：" + c.meaning : "含義：" + c.meaning}`
         )
         .join("\n");
+      const memberMemoryContext = await getMemberMemoryContext(ctx.user);
 
       const systemPrompt = `${READING_STYLE}
 
@@ -305,6 +319,7 @@ ${input.question || "（未填寫具體問題）"}
 
 上一輪完整塔羅解讀：
 ${input.interpretation}
+${memberMemoryContext}
 
 請根據以上五張牌，用上面範例那種 LINE 私訊語感寫完整解讀。
 只針對「求問者的問題」這一件事回答，第一行先直接回答，再展開原因和畫面。
@@ -323,23 +338,31 @@ ${input.interpretation}
         : "Mochi 暫時讀不到這個追問，請稍後再試。";
 
       const isMember = Boolean(ctx.user);
+      const inputData = JSON.stringify({
+        recordKind: "tarot_followup",
+        originalQuestion: input.question || null,
+        questionType: input.questionType,
+        cards: input.cards.map((card) => ({
+          name: card.name,
+          position: card.position,
+          reversed: card.reversed,
+        })),
+      });
+      const summary = await buildReadingSummary({
+        type: "tarot",
+        question: input.followUpQuestion,
+        inputData,
+        interpretation: answer,
+      });
       await saveReading({
         userId: ctx.user?.id ?? null,
         anonId: isMember ? null : ctx.anonId,
         ipHash: isMember ? null : ctx.ipHash,
         type: "tarot",
         question: input.followUpQuestion,
-        inputData: JSON.stringify({
-          recordKind: "tarot_followup",
-          originalQuestion: input.question || null,
-          questionType: input.questionType,
-          cards: input.cards.map((card) => ({
-            name: card.name,
-            position: card.position,
-            reversed: card.reversed,
-          })),
-        }),
+        inputData,
         interpretation: answer,
+        summary,
       });
 
       return { answer };

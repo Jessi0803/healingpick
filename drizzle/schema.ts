@@ -115,6 +115,7 @@ export const readings = pgTable("readings", {
   question: text("question"),
   inputData: text("inputData"),
   interpretation: text("interpretation"),
+  summary: text("summary"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
