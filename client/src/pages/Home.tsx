@@ -309,11 +309,16 @@ export default function Home() {
         <div className="max-w-3xl z-10 animate-fade-in-up -mt-16 md:-mt-24">
           {/* Mochi portrait */}
           <div className="mb-4 flex translate-y-4 justify-center">
-            <img
-              src="/cat.png"
-              alt="Mochi"
-              className="h-32 w-auto object-contain drop-shadow-[0_14px_28px_rgba(163,141,107,0.22)] md:h-36"
-            />
+            <div className="mochi-portrait-wrap relative inline-flex">
+              <span className="mochi-star mochi-star--one" aria-hidden="true">✦</span>
+              <span className="mochi-star mochi-star--two" aria-hidden="true">✧</span>
+              <span className="mochi-star mochi-star--three" aria-hidden="true">✦</span>
+              <img
+                src="/cat.png"
+                alt="Mochi"
+                className="mochi-portrait-float h-32 w-auto object-contain drop-shadow-[0_14px_28px_rgba(163,141,107,0.22)] md:h-36"
+              />
+            </div>
           </div>
 
           {/* Main title */}

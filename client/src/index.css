@@ -384,10 +384,78 @@ body::after {
   50%      { opacity: 0.7; transform: scale(1.05); }
 }
 
+/* Mochi homepage portrait */
+.mochi-portrait-wrap {
+  isolation: isolate;
+}
+
+.mochi-portrait-float {
+  animation: mochiPortraitFloat 5.8s ease-in-out infinite;
+}
+
+.mochi-star {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  color: rgba(163, 141, 107, 0.68);
+  font-family: 'Noto Serif TC', serif;
+  text-shadow: 0 0 12px rgba(209, 190, 155, 0.42);
+  animation: mochiStarTwinkle 4.8s ease-in-out infinite;
+}
+
+.mochi-star--one {
+  top: 14%;
+  left: -12%;
+  font-size: 14px;
+}
+
+.mochi-star--two {
+  top: 34%;
+  right: -16%;
+  font-size: 12px;
+  animation-delay: -1.6s;
+}
+
+.mochi-star--three {
+  bottom: 24%;
+  left: -2%;
+  font-size: 10px;
+  animation-delay: -3.1s;
+}
+
+@keyframes mochiPortraitFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -7px, 0); }
+}
+
+@keyframes mochiStarTwinkle {
+  0%, 72%, 100% {
+    opacity: 0;
+    transform: translate3d(0, 2px, 0) scale(0.78) rotate(-8deg);
+  }
+  18% {
+    opacity: 0.78;
+    transform: translate3d(0, 0, 0) scale(1.08) rotate(0deg);
+  }
+  34% {
+    opacity: 0.28;
+    transform: translate3d(0, -1px, 0) scale(0.92) rotate(8deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .night-star {
+  .night-star,
+  .mochi-portrait-float,
+  .mochi-star {
     animation: none;
+  }
+
+  .night-star {
     opacity: 0.4;
+  }
+
+  .mochi-star {
+    opacity: 0.35;
   }
 }
 
