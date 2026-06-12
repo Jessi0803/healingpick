@@ -312,7 +312,7 @@ export default function Home() {
             <img
               src="/cat.png"
               alt="Mochi"
-              className="h-28 w-auto object-contain drop-shadow-[0_14px_28px_rgba(163,141,107,0.22)] md:h-32"
+              className="h-32 w-auto object-contain drop-shadow-[0_14px_28px_rgba(163,141,107,0.22)] md:h-36"
             />
           </div>
 
