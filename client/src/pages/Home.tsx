@@ -330,10 +330,10 @@ export default function Home() {
           </h1>
 
           <p
-            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8 italic"
-            style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}
+            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
           >
-            "A small universe for feelings to rest."
+            把心事揉一揉，慢慢變成答案。
           </p>
 
           <p

@@ -49,10 +49,10 @@ export default function Footer() {
               找到屬於自己的安定與方向。
             </p>
             <p
-              className="mt-4 text-[11px] tracking-[0.15em] text-[#D1BE9B]/80 italic"
-              style={{ fontFamily: 'Cormorant Garamond, serif' }}
+              className="mt-4 text-[11px] tracking-[0.15em] text-[#D1BE9B]/80"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
             >
-              "A small universe for feelings to rest."
+              把心事揉一揉，慢慢變成答案。
             </p>
           </div>
 
