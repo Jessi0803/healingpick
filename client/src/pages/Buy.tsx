@@ -190,7 +190,7 @@ export default function BuyPage() {
 
               <p className="text-center text-[11px] text-[#31353A]/45 tracking-wider mb-2"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                結帳會在 Gumroad 安全頁面進行，付款完成後點數會自動加到你的帳號 🐾
+                結帳將透過合作金流服務完成，付款完成後點數會自動加到你的帳號 🐾
               </p>
               <p className="text-center text-[10px] text-[#31353A]/35 tracking-wider"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>

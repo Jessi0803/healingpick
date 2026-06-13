@@ -117,7 +117,7 @@ function reasonLabel(reason: string) {
   if (reason === 'signup_bonus') return '註冊贈點';
   if (reason === 'admin_topup') return '管理員加值';
   if (reason === 'admin_adjustment') return '管理員調整';
-  if (reason.startsWith('gumroad:')) return 'Gumroad 訂單';
+  if (reason.startsWith('gumroad:')) return '金流訂單';
   if (reason === 'tarot') return '塔羅扣點';
   if (reason === 'ziwei') return '紫微扣點';
   if (reason === 'fortune') return '每日運勢扣點';
@@ -341,7 +341,7 @@ export default function AdminPage() {
             <Metric label="占卜紀錄" value={data?.stats.readings ?? 0} />
             <Metric label="訪客數" value={data?.stats.visitors ?? 0} />
             <Metric label="訪客問答" value={data?.stats.visitorReadings ?? 0} />
-            <Metric label="Gumroad 訂單" value={data?.stats.purchases ?? 0} />
+            <Metric label="金流訂單" value={data?.stats.purchases ?? 0} />
             <Metric label="售出點數" value={data?.stats.creditsSold ?? 0} />
           </div>
 
