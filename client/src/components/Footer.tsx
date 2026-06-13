@@ -72,6 +72,7 @@ export default function Footer() {
                 { label: '心理測驗', href: '/quiz' },
                 { label: '能量商品', href: '/shop' },
                 { label: '關於我們', href: '/about' },
+                { label: '購物須知與退費政策', href: '/policy' },
               ].map((item) => (
                 <li key={item.href}>
                   <Link

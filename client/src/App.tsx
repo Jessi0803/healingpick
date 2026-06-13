@@ -15,6 +15,7 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import History from "./pages/History";
 import Buy from "./pages/Buy";
+import Policy from "./pages/Policy";
 import ResetPassword from "./pages/ResetPassword";
 import LoginDialog from "./components/LoginDialog";
 import Admin from "./pages/Admin";
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/shop/:id" component={ProductDetail} />
       <Route path="/history" component={History} />
       <Route path="/buy" component={Buy} />
+      <Route path="/policy" component={Policy} />
       <Route path="/admin" component={Admin} />
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/404" component={NotFound} />

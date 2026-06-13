@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -11,6 +12,74 @@ const PACKAGES = [
   { variant: 'Standard Pack', credits: 100, price: 'NT$180', tag: '最受歡迎' },
   { variant: 'Premium Pack', credits: 300, price: 'NT$450', tag: '超值' },
 ];
+
+function PurchasePolicySummary() {
+  return (
+    <>
+      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <section className="glass-panel rounded-2xl border border-[#D1BE9B]/20 p-6">
+          <h2
+            className="mb-4 text-[12px] tracking-[0.24em] text-[#A38D6B]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+          >
+            方案與使用規則
+          </h2>
+          <ul className="space-y-3">
+            {[
+              'Starter Pack：30 點，NT$70',
+              'Standard Pack：100 點，NT$180',
+              'Premium Pack：300 點，NT$450',
+              '塔羅、紫微、每日運勢會先消耗每日免費額度；用完後每次解讀扣 1 點。',
+              '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。',
+            ].map((item) => (
+              <li
+                key={item}
+                className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/66"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="glass-panel rounded-2xl border border-[#D1BE9B]/20 p-6">
+          <h2
+            className="mb-4 text-[12px] tracking-[0.24em] text-[#A38D6B]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+          >
+            購買前提醒
+          </h2>
+          <ul className="space-y-3">
+            {[
+              '請確認結帳 email 與 HealingPick 會員帳號 email 相同，以利付款後自動入帳。',
+              '未使用之點數，可於購買後 7 日內聯繫客服申請退費。',
+              '已使用點數、已產生之占卜解讀、AI 回覆或其他已完成提供之數位服務，恕無法退費。',
+              '若付款成功但點數未入帳，請聯繫 Email、LINE 或 IG 協助查核。',
+            ].map((item) => (
+              <li
+                key={item}
+                className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/66"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      <p className="mt-6 text-center text-[11px] leading-[1.9] tracking-[0.1em] text-[#31353A]/50"
+        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+        購買即表示你已閱讀並同意{' '}
+        <Link href="/policy" className="text-[#A38D6B] underline decoration-[#D1BE9B]/40 underline-offset-4 hover:text-[#D1BE9B]">
+          購物須知與退費政策
+        </Link>
+        。
+      </p>
+    </>
+  );
+}
 
 export default function BuyPage() {
   const { user, isAuthenticated, login } = useAuth();
@@ -161,6 +230,7 @@ export default function BuyPage() {
               )}
             </>
           )}
+          <PurchasePolicySummary />
         </div>
       </div>
     </PageLayout>
