@@ -129,6 +129,15 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
           >
             <span>📸</span> IG 私訊詢問 ⟡
           </a>
+
+          <a
+            href="mailto:baby90522@gmail.com"
+            onClick={onClose}
+            className="w-full py-3.5 text-xs tracking-[0.18em] border border-[#D1BE9B]/28 bg-white/35 hover:bg-[#D1BE9B]/12 hover:text-[#8A7250] rounded-full transition-all duration-500 flex items-center justify-center gap-2 shadow-sm font-light active:scale-95 text-[#31353A] cursor-pointer text-center"
+            style={{ fontFamily: 'Noto Serif TC, serif' }}
+          >
+            <span>✉</span> Email 聯繫
+          </a>
         </div>
         
         <div className="text-center text-[9px] text-[#D1BE9B]/80 tracking-widest mt-6 select-none">
