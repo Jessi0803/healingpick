@@ -574,6 +574,21 @@ export async function getVisitorCreditState(
 export async function saveReading(data: InsertReading): Promise<void> {
   const db = await getDb();
   if (!db) return;
+  if (data.interpretation) {
+    const recentDuplicate = await db
+      .select({ id: readings.id })
+      .from(readings)
+      .where(sql`
+        ${readings.type} = ${data.type}
+        AND coalesce(${readings.userId}, -1) = coalesce(${data.userId ?? null}, -1)
+        AND coalesce(${readings.anonId}, '') = coalesce(${data.anonId ?? null}, '')
+        AND coalesce(${readings.ipHash}, '') = coalesce(${data.ipHash ?? null}, '')
+        AND ${readings.interpretation} = ${data.interpretation}
+        AND ${readings.createdAt} > now() - interval '2 minutes'
+      `)
+      .limit(1);
+    if (recentDuplicate.length > 0) return;
+  }
   await db.insert(readings).values(data);
 }
 
