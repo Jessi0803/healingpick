@@ -1316,7 +1316,7 @@ export default function ZiweiPage() {
 
                 {/* Partner birth date (optional, for relationship questions) */}
                 <div className="mb-6">
-                  <label className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
+                  <label className="block text-[11px] tracking-[0.25em] text-[#8A7250] mb-2"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     對方生日（選填，問感情用）
                   </label>
