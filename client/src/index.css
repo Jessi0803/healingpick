@@ -520,7 +520,11 @@ body::after {
 }
 
 .music-toggle-glyph--idle {
-  animation: musicToggleNudge 4.8s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+  animation: musicToggleNudge 3.6s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+.music-toggle-button--idle {
+  animation: musicToggleGlow 3.6s ease-in-out infinite;
 }
 
 .music-toggle-button--idle::after {
@@ -529,24 +533,37 @@ body::after {
   inset: -5px;
   z-index: -1;
   border-radius: 999px;
-  border: 1px solid rgba(209, 190, 155, 0.44);
+  border: 1px solid rgba(209, 190, 155, 0.52);
   opacity: 0;
   transform: scale(0.88);
-  animation: musicToggleHalo 4.8s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  animation: musicToggleHalo 3.6s cubic-bezier(0.23, 1, 0.32, 1) infinite;
 }
 
 @keyframes musicToggleNudge {
-  0%, 74%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  78% { transform: translate3d(0, -1px, 0) rotate(-5deg); }
-  82% { transform: translate3d(1px, 0, 0) rotate(4deg); }
-  86% { transform: translate3d(-1px, 0, 0) rotate(-3deg); }
-  90% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  0%, 60%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  66% { transform: translate3d(0, -2px, 0) rotate(-7deg) scale(1.05); }
+  70% { transform: translate3d(2px, 0, 0) rotate(6deg) scale(1.07); }
+  74% { transform: translate3d(-2px, 0, 0) rotate(-5deg) scale(1.05); }
+  78% { transform: translate3d(1px, -1px, 0) rotate(4deg) scale(1.04); }
+  84% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+}
+
+@keyframes musicToggleGlow {
+  0%, 58%, 100% {
+    box-shadow: 0 10px 28px rgba(49, 53, 58, 0.16);
+  }
+  72% {
+    box-shadow:
+      0 10px 28px rgba(49, 53, 58, 0.16),
+      0 0 0 5px rgba(209, 190, 155, 0.16),
+      0 0 22px rgba(209, 190, 155, 0.48);
+  }
 }
 
 @keyframes musicToggleHalo {
-  0%, 70%, 100% { opacity: 0; transform: scale(0.88); }
-  76% { opacity: 0.42; transform: scale(1); }
-  96% { opacity: 0; transform: scale(1.42); }
+  0%, 58%, 100% { opacity: 0; transform: scale(0.88); }
+  70% { opacity: 0.56; transform: scale(1); }
+  92% { opacity: 0; transform: scale(1.55); }
 }
 
 @media (prefers-reduced-motion: reduce) {
