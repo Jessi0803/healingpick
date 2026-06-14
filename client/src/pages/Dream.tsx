@@ -8,8 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 
-const emotionOptions = ['緊張', '害怕', '難過', '懷念', '安心', '混亂', '興奮', '空空的'];
-
 const sampleDreams = [
   '夢到自己一直在找出口，可是每扇門打開都不是我要去的地方。',
   '夢到以前很重要的人突然出現，我們好像很熟，又好像很陌生。',
@@ -20,7 +18,6 @@ export default function DreamPage() {
   const { login } = useAuth();
   const utils = trpc.useUtils();
   const [dreamContent, setDreamContent] = useState('');
-  const [wakeEmotion, setWakeEmotion] = useState('');
   const [recentStatus, setRecentStatus] = useState('');
   const [interpretation, setInterpretation] = useState('');
 
@@ -60,7 +57,6 @@ export default function DreamPage() {
     setInterpretation('');
     interpretMutation.mutate({
       dreamContent: dreamContent.trim(),
-      wakeEmotion: wakeEmotion.trim() || undefined,
       recentStatus: recentStatus.trim() || undefined,
     });
   };
@@ -85,7 +81,7 @@ export default function DreamPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   MOCHI DREAM
                 </p>
-                <h1 className="text-3xl font-extralight leading-[1.7] tracking-[0.18em] text-[#31353A] md:text-5xl"
+                <h1 className="text-2xl font-extralight leading-[1.65] tracking-[0.16em] text-[#31353A] md:text-4xl"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                   Mochi 解夢
                 </h1>
@@ -97,23 +93,6 @@ export default function DreamPage() {
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               把你記得的夢交給 Mochi。不用寫得很完整，場景、人物、醒來後的感覺，都可以變成解讀的線索。
             </p>
-
-            <div className="mt-8 grid gap-3 text-[12px] leading-[2] tracking-[0.12em] text-[#31353A]/60 sm:grid-cols-3 lg:grid-cols-1"
-              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-              {[
-                ['🌙', '口語解讀', '延續塔羅與紫微那種私訊感'],
-                ['✨', '情緒連結', '看夢裡真正卡住的感覺'],
-                ['🤍', '溫柔提醒', '不恐嚇、不做絕對預言'],
-              ].map(([icon, title, desc]) => (
-                <div key={title} className="rounded-xl border border-[#D1BE9B]/18 bg-white/38 px-4 py-3 backdrop-blur-sm">
-                  <div className="mb-1 flex items-center gap-2 text-[#8A7250]">
-                    <span>{icon}</span>
-                    <span className="tracking-[0.18em]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{title}</span>
-                  </div>
-                  <p>{desc}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="relative z-10">
@@ -138,30 +117,6 @@ export default function DreamPage() {
                   {remainingChars} 字
                 </span>
               </label>
-
-              <div className="mt-5">
-                <p className="mb-3 text-[12px] tracking-[0.22em] text-[#8A7250]"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                  醒來後的感覺
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {emotionOptions.map((emotion) => (
-                    <button
-                      key={emotion}
-                      type="button"
-                      onClick={() => setWakeEmotion((current) => current === emotion ? '' : emotion)}
-                      className={`rounded-full border px-4 py-2 text-[11px] tracking-[0.16em] transition-all duration-300 active:scale-95 ${
-                        wakeEmotion === emotion
-                          ? 'border-[#D1BE9B] bg-[#D1BE9B]/28 text-[#6F5B3A]'
-                          : 'border-[#D1BE9B]/20 bg-white/42 text-[#31353A]/54 hover:border-[#D1BE9B]/48 hover:text-[#8A7250]'
-                      }`}
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {emotion}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               <label className="mt-5 block">
                 <span className="mb-2 block text-[12px] tracking-[0.22em] text-[#8A7250]"
