@@ -384,6 +384,50 @@ body::after {
   50%      { opacity: 0.7; transform: scale(1.05); }
 }
 
+/* Tarot shuffle: keep the active motion on compositor-friendly transforms so
+   shuffling stays smooth on mobile instead of re-rendering every frame. */
+.tarot-shuffle-card {
+  --tarot-idle-x: 0px;
+  --tarot-idle-y: 0px;
+  --tarot-idle-rot: 0deg;
+  --tarot-shuffle-delay: 0s;
+  transform: translate3d(var(--tarot-idle-x), var(--tarot-idle-y), 0) rotate(var(--tarot-idle-rot));
+  transform-origin: 50% 62%;
+  transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1), opacity 240ms ease-out;
+  will-change: transform;
+  contain: layout paint;
+  backface-visibility: hidden;
+}
+
+.tarot-shuffle-card--active {
+  animation: tarotShuffleOrbit 1.35s linear infinite;
+  animation-delay: var(--tarot-shuffle-delay);
+}
+
+@keyframes tarotShuffleOrbit {
+  0% {
+    transform: translate3d(0, -30px, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate3d(48px, -21px, 0) rotate(45deg);
+  }
+  50% {
+    transform: translate3d(0, 0, 0) rotate(90deg);
+  }
+  75% {
+    transform: translate3d(-48px, -21px, 0) rotate(135deg);
+  }
+  100% {
+    transform: translate3d(0, -30px, 0) rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarot-shuffle-card--active {
+    animation-duration: 2.4s;
+  }
+}
+
 /* Mochi homepage portrait */
 .mochi-portrait-wrap {
   isolation: isolate;

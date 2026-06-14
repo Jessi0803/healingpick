@@ -663,7 +663,7 @@ export default function FortunePage() {
                                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                                       {item.label}
                                     </p>
-                                    <div className="text-[12.5px] leading-[2] text-[#31353A]/72 tracking-wider prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!text-[12.5px] [&_p]:!leading-[2]"
+                                    <div className="text-[13.5px] leading-[2] text-[#31353A]/72 tracking-wider prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!text-[13.5px] [&_p]:!leading-[2]"
                                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                                       <Streamdown>{item.text}</Streamdown>
                                     </div>
@@ -681,7 +681,7 @@ export default function FortunePage() {
                                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                                     今日月相指引
                                   </p>
-                                  <div className="text-[12.5px] leading-[2] text-[#31353A]/72 tracking-wider italic prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!text-[12.5px] [&_p]:!leading-[2]"
+                                  <div className="text-[13.5px] leading-[2] text-[#31353A]/72 tracking-wider italic prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!text-[13.5px] [&_p]:!leading-[2]"
                                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                                     <Streamdown>{aiData.advice}</Streamdown>
                                   </div>

@@ -9,7 +9,7 @@
  *   - Crystal recommendation based on reading
  */
 
-import { useState, useEffect, useLayoutEffect, useRef, useCallback, type FormEvent } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, type CSSProperties, type FormEvent } from 'react';
 import { Link } from 'wouter';
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
@@ -545,10 +545,8 @@ export default function TarotPage() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [shuffling, setShuffling] = useState(false);
   const [isShufflingActive, setIsShufflingActive] = useState(false);
-  const [shuffleFrame, setShuffleFrame] = useState(0);
   const [shuffledDeck, setShuffledDeck] = useState<typeof MAJOR_ARCANA>([]);
   const [pickedIndices, setPickedIndices] = useState<number[]>([]);
-  const shuffleIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState<string>('');
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
@@ -841,31 +839,16 @@ export default function TarotPage() {
   // 開始持續洗牌動畫
   const handleStartShuffle = useCallback(() => {
     setIsShufflingActive(true);
-    setShuffleFrame(0);
-    shuffleIntervalRef.current = setInterval(() => {
-      setShuffleFrame(f => f + 1);
-    }, 120);
   }, []);
 
   // 停止洗牌，展開牌組讓使用者選牌
   const handleStopShuffle = useCallback(() => {
-    if (shuffleIntervalRef.current) {
-      clearInterval(shuffleIntervalRef.current);
-      shuffleIntervalRef.current = null;
-    }
     setIsShufflingActive(false);
     // 最終洗牌結果
     const finalDeck = [...MAJOR_ARCANA].sort(() => Math.random() - 0.5);
     setShuffledDeck(finalDeck);
     setPickedIndices([]);
     setStep('pick');
-  }, []);
-
-  // 清理 interval
-  useEffect(() => {
-    return () => {
-      if (shuffleIntervalRef.current) clearInterval(shuffleIntervalRef.current);
-    };
   }, []);
 
   useLayoutEffect(() => {
@@ -1328,23 +1311,20 @@ export default function TarotPage() {
                 }`} />
                 <div className="absolute w-32 h-32 rounded-full bg-[#D1BE9B]/8 blur-2xl" />
                 {Array.from({ length: 9 }).map((_, i) => {
-                  const angle = isShufflingActive
-                    ? ((shuffleFrame * 18 + i * 40) % 360)
-                    : (i - 4) * 8;
-                  const radius = isShufflingActive ? 80 : 0;
-                  const tx = isShufflingActive ? Math.sin((angle * Math.PI) / 180) * radius * 0.6 : (i - 4) * 18;
-                  const ty = isShufflingActive ? -Math.abs(Math.cos((angle * Math.PI) / 180)) * 30 : Math.abs(i - 4) * 5;
-                  const rot = isShufflingActive ? angle * 0.5 : (i - 4) * 6;
                   return (
                     <div
                       key={i}
-                      className="absolute w-[66px] h-[110px] md:w-[74px] md:h-[123px] drop-shadow-[0_12px_18px_rgba(49,53,58,0.24)]"
+                      className={`tarot-shuffle-card absolute w-[66px] h-[110px] md:w-[74px] md:h-[123px] drop-shadow-[0_12px_18px_rgba(49,53,58,0.24)] ${
+                        isShufflingActive ? 'tarot-shuffle-card--active' : ''
+                      }`}
                       style={{
-                        transform: `translate(${tx}px, ${ty}px) rotate(${rot}deg)`,
-                        transition: isShufflingActive ? 'transform 0.12s linear' : 'transform 0.5s cubic-bezier(0.23,1,0.32,1)',
+                        '--tarot-idle-x': `${(i - 4) * 18}px`,
+                        '--tarot-idle-y': `${Math.abs(i - 4) * 5}px`,
+                        '--tarot-idle-rot': `${(i - 4) * 6}deg`,
+                        '--tarot-shuffle-delay': `${i * -0.13}s`,
                         zIndex: i,
                         opacity: isShufflingActive ? 0.72 + (i % 3) * 0.1 : 1,
-                      }}
+                      } as CSSProperties}
                     >
                       <CardBack />
                     </div>
