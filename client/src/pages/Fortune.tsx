@@ -389,7 +389,16 @@ export default function FortunePage() {
     saveReadingMutation.mutate({
       type: 'fortune',
       inputData: JSON.stringify({ sign: selectedSign, signName: selectedSignData?.name, date: apiDateStr }),
-      interpretation: `整體運勢：${d.overall}\n\n感情愛情：${d.love}\n\n事業財運：${d.career}\n\n行動建議：${d.advice}`,
+      interpretation: [
+        `整體運勢（${d.overallScore}/10）：${d.overall}`,
+        `感情愛情（${d.loveScore}/10）：${d.love}`,
+        `事業財運（${d.careerScore}/10）：${d.career}`,
+        `健康提醒（${d.healthScore}/10）：${d.health}`,
+        `幸運資訊：${d.luckyColor}｜${d.luckyNumber}｜${d.crystal}`,
+        `水晶原因：${d.crystalReason}`,
+        `月相：${d.moonSymbol} ${d.moonPhase}`,
+        `行動建議：${d.advice}`,
+      ].join('\n\n'),
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyFortuneQuery.data]);

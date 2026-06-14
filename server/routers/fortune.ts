@@ -81,6 +81,86 @@ const ZODIAC_TRAITS: Record<string, {
   pisces:      { element: '水', modality: '變動', ruler: '海王星/木星', traits: '夢幻、同情心、靈性', strengths: '直覺、藝術才能、慈悲', challenges: '逃避現實、邊界模糊' },
 };
 
+const ZODIAC_FORTUNE_GUIDES: Record<string, {
+  innerVoice: string;
+  loveAngles: string[];
+  careerAngles: string[];
+  healthAngles: string[];
+}> = {
+  aries: {
+    innerVoice: '我想快點有結果，不想一直被拖住。',
+    loveAngles: ['直接開口但不要逼問', '把急躁轉成清楚邀請', '先確認自己的需求再行動'],
+    careerAngles: ['收尾舊任務再開新局', '避免衝動下決定或消費', '把行動力放在一個明確目標'],
+    healthAngles: ['頭部緊繃', '睡眠被急躁影響', '用短暫運動消耗焦躁'],
+  },
+  taurus: {
+    innerVoice: '我需要安全感，但又怕一改變就失控。',
+    loveAngles: ['用穩定陪伴取代反覆確認', '說出真正在意的生活細節', '避免用沉默測試對方'],
+    careerAngles: ['盤點資源和金錢安全感', '把慢步調變成穩定推進', '留意抗拒新做法'],
+    healthAngles: ['喉嚨或肩頸', '飲食和作息穩定度', '用伸展放掉固著感'],
+  },
+  gemini: {
+    innerVoice: '我腦中有很多想法，但不知道先回哪一個。',
+    loveAngles: ['說清楚而不是試探', '少用訊息速度解讀關係', '把玩笑後面的真心講明白'],
+    careerAngles: ['把想法列成三點', '先完成一段溝通或文件', '避免同時開太多任務'],
+    healthAngles: ['神經緊繃', '呼吸變淺', '放下螢幕整理思緒'],
+  },
+  cancer: {
+    innerVoice: '我很在意對方反應，但不想顯得太需要。',
+    loveAngles: ['把敏感化成溫柔表達', '不替對方補完整段劇情', '先照顧自己的安全感'],
+    careerAngles: ['建立可依靠的工作節奏', '整理帳務讓心安定', '不要用情緒決定支出'],
+    healthAngles: ['胃部和胸口悶', '情緒性疲勞', '用熱飲或散步安撫身體'],
+  },
+  leo: {
+    innerVoice: '我想被看見，但又怕自己不夠亮。',
+    loveAngles: ['主動表達但不等掌聲', '說出想被重視的地方', '避免用面子包住脆弱'],
+    careerAngles: ['把曝光和作品往前推', '定義一個可以被看見的成果', '留意為了形象而花錢'],
+    healthAngles: ['心口壓力', '背部或疲憊感', '用休息恢復自信而非硬撐'],
+  },
+  virgo: {
+    innerVoice: '我想做好一點，所以一直覺得還不夠完整。',
+    loveAngles: ['不要把小細節放大成問題', '用一句柔軟的話取代分析', '少挑錯多說需求'],
+    careerAngles: ['先完成可交付版本', '整理流程但不要過度修正', '檢查支出細節和帳務'],
+    healthAngles: ['腸胃', '焦慮型疲勞', '用簡單整理降低壓力'],
+  },
+  libra: {
+    innerVoice: '我想讓大家舒服，但也怕自己的需求不被放進去。',
+    loveAngles: ['不要只配合對方節奏', '把選擇說清楚', '練習不為了和諧吞下不舒服'],
+    careerAngles: ['談合作邊界', '確認報價或分工', '避免為了好看而多花錢'],
+    healthAngles: ['腰背或皮膚狀態', '被人際拉扯後疲憊', '留一段不被打擾的時間'],
+  },
+  scorpio: {
+    innerVoice: '我想知道真相，但又怕問出口會失控。',
+    loveAngles: ['少用測試確認安全感', '說出擔心而不是控制', '把直覺和證據分開'],
+    careerAngles: ['深入處理核心問題', '檢查金錢或合作風險', '避免因不信任而重做太多'],
+    healthAngles: ['睡眠深淺', '壓抑後的疲憊', '用書寫釋放緊繃'],
+  },
+  sagittarius: {
+    innerVoice: '我想往前走，但細節一直把我拉回來。',
+    loveAngles: ['用真誠分享取代逃避沉重話題', '承諾一個小而具體的行動', '不要用玩笑帶過在意'],
+    careerAngles: ['把大方向收成下一步', '整理學到的東西再分享', '避免衝動報名或投資'],
+    healthAngles: ['腿部和活動量', '坐不住的焦躁', '用戶外走動換氣'],
+  },
+  capricorn: {
+    innerVoice: '我不能鬆，鬆了好像就會落後。',
+    loveAngles: ['別把脆弱藏成冷靜', '主動說感謝或需要', '不要只用責任感經營關係'],
+    careerAngles: ['檢查長期目標和現實步驟', '處理責任和帳務', '避免過度壓縮自己'],
+    healthAngles: ['骨骼關節或肩背', '壓力累積', '安排真正能停下來的休息'],
+  },
+  aquarius: {
+    innerVoice: '我知道自己想法很多，但不知道哪個真的要落地。',
+    loveAngles: ['不要只用理性分析感受', '說一句真心而不是保持距離', '讓對方知道你在乎'],
+    careerAngles: ['把新想法變成可執行草稿', '清掉卡住的半成品', '確認資源分配是否太分散'],
+    healthAngles: ['神經系統緊繃', '作息不規律', '離線讓腦袋降噪'],
+  },
+  pisces: {
+    innerVoice: '我感覺很多，但有點分不清哪些是自己的。',
+    loveAngles: ['設溫柔界線', '不要替對方承擔全部情緒', '用清楚一句話說出感受'],
+    careerAngles: ['把靈感落成小步驟', '整理模糊支出和承諾', '避免因心軟接下太多'],
+    healthAngles: ['睡眠和水腫感', '情緒吸收過多', '用安靜時間回到自己'],
+  },
+};
+
 const fortuneResultSchema = z.object({
   overall: z.string(),
   overallScore: z.coerce.number().int().min(1).max(10),
@@ -255,6 +335,7 @@ export const fortuneRouter = router({
 
       // 取得星座特性
       const traits = ZODIAC_TRAITS[input.sign] || null;
+      const signGuide = ZODIAC_FORTUNE_GUIDES[input.sign] || null;
       const fallbackFortune = buildFallbackFortune({
         signName: input.signName,
         date: input.date,
@@ -270,19 +351,28 @@ export const fortuneRouter = router({
 - 優勢：${traits.strengths}
 - 成長課題：${traits.challenges}`
         : '';
+      const signGuideDesc = signGuide
+        ? `【今日星座寫作方向】
+- 內在聲音：${signGuide.innerVoice}
+- 感情可選角度：${signGuide.loveAngles.join('、')}
+- 事業財務可選角度：${signGuide.careerAngles.join('、')}
+- 健康可選角度：${signGuide.healthAngles.join('、')}`
+        : '';
 
       const systemPrompt = `${DAILY_FORTUNE_STYLE}
 
 內容判斷規則：
 - 運勢要實際、給得出具體感受，不空泛。
-- 今天的月相名稱最多在 overall、crystalReason、advice 其中 2 個欄位明確出現；其他欄位可改用「起點感」「整理的氣氛」「適合收尾的節奏」等語感。
-- 星座特性要寫成使用者自己的內在聲音或日常慣性，不要只列特質名詞。
-- love 要少一點教導感，多一點日常互動感；例如小邀請、清楚回一句、別用單一訊號腦補整段關係。
-- career 必須同時寫到工作與財務，不可以只寫工作；財務可以是報價、付款、支出、帳務、衝動消費、投資節奏或資源分配。
+- 星座差異是主角，月相只是今天的背景節奏。每個欄位都要至少有 1 個地方明顯呼應該星座的內在聲音、優勢或課題。
+- 今天的月相名稱最多在 overall、crystalReason、advice 其中 2 個欄位明確出現；其他欄位可改用「起點感」「整理的氣氛」「適合收尾的節奏」等語感，但不要讓每個星座都像同一篇月相日記。
+- 星座特性要寫成使用者自己的內在聲音或日常慣性，不要只列特質名詞。請優先使用「今日星座寫作方向」裡的角度。
+- love 要少一點教導感，多一點日常互動感；不要每次都只寫晚回訊息、小邀請或不要腦補。請依星座改寫成不同情境，例如界線、表達、確認需求、放下面子、少測試、少配合、說清楚。
+- career 必須同時寫到工作與財務，不可以只寫工作；不要每次都只寫報價、待收帳款或衝動消費。請依星座改寫成不同情境，例如曝光作品、整理流程、合作分工、資源分配、長期目標、半成品落地、接案承諾。
 - health 必須寫到身體感受和一個今天能做的小照顧；可以是肩頸、腸胃、睡眠、補水、散步、伸展或放下螢幕。
 - 避免只說「能量提升」「磁場轉換」「保持覺察」這類抽象詞；如果提到抽象感受，要接一句白話例子。
 - 結合月相能量與星座特性給予個性化建議。
 - 水晶推薦要與月相能量和星座元素相呼應。
+- 若同一天不同星座生成結果，整體、感情、事業財運的具體情境不可高度相似。
 - 請務必只輸出指定的 JSON 格式，欄位內的文字都用上面範例那種 LINE 私訊口吻來寫。`;
 
       const userPrompt = `請為${input.signName}（${input.sign}）生成 ${input.date} 的每日運勢。
@@ -293,15 +383,17 @@ export const fortuneRouter = router({
 
 ${traitsDesc}
 
+${signGuideDesc}
+
 請結合以上月相能量與星座特性，生成個性化的每日運勢。以 JSON 格式回傳：
 {
-  "overall": "整體運勢描述（4-7個短行；結合月相能量與星座內在慣性；說出今天容易卡住的心理聲音，以及可以怎麼調整，例如先把一件事拆成小步驟）",
+  "overall": "整體運勢描述（4-7個短行；星座內在聲音要比月相更明顯；說出今天容易卡住的心理聲音，以及可以怎麼調整）",
   "overallScore": 整體分數（1-10的整數）,
-  "love": "愛情運勢描述（4-7個短行；用日常互動語氣說出容易腦補或卡住的地方，以及可以怎麼做，例如先丟出一個小邀請，不要只用回訊息速度判斷）",
+  "love": "愛情運勢描述（4-7個短行；依今日星座寫作方向選一個感情角度，不要固定寫晚回訊息、小邀請、不要腦補）",
   "loveScore": 愛情分數（1-10的整數）,
-  "career": "事業財運描述（4-7個短行；同時包含工作與財務，說出容易卡住的原因，以及可以怎麼做，例如收尾任務、整理報價、確認付款或避開衝動消費）",
+  "career": "事業財運描述（4-7個短行；同時包含工作與財務；依今日星座寫作方向選一個工作角度和一個金錢角度，不要固定寫報價、待收帳款、衝動消費）",
   "careerScore": 事業分數（1-10的整數）,
-  "health": "健康運勢描述（4-7個短行；說出今天身體可能反映在哪裡，以及可以怎麼照顧，例如補水、伸展、早點休息或散步十分鐘）",
+  "health": "健康運勢描述（4-7個短行；依今日星座寫作方向說出身體可能反映在哪裡，以及一個今天能做的小照顧）",
   "healthScore": 健康分數（1-10的整數）,
   "luckyColor": "幸運色（單一顏色名稱，與月相或星座元素相關）",
   "luckyNumber": 幸運數字（1-99的整數）,
