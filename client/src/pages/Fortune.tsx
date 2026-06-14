@@ -396,7 +396,6 @@ export default function FortunePage() {
         `健康提醒（${d.healthScore}/10）：${d.health}`,
         `幸運資訊：${d.luckyColor}｜${d.luckyNumber}｜${d.crystal}`,
         `水晶原因：${d.crystalReason}`,
-        `月相：${d.moonSymbol} ${d.moonPhase}`,
         `行動建議：${d.advice}`,
       ].join('\n\n'),
     });
@@ -679,23 +678,6 @@ export default function FortunePage() {
                                   </div>
                                 </div>
                               ))}
-                            </div>
-
-                            {/* Today's advice */}
-                            <div className="pt-4 border-t border-[#D1BE9B]/15">
-                              <div className="flex gap-3">
-                                <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">☽</span>
-                                <div>
-                                  <p className="text-[12px] tracking-[0.2em] text-[#6F5A3A] mb-1"
-                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                                    今日月相指引
-                                  </p>
-                                  <div className="text-[13.5px] leading-[2] text-[#31353A]/72 tracking-wider italic prose prose-sm max-w-none prose-strong:text-[#31353A]/90 prose-strong:font-semibold [&_p]:!text-[13.5px] [&_p]:!leading-[2]"
-                                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                                    <Streamdown>{aiData.advice}</Streamdown>
-                                  </div>
-                                </div>
-                              </div>
                             </div>
 
                             {/* Product recommendation */}
