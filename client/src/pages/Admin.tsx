@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { Fragment, FormEvent, useEffect, useMemo, useState } from 'react';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -494,6 +494,12 @@ function UsersTable({
   onDeleteUser: (row: AdminUserRow) => void;
 }) {
   const [creditInputs, setCreditInputs] = useState<Record<number, string>>({});
+  const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
+  const selectedUser = rows.find((row) => row.id === expandedUserId) ?? null;
+  const userReadingsQuery = trpc.admin.userReadings.useQuery(
+    { userId: expandedUserId ?? 0, limit: 100 },
+    { enabled: expandedUserId != null }
+  );
 
   useEffect(() => {
     setCreditInputs((current) => {
@@ -517,18 +523,19 @@ function UsersTable({
             <th className="px-4 py-3 font-normal">今日免費已用</th>
             <th className="px-4 py-3 font-normal">註冊時間</th>
             <th className="px-4 py-3 font-normal">最後登入</th>
+            <th className="px-4 py-3 font-normal">歷史</th>
             <th className="px-4 py-3 font-normal">操作</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
           {message && (
             <tr>
-              <td colSpan={8} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
+              <td colSpan={9} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
                 {message}
               </td>
             </tr>
           )}
-          {rows.length === 0 ? <EmptyRow colSpan={8} /> : rows.map((row) => {
+          {rows.length === 0 ? <EmptyRow colSpan={9} /> : rows.map((row) => {
             const inputValue = creditInputs[row.id] ?? String(row.credits);
             const parsedCredits = Number(inputValue.trim());
             const canSaveCredits =
@@ -541,61 +548,121 @@ function UsersTable({
             const isRowAdjusting = isAdjusting && adjustingUserId === row.id;
             const isCurrentUser = row.id === currentUserId;
             const isRowDeleting = isDeleting && deletingUserId === row.id;
+            const isExpanded = expandedUserId === row.id;
             return (
-            <tr key={row.id}>
-              <td className="px-4 py-3">{row.id}</td>
-              <td className="px-4 py-3">
-                <div>{row.email ?? '—'}</div>
-                <div className="mt-1 text-[11px] text-[#31353A]/42">{row.name ?? row.loginMethod ?? '—'}</div>
-              </td>
-              <td className="px-4 py-3">{row.role}</td>
-              <td className="px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min={0}
-                    max={100000}
-                    step={1}
-                    value={inputValue}
-                    onChange={(event) => {
-                      setCreditInputs((current) => ({
-                        ...current,
-                        [row.id]: event.target.value,
-                      }));
-                    }}
-                    className="w-24 rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-1.5 text-xs text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  />
+            <Fragment key={row.id}>
+              <tr key={row.id} className={isExpanded ? 'bg-[#D1BE9B]/5' : undefined}>
+                <td className="px-4 py-3">{row.id}</td>
+                <td className="px-4 py-3">
+                  <div>{row.email ?? '—'}</div>
+                  <div className="mt-1 text-[11px] text-[#31353A]/42">{row.name ?? row.loginMethod ?? '—'}</div>
+                </td>
+                <td className="px-4 py-3">{row.role}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={0}
+                      max={100000}
+                      step={1}
+                      value={inputValue}
+                      onChange={(event) => {
+                        setCreditInputs((current) => ({
+                          ...current,
+                          [row.id]: event.target.value,
+                        }));
+                      }}
+                      className="w-24 rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-1.5 text-xs text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    />
+                    <button
+                      type="button"
+                      disabled={!canSaveCredits}
+                      onClick={() => onUpdateCredits(row, parsedCredits)}
+                      className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    >
+                      {isRowAdjusting ? '儲存中' : '儲存'}
+                    </button>
+                  </div>
+                </td>
+                <td className="px-4 py-3">{row.freeUsedToday}</td>
+                <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
+                <td className="px-4 py-3">{formatDate(row.lastSignedIn)}</td>
+                <td className="px-4 py-3">
                   <button
                     type="button"
-                    disabled={!canSaveCredits}
-                    onClick={() => onUpdateCredits(row, parsedCredits)}
-                    className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                    onClick={() => setExpandedUserId(isExpanded ? null : row.id)}
+                    className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
-                    {isRowAdjusting ? '儲存中' : '儲存'}
+                    {isExpanded ? '收合' : '歷史問答'}
                   </button>
-                </div>
-              </td>
-              <td className="px-4 py-3">{row.freeUsedToday}</td>
-              <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
-              <td className="px-4 py-3">{formatDate(row.lastSignedIn)}</td>
-              <td className="px-4 py-3">
-                <button
-                  type="button"
-                  disabled={isCurrentUser || isDeleting}
-                  onClick={() => onDeleteUser(row)}
-                  className="rounded-md border border-[#C9837A]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
-                  title={isCurrentUser ? '不能刪除目前登入中的管理員帳號' : '刪除會員'}
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  {isRowDeleting ? '刪除中' : '刪除'}
-                </button>
-              </td>
-            </tr>
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    type="button"
+                    disabled={isCurrentUser || isDeleting}
+                    onClick={() => onDeleteUser(row)}
+                    className="rounded-md border border-[#C9837A]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
+                    title={isCurrentUser ? '不能刪除目前登入中的管理員帳號' : '刪除會員'}
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    {isRowDeleting ? '刪除中' : '刪除'}
+                  </button>
+                </td>
+              </tr>
+              {isExpanded && (
+                <tr key={`${row.id}-readings`}>
+                  <td colSpan={9} className="bg-[#FAF7F4]/70 px-4 py-4">
+                    <UserReadingHistory
+                      user={selectedUser}
+                      rows={userReadingsQuery.data ?? []}
+                      isLoading={userReadingsQuery.isLoading || userReadingsQuery.isFetching}
+                      isError={userReadingsQuery.isError}
+                    />
+                  </td>
+                </tr>
+              )}
+            </Fragment>
           )})}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function UserReadingHistory({
+  user,
+  rows,
+  isLoading,
+  isError,
+}: {
+  user: AdminUserRow | null;
+  rows: AdminReadingRow[];
+  isLoading: boolean;
+  isError: boolean;
+}) {
+  const label = user?.email ?? user?.name ?? (user ? `會員 #${user.id}` : '會員');
+
+  return (
+    <div className="rounded-lg border border-[#D1BE9B]/18 bg-white/60">
+      <div className="flex flex-col gap-1 border-b border-[#D1BE9B]/12 px-4 py-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-[11px] tracking-[0.16em] text-[#A38D6B]">歷史問答</p>
+          <p className="mt-1 text-xs tracking-[0.08em] text-[#31353A]/55">{label}</p>
+        </div>
+        <p className="text-[11px] tracking-[0.1em] text-[#31353A]/42">
+          最新 {rows.length.toLocaleString('zh-TW')} 筆
+        </p>
+      </div>
+      {isLoading ? (
+        <div className="px-4 py-8 text-center text-xs tracking-[0.16em] text-[#31353A]/42">載入中</div>
+      ) : isError ? (
+        <div className="px-4 py-8 text-center text-xs tracking-[0.16em] text-[#C9837A]">歷史問答載入失敗</div>
+      ) : (
+        <ReadingsTable rows={rows} />
+      )}
     </div>
   );
 }

@@ -179,6 +179,39 @@ export const adminRouter = router({
         feedbacks: feedbackRows,
       };
     }),
+  userReadings: adminProcedure
+    .input(
+      z.object({
+        userId: z.number().int().positive(),
+        limit: z.number().int().min(1).max(100).default(100),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        return [];
+      }
+
+      return db
+        .select({
+          id: readings.id,
+          userId: readings.userId,
+          anonId: readings.anonId,
+          ipHash: readings.ipHash,
+          email: users.email,
+          name: users.name,
+          type: readings.type,
+          question: readings.question,
+          inputData: readings.inputData,
+          interpretation: readings.interpretation,
+          createdAt: readings.createdAt,
+        })
+        .from(readings)
+        .leftJoin(users, eq(readings.userId, users.id))
+        .where(eq(readings.userId, input.userId))
+        .orderBy(desc(readings.createdAt))
+        .limit(input.limit);
+    }),
   updateDailyFreeQuota: adminProcedure
     .input(
       z.object({
