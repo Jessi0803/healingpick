@@ -7,11 +7,20 @@ import { CatPeeking } from '@/components/CatElements';
 import { Textarea } from '@/components/ui/textarea';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { useRotatingText } from '@/hooks/useRotatingText';
 
 const sampleDreams = [
   '夢到自己一直在找出口，可是每扇門打開都不是我要去的地方。',
   '夢到以前很重要的人突然出現，我們好像很熟，又好像很陌生。',
   '夢到牙齒掉了，醒來之後心裡很慌，但說不上來在怕什麼。',
+];
+
+const DREAM_WAITING_MESSAGES = [
+  'Mochi 正在讀夢',
+  'Mochi 把夢裡的小碎片排排坐',
+  'Mochi 正在摸摸夢的邊邊',
+  '夢裡的訊號正在慢慢亮起來',
+  '再等一下下，Mochi 快拼好了',
 ];
 
 export default function DreamPage() {
@@ -49,6 +58,7 @@ export default function DreamPage() {
       toast.error('Mochi 暫時讀不到這個夢，請稍後再試');
     },
   });
+  const waitingMessage = useRotatingText(DREAM_WAITING_MESSAGES, interpretMutation.isPending, 2400);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -139,7 +149,7 @@ export default function DreamPage() {
                 {interpretMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Mochi 正在讀夢
+                    {waitingMessage}
                   </>
                 ) : (
                   <>
@@ -162,7 +172,7 @@ export default function DreamPage() {
                 {interpretMutation.isPending ? (
                   <p className="text-[13px] leading-[2.2] tracking-[0.12em] text-[#31353A]/54"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                    先別急，Mochi 正在把夢裡的畫面慢慢拼起來～
+                    {waitingMessage}
                   </p>
                 ) : (
                   <div className="text-[14px] leading-[2.15] tracking-[0.08em] text-[#31353A]/76"
