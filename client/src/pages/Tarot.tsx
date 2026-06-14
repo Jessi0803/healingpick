@@ -483,12 +483,12 @@ const TAROT_RECOMMENDATION_MESSAGES: Record<string, string> = {
 const TAROT_PENDING_FOLLOW_UP_KEY = 'healingpick:tarot-pending-follow-up';
 const TAROT_PENDING_START_KEY = 'healingpick:tarot-pending-start';
 const FOLLOW_UP_LOGIN_PROMPT = {
-  title: '登入後繼續追問',
-  subtitle: '新朋友註冊送 5 點，可以多算幾次 🐾',
+  title: '登入會員，獲得更準確的個人解析',
+  subtitle: '加入會員後，系統能依據你過往的資料與使用紀錄，讓每次解析更符合你的狀態與脈絡。',
 };
 const REPEAT_READING_LOGIN_PROMPT = {
-  title: '登入後繼續占卜',
-  subtitle: 'Mochi 幫你把這次想問的事留著。登入後會回到這一頁繼續算；新朋友註冊送 5 點，可以多算幾次 🐾',
+  title: '登入會員，獲得更準確的個人解析',
+  subtitle: '加入會員後，系統能依據你過往的資料與使用紀錄，讓每次解析更符合你的狀態與脈絡。',
 };
 
 export default function TarotPage() {

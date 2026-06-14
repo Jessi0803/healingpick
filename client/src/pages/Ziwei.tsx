@@ -400,12 +400,12 @@ type FollowUpExchange = {
 const ZIWEI_PENDING_FOLLOW_UP_KEY = 'healingpick:ziwei-pending-follow-up';
 const ZIWEI_PENDING_GENERATE_KEY = 'healingpick:ziwei-pending-generate';
 const FOLLOW_UP_LOGIN_PROMPT = {
-  title: '登入後繼續追問',
-  subtitle: '新朋友註冊送 5 點，可以多算幾次 🐾',
+  title: '登入會員，獲得更準確的個人解析',
+  subtitle: '加入會員後，系統能依據你過往的資料與使用紀錄，讓每次解析更符合你的狀態與脈絡。',
 };
 const REPEAT_READING_LOGIN_PROMPT = {
-  title: '登入後繼續看命盤',
-  subtitle: 'Mochi 幫你把這次想看的方向留著。登入後會回到這一頁繼續排盤；新朋友註冊送 5 點，可以多算幾次 🐾',
+  title: '登入會員，獲得更準確的個人解析',
+  subtitle: '加入會員後，系統能依據你過往的資料與使用紀錄，讓每次解析更符合你的狀態與脈絡。',
 };
 
 export default function ZiweiPage() {

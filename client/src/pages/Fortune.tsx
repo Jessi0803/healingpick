@@ -20,8 +20,8 @@ import { getContextualRecommendationReason, getProductImageStyle, type Product }
 import { useRotatingText } from '@/hooks/useRotatingText';
 
 const REPEAT_READING_LOGIN_PROMPT = {
-  title: '登入後繼續查看',
-  subtitle: 'Mochi 幫你把這次想看的運勢留著。新朋友註冊送 5 點，可以多看幾次 🐾',
+  title: '登入會員，獲得更準確的個人解析',
+  subtitle: '加入會員後，系統能依據你過往的資料與使用紀錄，讓每次解析更符合你的狀態與脈絡。',
 };
 
 // ─── Zodiac Signs ─────────────────────────────────────────────────────────────
