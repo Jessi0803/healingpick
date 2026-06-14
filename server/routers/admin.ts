@@ -81,6 +81,7 @@ export const adminRouter = router({
               email: users.email,
               role: users.role,
               loginMethod: users.loginMethod,
+              adminNote: users.adminNote,
               credits: users.credits,
               freeUsedToday: users.freeUsedToday,
               lastFreeReset: users.lastFreeReset,
@@ -274,6 +275,42 @@ export const adminRouter = router({
       });
 
       return { userId: user.id, credits: user.credits };
+    }),
+  updateUserNote: adminProcedure
+    .input(
+      z.object({
+        userId: z.number().int().positive(),
+        adminNote: z.string().max(2000),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database unavailable",
+        });
+      }
+
+      const normalizedNote = input.adminNote.trim();
+      const updated = await db
+        .update(users)
+        .set({ adminNote: normalizedNote || null })
+        .where(eq(users.id, input.userId))
+        .returning({
+          id: users.id,
+          adminNote: users.adminNote,
+        });
+
+      const user = updated[0];
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "找不到這個會員",
+        });
+      }
+
+      return { userId: user.id, adminNote: user.adminNote };
     }),
   deleteUser: adminProcedure
     .input(

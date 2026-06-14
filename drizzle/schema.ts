@@ -17,6 +17,7 @@ export const users = pgTable("users", {
   birthDate: varchar("birthDate", { length: 10 }),
   birthTime: varchar("birthTime", { length: 16 }),
   gender: varchar("gender", { length: 16 }),
+  adminNote: text("adminNote"),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: roleEnum("role").default("user").notNull(),
   /** Purchasable point balance. Each paid reading consumes from here. */

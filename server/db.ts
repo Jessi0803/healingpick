@@ -17,6 +17,7 @@ type Db = ReturnType<typeof drizzle>;
 let _db: Db | null = null;
 let userProfileColumnsReady = false;
 let readingSummaryColumnReady = false;
+let userAdminNoteColumnReady = false;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 // Uses postgres-js against Supabase's pooled connection (prepare:false is
@@ -30,6 +31,7 @@ export async function getDb(): Promise<Db | null> {
       });
       _db = drizzle(client);
       await ensureUserProfileColumns(_db);
+      await ensureUserAdminNoteColumn(_db);
       await ensureReadingSummaryColumn(_db);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
@@ -59,6 +61,14 @@ async function ensureUserProfileColumns(db: Db) {
     ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "gender" varchar(16)
   `);
   userProfileColumnsReady = true;
+}
+
+async function ensureUserAdminNoteColumn(db: Db) {
+  if (userAdminNoteColumnReady) return;
+  await db.execute(sql`
+    ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "adminNote" text
+  `);
+  userAdminNoteColumnReady = true;
 }
 
 async function ensureReadingSummaryColumn(db: Db) {

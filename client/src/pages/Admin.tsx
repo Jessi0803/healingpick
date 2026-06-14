@@ -40,6 +40,7 @@ type AdminUserRow = {
   email: string | null;
   role: 'user' | 'admin';
   loginMethod: string | null;
+  adminNote: string | null;
   credits: number;
   freeUsedToday: number;
   createdAt: Date;
@@ -164,6 +165,15 @@ export default function AdminPage() {
       setUserActionMessage(error.message || '點數更新失敗，請稍後再試');
     },
   });
+  const updateUserNoteMutation = trpc.admin.updateUserNote.useMutation({
+    onSuccess: async (result) => {
+      setUserActionMessage(`已更新會員 #${result.userId} 備註`);
+      await dashboardQuery.refetch();
+    },
+    onError: (error) => {
+      setUserActionMessage(error.message || '備註更新失敗，請稍後再試');
+    },
+  });
   const deleteUserMutation = trpc.admin.deleteUser.useMutation({
     onSuccess: async (result) => {
       const label = result.email ?? result.name ?? `會員 #${result.id}`;
@@ -206,6 +216,11 @@ export default function AdminPage() {
 
     setUserActionMessage('');
     updateUserCreditsMutation.mutate({ userId: row.id, credits });
+  };
+
+  const handleUpdateUserNote = (row: AdminUserRow, adminNote: string) => {
+    setUserActionMessage('');
+    updateUserNoteMutation.mutate({ userId: row.id, adminNote });
   };
 
   const handleDeleteUser = (row: AdminUserRow) => {
@@ -428,9 +443,12 @@ export default function AdminPage() {
                   isAdjusting={updateUserCreditsMutation.isPending}
                   deletingUserId={deleteUserMutation.variables?.userId ?? null}
                   isDeleting={deleteUserMutation.isPending}
+                  savingNoteUserId={updateUserNoteMutation.variables?.userId ?? null}
+                  isSavingNote={updateUserNoteMutation.isPending}
                   message={userActionMessage}
                   currentUserId={user.id}
                   onUpdateCredits={handleUpdateUserCredits}
+                  onUpdateNote={handleUpdateUserNote}
                   onDeleteUser={handleDeleteUser}
                 />
               )}
@@ -478,9 +496,12 @@ function UsersTable({
   isAdjusting,
   deletingUserId,
   isDeleting,
+  savingNoteUserId,
+  isSavingNote,
   message,
   currentUserId,
   onUpdateCredits,
+  onUpdateNote,
   onDeleteUser,
 }: {
   rows: AdminUserRow[];
@@ -488,12 +509,16 @@ function UsersTable({
   isAdjusting: boolean;
   deletingUserId: number | null;
   isDeleting: boolean;
+  savingNoteUserId: number | null;
+  isSavingNote: boolean;
   message: string;
   currentUserId: number;
   onUpdateCredits: (row: AdminUserRow, credits: number) => void;
+  onUpdateNote: (row: AdminUserRow, adminNote: string) => void;
   onDeleteUser: (row: AdminUserRow) => void;
 }) {
   const [creditInputs, setCreditInputs] = useState<Record<number, string>>({});
+  const [noteInputs, setNoteInputs] = useState<Record<number, string>>({});
   const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
   const selectedUser = rows.find((row) => row.id === expandedUserId) ?? null;
   const userReadingsQuery = trpc.admin.userReadings.useQuery(
@@ -511,9 +536,19 @@ function UsersTable({
     });
   }, [rows]);
 
+  useEffect(() => {
+    setNoteInputs((current) => {
+      const next: Record<number, string> = {};
+      for (const row of rows) {
+        next[row.id] = current[row.id] ?? row.adminNote ?? '';
+      }
+      return next;
+    });
+  }, [rows]);
+
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1080px] text-left">
+      <table className="w-full min-w-[1320px] text-left">
         <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
           <tr>
             <th className="px-4 py-3 font-normal">ID</th>
@@ -523,6 +558,7 @@ function UsersTable({
             <th className="px-4 py-3 font-normal">今日免費已用</th>
             <th className="px-4 py-3 font-normal">註冊時間</th>
             <th className="px-4 py-3 font-normal">最後登入</th>
+            <th className="px-4 py-3 font-normal">備註</th>
             <th className="px-4 py-3 font-normal">歷史</th>
             <th className="px-4 py-3 font-normal">操作</th>
           </tr>
@@ -530,13 +566,14 @@ function UsersTable({
         <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
           {message && (
             <tr>
-              <td colSpan={9} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
+              <td colSpan={10} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
                 {message}
               </td>
             </tr>
           )}
-          {rows.length === 0 ? <EmptyRow colSpan={9} /> : rows.map((row) => {
+          {rows.length === 0 ? <EmptyRow colSpan={10} /> : rows.map((row) => {
             const inputValue = creditInputs[row.id] ?? String(row.credits);
+            const noteValue = noteInputs[row.id] ?? row.adminNote ?? '';
             const parsedCredits = Number(inputValue.trim());
             const canSaveCredits =
               inputValue.trim() !== '' &&
@@ -545,7 +582,12 @@ function UsersTable({
               parsedCredits <= 100000 &&
               parsedCredits !== row.credits &&
               !isAdjusting;
+            const canSaveNote =
+              noteValue.trim() !== (row.adminNote ?? '') &&
+              noteValue.length <= 2000 &&
+              !isSavingNote;
             const isRowAdjusting = isAdjusting && adjustingUserId === row.id;
+            const isRowSavingNote = isSavingNote && savingNoteUserId === row.id;
             const isCurrentUser = row.id === currentUserId;
             const isRowDeleting = isDeleting && deletingUserId === row.id;
             const isExpanded = expandedUserId === row.id;
@@ -590,6 +632,38 @@ function UsersTable({
                 <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
                 <td className="px-4 py-3">{formatDate(row.lastSignedIn)}</td>
                 <td className="px-4 py-3">
+                  <div className="flex min-w-64 flex-col gap-2">
+                    <textarea
+                      value={noteValue}
+                      maxLength={2000}
+                      rows={3}
+                      onChange={(event) => {
+                        setNoteInputs((current) => ({
+                          ...current,
+                          [row.id]: event.target.value,
+                        }));
+                      }}
+                      placeholder="寫給自己的會員小筆記"
+                      className="min-h-20 resize-y rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs leading-[1.7] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    />
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] tracking-[0.08em] text-[#31353A]/38">
+                        {noteValue.length}/2000
+                      </span>
+                      <button
+                        type="button"
+                        disabled={!canSaveNote}
+                        onClick={() => onUpdateNote(row, noteValue)}
+                        className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        {isRowSavingNote ? '儲存中' : '儲存備註'}
+                      </button>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
                   <button
                     type="button"
                     onClick={() => setExpandedUserId(isExpanded ? null : row.id)}
@@ -614,7 +688,7 @@ function UsersTable({
               </tr>
               {isExpanded && (
                 <tr key={`${row.id}-readings`}>
-                  <td colSpan={9} className="bg-[#FAF7F4]/70 px-4 py-4">
+                  <td colSpan={10} className="bg-[#FAF7F4]/70 px-4 py-4">
                     <UserReadingHistory
                       user={selectedUser}
                       rows={userReadingsQuery.data ?? []}
