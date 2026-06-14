@@ -8,7 +8,7 @@ import { buildReadingSummary } from "../_core/readingMemory";
 
 export const historyRouter = router({
   /**
-   * 取得使用者的占卜歷史（塔羅、紫微、每日運勢）
+   * 取得使用者的占卜歷史（塔羅、紫微、每日運勢、解夢）
    */
   getReadings: protectedProcedure
     .input(z.object({ limit: z.number().min(1).max(50).default(20) }))
@@ -24,7 +24,7 @@ export const historyRouter = router({
   saveReading: publicProcedure
     .input(
       z.object({
-        type: z.enum(["tarot", "ziwei", "fortune"]),
+        type: z.enum(["tarot", "ziwei", "fortune", "dream"]),
         question: z.string().max(500).optional(),
         inputData: z.string().max(5000).optional(),
         interpretation: z.string().max(10000).optional(),

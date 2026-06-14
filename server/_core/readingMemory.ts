@@ -6,6 +6,7 @@ const TYPE_LABELS = {
   tarot: "塔羅",
   ziwei: "紫微",
   fortune: "每日運勢",
+  dream: "Mochi 解夢",
 } as const;
 
 function compactText(value: string, maxLength: number) {

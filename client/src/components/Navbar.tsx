@@ -17,13 +17,14 @@ import { trpc } from '@/lib/trpc';
 const navLinks = [
   { label: '塔羅占卜', href: '/tarot' },
   { label: '紫微斗數', href: '/ziwei' },
+  { label: 'Mochi 解夢', href: '/dream' },
   { label: '每日運勢', href: '/fortune/daily' },
   { label: '心理測驗', href: '/quiz' },
   { label: '能量商品', href: '/shop' },
   { label: '購買點數', href: '/buy' },
 ];
 
-const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、每日運勢用完免費額度後，每次解讀消耗 1 點。';
+const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、Mochi 解夢、每日運勢用完免費額度後，每次解讀消耗 1 點。';
 
 export default function Navbar() {
   const { user, isAuthenticated, login, logout } = useAuth();
@@ -154,7 +155,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav – centred, flat */}
-          <div className="hidden lg:flex items-center justify-center gap-6 absolute left-1/2 -translate-x-1/2">
+          <div className="hidden xl:flex items-center justify-center gap-5 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => renderNavLink(link))}
           </div>
 
@@ -163,7 +164,7 @@ export default function Navbar() {
           <div className="flex items-center justify-end gap-3">
             {/* Desktop auth */}
             {isAuthenticated ? (
-              <div className="hidden lg:flex items-center gap-3">
+              <div className="hidden xl:flex items-center gap-3">
                 {credits?.enabled && (
                   <Link
                     href="/buy"
@@ -208,7 +209,7 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <div className="hidden lg:flex items-center gap-3">
+              <div className="hidden xl:flex items-center gap-3">
                 {freeQuotaLabel && (
                   <span className="text-xs tracking-[0.15em] text-[#A38D6B]"
                     title={creditsHint}
@@ -228,7 +229,7 @@ export default function Navbar() {
 
             {/* Hamburger */}
             <button
-              className="lg:hidden p-2 text-[#31353A]/80 hover:text-[#D1BE9B] transition-colors"
+              className="xl:hidden p-2 text-[#31353A]/80 hover:text-[#D1BE9B] transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
@@ -240,7 +241,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-36 bottom-0 z-40 lg:hidden">
+        <div className="fixed inset-x-0 top-36 bottom-0 z-40 xl:hidden">
           <div
             className="absolute inset-0 bg-[#3D4144]/20 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}

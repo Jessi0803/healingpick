@@ -29,7 +29,7 @@ function PurchasePolicySummary() {
               'Starter Pack：30 點，NT$70',
               'Standard Pack：100 點，NT$180',
               'Premium Pack：300 點，NT$450',
-              '塔羅、紫微、每日運勢會先消耗每日免費額度；用完後每次解讀扣 1 點。',
+              '塔羅、紫微、Mochi 解夢、每日運勢會先消耗每日免費額度；用完後每次解讀扣 1 點。',
               '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。',
             ].map((item) => (
               <li
@@ -162,7 +162,7 @@ export default function BuyPage() {
                 </p>
                 <p className="mt-3 text-[11px] leading-[1.9] tracking-[0.12em] text-[#31353A]/48"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                  免費額度每日 00:00 重置，已購買點數不會被清空；塔羅、紫微、每日運勢會先消耗免費額度，用完後每次扣 1 點。
+                  免費額度每日 00:00 重置，已購買點數不會被清空；塔羅、紫微、Mochi 解夢、每日運勢會先消耗免費額度，用完後每次扣 1 點。
                 </p>
               </div>
 

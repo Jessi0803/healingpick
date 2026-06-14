@@ -1,7 +1,7 @@
 /**
  * SOUL EASE | Mochi．crystal — 我的紀錄
  * Design: Wabi-Sabi Luxe × Morandi Oat Milk
- * Shows user's past readings (tarot, ziwei, fortune).
+ * Shows user's past readings (tarot, ziwei, fortune, dream).
  * Requires login.
  */
 
@@ -17,12 +17,14 @@ const TYPE_LABELS: Record<string, string> = {
   tarot: '塔羅牌占卜',
   ziwei: '紫微斗數',
   fortune: '每日運勢',
+  dream: 'Mochi 解夢',
 };
 
 const TYPE_ICONS: Record<string, string> = {
   tarot: '🔮',
   ziwei: '☯',
   fortune: '☀',
+  dream: '🌙',
 };
 
 const HOURS = [

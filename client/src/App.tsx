@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Tarot from "./pages/Tarot";
 import Ziwei from "./pages/Ziwei";
+import Dream from "./pages/Dream";
 import Fortune from "./pages/Fortune";
 import Quiz from "./pages/Quiz";
 import Shop from "./pages/Shop";
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/tarot" component={Tarot} />
       <Route path="/ziwei" component={Ziwei} />
+      <Route path="/dream" component={Dream} />
       <Route path="/fortune" component={Fortune} />
       <Route path="/fortune/daily" component={Fortune} />
       <Route path="/quiz" component={Quiz} />

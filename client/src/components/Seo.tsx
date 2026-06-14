@@ -4,7 +4,7 @@ import { findProduct } from '@/data/products';
 
 const SITE_URL = 'https://healingpick.com';
 const SITE_NAME = 'HealingPick 癒見好物';
-const DEFAULT_DESCRIPTION = '有些心事，可以先放進 Mochi 小宇宙。塔羅占卜、紫微斗數、每日運勢、心靈療癒與能量水晶。';
+const DEFAULT_DESCRIPTION = '有些心事，可以先放進 Mochi 小宇宙。塔羅占卜、紫微斗數、Mochi 解夢、每日運勢、心靈療癒與能量水晶。';
 
 const PAGE_META: Record<string, { title: string; description: string }> = {
   '/': {
@@ -18,6 +18,10 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
   '/ziwei': {
     title: `紫微斗數命盤｜${SITE_NAME}`,
     description: '輸入出生日期與時辰，查看紫微斗數命盤解析，理解自己的個性、優勢、關係與當下適合的方向。',
+  },
+  '/dream': {
+    title: `Mochi 解夢｜${SITE_NAME}`,
+    description: '寫下夢境與醒來後的感覺，讓 Mochi 用本站塔羅與紫微的口語解讀風格，陪你看見夢裡的情緒訊號。',
   },
   '/fortune': {
     title: `每日運勢｜${SITE_NAME}`,
@@ -37,11 +41,11 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
   },
   '/about': {
     title: `關於我們｜${SITE_NAME}`,
-    description: '認識 HealingPick 癒見好物，一個結合塔羅、紫微、每日運勢、心理測驗與療癒選物的平台。',
+    description: '認識 HealingPick 癒見好物，一個結合塔羅、紫微、Mochi 解夢、每日運勢、心理測驗與療癒選物的平台。',
   },
   '/buy': {
     title: `購買點數｜${SITE_NAME}`,
-    description: '購買 HealingPick 點數，繼續使用塔羅、紫微與每日運勢等療癒解讀服務。',
+    description: '購買 HealingPick 點數，繼續使用塔羅、紫微、Mochi 解夢與每日運勢等療癒解讀服務。',
   },
 };
 

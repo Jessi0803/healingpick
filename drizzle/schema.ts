@@ -1,7 +1,7 @@
 import { integer, pgEnum, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["user", "admin"]);
-export const readingTypeEnum = pgEnum("reading_type", ["tarot", "ziwei", "fortune"]);
+export const readingTypeEnum = pgEnum("reading_type", ["tarot", "ziwei", "fortune", "dream"]);
 export const feedbackSourceEnum = pgEnum("feedback_source", ["tarot", "ziwei"]);
 
 /**

@@ -18,6 +18,7 @@ const typeLabels: Record<string, string> = {
   tarot: '塔羅',
   ziwei: '紫微',
   fortune: '每日運勢',
+  dream: 'Mochi 解夢',
 };
 
 function getReadingKind(row: Pick<AdminReadingRow, 'type' | 'inputData'>) {
@@ -121,6 +122,7 @@ function reasonLabel(reason: string) {
   if (reason === 'tarot') return '塔羅扣點';
   if (reason === 'ziwei') return '紫微扣點';
   if (reason === 'fortune') return '每日運勢扣點';
+  if (reason === 'dream') return 'Mochi 解夢扣點';
   return reason;
 }
 

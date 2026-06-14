@@ -4,7 +4,7 @@
  * Sections:
  *   1. Hero + 3D Book (星夢之書)
  *   2. Crystal Altar (水晶祭壇)
- *   3. Features Overview (四大功能入口)
+ *   3. Features Overview (五大功能入口)
  *   4. Divination Preview (占卜聖殿入口)
  *   5. Quiz Teaser (心理測驗)
  *   6. Shop Preview (能量商品)
@@ -85,6 +85,14 @@ const features = [
     desc: '輸入生辰八字，排出專屬命盤，洞悉人生格局與流年運勢。',
     href: '/ziwei',
     color: '#DDD5C8',  // 暖米棕，比背景深一階
+  },
+  {
+    icon: '🌙',
+    title: 'Mochi 解夢',
+    subtitle: 'Dream Reading',
+    desc: '寫下夢境與醒來後的感覺，讓 Mochi 幫你看見夢裡真正想說的訊號。',
+    href: '/dream',
+    color: '#E8E4EE',
   },
   {
     icon: '☀',
@@ -343,7 +351,7 @@ export default function Home() {
             今日有 {dailyMochiVisitorCount} 人來找 Mochi 占卜
           </p>
 
-          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[20rem] sm:grid-cols-2">
+          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[32rem] sm:grid-cols-2 lg:grid-cols-5">
             <Link href="/tarot">
               <button
                 className="w-full px-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
@@ -358,6 +366,14 @@ export default function Home() {
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 紫微斗數
+              </button>
+            </Link>
+            <Link href="/dream">
+              <button
+                className="w-full px-4 py-3 text-xs tracking-[0.25em] border border-[#B7A8CF]/25 bg-[#F0ECF6]/34 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                Mochi 解夢
               </button>
             </Link>
             <Link href="/fortune">
@@ -410,7 +426,7 @@ export default function Home() {
               className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
             >
-              靈性療癒的四種方式
+              靈性療癒的五種方式
             </h2>
             <div className="divider-gold mt-4 max-w-xs mx-auto">
               <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none">
@@ -419,7 +435,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
             {features.map((f, i) => (
               <Link key={f.href} href={f.href}>
                 <div
