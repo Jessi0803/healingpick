@@ -67,16 +67,16 @@ export const dreamRouter = router({
       await chargeReading(ctx, "dream");
 
       const memberMemoryContext = await getMemberMemoryContext(ctx.user);
+      const optionalContext = [
+        input.wakeEmotion ? `醒來後的感覺：\n${input.wakeEmotion}` : "",
+        input.recentStatus ? `最近狀態：\n${input.recentStatus}` : "",
+      ].filter(Boolean).join("\n\n");
+
       const userPrompt = `請根據以下資料，產生一段 Mochi 解夢。
 
 夢境內容：
 ${input.dreamContent}
-
-醒來後的感覺：
-${input.wakeEmotion || "（使用者未填）"}
-
-最近狀態：
-${input.recentStatus || "（使用者未填）"}
+${optionalContext ? `\n\n${optionalContext}` : ""}
 ${memberMemoryContext}
 
 請用本站塔羅與紫微解讀那種口語私訊感來寫。
@@ -112,16 +112,20 @@ ${memberMemoryContext}
           })
         : null;
 
-      await saveReading({
-        userId: ctx.user?.id ?? null,
-        anonId: isMember ? null : ctx.anonId,
-        ipHash: isMember ? null : ctx.ipHash,
-        type: "dream",
-        question: input.dreamContent.slice(0, 500),
-        inputData,
-        interpretation,
-        summary,
-      });
+      try {
+        await saveReading({
+          userId: ctx.user?.id ?? null,
+          anonId: isMember ? null : ctx.anonId,
+          ipHash: isMember ? null : ctx.ipHash,
+          type: "dream",
+          question: input.dreamContent.slice(0, 500),
+          inputData,
+          interpretation,
+          summary,
+        });
+      } catch (error) {
+        console.warn("[dream] Failed to save reading", error);
+      }
 
       return { interpretation };
     }),

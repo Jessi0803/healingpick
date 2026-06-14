@@ -18,7 +18,6 @@ export default function DreamPage() {
   const { login } = useAuth();
   const utils = trpc.useUtils();
   const [dreamContent, setDreamContent] = useState('');
-  const [recentStatus, setRecentStatus] = useState('');
   const [interpretation, setInterpretation] = useState('');
 
   const canSubmit = dreamContent.trim().length >= 6;
@@ -57,7 +56,6 @@ export default function DreamPage() {
     setInterpretation('');
     interpretMutation.mutate({
       dreamContent: dreamContent.trim(),
-      recentStatus: recentStatus.trim() || undefined,
     });
   };
 
@@ -116,20 +114,6 @@ export default function DreamPage() {
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                   {remainingChars} 字
                 </span>
-              </label>
-
-              <label className="mt-5 block">
-                <span className="mb-2 block text-[12px] tracking-[0.22em] text-[#8A7250]"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                  最近狀態
-                </span>
-                <Textarea
-                  value={recentStatus}
-                  onChange={(event) => setRecentStatus(event.target.value.slice(0, 500))}
-                  placeholder="選填。例如：最近工作壓力大、感情有點不確定、一直睡不好..."
-                  className="min-h-[96px] resize-none rounded-xl border-[#D1BE9B]/24 bg-white/50 px-4 py-3 text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/76 shadow-none placeholder:text-[#31353A]/30 focus-visible:border-[#D1BE9B]/55 focus-visible:ring-[#D1BE9B]/18"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                />
               </label>
 
               <div className="mt-5 flex flex-wrap gap-2">
