@@ -24,21 +24,21 @@ import { getContextualRecommendationReason, getProductImageStyle, type Product }
 import { useRotatingText } from '@/hooks/useRotatingText';
 
 const ZIWEI_WAITING_MESSAGES = [
-  '命盤排列中，正在對照你的出生時辰...',
-  '正在看命宮、身宮與各宮位的關係...',
-  'Mochi 正在整理你的優勢和容易卡住的地方...',
-  '正在把命盤訊息翻成白話解讀...',
-  '快好了，正在整理適合你現在的方向...',
+  'Mochi 正在整理線索，但看起來像在發呆。',
+  'Mochi 正在用貓掌把混亂拍成重點。',
+  'Mochi 正在分析中，眼神很空，腦袋很忙。',
+  'Mochi 正在把腦內毛線球慢慢解開。',
+  'Mochi 正在看起來沒在想，其實很有想法。',
+  'Mochi 正在慢慢靠近重點，像靠近一個紙箱。',
 ];
 
 const ZIWEI_FOLLOW_UP_WAITING_MESSAGES = [
-  'Mochi 正在把命盤再攤開看一次...',
-  '這題有點細，Mochi 正在慢慢對宮位...',
-  '正在把剛剛的命盤訊息和你的追問放在一起看...',
-  'Mochi 好像看到一個小重點了...',
-  '再等一下下，Mochi 正在整理成好懂的話...',
-  '命盤裡的小線索正在排隊，Mochi 幫你翻譯中...',
-  '這個追問很重要，Mochi 會看仔細一點...',
+  'Mochi 正在整理線索，但看起來像在發呆。',
+  'Mochi 正在用貓掌把混亂拍成重點。',
+  'Mochi 正在分析中，眼神很空，腦袋很忙。',
+  'Mochi 正在把腦內毛線球慢慢解開。',
+  'Mochi 正在看起來沒在想，其實很有想法。',
+  'Mochi 正在慢慢靠近重點，像靠近一個紙箱。',
 ];
 
 // ─── Product Card ─────────────────────────────────────────────────────────────

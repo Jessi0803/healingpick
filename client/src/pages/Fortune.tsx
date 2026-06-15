@@ -41,11 +41,12 @@ const ZODIAC_SIGNS = [
 ];
 
 const FORTUNE_WAITING_MESSAGES = [
-  '正在看看今天的整體節奏...',
-  'Mochi 正在整理今天適合留意的地方...',
-  '正在把感情、工作和狀態分開看看...',
-  '快好了，正在準備今天的小提醒...',
-  '正在找出今天最適合你的行動建議...',
+  'Mochi 正在整理線索，但看起來像在發呆。',
+  'Mochi 正在用貓掌把混亂拍成重點。',
+  'Mochi 正在分析中，眼神很空，腦袋很忙。',
+  'Mochi 正在把腦內毛線球慢慢解開。',
+  'Mochi 正在看起來沒在想，其實很有想法。',
+  'Mochi 正在慢慢靠近重點，像靠近一個紙箱。',
 ];
 
 const ELEMENT_RECOMMENDATION_MESSAGES: Record<string, string> = {

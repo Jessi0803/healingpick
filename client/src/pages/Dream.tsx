@@ -16,11 +16,12 @@ const sampleDreams = [
 ];
 
 const DREAM_WAITING_MESSAGES = [
-  'Mochi 正在讀夢',
-  'Mochi 把夢裡的小碎片排排坐',
-  'Mochi 正在摸摸夢的邊邊',
-  '夢裡的訊號正在慢慢亮起來',
-  '再等一下下，Mochi 快拼好了',
+  'Mochi 正在整理線索，但看起來像在發呆。',
+  'Mochi 正在用貓掌把混亂拍成重點。',
+  'Mochi 正在分析中，眼神很空，腦袋很忙。',
+  'Mochi 正在把腦內毛線球慢慢解開。',
+  'Mochi 正在看起來沒在想，其實很有想法。',
+  'Mochi 正在慢慢靠近重點，像靠近一個紙箱。',
 ];
 
 export default function DreamPage() {

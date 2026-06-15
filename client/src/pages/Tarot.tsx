@@ -85,21 +85,21 @@ const SPREAD_POSITIONS = [
 ];
 
 const TAROT_WAITING_MESSAGES = [
-  '正在洗牌，讓問題慢慢浮上來...',
-  'Mochi 正在看牌面之間的關聯...',
-  '正在整理這次牌陣想說的重點...',
-  '把牌裡的訊息翻成你看得懂的話...',
-  '快好了，正在把建議整理得更具體一點...',
+  'Mochi 正在整理線索，但看起來像在發呆。',
+  'Mochi 正在用貓掌把混亂拍成重點。',
+  'Mochi 正在分析中，眼神很空，腦袋很忙。',
+  'Mochi 正在把腦內毛線球慢慢解開。',
+  'Mochi 正在看起來沒在想，其實很有想法。',
+  'Mochi 正在慢慢靠近重點，像靠近一個紙箱。',
 ];
 
 const TAROT_FOLLOW_UP_WAITING_MESSAGES = [
-  'Mochi 正在把牌牌攤開來看...',
-  '這題有點細，Mochi 正在慢慢讀...',
-  '正在把剛剛的訊息和你的追問放在一起看...',
-  'Mochi 好像看到一點小線索了...',
-  '再等一下下，Mochi 正在整理成好懂的話...',
-  '牌面正在說悄悄話，Mochi 幫你翻譯中...',
-  '這個追問很重要，Mochi 會看仔細一點...',
+  'Mochi 正在整理線索，但看起來像在發呆。',
+  'Mochi 正在用貓掌把混亂拍成重點。',
+  'Mochi 正在分析中，眼神很空，腦袋很忙。',
+  'Mochi 正在把腦內毛線球慢慢解開。',
+  'Mochi 正在看起來沒在想，其實很有想法。',
+  'Mochi 正在慢慢靠近重點，像靠近一個紙箱。',
 ];
 
 // Rider-Waite-Smith Tarot card images (public domain), self-hosted in
