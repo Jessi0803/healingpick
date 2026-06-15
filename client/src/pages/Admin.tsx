@@ -13,6 +13,7 @@ const tabs = [
 ] as const;
 
 type TabId = typeof tabs[number]['id'];
+const DAILY_FREE_QUOTA_MAX = 100;
 
 const typeLabels: Record<string, string> = {
   tarot: '塔羅',
@@ -223,11 +224,11 @@ export default function AdminPage() {
     event.preventDefault();
     const value = Number(dailyFreeQuotaInput.trim());
     if (!dailyFreeQuotaInput.trim()) {
-      setSettingsMessage('每日免費額度固定為 1 次');
+      setSettingsMessage(`每日免費額度請輸入 1-${DAILY_FREE_QUOTA_MAX} 次`);
       return;
     }
-    if (!Number.isInteger(value) || value !== 1) {
-      setSettingsMessage('每日免費額度固定為 1 次');
+    if (!Number.isInteger(value) || value < 1 || value > DAILY_FREE_QUOTA_MAX) {
+      setSettingsMessage(`每日免費額度請輸入 1-${DAILY_FREE_QUOTA_MAX} 次`);
       return;
     }
     setSettingsMessage('');
@@ -398,14 +399,14 @@ export default function AdminPage() {
                   免費點數設定
                 </p>
                 <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
-                  會員與訪客每天固定可免費使用 1 次，目前為 {data?.settings.dailyFreeQuota ?? 1} 點。
+                  會員與訪客每天可免費使用 {data?.settings.dailyFreeQuota ?? 1} 次。
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input
                   type="number"
                   min={1}
-                  max={1}
+                  max={DAILY_FREE_QUOTA_MAX}
                   step={1}
                   value={dailyFreeQuotaInput}
                   onChange={(event) => {

@@ -2,7 +2,7 @@ import { desc, eq, like, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { creditTransactions, feedbacks, readings, users } from "../../drizzle/schema";
-import { DEFAULT_DAILY_FREE_QUOTA, getDailyFreeQuota, getDb, setDailyFreeQuota } from "../db";
+import { DEFAULT_DAILY_FREE_QUOTA, MAX_DAILY_FREE_QUOTA, getDailyFreeQuota, getDb, setDailyFreeQuota } from "../db";
 import { adminProcedure, router } from "../_core/trpc";
 
 const limitInput = z.object({
@@ -216,7 +216,7 @@ export const adminRouter = router({
   updateDailyFreeQuota: adminProcedure
     .input(
       z.object({
-        dailyFreeQuota: z.number().int().min(1).max(1),
+        dailyFreeQuota: z.number().int().min(1).max(MAX_DAILY_FREE_QUOTA),
       })
     )
     .mutation(async ({ input }) => {
