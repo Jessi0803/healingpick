@@ -72,6 +72,13 @@ type AdminReadingRow = {
   createdAt: Date;
 };
 
+type ParsedReadingInput = {
+  recordKind?: string;
+  dreamContent?: string;
+  wakeEmotion?: string | null;
+  recentStatus?: string | null;
+};
+
 type AdminFeedbackRow = {
   id: number;
   userId: number | null;
@@ -97,6 +104,24 @@ function formatDate(value: string | Date | null | undefined) {
 function shortText(value: string | null | undefined, max = 90) {
   if (!value) return '—';
   return value.length > max ? `${value.slice(0, max)}...` : value;
+}
+
+function parseReadingInputData(inputData: string | null | undefined): ParsedReadingInput | null {
+  if (!inputData) return null;
+  try {
+    const parsed = JSON.parse(inputData);
+    return parsed && typeof parsed === 'object' ? parsed as ParsedReadingInput : null;
+  } catch {
+    return null;
+  }
+}
+
+function getReadingPreview(row: AdminReadingRow) {
+  const parsed = parseReadingInputData(row.inputData);
+  if (row.type === 'dream' && parsed?.dreamContent) {
+    return parsed.dreamContent;
+  }
+  return row.question || row.inputData;
 }
 
 function isVisitor(row: Pick<AdminReadingRow, 'userId'>) {
@@ -778,36 +803,50 @@ function ReadingsTable({ rows }: { rows: AdminReadingRow[] }) {
     <div className="divide-y divide-[#D1BE9B]/12">
       {rows.length === 0 ? (
         <div className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">沒有資料</div>
-      ) : rows.map((row) => (
-        <details key={row.id} className="group px-4 py-4">
-          <summary className="cursor-pointer list-none">
-            <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] tracking-[0.1em] ${isVisitor(row) ? 'bg-[#C9837A]/12 text-[#C9837A]' : 'bg-[#A38D6B]/14 text-[#A38D6B]'}`}>
-                    {isVisitor(row) ? '訪客' : '會員'}
-                  </span>
-                  <span>{getReadingKind(row)} · {readerLabel(row)}</span>
+      ) : rows.map((row) => {
+        const parsedInput = parseReadingInputData(row.inputData);
+        const isDreamRecord = row.type === 'dream' || parsedInput?.recordKind === 'dream';
+        return (
+          <details key={row.id} className="group px-4 py-4">
+            <summary className="cursor-pointer list-none">
+              <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <div className="flex items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] tracking-[0.1em] ${isVisitor(row) ? 'bg-[#C9837A]/12 text-[#C9837A]' : 'bg-[#A38D6B]/14 text-[#A38D6B]'}`}>
+                      {isVisitor(row) ? '訪客' : '會員'}
+                    </span>
+                    <span>{getReadingKind(row)} · {readerLabel(row)}</span>
+                  </div>
+                  <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
+                    {shortText(getReadingPreview(row), 120)}
+                  </div>
                 </div>
-                <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
-                  {shortText(row.question || row.inputData, 120)}
+                <div className="shrink-0 text-[11px] tracking-[0.1em] text-[#A38D6B]">
+                  {formatDate(row.createdAt)}
                 </div>
               </div>
-              <div className="shrink-0 text-[11px] tracking-[0.1em] text-[#A38D6B]">
-                {formatDate(row.createdAt)}
+            </summary>
+            <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
+              <RecordBlock title="顧客身分" value={readerLabel(row)} />
+              {isDreamRecord ? (
+                <>
+                  <RecordBlock title="夢境紀錄" value={parsedInput?.dreamContent ?? row.question} />
+                  <RecordBlock title="醒來感受" value={parsedInput?.wakeEmotion} />
+                  <RecordBlock title="近期狀態" value={parsedInput?.recentStatus} />
+                </>
+              ) : (
+                <>
+                  <RecordBlock title="顧客問題" value={row.question} />
+                  <RecordBlock title="輸入資料" value={row.inputData} />
+                </>
+              )}
+              <div className="md:col-span-2">
+                <RecordBlock title="mochi解讀" value={row.interpretation} maxHeight />
               </div>
             </div>
-          </summary>
-          <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
-            <RecordBlock title="顧客身分" value={readerLabel(row)} />
-            <RecordBlock title="顧客問題" value={row.question} />
-            <RecordBlock title="輸入資料" value={row.inputData} />
-            <div className="md:col-span-2">
-              <RecordBlock title="mochi解讀" value={row.interpretation} maxHeight />
-            </div>
-          </div>
-        </details>
-      ))}
+          </details>
+        );
+      })}
     </div>
   );
 }
@@ -885,7 +924,7 @@ function TransactionsTable({ rows }: { rows: AdminTransactionRow[] }) {
   );
 }
 
-function RecordBlock({ title, value, maxHeight = false }: { title: string; value: string | null; maxHeight?: boolean }) {
+function RecordBlock({ title, value, maxHeight = false }: { title: string; value: string | null | undefined; maxHeight?: boolean }) {
   return (
     <div className="rounded-lg border border-[#D1BE9B]/15 bg-white/45 p-3">
       <div className="mb-2 text-[11px] tracking-[0.16em] text-[#A38D6B]">{title}</div>

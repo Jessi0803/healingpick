@@ -18,6 +18,7 @@ let _db: Db | null = null;
 let userProfileColumnsReady = false;
 let readingSummaryColumnReady = false;
 let userAdminNoteColumnReady = false;
+let readingTypeValuesReady = false;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 // Uses postgres-js against Supabase's pooled connection (prepare:false is
@@ -30,6 +31,7 @@ export async function getDb(): Promise<Db | null> {
         ssl: "require",
       });
       _db = drizzle(client);
+      await ensureReadingTypeValues(_db);
       await ensureUserProfileColumns(_db);
       await ensureUserAdminNoteColumn(_db);
       await ensureReadingSummaryColumn(_db);
@@ -69,6 +71,14 @@ async function ensureUserAdminNoteColumn(db: Db) {
     ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "adminNote" text
   `);
   userAdminNoteColumnReady = true;
+}
+
+async function ensureReadingTypeValues(db: Db) {
+  if (readingTypeValuesReady) return;
+  await db.execute(sql`
+    ALTER TYPE "public"."reading_type" ADD VALUE IF NOT EXISTS 'dream'
+  `);
+  readingTypeValuesReady = true;
 }
 
 async function ensureReadingSummaryColumn(db: Db) {
@@ -579,7 +589,7 @@ export async function getVisitorCreditState(
   };
 }
 
-// ─── Readings (Tarot / Ziwei / Fortune) ──────────────────────────────────────
+// ─── Readings (Tarot / Ziwei / Fortune / Dream) ──────────────────────────────
 
 export async function saveReading(data: InsertReading): Promise<void> {
   const db = await getDb();
