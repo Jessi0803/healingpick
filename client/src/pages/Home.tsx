@@ -17,7 +17,6 @@ import { CatPeeking } from '@/components/CatElements';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { PRODUCTS, getProductImageStyle } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
-import CosmicMist from '@/components/CosmicMist';
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
@@ -244,9 +243,6 @@ export default function Home() {
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <section className="min-h-[100vh] flex flex-col justify-center items-center text-center px-6 relative pt-10 pb-16 overflow-hidden">
-        {/* Drifting oat-milk mist + glints (Stitch-inspired, re-tinted) */}
-        <CosmicMist className="z-0" intensity={1} />
-
         {/* ── Large watermark text ── */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
           <span

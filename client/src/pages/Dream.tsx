@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Streamdown } from 'streamdown';
 import PageLayout from '@/components/PageLayout';
 import OracleSphere from '@/components/OracleSphere';
+import CosmicMist from '@/components/CosmicMist';
 import { CatPeeking } from '@/components/CatElements';
 import { Textarea } from '@/components/ui/textarea';
 import { trpc } from '@/lib/trpc';
@@ -157,8 +158,11 @@ export default function DreamPage() {
 
   return (
     <PageLayout>
-      <main className="min-h-screen overflow-hidden px-4 pb-20 pt-28 md:px-8">
-        <section className="relative mx-auto flex max-w-6xl flex-col gap-8 lg:grid lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+      <main className="relative min-h-screen overflow-hidden px-4 pb-20 pt-28 md:px-8">
+        {/* Drifting oat-milk mist + glints (Stitch-inspired) */}
+        <CosmicMist className="z-0" intensity={0.9} />
+
+        <section className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 lg:grid lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="pointer-events-none absolute -left-16 top-12 h-64 w-64 rounded-full bg-[#E5DFEE]/45 blur-3xl" />
           <div className="pointer-events-none absolute -right-20 top-44 h-72 w-72 rounded-full bg-[#D1BE9B]/25 blur-3xl" />
 

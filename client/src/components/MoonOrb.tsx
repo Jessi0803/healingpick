@@ -38,11 +38,11 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
     // Moon sphere.
     const geometry = new THREE.SphereGeometry(1.5, 64, 64);
     const material = new THREE.MeshPhongMaterial({
-      color: 0xe6e2da, // soft pearl
+      color: 0xe0e0e0,
       emissive: 0x222222,
       shininess: 10,
       transparent: true,
-      opacity: 0.95,
+      opacity: 0.9,
     });
     const moon = new THREE.Mesh(geometry, material);
     moonGroup.add(moon);
@@ -53,7 +53,7 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
       uniforms: {
         c: { value: 0.1 },
         p: { value: 4.5 },
-        glowColor: { value: new THREE.Color(0xd1be9b) }, // site gold
+        glowColor: { value: new THREE.Color(0x8a7250) }, // muted gold (original)
         viewVector: { value: camera.position },
       },
       vertexShader: `
@@ -161,5 +161,17 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
     };
   }, []);
 
-  return <div ref={mountRef} aria-hidden="true" className={`pointer-events-none ${className}`} />;
+  return (
+    <div aria-hidden="true" className={`pointer-events-none relative ${className}`}>
+      {/* Soft deep-space backdrop so the moon + gold rim glow read as designed */}
+      <div
+        className="absolute left-1/2 top-1/2 -z-10 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(20,22,33,0.92) 0%, rgba(28,26,44,0.55) 42%, rgba(40,38,60,0.15) 64%, transparent 78%)',
+        }}
+      />
+      <div ref={mountRef} className="h-full w-full" />
+    </div>
+  );
 }
