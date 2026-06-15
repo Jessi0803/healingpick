@@ -35,20 +35,46 @@ export default function OracleSphere({ className = '' }: { className?: string })
     // The rotating crystal (icosahedron wireframe), self-illuminated so it glows.
     const group = new THREE.Group();
     const geometry = new THREE.IcosahedronGeometry(1.4, 1);
+    // Fine silver "thread" wireframe.
     const material = new THREE.MeshPhongMaterial({
-      color: 0x9b8dc0, // site lavender accent
-      emissive: 0xb7a8e0, // glow tint
-      emissiveIntensity: 0.28,
+      color: 0xcfcedd, // soft silver
+      emissive: 0xbfc2d6, // cool silver glow
+      emissiveIntensity: 0.22,
       wireframe: true,
       transparent: true,
-      opacity: 0.62,
+      opacity: 0.55,
     });
     const crystal = new THREE.Mesh(geometry, material);
     group.add(crystal);
 
+    // Soft round sprite for the tiny glinting highlights.
+    const spriteCanvas = document.createElement('canvas');
+    spriteCanvas.width = spriteCanvas.height = 64;
+    const sctx = spriteCanvas.getContext('2d')!;
+    const grad = sctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+    grad.addColorStop(0.35, 'rgba(232,234,245,0.5)');
+    grad.addColorStop(1, 'rgba(232,234,245,0)');
+    sctx.fillStyle = grad;
+    sctx.fillRect(0, 0, 64, 64);
+    const sprite = new THREE.CanvasTexture(spriteCanvas);
+
+    // Tiny silver-white glints at each vertex; they shimmer in the render loop.
+    const pointsMaterial = new THREE.PointsMaterial({
+      map: sprite,
+      color: 0xeef0f8, // silver white
+      size: 0.12,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+    });
+    const vertexGlint = new THREE.Points(geometry, pointsMaterial);
+    group.add(vertexGlint);
+
     scene.add(group);
 
-    const light = new THREE.PointLight(0xd2bfea, 1.8, 10);
+    const light = new THREE.PointLight(0xeaeaf2, 1.8, 10); // cool silver light
     light.position.set(0, 0, 2);
     scene.add(light);
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
@@ -76,9 +102,12 @@ export default function OracleSphere({ className = '' }: { className?: string })
     let running = true;
 
     const renderFrame = () => {
-      group.position.y = Math.sin(Date.now() * 0.001) * 0.15;
+      const t = Date.now() * 0.001;
+      group.position.y = Math.sin(t) * 0.15;
       group.rotation.x += (mouseY * 0.1 - group.rotation.x) * 0.05;
       group.rotation.y += (mouseX * 0.1 - group.rotation.y) * 0.05;
+      // Gentle twinkle on the glints.
+      pointsMaterial.opacity = 0.4 + 0.25 * Math.sin(t * 1.6);
       renderer.render(scene, camera);
     };
 
@@ -115,6 +144,8 @@ export default function OracleSphere({ className = '' }: { className?: string })
       ro?.disconnect();
       geometry.dispose();
       material.dispose();
+      pointsMaterial.dispose();
+      sprite.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode === mount) {
         mount.removeChild(renderer.domElement);

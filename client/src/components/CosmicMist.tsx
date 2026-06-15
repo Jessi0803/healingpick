@@ -65,12 +65,12 @@ void main() {
   float mist = n1 * 0.5 + n2 * 0.3 + n3 * 0.2;       // ~[-1,1]
   mist = mist * 0.5 + 0.5;                            // ~[0,1]
 
-  // Oat-Milk Morandi palette — pushed a touch deeper so the haze reads on cream.
-  vec3 lilac = vec3(0.831, 0.788, 0.890); // deeper lavender
-  vec3 gold   = vec3(0.878, 0.776, 0.560); // deeper milk-tea gold
-  vec3 rose   = vec3(0.918, 0.769, 0.776); // #EAC4C6 hint
-  vec3 tint = mix(lilac, gold, smoothstep(0.30, 0.78, mist));
-  tint = mix(tint, rose, smoothstep(0.6, 0.95, mist) * 0.35);
+  // Warm milk-tea palette — all warm tones (R>G>B) so they never gray out.
+  vec3 oat       = vec3(0.949, 0.910, 0.847); // #F2E8D8 warm oat
+  vec3 champagne = vec3(0.910, 0.831, 0.659); // #E8D4A8 champagne gold
+  vec3 milktea   = vec3(0.851, 0.745, 0.561); // #D9BE8F deep milk-tea
+  vec3 tint = mix(oat, champagne, smoothstep(0.30, 0.78, mist));
+  tint = mix(tint, milktea, smoothstep(0.6, 0.95, mist) * 0.45);
 
   // Haze opacity: visible but still soft. Vignette keeps edges clean.
   float vignette = 1.0 - smoothstep(0.55, 1.35, length(uv - 0.5));

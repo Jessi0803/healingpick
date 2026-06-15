@@ -185,11 +185,11 @@ export default function DreamPage() {
 
             <p className="max-w-md text-[13px] leading-[2.2] tracking-[0.12em] text-[#31353A]/62"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-              把你記得的夢交給 Mochi。不用寫得很完整，場景、人物、醒來後的感覺，都可以變成解讀的線索。
+              把你記得的夢交給 Mochi。場景、人物、醒來後的感覺，都可以變成解讀的線索。
             </p>
 
             {/* Rotating Oracle crystal (Stitch-inspired) */}
-            <OracleSphere className="mx-auto mt-2 aspect-square w-full max-w-[320px]" />
+            <OracleSphere className="mx-auto mt-2 aspect-square w-full max-w-[368px]" />
           </div>
 
           <div className="relative z-10">
