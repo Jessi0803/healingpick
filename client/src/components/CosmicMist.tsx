@@ -65,12 +65,13 @@ void main() {
   float mist = n1 * 0.5 + n2 * 0.3 + n3 * 0.2;       // ~[-1,1]
   mist = mist * 0.5 + 0.5;                            // ~[0,1]
 
-  // Warm milk-tea palette — all warm tones (R>G>B) so they never gray out.
-  vec3 oat       = vec3(0.949, 0.910, 0.847); // #F2E8D8 warm oat
-  vec3 champagne = vec3(0.910, 0.831, 0.659); // #E8D4A8 champagne gold
-  vec3 milktea   = vec3(0.851, 0.745, 0.561); // #D9BE8F deep milk-tea
+  // Warm milk-tea palette — more saturated so it reads warm on any screen
+  // (low-saturation warm tones can look gray on mobile panels).
+  vec3 oat       = vec3(0.957, 0.898, 0.792); // #F4E5CA warm oat
+  vec3 champagne = vec3(0.922, 0.804, 0.561); // #EBCD8F champagne gold
+  vec3 milktea   = vec3(0.847, 0.690, 0.439); // #D8B070 deep milk-tea
   vec3 tint = mix(oat, champagne, smoothstep(0.30, 0.78, mist));
-  tint = mix(tint, milktea, smoothstep(0.6, 0.95, mist) * 0.45);
+  tint = mix(tint, milktea, smoothstep(0.6, 0.95, mist) * 0.5);
 
   // Haze opacity: visible but still soft. Vignette keeps edges clean.
   float vignette = 1.0 - smoothstep(0.55, 1.35, length(uv - 0.5));

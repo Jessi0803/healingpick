@@ -11,6 +11,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'wouter';
 import { Streamdown } from 'streamdown';
 import PageLayout from '@/components/PageLayout';
+import MoonOrb from '@/components/MoonOrb';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { CatListening } from '@/components/CatElements';
 import { trpc } from '@/lib/trpc';
@@ -429,6 +430,9 @@ export default function FortunePage() {
               {dateStr}
             </p>
           </div>
+
+          {/* Moon orb (Stitch-inspired) */}
+          <MoonOrb className="animate-float-1 mx-auto -mt-2 mb-8 aspect-square w-52 drop-shadow-[0_0_50px_rgba(209,190,155,0.3)] md:w-64" />
 
           {/* How It Works */}
           <HowItWorksPanel />
