@@ -279,7 +279,7 @@ function FortuneClassroomEnvelope() {
             <div>
               <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>☀️ 第三步：翻譯成今天能用的提醒</h4>
               <p>
-                最後，Mochi 會把「今日月相」和「你的星座特性」整理成幾個生活面向：整體狀態、感情、工作財運、健康與行動建議。<br/><br/>
+                最後，Mochi 會把「今日月相」和「你的星座特性」整理成幾個生活面向：整體狀態、感情、工作財運、健康與策略提醒。<br/><br/>
                 你不需要把它當成絕對答案。更像是早上出門前，有一隻懂你的貓咪輕輕提醒：「今天可以勇敢一點，但也別忘了留一點力氣給自己。」
               </p>
             </div>
@@ -397,7 +397,7 @@ export default function FortunePage() {
         `健康提醒（${d.healthScore}/10）：${d.health}`,
         `幸運資訊：${d.luckyColor}｜${d.luckyNumber}｜${d.crystal}`,
         `水晶原因：${d.crystalReason}`,
-        `行動建議：${d.advice}`,
+        `策略提醒：${d.advice}`,
       ].join('\n\n'),
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -664,6 +664,7 @@ export default function FortunePage() {
                                 { icon: '♥', label: '感情運勢', text: aiData.love },
                                 { icon: '◈', label: '事業財運', text: aiData.career },
                                 { icon: '◉', label: '健康提醒', text: aiData.health },
+                                { icon: '◎', label: '策略提醒', text: aiData.advice },
                               ].map(item => (
                                 <div key={item.label} className="flex gap-3">
                                   <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">{item.icon}</span>
