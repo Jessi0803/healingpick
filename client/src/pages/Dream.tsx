@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Loader2, Moon, Sparkles } from 'lucide-react';
 import { Link } from 'wouter';
 import { toast } from 'sonner';
@@ -28,6 +28,23 @@ const DREAM_WAITING_MESSAGES = [
   'Mochi 正在看起來沒在想，其實很有想法。',
   'Mochi 正在慢慢靠近重點，像靠近一個紙箱。',
 ];
+
+const DREAM_FOLLOW_UP_WAITING_MESSAGES = [
+  'Mochi 正在接著剛剛的夢往下看。',
+  'Mochi 正在把追問和夢裡的訊號對在一起。',
+  'Mochi 正在補上剛剛沒說完的那一塊。',
+];
+
+const DREAM_PENDING_FOLLOW_UP_KEY = 'healingpick:dream-pending-follow-up';
+const FOLLOW_UP_LOGIN_PROMPT = {
+  title: '登入後繼續追問夢境',
+  subtitle: 'Mochi 會接著剛剛的解夢，幫你把追問看得更完整。',
+};
+
+type FollowUpExchange = {
+  question: string;
+  answer: string;
+};
 
 function ProductCard({
   product,
@@ -107,10 +124,18 @@ function ProductCard({
 }
 
 export default function DreamPage() {
-  const { login } = useAuth();
+  const { isAuthenticated, login } = useAuth();
   const utils = trpc.useUtils();
+  const creditsQuery = trpc.credits.state.useQuery(undefined, {
+    refetchOnWindowFocus: true,
+  });
   const [dreamContent, setDreamContent] = useState('');
   const [interpretation, setInterpretation] = useState('');
+  const [followUpQuestion, setFollowUpQuestion] = useState('');
+  const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
+  const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
+  const followUpRequestInFlightRef = useRef<string | null>(null);
+  const completedFollowUpRequestKeysRef = useRef(new Set<string>());
 
   const canSubmit = dreamContent.trim().length >= 6;
   const remainingChars = useMemo(() => 1600 - dreamContent.length, [dreamContent.length]);
@@ -122,6 +147,9 @@ export default function DreamPage() {
   const interpretMutation = trpc.dream.interpret.useMutation({
     onSuccess: async (data) => {
       setInterpretation(data.interpretation);
+      setFollowUpQuestion('');
+      setFollowUpExchanges([]);
+      setPendingFollowUpAfterLogin(false);
       await Promise.all([
         utils.credits.state.invalidate(),
         utils.history.getReadings.invalidate(),
@@ -145,16 +173,211 @@ export default function DreamPage() {
       toast.error('Mochi 暫時讀不到這個夢，請稍後再試');
     },
   });
+  const followUpMutation = trpc.dream.followUp.useMutation({
+    onSuccess: async (data, variables) => {
+      const requestKey = JSON.stringify([
+        variables.dreamContent,
+        variables.interpretation,
+        variables.followUpQuestion,
+      ]);
+      completedFollowUpRequestKeysRef.current.add(requestKey);
+      setFollowUpExchanges((prev) => [
+        ...prev,
+        {
+          question: variables.followUpQuestion,
+          answer: data.answer,
+        },
+      ]);
+      setFollowUpQuestion('');
+      setPendingFollowUpAfterLogin(false);
+      await Promise.all([
+        utils.credits.state.invalidate(),
+        utils.history.getReadings.invalidate(),
+      ]);
+    },
+    onError: (error, variables) => {
+      const requestKey = JSON.stringify([
+        variables.dreamContent,
+        variables.interpretation,
+        variables.followUpQuestion,
+      ]);
+      completedFollowUpRequestKeysRef.current.delete(requestKey);
+
+      if (error.message === 'NOT_SIGNED_IN') {
+        void login(FOLLOW_UP_LOGIN_PROMPT);
+        return;
+      }
+      if (error.message === 'INSUFFICIENT_CREDITS') {
+        toast.error('可用次數不足', {
+          description: '可以先購買點數，或稍後再回來問 Mochi。',
+          action: {
+            label: '購買點數',
+            onClick: () => {
+              window.location.href = '/buy';
+            },
+          },
+          duration: 6000,
+        });
+        return;
+      }
+      toast.error('追問暫時無法送出，請稍後再試。');
+    },
+    onSettled: (_data, _error, variables) => {
+      if (!variables) {
+        followUpRequestInFlightRef.current = null;
+        return;
+      }
+      const requestKey = JSON.stringify([
+        variables.dreamContent,
+        variables.interpretation,
+        variables.followUpQuestion,
+      ]);
+      if (followUpRequestInFlightRef.current === requestKey) {
+        followUpRequestInFlightRef.current = null;
+      }
+    },
+  });
   const waitingMessage = useRotatingText(DREAM_WAITING_MESSAGES, interpretMutation.isPending, 2400);
+  const followUpWaitingMessage = useRotatingText(
+    DREAM_FOLLOW_UP_WAITING_MESSAGES,
+    followUpMutation.isPending,
+    2400
+  );
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!canSubmit || interpretMutation.isPending) return;
     setInterpretation('');
+    setFollowUpQuestion('');
+    setFollowUpExchanges([]);
+    setPendingFollowUpAfterLogin(false);
     interpretMutation.mutate({
       dreamContent: dreamContent.trim(),
     });
   };
+
+  const submitFollowUp = useCallback((trimmedQuestion: string) => {
+    if (!trimmedQuestion || !interpretation || followUpMutation.isPending) return false;
+
+    if (!isAuthenticated) {
+      setPendingFollowUpAfterLogin(true);
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem(DREAM_PENDING_FOLLOW_UP_KEY, JSON.stringify({
+          dreamContent,
+          interpretation,
+          followUpQuestion: trimmedQuestion,
+        }));
+      }
+      void login(FOLLOW_UP_LOGIN_PROMPT);
+      return false;
+    }
+
+    const trimmedDream = dreamContent.trim();
+    const requestKey = JSON.stringify([
+      trimmedDream,
+      interpretation,
+      trimmedQuestion,
+    ]);
+    if (
+      followUpRequestInFlightRef.current === requestKey ||
+      completedFollowUpRequestKeysRef.current.has(requestKey)
+    ) {
+      return true;
+    }
+    followUpRequestInFlightRef.current = requestKey;
+
+    followUpMutation.mutate({
+      dreamContent: trimmedDream,
+      interpretation,
+      followUpQuestion: trimmedQuestion,
+    });
+    return true;
+  }, [
+    dreamContent,
+    followUpMutation,
+    interpretation,
+    isAuthenticated,
+    login,
+  ]);
+
+  const handleFollowUpSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    submitFollowUp(followUpQuestion.trim());
+  };
+
+  useEffect(() => {
+    if (!pendingFollowUpAfterLogin || !isAuthenticated || followUpMutation.isPending) return;
+    const trimmedQuestion = followUpQuestion.trim();
+    if (!trimmedQuestion) {
+      setPendingFollowUpAfterLogin(false);
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.removeItem(DREAM_PENDING_FOLLOW_UP_KEY);
+    }
+
+    void creditsQuery.refetch().then(() => {
+      const submitted = submitFollowUp(trimmedQuestion);
+      if (submitted || isAuthenticated) setPendingFollowUpAfterLogin(false);
+    });
+  }, [
+    creditsQuery,
+    followUpMutation.isPending,
+    followUpQuestion,
+    isAuthenticated,
+    pendingFollowUpAfterLogin,
+    submitFollowUp,
+  ]);
+
+  useEffect(() => {
+    if (!isAuthenticated || followUpMutation.isPending || typeof window === 'undefined') return;
+    const raw = window.sessionStorage.getItem(DREAM_PENDING_FOLLOW_UP_KEY);
+    if (!raw) return;
+    window.sessionStorage.removeItem(DREAM_PENDING_FOLLOW_UP_KEY);
+
+    try {
+      const pending = JSON.parse(raw) as {
+        dreamContent?: string;
+        interpretation?: string;
+        followUpQuestion?: string;
+      };
+      const pendingDream = pending.dreamContent?.trim();
+      const pendingInterpretation = pending.interpretation?.trim();
+      const pendingQuestion = pending.followUpQuestion?.trim();
+      if (!pendingDream || !pendingInterpretation || !pendingQuestion) {
+        window.sessionStorage.removeItem(DREAM_PENDING_FOLLOW_UP_KEY);
+        return;
+      }
+
+      setDreamContent(pendingDream);
+      setInterpretation(pendingInterpretation);
+      setFollowUpQuestion(pendingQuestion);
+      setPendingFollowUpAfterLogin(false);
+      const requestKey = JSON.stringify([
+        pendingDream,
+        pendingInterpretation,
+        pendingQuestion,
+      ]);
+      if (
+        followUpRequestInFlightRef.current === requestKey ||
+        completedFollowUpRequestKeysRef.current.has(requestKey)
+      ) {
+        return;
+      }
+      followUpRequestInFlightRef.current = requestKey;
+
+      void creditsQuery.refetch().then(() => {
+        followUpMutation.mutate({
+          dreamContent: pendingDream,
+          interpretation: pendingInterpretation,
+          followUpQuestion: pendingQuestion,
+        });
+      });
+    } catch {
+      window.sessionStorage.removeItem(DREAM_PENDING_FOLLOW_UP_KEY);
+    }
+  }, [creditsQuery, isAuthenticated, followUpMutation, followUpMutation.isPending]);
 
   return (
     <PageLayout>
@@ -271,6 +494,79 @@ export default function DreamPage() {
                   <div className="text-[14px] leading-[2.15] tracking-[0.08em] text-[#31353A]/76"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                     <Streamdown>{interpretation}</Streamdown>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {!interpretMutation.isPending && interpretation && (
+              <section className="mt-6 rounded-2xl border border-[#D1BE9B]/22 bg-white/58 p-5 shadow-[0_18px_50px_rgba(163,141,107,0.1)] backdrop-blur-xl md:p-7">
+                <div className="mb-4 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-[#8A7250]">
+                    <Sparkles className="h-4 w-4" />
+                    <h2 className="text-[13px] tracking-[0.22em]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      想繼續問這個夢嗎
+                    </h2>
+                  </div>
+                  <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    Mochi 會基於剛剛的夢境與解讀，補上一段更貼近追問的回應。
+                  </p>
+                </div>
+
+                <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
+                  <Textarea
+                    value={followUpQuestion}
+                    onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
+                    maxLength={300}
+                    placeholder="例如：這個夢是在說我還放不下他嗎？或是跟最近工作壓力有關？"
+                    className="min-h-[88px] resize-none rounded-xl border-[#D1BE9B]/28 bg-white/58 px-4 py-3 text-[13px] leading-[1.9] tracking-[0.08em] text-[#31353A]/78 shadow-none placeholder:text-[#31353A]/30 focus-visible:border-[#D1BE9B]/55 focus-visible:ring-[#D1BE9B]/18"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                  />
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      {followUpQuestion.length}/300
+                    </span>
+                    <button
+                      type="submit"
+                      disabled={followUpQuestion.trim().length < 2 || followUpMutation.isPending}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#3D4144] px-6 py-2.5 text-[11px] tracking-[0.18em] text-[#FAF7F4] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    >
+                      {followUpMutation.isPending ? (
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          {followUpWaitingMessage}
+                        </>
+                      ) : (
+                        '請 Mochi 回應'
+                      )}
+                    </button>
+                  </div>
+                </form>
+
+                {followUpExchanges.length > 0 && (
+                  <div className="mt-5 flex flex-col gap-3">
+                    {followUpExchanges.map((item, index) => (
+                      <div key={`${index}-${item.question}`} className="rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
+                        <div className="mb-3 flex flex-col gap-1">
+                          <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                            Mochi 的補充回應
+                          </p>
+                          <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
+                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                            你的追問：{item.question}
+                          </p>
+                        </div>
+                        <div className="text-[13px] leading-[2.05] tracking-[0.08em] text-[#31353A]/78"
+                          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                          <Streamdown>{item.answer}</Streamdown>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </section>

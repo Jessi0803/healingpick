@@ -151,4 +151,82 @@ ${memberMemoryContext}
 
       return { interpretation };
     }),
+  /**
+   * 追問：需登入，先消耗每日免費額度，用完後扣 1 點。
+   */
+  followUp: publicProcedure
+    .input(
+      z.object({
+        dreamContent: z.string().trim().min(6).max(1600),
+        interpretation: z.string().trim().min(1).max(10000),
+        followUpQuestion: z.string().trim().min(2).max(300),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "NOT_SIGNED_IN" });
+      }
+      await chargeReading(ctx, "dream_followup");
+
+      const memberMemoryContext = await getMemberMemoryContext(ctx.user);
+      const userPrompt = `請根據上一輪夢境與解讀，回答使用者的追問。
+
+原本的夢境內容：
+${input.dreamContent}
+
+上一輪解夢：
+${input.interpretation}
+
+使用者的追問：
+${input.followUpQuestion}
+${memberMemoryContext}
+
+請只回答追問本身。
+第一行就直接給判斷，不要寒暄。
+如果追問有多個小題，可以用 1. 2. 3. 逐題回答。
+延續 Mochi 解夢的口語私訊感，溫柔但要有明確判斷。
+不要寫標題，不要輸出分隔線。`;
+
+      const response = await invokeLLM({
+        messages: [
+          { role: "system", content: DREAM_STYLE },
+          { role: "user", content: userPrompt },
+        ],
+      });
+
+      const rawContent = response.choices?.[0]?.message?.content;
+      const answer = rawContent
+        ? cleanDreamInterpretation(
+            extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+          )
+        : "Mochi 暫時讀不到這個追問，請稍後再試。";
+
+      const inputData = JSON.stringify({
+        recordKind: "dream_followup",
+        originalDream: input.dreamContent,
+      });
+      const summary = await buildReadingSummary({
+        type: "dream",
+        question: input.followUpQuestion,
+        inputData,
+        interpretation: answer,
+      });
+
+      try {
+        await saveReading({
+          userId: ctx.user.id,
+          anonId: null,
+          ipHash: null,
+          type: "dream",
+          question: input.followUpQuestion,
+          inputData,
+          interpretation: answer,
+          summary,
+        });
+      } catch (error) {
+        console.warn("[dream] Failed to save follow-up", error);
+      }
+
+      return { answer };
+    }),
 });

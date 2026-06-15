@@ -15,7 +15,7 @@ export const creditsRouter = router({
       return { enabled, signedIn: false, credits: 0, freeRemaining: 0, dailyFreeQuota: 0 };
     }
     if (ctx.user) {
-      const s = await getCreditState(ctx.user.id);
+      const s = await getCreditState(ctx.user.id, ctx.anonId, ctx.ipHash);
       return {
         enabled: true,
         signedIn: true,

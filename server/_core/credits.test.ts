@@ -70,7 +70,7 @@ describe("credits gating", () => {
       "tarot"
     );
 
-    expect(mockSpendForReading).toHaveBeenCalledWith(42, "tarot");
+    expect(mockSpendForReading).toHaveBeenCalledWith(42, "tarot", null, null);
     expect(mockSpendVisitorFree).not.toHaveBeenCalled();
   });
 

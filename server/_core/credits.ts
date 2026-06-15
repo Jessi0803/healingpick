@@ -21,7 +21,7 @@ export async function chargeReading(ctx: TrpcContext, reason: string): Promise<v
   if (!isCreditsEnabled()) return;
 
   if (ctx.user) {
-    const result = await spendForReading(ctx.user.id, reason);
+    const result = await spendForReading(ctx.user.id, reason, ctx.anonId, ctx.ipHash);
     if (!result.ok) {
       if (result.reason === "no_db") return; // fail open
       throw new TRPCError({ code: "FORBIDDEN", message: "INSUFFICIENT_CREDITS" });

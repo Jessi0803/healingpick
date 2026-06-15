@@ -399,7 +399,7 @@ export default function AdminPage() {
                   免費點數設定
                 </p>
                 <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
-                  會員與訪客每天可免費使用 {data?.settings.dailyFreeQuota ?? 1} 次。
+                  每位顧客每天共可免費使用 {data?.settings.dailyFreeQuota ?? 1} 次；訪客可匿名使用第 1 次，第 2 次起需登入。
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">

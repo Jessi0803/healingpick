@@ -47,6 +47,8 @@ export async function getDb(): Promise<Db | null> {
 export const DEFAULT_DAILY_FREE_QUOTA = 1;
 export const DAILY_FREE_QUOTA = DEFAULT_DAILY_FREE_QUOTA;
 export const MAX_DAILY_FREE_QUOTA = 100;
+/** Logged-out visitors can only use the first free reading before signing in. */
+export const ANON_FREE_BEFORE_LOGIN_LIMIT = 1;
 /** Credits granted once when a user first signs up. */
 export const SIGNUP_BONUS_CREDITS = 5;
 const DAILY_FREE_QUOTA_KEY = "daily_free_quota";
@@ -302,14 +304,32 @@ async function ensureFreshDay(userId: number) {
   }
 }
 
-export async function getCreditState(userId: number): Promise<CreditState | null> {
+async function getVisitorUsedToday(anonId: string | null, ipHash: string | null): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  if (anonId) await ensureFreshDayAnon(anonId);
+  if (ipHash) await ensureFreshDayIp(ipHash);
+  const anonUsed = anonId
+    ? (await db.select().from(anonymousSessions).where(eq(anonymousSessions.anonId, anonId)).limit(1))[0]
+        ?.freeUsedToday ?? 0
+    : 0;
+  const ipUsed = ipHash ? await getIpUsed(ipHash) : 0;
+  return Math.max(anonUsed, ipUsed);
+}
+
+export async function getCreditState(
+  userId: number,
+  anonId: string | null = null,
+  ipHash: string | null = null
+): Promise<CreditState | null> {
   await ensureFreshDay(userId);
   const user = await getUserById(userId);
   if (!user) return null;
   const dailyFreeQuota = await getDailyFreeQuota();
+  const freeUsedToday = Math.max(user.freeUsedToday, await getVisitorUsedToday(anonId, ipHash));
   return {
     credits: user.credits,
-    freeRemaining: Math.max(0, dailyFreeQuota - user.freeUsedToday),
+    freeRemaining: Math.max(0, dailyFreeQuota - freeUsedToday),
     dailyFreeQuota,
   };
 }
@@ -322,7 +342,12 @@ export type SpendResult =
  * Charge one unit for a reading: consume a daily free use if available,
  * otherwise spend one credit. Returns ok:false when neither is available.
  */
-export async function spendForReading(userId: number, reason: string): Promise<SpendResult> {
+export async function spendForReading(
+  userId: number,
+  reason: string,
+  anonId: string | null = null,
+  ipHash: string | null = null
+): Promise<SpendResult> {
   const db = await getDb();
   if (!db) return { ok: false, reason: "no_db" };
 
@@ -330,14 +355,15 @@ export async function spendForReading(userId: number, reason: string): Promise<S
   const user = await getUserById(userId);
   if (!user) return { ok: false, reason: "no_db" };
   const dailyFreeQuota = await getDailyFreeQuota();
+  const freeUsedToday = Math.max(user.freeUsedToday, await getVisitorUsedToday(anonId, ipHash));
 
   // 1) Free quota first.
-  if (user.freeUsedToday < dailyFreeQuota) {
+  if (freeUsedToday < dailyFreeQuota) {
     await db
       .update(users)
-      .set({ freeUsedToday: user.freeUsedToday + 1 })
+      .set({ freeUsedToday: freeUsedToday + 1 })
       .where(eq(users.id, userId));
-    const state = await getCreditState(userId);
+    const state = await getCreditState(userId, anonId, ipHash);
     return { ok: true, usedFree: true, state: state! };
   }
 
@@ -355,7 +381,7 @@ export async function spendForReading(userId: number, reason: string): Promise<S
         reason,
         balanceAfter: updated[0].credits,
       });
-      const state = await getCreditState(userId);
+      const state = await getCreditState(userId, anonId, ipHash);
       return { ok: true, usedFree: false, state: state! };
     }
   }
@@ -441,9 +467,10 @@ export async function getAnonCreditState(anonId: string): Promise<CreditState | 
   const row = rows[0];
   const used = row?.freeUsedToday ?? 0;
   const dailyFreeQuota = await getDailyFreeQuota();
+  const anonymousFreeQuota = Math.min(ANON_FREE_BEFORE_LOGIN_LIMIT, dailyFreeQuota);
   return {
     credits: 0,
-    freeRemaining: Math.max(0, dailyFreeQuota - used),
+    freeRemaining: Math.max(0, anonymousFreeQuota - used),
     dailyFreeQuota,
   };
 }
@@ -467,8 +494,9 @@ export async function spendAnonFree(anonId: string): Promise<SpendResult> {
   const row = rows[0];
   if (!row) return { ok: false, reason: "no_db" };
   const dailyFreeQuota = await getDailyFreeQuota();
+  const anonymousFreeQuota = Math.min(ANON_FREE_BEFORE_LOGIN_LIMIT, dailyFreeQuota);
 
-  if (row.freeUsedToday < dailyFreeQuota) {
+  if (row.freeUsedToday < anonymousFreeQuota) {
     await db
       .update(anonymousSessions)
       .set({ freeUsedToday: row.freeUsedToday + 1 })
@@ -538,8 +566,9 @@ export async function spendVisitorFree(
     : 0;
   const ipUsed = ipHash ? await getIpUsed(ipHash) : 0;
   const dailyFreeQuota = await getDailyFreeQuota();
+  const anonymousFreeQuota = Math.min(ANON_FREE_BEFORE_LOGIN_LIMIT, dailyFreeQuota);
 
-  if ((anonId && anonUsed >= dailyFreeQuota) || (ipHash && ipUsed >= dailyFreeQuota)) {
+  if ((anonId && anonUsed >= anonymousFreeQuota) || (ipHash && ipUsed >= anonymousFreeQuota)) {
     return { ok: false, reason: "insufficient" };
   }
 
@@ -561,7 +590,7 @@ export async function spendVisitorFree(
     usedFree: true,
     state: {
       credits: 0,
-      freeRemaining: Math.max(0, dailyFreeQuota - Math.max(anonUsed + 1, ipUsed + 1)),
+      freeRemaining: Math.max(0, anonymousFreeQuota - Math.max(anonUsed + 1, ipUsed + 1)),
       dailyFreeQuota,
     },
   };
@@ -583,9 +612,10 @@ export async function getVisitorCreditState(
   const ipUsed = ipHash ? await getIpUsed(ipHash) : 0;
   const used = Math.max(anonUsed, ipUsed);
   const dailyFreeQuota = await getDailyFreeQuota();
+  const anonymousFreeQuota = Math.min(ANON_FREE_BEFORE_LOGIN_LIMIT, dailyFreeQuota);
   return {
     credits: 0,
-    freeRemaining: Math.max(0, dailyFreeQuota - used),
+    freeRemaining: Math.max(0, anonymousFreeQuota - used),
     dailyFreeQuota,
   };
 }
