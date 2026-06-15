@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Loader2, Moon, Sparkles } from 'lucide-react';
+import { Link } from 'wouter';
 import { toast } from 'sonner';
 import { Streamdown } from 'streamdown';
 import PageLayout from '@/components/PageLayout';
@@ -8,6 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { useRotatingText } from '@/hooks/useRotatingText';
+import { recommendForDream } from '@/data/recommend';
+import { getContextualRecommendationReason, getProductImageStyle, type Product } from '@/data/products';
 
 const sampleDreams = [
   '夢到自己一直在找出口，可是每扇門打開都不是我要去的地方。',
@@ -24,6 +27,83 @@ const DREAM_WAITING_MESSAGES = [
   'Mochi 正在慢慢靠近重點，像靠近一個紙箱。',
 ];
 
+function ProductCard({
+  product,
+  context,
+  role = 'primary',
+}: {
+  product: Product;
+  context?: string;
+  role?: 'primary' | 'secondary';
+}) {
+  const meanings = product.meanings.slice(0, 3).map((m) => m.title);
+  const recommendationReason = getContextualRecommendationReason(product, context, role);
+  const roleLabel = role === 'primary' ? '最貼近這個夢' : '也可以一起看';
+
+  return (
+    <Link href={`/shop/${product.slug}`}>
+      <div className="flex cursor-pointer flex-col gap-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/42 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/50 sm:flex-row">
+        <div className="h-52 w-full flex-shrink-0 overflow-hidden rounded-xl bg-[#F0EBE3]/40 sm:h-32 sm:w-32">
+          <img src={product.img} alt={product.name} className="h-full w-full object-cover" style={getProductImageStyle(product)} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <span className="mr-1.5 rounded-full border border-[#D1BE9B]/20 bg-white/70 px-1.5 py-0.5 text-[10px] tracking-[0.15em] text-[#6F5A3A]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {roleLabel}
+              </span>
+              {product.tag && (
+                <span className="rounded-full bg-[#D1BE9B]/20 px-1.5 py-0.5 text-[10px] tracking-[0.15em] text-[#A38D6B]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  {product.tag}
+                </span>
+              )}
+              <p className="mt-1 truncate text-[15px] tracking-[0.08em] text-[#31353A]/88"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {product.name}
+              </p>
+              <p className="truncate text-[11px] tracking-wider text-[#31353A]/50 italic"
+                style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                {product.subtitle}
+              </p>
+            </div>
+            <p className="flex-shrink-0 text-sm font-light text-[#D1BE9B]"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              NT$ {product.price.toLocaleString()}
+            </p>
+          </div>
+
+          <div className="mb-2 flex flex-wrap gap-1">
+            {meanings.map((meaning) => (
+              <span key={meaning} className="rounded-full border border-[#D1BE9B]/15 bg-[#F0EBE3]/70 px-2 py-0.5 text-[10px] tracking-[0.1em] text-[#31353A]/62"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                {meaning}
+              </span>
+            ))}
+          </div>
+
+          <div className="mb-2 rounded-xl border border-[#D1BE9B]/15 bg-[#F8F4EC]/45 px-3 py-2">
+            <p className="mb-1 text-[11px] tracking-[0.18em] text-[#A38D6B]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              為什麼 Mochi 想到它
+            </p>
+            <p className="text-[12px] leading-[1.85] tracking-[0.06em] text-[#31353A]/66"
+              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+              {recommendationReason}
+            </p>
+          </div>
+
+          <span className="text-[11px] tracking-[0.15em] text-[#A38D6B]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            看看這款商品 →
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function DreamPage() {
   const { login } = useAuth();
   const utils = trpc.useUtils();
@@ -32,6 +112,10 @@ export default function DreamPage() {
 
   const canSubmit = dreamContent.trim().length >= 6;
   const remainingChars = useMemo(() => 1600 - dreamContent.length, [dreamContent.length]);
+  const recommendations = useMemo(
+    () => interpretation ? recommendForDream(dreamContent, interpretation) : [],
+    [dreamContent, interpretation],
+  );
 
   const interpretMutation = trpc.dream.interpret.useMutation({
     onSuccess: async (data) => {
@@ -181,6 +265,32 @@ export default function DreamPage() {
                     <Streamdown>{interpretation}</Streamdown>
                   </div>
                 )}
+              </section>
+            )}
+
+            {!interpretMutation.isPending && interpretation && recommendations.length > 0 && (
+              <section className="mt-6 rounded-2xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/72 p-5 shadow-[0_18px_50px_rgba(163,141,107,0.1)] backdrop-blur-xl md:p-7">
+                <div className="mb-4 flex items-center gap-2 text-[#8A7250]">
+                  <Sparkles className="h-4 w-4" />
+                  <h2 className="text-[13px] tracking-[0.22em]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    Mochi 為這個夢想到的能量商品
+                  </h2>
+                </div>
+                <p className="mb-4 text-[12px] leading-[2] tracking-[0.1em] text-[#31353A]/54"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                  依照夢裡出現的情緒、場景與醒來後的感覺，從目前商品中挑出比較呼應的陪伴。
+                </p>
+                <div className="grid gap-3">
+                  {recommendations.map((product, index) => (
+                    <ProductCard
+                      key={product.slug}
+                      product={product}
+                      context={dreamContent}
+                      role={index === 0 ? 'primary' : 'secondary'}
+                    />
+                  ))}
+                </div>
               </section>
             )}
           </div>

@@ -178,6 +178,101 @@ export function recommendForFortune(element: string): Product[] {
   return pickTop(sig, 2);
 }
 
+// ─── Dream ──────────────────────────────────────────────────────────────────
+// 常見夢境訊號 → 既有商品方向
+const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
+  {
+    patterns: ['追', '逃', '躲', '跑不動', '被抓', '攻擊', '怪物', '鬼', '黑影', '害怕', '恐怖'],
+    signal: {
+      categories: ['protect', 'calm'],
+      keywords: ['安全感', '界線', '安定', '焦慮', '保護', '壓力'],
+      preferSlugs: ['glimmer-fox', 'calm-light'],
+    },
+  },
+  {
+    patterns: ['迷路', '出口', '門', '走廊', '電梯', '樓梯', '找不到', '困住', '房子', '學校'],
+    signal: {
+      categories: ['protect', 'calm'],
+      keywords: ['方向', '直覺', '釐清', '迷惘', '選擇', '自我探索'],
+      preferSlugs: ['moonlight-wings', 'calm-light'],
+    },
+  },
+  {
+    patterns: ['牙齒', '掉牙', '流血', '裸', '考試', '遲到', '失控', '跌倒', '墜落', '掉下去'],
+    signal: {
+      categories: ['calm', 'courage'],
+      keywords: ['焦慮', '自信', '穩定情緒', '壓力', '相信自己'],
+      preferSlugs: ['calm-light', 'courage-cat'],
+    },
+  },
+  {
+    patterns: ['前任', '喜歡的人', '戀人', '分手', '曖昧', '結婚', '朋友', '家人', '媽媽', '爸爸', '吵架'],
+    signal: {
+      categories: ['wish', 'protect'],
+      keywords: ['關係', '人緣', '愛', '緣分', '陪伴', '溫柔連結'],
+      preferSlugs: ['wish-fox', 'wish-bunny'],
+    },
+  },
+  {
+    patterns: ['工作', '公司', '老闆', '同事', '錢', '賺錢', '財', '店', '客人', '創業', '面試'],
+    signal: {
+      categories: ['wealth', 'courage'],
+      keywords: ['工作', '金錢', '事業', '機會', '行動力', '自我價值'],
+      preferSlugs: ['wealth-stone', 'courage-cat'],
+    },
+  },
+  {
+    patterns: ['水', '海', '河', '下雨', '淹水', '游泳', '浴室', '洗澡', '哭', '眼淚'],
+    signal: {
+      categories: ['calm', 'wish'],
+      keywords: ['情緒', '釋放', '平靜', '自我療癒', '照顧'],
+      preferSlugs: ['calm-light', 'wish-bunny'],
+    },
+  },
+  {
+    patterns: ['飛', '翅膀', '天空', '月亮', '星星', '旅行', '搬家', '車', '火車', '飛機'],
+    signal: {
+      categories: ['courage', 'protect'],
+      keywords: ['方向', '新開始', '勇氣', '希望', '直覺', '前進'],
+      preferSlugs: ['moonlight-wings', 'courage-cat'],
+    },
+  },
+];
+
+export function recommendForDream(dreamContent: string, interpretation = ''): Product[] {
+  const text = `${dreamContent} ${interpretation}`.toLowerCase();
+  const merged: Signal = { categories: [], keywords: [], preferSlugs: [] };
+
+  DREAM_SIGNALS.forEach(({ patterns, signal }) => {
+    if (!patterns.some((pattern) => text.includes(pattern.toLowerCase()))) return;
+    merged.categories?.push(...(signal.categories ?? []));
+    merged.keywords?.push(...(signal.keywords ?? []));
+    merged.preferSlugs?.push(...(signal.preferSlugs ?? []));
+  });
+
+  if (!merged.categories?.length && !merged.keywords?.length && !merged.preferSlugs?.length) {
+    return pickTop(
+      {
+        categories: ['calm', 'protect'],
+        keywords: [...extractKeywords(dreamContent), ...extractKeywords(interpretation)],
+        preferSlugs: ['calm-light', 'moonlight-wings'],
+      },
+      2,
+      'calm',
+    );
+  }
+
+  return pickTop(
+    {
+      categories: [...new Set(merged.categories)],
+      keywords: [...new Set([...(merged.keywords ?? []), ...extractKeywords(dreamContent), ...extractKeywords(interpretation)])],
+      preferSlugs: [...new Set(merged.preferSlugs)],
+    },
+    2,
+    merged.categories?.[0],
+  );
+}
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 function extractKeywords(text: string): string[] {
   if (!text) return [];
