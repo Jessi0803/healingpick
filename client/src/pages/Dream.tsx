@@ -4,6 +4,7 @@ import { Link } from 'wouter';
 import { toast } from 'sonner';
 import { Streamdown } from 'streamdown';
 import PageLayout from '@/components/PageLayout';
+import OracleSphere from '@/components/OracleSphere';
 import { CatPeeking } from '@/components/CatElements';
 import { Textarea } from '@/components/ui/textarea';
 import { trpc } from '@/lib/trpc';
@@ -186,6 +187,9 @@ export default function DreamPage() {
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               把你記得的夢交給 Mochi。不用寫得很完整，場景、人物、醒來後的感覺，都可以變成解讀的線索。
             </p>
+
+            {/* Rotating Oracle crystal (Stitch-inspired) */}
+            <OracleSphere className="mx-auto mt-2 aspect-square w-full max-w-[320px]" />
           </div>
 
           <div className="relative z-10">
