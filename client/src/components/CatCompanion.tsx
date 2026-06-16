@@ -20,27 +20,8 @@ type Pearl = {
 
 // ─── 卡片內容池 ──────────────────────────────────────────────────────────────
 const PEARLS: Pearl[] = [
-  // 三種純療癒語錄 (僅保留 3 種最溫柔的語錄)
-  { text: '每一個感受都值得被聽見 ✦' },
-  { text: '你不需要完美,只需要真實 ♡' },
-  { text: '深呼吸三秒,當下就會溫柔一點 ☽' },
-
-  // Mochi 心理測驗入口卡片 (作為輪播項目之一顯示)
   {
-    text: '🔮 最近有些疲憊或迷茫嗎？讓 Mochi 幫你感應一下，測測現在最適合你狀態的水晶與療癒小物吧 🐾',
-    cta: { label: '開始心理測驗 ✦', href: 'quiz-trigger' }
-  },
-
-  // 塔羅小知識(配連結到 /tarot)
-  {
-    text: '塔羅不是預言,是一面照出你內心真實樣子的鏡子。',
-    cta: { label: '照照看 →', href: '/tarot' },
-  },
-
-  // 紫微小知識(配連結到 /ziwei)
-  {
-    text: '紫微命盤會幫你看見自己的優勢劣勢，以及現在適合怎麼調整。',
-    cta: { label: '看紫微命盤 →', href: '/ziwei' },
+    text: '登入會員後，Mochi 可以參考你的占卜歷史，讓分析和回答更貼近你的狀態喔。',
   },
 ];
 
@@ -249,22 +230,6 @@ export default function CatCompanion() {
     };
   }, []);
 
-  // 卡片打開時,每 8 秒自動切下一則 (若在測驗中則暫停輪播)
-  useEffect(() => {
-    if (!isOpen || quizActive) return;
-    const id = setInterval(() => {
-      setCursor((c) => {
-        const next = c + 1;
-        if (next >= order.length) {
-          setOrder(shuffle(Array.from({ length: PEARLS.length }, (_, i) => i)));
-          return 0;
-        }
-        return next;
-      });
-    }, 8000);
-    return () => clearInterval(id);
-  }, [isOpen, order.length, quizActive]);
-
   const handleCatClick = () => {
     setIsOpen((o) => {
       const next = !o;
@@ -280,6 +245,7 @@ export default function CatCompanion() {
   // 點卡片 → 下一則 (非測驗中有效)
   const handleBubbleClick = () => {
     if (quizActive) return;
+    if (PEARLS.length <= 1) return;
     const next = cursor + 1;
     if (next >= order.length) {
       setOrder(shuffle(Array.from({ length: PEARLS.length }, (_, i) => i)));
@@ -555,16 +521,6 @@ export default function CatCompanion() {
                     </button>
                   </div>
                 )}
-
-                {/* 自動輪播提示 */}
-                <div className="px-3.5 pb-2.5">
-                  <p
-                    className="text-[9px] text-[#D1BE9B]/70 tracking-wider text-center"
-                    style={{ fontFamily: 'Noto Serif TC, serif' }}
-                  >
-                    ✦ 每幾秒自動換一則(也可以點卡片換)
-                  </p>
-                </div>
               </>
             )}
 
