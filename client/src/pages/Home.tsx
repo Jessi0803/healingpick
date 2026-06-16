@@ -163,7 +163,7 @@ function getDailyMochiVisitorCount(date = new Date()) {
     hash = (hash * 31 + dateKey.charCodeAt(i)) >>> 0;
   }
 
-  return (hash % 100) + 1;
+  return 20 + (hash % 31);
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
