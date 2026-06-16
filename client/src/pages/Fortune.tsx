@@ -432,7 +432,7 @@ export default function FortunePage() {
           </div>
 
           {/* Moon orb (Stitch-inspired) */}
-          <MoonOrb className="animate-float-1 mx-auto -mt-2 mb-8 aspect-square w-52 drop-shadow-[0_0_50px_rgba(209,190,155,0.3)] md:w-64" />
+          <MoonOrb className="animate-float-1 mx-auto -mt-2 mb-8 aspect-square w-44 drop-shadow-[0_0_50px_rgba(209,190,155,0.3)] md:w-56" />
 
           {/* How It Works */}
           <HowItWorksPanel />
