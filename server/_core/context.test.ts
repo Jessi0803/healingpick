@@ -107,6 +107,39 @@ describe("createContext", () => {
     expect(ctx.user?.id).toBe(12);
   });
 
+  it("keeps the canonical account email when signing in through an alias", async () => {
+    mockVerifyAccessToken.mockResolvedValueOnce({
+      id: "alias-provider-id",
+      email: "alias@example.com",
+      name: "Alias Name",
+    });
+    mockGetUserByOpenId.mockResolvedValueOnce(undefined);
+    mockGetPreferredUserByEmail.mockResolvedValueOnce({
+      id: 12,
+      openId: "primary-provider-id",
+      email: "primary@example.com",
+      name: "Primary User",
+      loginMethod: "email",
+    } as Awaited<ReturnType<typeof getPreferredUserByEmail>>);
+    mockTouchUserSignInById.mockResolvedValueOnce({
+      id: 12,
+      openId: "primary-provider-id",
+      email: "primary@example.com",
+      name: "Primary User",
+      loginMethod: "email",
+    } as Awaited<ReturnType<typeof touchUserSignInById>>);
+
+    const ctx = await createContext(createOptions({ authorization: "Bearer token-alias" }));
+
+    expect(mockGetPreferredUserByEmail).toHaveBeenCalledWith("alias@example.com");
+    expect(mockTouchUserSignInById).toHaveBeenCalledWith(12, {
+      email: "primary@example.com",
+      name: "Alias Name",
+      loginMethod: "email",
+    });
+    expect(ctx.user?.id).toBe(12);
+  });
+
   it("prefers the canonical email user when the bearer token matches a duplicate user", async () => {
     mockVerifyAccessToken.mockResolvedValueOnce({
       id: "duplicate-provider-id",

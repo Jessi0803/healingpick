@@ -16,7 +16,9 @@
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "users:merge-duplicates:dry-run": "tsx scripts/merge-duplicate-users-by-email.ts",
-    "users:merge-duplicates:apply": "tsx scripts/merge-duplicate-users-by-email.ts --apply"
+    "users:merge-duplicates:apply": "tsx scripts/merge-duplicate-users-by-email.ts --apply",
+    "users:link-yun-emails:dry-run": "tsx scripts/link-yun-email-accounts.ts",
+    "users:link-yun-emails:apply": "tsx scripts/link-yun-email-accounts.ts --apply"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",

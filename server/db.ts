@@ -9,6 +9,7 @@ import {
   creditTransactions,
   ipQuotas,
   readings,
+  userEmailAliases,
   users,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
@@ -19,6 +20,7 @@ let userProfileColumnsReady = false;
 let readingSummaryColumnReady = false;
 let userAdminNoteColumnReady = false;
 let readingTypeValuesReady = false;
+let userEmailAliasesTableReady = false;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 // Uses postgres-js against Supabase's pooled connection (prepare:false is
@@ -35,6 +37,7 @@ export async function getDb(): Promise<Db | null> {
       await ensureUserProfileColumns(_db);
       await ensureUserAdminNoteColumn(_db);
       await ensureReadingSummaryColumn(_db);
+      await ensureUserEmailAliasesTable(_db);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -90,6 +93,21 @@ async function ensureReadingSummaryColumn(db: Db) {
     ALTER TABLE "readings" ADD COLUMN IF NOT EXISTS "summary" text
   `);
   readingSummaryColumnReady = true;
+}
+
+async function ensureUserEmailAliasesTable(db: Db) {
+  if (userEmailAliasesTableReady) return;
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS "user_email_aliases" (
+      "email" varchar(320) PRIMARY KEY NOT NULL,
+      "userId" integer NOT NULL,
+      "createdAt" timestamp DEFAULT now() NOT NULL
+    )
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS "user_email_aliases_userId_idx" ON "user_email_aliases" ("userId")
+  `);
+  userEmailAliasesTableReady = true;
 }
 
 function taipeiDateKey(date: Date): string {
@@ -175,13 +193,10 @@ export async function getUserById(id: number) {
 }
 
 export async function getUserByEmail(email: string) {
-  const db = await getDb();
-  if (!db) return undefined;
-  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return getPreferredUserByEmail(email);
 }
 
-export async function getPreferredUserByEmail(email: string) {
+async function getUserByExactEmail(email: string) {
   const db = await getDb();
   if (!db) return undefined;
   const normalizedEmail = email.trim().toLowerCase();
@@ -192,6 +207,22 @@ export async function getPreferredUserByEmail(email: string) {
     .orderBy(sql`case when ${users.role} = 'admin' then 0 else 1 end`, asc(users.createdAt), asc(users.id))
     .limit(1);
   return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getPreferredUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const aliasResult = await db
+    .select({ user: users })
+    .from(userEmailAliases)
+    .innerJoin(users, eq(userEmailAliases.userId, users.id))
+    .where(sql`lower(${userEmailAliases.email}) = ${normalizedEmail}`)
+    .limit(1);
+  if (aliasResult.length > 0) return aliasResult[0].user;
+
+  return getUserByExactEmail(normalizedEmail);
 }
 
 export async function touchUserSignInById(

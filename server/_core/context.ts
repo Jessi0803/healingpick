@@ -50,7 +50,7 @@ export async function createContext(
         const preferredUser = identity.email ? await getPreferredUserByEmail(identity.email) : undefined;
         if (preferredUser && preferredUser.id !== appUser?.id) {
           appUser = await touchUserSignInById(preferredUser.id, {
-            email: identity.email ?? preferredUser.email,
+            email: preferredUser.email ?? identity.email,
             name: identity.name ?? preferredUser.name,
             loginMethod: preferredUser.loginMethod ?? "email",
           });

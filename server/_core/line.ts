@@ -216,7 +216,7 @@ export function registerLineRoutes(app: Express) {
         if (existingUser) {
           await db.touchUserSignInById(existingUser.id, {
             name: existingUser.name ?? name,
-            email,
+            email: existingUser.email ?? email,
             loginMethod: existingUser.loginMethod ?? "line",
           });
           sessionOpenId = existingUser.openId;

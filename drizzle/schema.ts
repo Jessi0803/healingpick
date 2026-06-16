@@ -38,6 +38,19 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 /**
+ * Additional emails that should resolve to the same app user. This lets a
+ * customer sign in through more than one email while sharing credits/history.
+ */
+export const userEmailAliases = pgTable("user_email_aliases", {
+  email: varchar("email", { length: 320 }).primaryKey(),
+  userId: integer("userId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UserEmailAlias = typeof userEmailAliases.$inferSelect;
+export type InsertUserEmailAlias = typeof userEmailAliases.$inferInsert;
+
+/**
  * Ledger of every credit change (signup bonus, purchase, per-reading spend,
  * admin top-up). Lets us audit balances.
  */
