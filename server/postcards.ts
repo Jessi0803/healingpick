@@ -182,6 +182,9 @@ export async function recordReturnAndMaybeCreatePostcard(user: {
   const returnsSincePostcard = (state?.returnsSincePostcard ?? 0) + 1;
   if (returnsSincePostcard === PREPARED_RETURN_COUNT) {
     const postcard = await maybeCreatePostcardForUser(user, { force: true });
+    if (!postcard) {
+      return { status: "none", postcard: null };
+    }
     await db.updateMemberPostcardReturnState(user.id, {
       returnsSincePostcard,
       lastReturnAt: now,
