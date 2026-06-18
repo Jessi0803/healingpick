@@ -142,6 +142,10 @@ export function googleDrivePostcardsConfigured() {
   );
 }
 
+function googleDriveImageUrl(fileId: string) {
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+}
+
 export async function uploadPostcardToGoogleDrive(
   fileName: string,
   data: Buffer | Uint8Array | string,
@@ -213,7 +217,7 @@ export async function uploadPostcardToGoogleDrive(
 
   return {
     fileId: uploaded.id,
-    imageUrl: `https://drive.google.com/uc?export=view&id=${uploaded.id}`,
+    imageUrl: googleDriveImageUrl(uploaded.id),
     webViewLink: uploaded.webViewLink,
   };
 }
