@@ -6,6 +6,7 @@ import {
 } from "./googleDrive";
 import { ENV } from "./_core/env";
 import { generateImageData } from "./_core/imageGeneration";
+import { extractTextContent, invokeLLM } from "./_core/llm";
 
 const POSTCARD_COOLDOWN_DAYS = 7;
 const RETURNS_PER_POSTCARD = 2;
@@ -56,10 +57,18 @@ function wrapText(text: string, maxChars: number) {
   return lines.slice(0, 5);
 }
 
-function buildPostcardMessage(context: Awaited<ReturnType<typeof db.getRecentReadingSummaries>>) {
+function sanitizePostcardMessage(value: string) {
+  return value
+    .replace(/^[「"']+|[」"']+$/g, "")
+    .replace(/\s+/g, "")
+    .slice(0, 45);
+}
+
+function buildFallbackPostcardMessage(
+  context: Awaited<ReturnType<typeof db.getRecentReadingSummaries>>,
+) {
   const latest = context[0];
   const base = latest?.summary || latest?.question || latest?.interpretation || "";
-
   if (base.includes("感情") || base.includes("關係") || base.includes("愛")) {
     return "關係裡的答案不用急著逼出來。先把自己的心安放好，你值得被溫柔對待。";
   }
@@ -73,6 +82,47 @@ function buildPostcardMessage(context: Awaited<ReturnType<typeof db.getRecentRea
     return "累的時候，不必立刻變勇敢。先好好呼吸，讓自己被今天輕輕接住。";
   }
   return "你不需要一次想清楚所有答案。願你今天先靠近自己一點點，那也是很珍貴的前進。";
+}
+
+async function buildPostcardMessage(
+  context: Awaited<ReturnType<typeof db.getRecentReadingSummaries>>,
+) {
+  const summaries = context
+    .map((reading, index) => {
+      const text = reading.summary || reading.question || "";
+      return text.trim() ? `${index + 1}. ${text.trim().slice(0, 220)}` : "";
+    })
+    .filter(Boolean);
+
+  if (summaries.length === 0) {
+    return buildFallbackPostcardMessage(context);
+  }
+
+  try {
+    const response = await invokeLLM({
+      maxTokens: 120,
+      messages: [
+        {
+          role: "system",
+          content:
+            "你是療癒品牌的明信片文案編輯。請根據會員最近三筆解讀摘要，寫一句繁體中文安慰語。限制：20-35字；不要引用原問題；不要提具體事件、姓名、占卜、塔羅、紫微、診斷或隱私細節；語氣像明信片，溫柔但不說教；只輸出一句話，不要加標點以外的說明。",
+        },
+        {
+          role: "user",
+          content: `最近摘要：\n${summaries.join("\n")}`,
+        },
+      ],
+    });
+    const raw = response.choices[0]?.message.content;
+    const text = raw
+      ? extractTextContent(raw as string | Array<{ type: string; text?: string }>)
+      : "";
+    const sanitized = sanitizePostcardMessage(text);
+    return sanitized.length >= 8 ? sanitized : buildFallbackPostcardMessage(context);
+  } catch (error) {
+    console.warn("[Postcards] LLM postcard message generation failed:", error);
+    return buildFallbackPostcardMessage(context);
+  }
 }
 
 function buildCatPhotoPrompt(message: string) {
@@ -163,7 +213,7 @@ export async function maybeCreatePostcardForUser(
   }
 
   const context = await db.getRecentReadingSummaries(user.id);
-  const message = buildPostcardMessage(context);
+  const message = await buildPostcardMessage(context);
   const catBackgroundDataUrl = await generateCatBackgroundDataUrl(message);
   const svg = renderPostcardSvg(message, user.name, catBackgroundDataUrl);
   const uploaded = await uploadPostcardToGoogleDrive(
