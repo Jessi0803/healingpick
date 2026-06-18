@@ -87,13 +87,8 @@ function buildCatPhotoPrompt(message: string) {
 }
 
 async function generateCatBackgroundDataUrl(message: string) {
-  try {
-    const image = await generateImageData({ prompt: buildCatPhotoPrompt(message) });
-    return image.dataUrl;
-  } catch (error) {
-    console.warn("[Postcards] AI cat background generation failed, using fallback:", error);
-    return null;
-  }
+  const image = await generateImageData({ prompt: buildCatPhotoPrompt(message) });
+  return image.dataUrl;
 }
 
 function renderPostcardSvg(
