@@ -5,6 +5,7 @@ import {
   uploadPostcardToGoogleDrive,
 } from "./googleDrive";
 import { ENV } from "./_core/env";
+import { generateImageData } from "./_core/imageGeneration";
 
 const POSTCARD_COOLDOWN_DAYS = 7;
 const RETURNS_PER_POSTCARD = 2;
@@ -74,7 +75,32 @@ function buildPostcardMessage(context: Awaited<ReturnType<typeof db.getRecentRea
   return "你不需要一次想清楚所有答案。願你今天先靠近自己一點點，那也是很珍貴的前進。";
 }
 
-function renderPostcardSvg(message: string, displayName: string | null) {
+function buildCatPhotoPrompt(message: string) {
+  return [
+    "A warm, healing postcard-style photo of a calm cat in soft natural window light.",
+    "The cat should feel comforting, gentle, serene, and emotionally supportive.",
+    "Use a cozy Taiwanese cafe or quiet bedroom mood, soft blanket texture, warm sunlight, shallow depth of field.",
+    "No text, no letters, no signs, no watermark, no logo, no typography anywhere in the image.",
+    "Leave calm empty space on the left or lower third for overlaid Chinese text.",
+    `Emotional theme: ${message}`,
+  ].join(" ");
+}
+
+async function generateCatBackgroundDataUrl(message: string) {
+  try {
+    const image = await generateImageData({ prompt: buildCatPhotoPrompt(message) });
+    return image.dataUrl;
+  } catch (error) {
+    console.warn("[Postcards] AI cat background generation failed, using fallback:", error);
+    return null;
+  }
+}
+
+function renderPostcardSvg(
+  message: string,
+  displayName: string | null,
+  backgroundImageDataUrl: string | null,
+) {
   const lines = wrapText(message, 18);
   const greeting = displayName ? `${displayName}，給你的一張小卡` : "給你的一張小卡";
   const lineNodes = lines
@@ -94,22 +120,33 @@ function renderPostcardSvg(message: string, displayName: string | null) {
     <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#574C45" flood-opacity="0.18"/>
     </filter>
+    <linearGradient id="textShade" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#FFFDF8" stop-opacity="0.88"/>
+      <stop offset="62%" stop-color="#FFFDF8" stop-opacity="0.68"/>
+      <stop offset="100%" stop-color="#FFFDF8" stop-opacity="0.16"/>
+    </linearGradient>
   </defs>
   <rect width="1200" height="800" fill="url(#sky)"/>
-  <path d="M0 540 C180 470 310 585 485 520 C690 444 795 540 1200 430 L1200 800 L0 800 Z" fill="#8BA79A" opacity="0.36"/>
+  ${
+    backgroundImageDataUrl
+      ? `<image href="${backgroundImageDataUrl}" x="0" y="0" width="1200" height="800" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1200" height="800" fill="#2F3437" opacity="0.1"/>
+  <rect width="820" height="800" fill="url(#textShade)"/>`
+      : `<path d="M0 540 C180 470 310 585 485 520 C690 444 795 540 1200 430 L1200 800 L0 800 Z" fill="#8BA79A" opacity="0.36"/>
   <path d="M0 635 C230 560 395 700 620 610 C825 528 975 640 1200 575 L1200 800 L0 800 Z" fill="#B08D74" opacity="0.28"/>
-  <circle cx="955" cy="170" r="78" fill="#FFF8DC" opacity="0.82"/>
-  <rect x="52" y="56" width="1096" height="688" rx="28" fill="#FFFDF7" opacity="0.72" filter="url(#softShadow)"/>
-  <rect x="76" y="80" width="1048" height="640" rx="18" fill="none" stroke="#B89F83" stroke-width="3" stroke-dasharray="14 13" opacity="0.7"/>
-  <text x="88" y="170" class="eyebrow">SOUL EASE POSTCARD</text>
-  <text x="88" y="225" class="title">${escapeXml(greeting)}</text>
+  <circle cx="955" cy="170" r="78" fill="#FFF8DC" opacity="0.82"/>`
+  }
+  <rect x="52" y="56" width="1096" height="688" rx="28" fill="#FFFDF7" opacity="${backgroundImageDataUrl ? "0.42" : "0.72"}" filter="url(#softShadow)"/>
+  <rect x="76" y="80" width="1048" height="640" rx="18" fill="none" stroke="#F4E9D6" stroke-width="3" stroke-dasharray="14 13" opacity="0.82"/>
+  <text x="88" y="155" class="eyebrow">SOUL EASE POSTCARD</text>
+  <text x="88" y="210" class="title">${escapeXml(greeting)}</text>
   ${lineNodes}
   <text x="88" y="640" class="sign">願你今天被自己溫柔地陪伴</text>
   <style>
-    .eyebrow { font: 600 25px system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif; letter-spacing: 5px; fill: #7E6B5B; }
-    .title { font: 600 42px system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif; fill: #2F3437; }
-    .message { font: 500 38px system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif; fill: #354044; }
-    .sign { font: 500 27px system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif; fill: #806F5D; }
+    .eyebrow { font: 600 25px system-ui, -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif; letter-spacing: 5px; fill: #7E6B5B; }
+    .title { font: 600 42px system-ui, -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif; fill: #2F3437; }
+    .message { font: 500 38px system-ui, -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif; fill: #354044; }
+    .sign { font: 500 27px system-ui, -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif; fill: #806F5D; }
   </style>
 </svg>`;
 }
@@ -132,7 +169,8 @@ export async function maybeCreatePostcardForUser(
 
   const context = await db.getRecentReadingSummaries(user.id);
   const message = buildPostcardMessage(context);
-  const svg = renderPostcardSvg(message, user.name);
+  const catBackgroundDataUrl = await generateCatBackgroundDataUrl(message);
+  const svg = renderPostcardSvg(message, user.name, catBackgroundDataUrl);
   const uploaded = await uploadPostcardToGoogleDrive(
     `soul-ease-postcard-${user.id}-${Date.now()}.svg`,
     svg,
