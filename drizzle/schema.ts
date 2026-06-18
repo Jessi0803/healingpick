@@ -3,6 +3,7 @@ import { integer, pgEnum, pgTable, serial, text, timestamp, varchar } from "driz
 export const roleEnum = pgEnum("role", ["user", "admin"]);
 export const readingTypeEnum = pgEnum("reading_type", ["tarot", "ziwei", "fortune", "dream"]);
 export const feedbackSourceEnum = pgEnum("feedback_source", ["tarot", "ziwei"]);
+export const postcardStatusEnum = pgEnum("postcard_status", ["ready", "failed"]);
 
 /**
  * Core user table backing auth + credits.
@@ -166,3 +167,40 @@ export const treeholeSessions = pgTable("treehole_sessions", {
 
 export type TreeholeSession = typeof treeholeSessions.$inferSelect;
 export type InsertTreeholeSession = typeof treeholeSessions.$inferInsert;
+
+/**
+ * Personalized postcard notifications shown to members after sign-in.
+ * Images are stored outside Supabase; currently Google Drive file metadata is
+ * retained so the storage provider can be swapped later.
+ */
+export const memberPostcards = pgTable("member_postcards", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId").notNull(),
+  message: text("message").notNull(),
+  googleFileId: varchar("googleFileId", { length: 128 }).notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  status: postcardStatusEnum("status").default("ready").notNull(),
+  seenAt: timestamp("seenAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type MemberPostcard = typeof memberPostcards.$inferSelect;
+export type InsertMemberPostcard = typeof memberPostcards.$inferInsert;
+
+/**
+ * Tracks member returns so postcards can be delivered on a predictable cadence
+ * without counting page refreshes as new visits.
+ */
+export const memberPostcardStates = pgTable("member_postcard_states", {
+  userId: integer("userId").primaryKey().notNull(),
+  returnsSincePostcard: integer("returnsSincePostcard").default(0).notNull(),
+  lastReturnAt: timestamp("lastReturnAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export type MemberPostcardState = typeof memberPostcardStates.$inferSelect;
+export type InsertMemberPostcardState = typeof memberPostcardStates.$inferInsert;

@@ -3,11 +3,14 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import {
   InsertReading,
+  InsertMemberPostcard,
   InsertUser,
   anonymousSessions,
   appSettings,
   creditTransactions,
   ipQuotas,
+  memberPostcards,
+  memberPostcardStates,
   readings,
   userEmailAliases,
   users,
@@ -21,6 +24,8 @@ let readingSummaryColumnReady = false;
 let userAdminNoteColumnReady = false;
 let readingTypeValuesReady = false;
 let userEmailAliasesTableReady = false;
+let memberPostcardsTableReady = false;
+let memberPostcardStatesTableReady = false;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 // Uses postgres-js against Supabase's pooled connection (prepare:false is
@@ -38,6 +43,8 @@ export async function getDb(): Promise<Db | null> {
       await ensureUserAdminNoteColumn(_db);
       await ensureReadingSummaryColumn(_db);
       await ensureUserEmailAliasesTable(_db);
+      await ensureMemberPostcardsTable(_db);
+      await ensureMemberPostcardStatesTable(_db);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -108,6 +115,54 @@ async function ensureUserEmailAliasesTable(db: Db) {
     CREATE INDEX IF NOT EXISTS "user_email_aliases_userId_idx" ON "user_email_aliases" ("userId")
   `);
   userEmailAliasesTableReady = true;
+}
+
+async function ensureMemberPostcardsTable(db: Db) {
+  if (memberPostcardsTableReady) return;
+  await db.execute(sql`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'postcard_status') THEN
+        CREATE TYPE "public"."postcard_status" AS ENUM ('ready', 'failed');
+      END IF;
+    END
+    $$;
+  `);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS "member_postcards" (
+      "id" serial PRIMARY KEY NOT NULL,
+      "userId" integer NOT NULL,
+      "message" text NOT NULL,
+      "googleFileId" varchar(128) NOT NULL,
+      "imageUrl" text NOT NULL,
+      "status" "postcard_status" DEFAULT 'ready' NOT NULL,
+      "seenAt" timestamp,
+      "createdAt" timestamp DEFAULT now() NOT NULL
+    )
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS "member_postcards_user_created_idx"
+    ON "member_postcards" ("userId", "createdAt" DESC)
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS "member_postcards_user_seen_idx"
+    ON "member_postcards" ("userId", "seenAt")
+  `);
+  memberPostcardsTableReady = true;
+}
+
+async function ensureMemberPostcardStatesTable(db: Db) {
+  if (memberPostcardStatesTableReady) return;
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS "member_postcard_states" (
+      "userId" integer PRIMARY KEY NOT NULL,
+      "returnsSincePostcard" integer DEFAULT 0 NOT NULL,
+      "lastReturnAt" timestamp,
+      "createdAt" timestamp DEFAULT now() NOT NULL,
+      "updatedAt" timestamp DEFAULT now() NOT NULL
+    )
+  `);
+  memberPostcardStatesTableReady = true;
 }
 
 function taipeiDateKey(date: Date): string {
@@ -259,6 +314,104 @@ export async function updateUserProfile(
     })
     .where(eq(users.id, id));
   return getUserById(id);
+}
+
+// ─── Member Postcards ───────────────────────────────────────────────────────
+
+export async function getLatestUnreadPostcard(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db
+    .select()
+    .from(memberPostcards)
+    .where(sql`${memberPostcards.userId} = ${userId} AND ${memberPostcards.seenAt} IS NULL`)
+    .orderBy(desc(memberPostcards.createdAt))
+    .limit(1);
+  return rows[0];
+}
+
+export async function getLatestPostcard(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db
+    .select()
+    .from(memberPostcards)
+    .where(eq(memberPostcards.userId, userId))
+    .orderBy(desc(memberPostcards.createdAt))
+    .limit(1);
+  return rows[0];
+}
+
+export async function createMemberPostcard(values: InsertMemberPostcard) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.insert(memberPostcards).values(values).returning();
+  return rows[0];
+}
+
+export async function getMemberPostcardState(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db
+    .select()
+    .from(memberPostcardStates)
+    .where(eq(memberPostcardStates.userId, userId))
+    .limit(1);
+  return rows[0];
+}
+
+export async function updateMemberPostcardReturnState(
+  userId: number,
+  values: { returnsSincePostcard: number; lastReturnAt: Date },
+) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db
+    .insert(memberPostcardStates)
+    .values({
+      userId,
+      returnsSincePostcard: values.returnsSincePostcard,
+      lastReturnAt: values.lastReturnAt,
+      updatedAt: values.lastReturnAt,
+    })
+    .onConflictDoUpdate({
+      target: memberPostcardStates.userId,
+      set: {
+        returnsSincePostcard: values.returnsSincePostcard,
+        lastReturnAt: values.lastReturnAt,
+        updatedAt: values.lastReturnAt,
+      },
+    })
+    .returning();
+  return rows[0];
+}
+
+export async function markPostcardSeen(userId: number, postcardId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db
+    .update(memberPostcards)
+    .set({ seenAt: new Date() })
+    .where(sql`${memberPostcards.id} = ${postcardId} AND ${memberPostcards.userId} = ${userId}`)
+    .returning();
+  return rows[0];
+}
+
+export async function getRecentReadingSummaries(userId: number, limit = 3) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({
+      type: readings.type,
+      question: readings.question,
+      summary: readings.summary,
+      interpretation: readings.interpretation,
+      createdAt: readings.createdAt,
+    })
+    .from(readings)
+    .where(eq(readings.userId, userId))
+    .orderBy(desc(readings.createdAt))
+    .limit(limit);
 }
 
 // ─── Credits ──────────────────────────────────────────────────────────────────

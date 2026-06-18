@@ -25,4 +25,12 @@ export const ENV = {
   lineChannelSecret: process.env.LINE_CHANNEL_SECRET ?? "",
   lineLoginRedirectUri: process.env.LINE_LOGIN_REDIRECT_URI ?? "",
   lineLoginRequestEmail: process.env.LINE_LOGIN_REQUEST_EMAIL === "true",
+  googleDrivePostcardFolderId: process.env.GOOGLE_DRIVE_POSTCARD_FOLDER_ID ?? "",
+  googleServiceAccountJson: process.env.GOOGLE_SERVICE_ACCOUNT_JSON ?? "",
+  googleServiceAccountJsonPath: process.env.GOOGLE_SERVICE_ACCOUNT_JSON_PATH ?? "",
+  googleOAuthClientId: process.env.GOOGLE_OAUTH_CLIENT_ID ?? "",
+  googleOAuthClientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET ?? "",
+  googleOAuthRefreshToken: process.env.GOOGLE_OAUTH_REFRESH_TOKEN ?? "",
+  postcardPilotEmails: process.env.POSTCARD_PILOT_EMAILS ?? "baby90522@gmail.com",
+  postcardReturnDedupeMinutes: process.env.POSTCARD_RETURN_DEDUPE_MINUTES ?? "1",
 };

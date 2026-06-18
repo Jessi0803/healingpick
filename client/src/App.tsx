@@ -21,6 +21,7 @@ import ResetPassword from "./pages/ResetPassword";
 import LoginDialog from "./components/LoginDialog";
 import Admin from "./pages/Admin";
 import Seo from "./components/Seo";
+import PostcardNotifier from "./components/PostcardNotifier";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -54,6 +55,7 @@ function App() {
           <Toaster />
           <Seo />
           <Router />
+          <PostcardNotifier />
           <CatCompanion />
           <LoginDialog />
         </TooltipProvider>
