@@ -62,7 +62,7 @@ async function getServiceAccountCredentials(): Promise<ServiceAccountCredentials
   return cachedCredentials;
 }
 
-async function getAccessToken(): Promise<string> {
+export async function getGoogleDriveAccessToken(): Promise<string> {
   const now = Date.now();
   if (cachedToken && cachedToken.expiresAt - 60_000 > now) {
     return cachedToken.accessToken;
@@ -143,7 +143,7 @@ export function googleDrivePostcardsConfigured() {
 }
 
 function googleDriveImageUrl(fileId: string) {
-  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+  return `/api/postcards/image/${encodeURIComponent(fileId)}`;
 }
 
 export async function uploadPostcardToGoogleDrive(
@@ -151,7 +151,7 @@ export async function uploadPostcardToGoogleDrive(
   data: Buffer | Uint8Array | string,
   mimeType: string,
 ): Promise<DriveUploadResult> {
-  const accessToken = await getAccessToken();
+  const accessToken = await getGoogleDriveAccessToken();
   const boundary = `soul-ease-${crypto.randomUUID()}`;
   const metadata = {
     name: fileName,

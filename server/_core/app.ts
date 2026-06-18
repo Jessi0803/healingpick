@@ -7,6 +7,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { handleGumroadPing } from "./gumroad";
+import { registerPostcardImageProxy } from "../postcardImageProxy";
 
 // Builds the API-only Express app (no Vite, no static, no listen).
 // Reused by the local dev server (server/_core/index.ts) and the Vercel
@@ -16,6 +17,7 @@ export function createApp(): Express {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
+  registerPostcardImageProxy(app);
   registerOAuthRoutes(app);
   registerLineRoutes(app);
   app.post("/api/gumroad-webhook", handleGumroadPing);
