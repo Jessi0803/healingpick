@@ -50,6 +50,7 @@ export default function PostcardNotifier() {
   useEffect(() => {
     if (!postcard || notifiedPostcardRef.current === postcard.id) return;
     notifiedPostcardRef.current = postcard.id;
+    setOpen(true);
     toast("你收到一張心靈明信片", {
       description: "點開看看今天留給你的溫柔小提醒。",
       action: {
