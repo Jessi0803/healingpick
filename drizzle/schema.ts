@@ -26,6 +26,8 @@ export const users = pgTable("users", {
   freeUsedToday: integer("freeUsedToday").default(0).notNull(),
   /** When the daily free quota was last reset. */
   lastFreeReset: timestamp("lastFreeReset").defaultNow().notNull(),
+  /** Authenticated app-open count used to schedule little postcard letters. */
+  loginCount: integer("loginCount").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt")
     .defaultNow()
@@ -135,6 +137,26 @@ export const readings = pgTable("readings", {
 
 export type Reading = typeof readings.$inferSelect;
 export type InsertReading = typeof readings.$inferInsert;
+
+/**
+ * Delayed postcard letters. Odd authenticated opens create the postcard;
+ * the following even open delivers it.
+ */
+export const userPostcards = pgTable("user_postcards", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId").notNull(),
+  createdLoginCount: integer("createdLoginCount").notNull(),
+  deliverLoginCount: integer("deliverLoginCount").notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  message: text("message").notNull(),
+  status: varchar("status", { length: 24 }).default("scheduled").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  notifiedAt: timestamp("notifiedAt"),
+  openedAt: timestamp("openedAt"),
+});
+
+export type UserPostcard = typeof userPostcards.$inferSelect;
+export type InsertUserPostcard = typeof userPostcards.$inferInsert;
 
 /**
  * Customer feedback submitted after tarot / ziwei readings.

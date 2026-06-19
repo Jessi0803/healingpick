@@ -2,6 +2,7 @@ import { asc, desc, eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import {
+  InsertUserPostcard,
   InsertReading,
   InsertUser,
   anonymousSessions,
@@ -10,6 +11,7 @@ import {
   ipQuotas,
   readings,
   userEmailAliases,
+  userPostcards,
   users,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
@@ -21,6 +23,8 @@ let readingSummaryColumnReady = false;
 let userAdminNoteColumnReady = false;
 let readingTypeValuesReady = false;
 let userEmailAliasesTableReady = false;
+let userLoginCountColumnReady = false;
+let userPostcardsTableReady = false;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 // Uses postgres-js against Supabase's pooled connection (prepare:false is
@@ -38,6 +42,8 @@ export async function getDb(): Promise<Db | null> {
       await ensureUserAdminNoteColumn(_db);
       await ensureReadingSummaryColumn(_db);
       await ensureUserEmailAliasesTable(_db);
+      await ensureUserLoginCountColumn(_db);
+      await ensureUserPostcardsTable(_db);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -108,6 +114,41 @@ async function ensureUserEmailAliasesTable(db: Db) {
     CREATE INDEX IF NOT EXISTS "user_email_aliases_userId_idx" ON "user_email_aliases" ("userId")
   `);
   userEmailAliasesTableReady = true;
+}
+
+async function ensureUserLoginCountColumn(db: Db) {
+  if (userLoginCountColumnReady) return;
+  await db.execute(sql`
+    ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "loginCount" integer DEFAULT 0 NOT NULL
+  `);
+  userLoginCountColumnReady = true;
+}
+
+async function ensureUserPostcardsTable(db: Db) {
+  if (userPostcardsTableReady) return;
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS "user_postcards" (
+      "id" serial PRIMARY KEY NOT NULL,
+      "userId" integer NOT NULL,
+      "createdLoginCount" integer NOT NULL,
+      "deliverLoginCount" integer NOT NULL,
+      "imageUrl" text NOT NULL,
+      "message" text NOT NULL,
+      "status" varchar(24) DEFAULT 'scheduled' NOT NULL,
+      "createdAt" timestamp DEFAULT now() NOT NULL,
+      "notifiedAt" timestamp,
+      "openedAt" timestamp
+    )
+  `);
+  await db.execute(sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS "user_postcards_user_created_login_idx"
+      ON "user_postcards" ("userId", "createdLoginCount")
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS "user_postcards_user_deliver_status_idx"
+      ON "user_postcards" ("userId", "deliverLoginCount", "status")
+  `);
+  userPostcardsTableReady = true;
 }
 
 function taipeiDateKey(date: Date): string {
@@ -713,4 +754,87 @@ export async function getRecentReadingSummariesByUser(userId: number, limit = 5)
     .where(sql`${readings.userId} = ${userId} AND ${readings.summary} IS NOT NULL AND ${readings.summary} <> ''`)
     .orderBy(desc(readings.createdAt))
     .limit(limit);
+}
+
+// ─── Delayed postcard letters ───────────────────────────────────────────────
+
+export async function incrementUserLoginCount(userId: number): Promise<number | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const updated = await db
+    .update(users)
+    .set({
+      loginCount: sql`${users.loginCount} + 1`,
+      lastSignedIn: new Date(),
+    })
+    .where(eq(users.id, userId))
+    .returning({ loginCount: users.loginCount });
+  return updated[0]?.loginCount ?? null;
+}
+
+export async function createScheduledPostcard(data: InsertUserPostcard) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const inserted = await db
+    .insert(userPostcards)
+    .values(data)
+    .onConflictDoNothing()
+    .returning();
+  return inserted[0];
+}
+
+export async function getPostcardForDelivery(userId: number, deliverLoginCount: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db
+    .select()
+    .from(userPostcards)
+    .where(sql`
+      ${userPostcards.userId} = ${userId}
+      AND ${userPostcards.deliverLoginCount} = ${deliverLoginCount}
+      AND ${userPostcards.status} IN ('scheduled', 'notified')
+    `)
+    .orderBy(desc(userPostcards.createdAt))
+    .limit(1);
+  return rows[0];
+}
+
+export async function getCurrentNotifiedPostcard(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db
+    .select()
+    .from(userPostcards)
+    .where(sql`${userPostcards.userId} = ${userId} AND ${userPostcards.status} = 'notified'`)
+    .orderBy(desc(userPostcards.notifiedAt), desc(userPostcards.createdAt))
+    .limit(1);
+  return rows[0];
+}
+
+export async function markPostcardNotified(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const updated = await db
+    .update(userPostcards)
+    .set({
+      status: "notified",
+      notifiedAt: new Date(),
+    })
+    .where(sql`${userPostcards.id} = ${id} AND ${userPostcards.status} IN ('scheduled', 'notified')`)
+    .returning();
+  return updated[0];
+}
+
+export async function markPostcardOpened(userId: number, id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const updated = await db
+    .update(userPostcards)
+    .set({
+      status: "opened",
+      openedAt: new Date(),
+    })
+    .where(sql`${userPostcards.id} = ${id} AND ${userPostcards.userId} = ${userId}`)
+    .returning();
+  return updated[0];
 }

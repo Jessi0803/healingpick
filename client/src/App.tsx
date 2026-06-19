@@ -19,6 +19,7 @@ import Buy from "./pages/Buy";
 import Policy from "./pages/Policy";
 import ResetPassword from "./pages/ResetPassword";
 import LoginDialog from "./components/LoginDialog";
+import PostcardMailbox from "./components/PostcardMailbox";
 import Admin from "./pages/Admin";
 import Seo from "./components/Seo";
 function Router() {
@@ -55,6 +56,7 @@ function App() {
           <Seo />
           <Router />
           <CatCompanion />
+          <PostcardMailbox />
           <LoginDialog />
         </TooltipProvider>
       </ThemeProvider>
