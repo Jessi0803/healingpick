@@ -12,6 +12,7 @@ import { Link } from 'wouter';
 import { Streamdown } from 'streamdown';
 import PageLayout from '@/components/PageLayout';
 import MoonOrb from '@/components/MoonOrb';
+import { getMoodPlushieOpening, MoodClawMachine, type MoodPlushie } from '@/components/MoodClawMachine';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { CatListening } from '@/components/CatElements';
 import { trpc } from '@/lib/trpc';
@@ -341,6 +342,7 @@ export default function FortunePage() {
   const { isAuthenticated, login } = useAuth();
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [hasClickedGenerate, setHasClickedGenerate] = useState(false);
+  const [caughtMoodPlushie, setCaughtMoodPlushie] = useState<MoodPlushie | null>(null);
   const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
   const [today] = useState(new Date());
   const savedFortuneRef = useRef<string>('');
@@ -406,6 +408,12 @@ export default function FortunePage() {
 
   const aiData = dailyFortuneQuery.data;
   const fortuneWaitingMessage = useRotatingText(FORTUNE_WAITING_MESSAGES, dailyFortuneQuery.isLoading);
+
+  useEffect(() => {
+    if (dailyFortuneQuery.isLoading) {
+      setCaughtMoodPlushie(null);
+    }
+  }, [dailyFortuneQuery.isLoading]);
 
   return (
     <PageLayout>
@@ -605,12 +613,12 @@ export default function FortunePage() {
                     <>
                         {/* Loading state */}
                         {dailyFortuneQuery.isLoading && (
-                          <div className="flex flex-col items-center gap-4 py-12">
-                            <div className="text-3xl animate-pulse">🌙</div>
+                          <div className="flex flex-col items-center gap-4 py-8">
                             <p className="text-[12px] tracking-[0.2em] text-[#31353A]/54"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                               {fortuneWaitingMessage}
                             </p>
+                            <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
                           </div>
                         )}
 
@@ -633,6 +641,12 @@ export default function FortunePage() {
                         {/* AI Fortune content */}
                         {aiData && (
                           <>
+                            {caughtMoodPlushie && (
+                              <div className="mb-5 rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/75 px-4 py-3 text-[13px] leading-[2] tracking-[0.08em] text-[#6F5A3A]/82"
+                                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                {getMoodPlushieOpening(caughtMoodPlushie, 'fortune')}
+                              </div>
+                            )}
                             {/* Scores */}
                             <div className="space-y-3 mb-6">
                               <ScoreBar label="整體" score={aiData.overallScore}  color={selectedSignData.color} />

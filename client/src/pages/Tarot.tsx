@@ -19,6 +19,7 @@ import { Streamdown } from 'streamdown';
 import { CatWaving, CatListening } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ReadingFeedback from '@/components/ReadingFeedback';
+import { getMoodPlushieOpening, MoodClawMachine, type MoodPlushie } from '@/components/MoodClawMachine';
 import { Mail } from 'lucide-react';
 import { recommendForCategory, recommendForTarot, type RecommendationCategory } from '@/data/recommend';
 import { getContextualRecommendationReason, getProductImageStyle, type Product } from '@/data/products';
@@ -548,6 +549,7 @@ export default function TarotPage() {
   const [shuffledDeck, setShuffledDeck] = useState<typeof MAJOR_ARCANA>([]);
   const [pickedIndices, setPickedIndices] = useState<number[]>([]);
   const [llmInterpretation, setLlmInterpretation] = useState<string>('');
+  const [caughtMoodPlushie, setCaughtMoodPlushie] = useState<MoodPlushie | null>(null);
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
@@ -648,6 +650,12 @@ export default function TarotPage() {
     TAROT_FOLLOW_UP_WAITING_MESSAGES,
     followUpMutation.isPending
   );
+
+  useEffect(() => {
+    if (interpretMutation.isPending) {
+      setCaughtMoodPlushie(null);
+    }
+  }, [interpretMutation.isPending]);
 
   const getReadingCardsPayload = (cards = drawnCards) =>
     cards.map((d, i) => ({
@@ -1672,12 +1680,12 @@ export default function TarotPage() {
                   </div>
                 )}
                 {interpretMutation.isPending && (
-                  <div className="flex flex-col items-center justify-center py-12 gap-4">
-                    <div className="text-[#D1BE9B] text-3xl animate-spin">✦</div>
+                  <div className="flex flex-col items-center justify-center py-8 gap-4">
                     <p className="text-xs tracking-[0.2em] text-[#31353A]/58"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {tarotWaitingMessage}
                     </p>
+                    <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
                   </div>
                 )}
                 {interpretMutation.isError && (
@@ -1700,6 +1708,11 @@ export default function TarotPage() {
                       prose-strong:text-[#31353A]/90 prose-strong:font-medium
                       prose-ul:my-1.5 prose-li:my-0.5 prose-li:marker:text-[#D1BE9B]"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      {caughtMoodPlushie && (
+                        <p className="rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/75 px-4 py-3 text-[#6F5A3A]/82">
+                          {getMoodPlushieOpening(caughtMoodPlushie, 'tarot')}
+                        </p>
+                      )}
                       <Streamdown>{llmInterpretation}</Streamdown>
                     </div>
 

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Loader2, Send, User, Sparkles } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Streamdown } from "streamdown";
+import { getMoodPlushieOpening, MoodClawMachine, type MoodPlushie } from "./MoodClawMachine";
 
 /**
  * Message type matching server-side LLM Message interface
@@ -121,6 +122,7 @@ export function AIChatBox({
   suggestedPrompts,
 }: AIChatBoxProps) {
   const [input, setInput] = useState("");
+  const [caughtMoodPlushie, setCaughtMoodPlushie] = useState<MoodPlushie | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputAreaRef = useRef<HTMLFormElement>(null);
@@ -148,6 +150,12 @@ export function AIChatBox({
       setMinHeightForLastMessage(Math.max(0, calculatedHeight));
     }
   }, []);
+
+  useEffect(() => {
+    if (isLoading) {
+      setCaughtMoodPlushie(null);
+    }
+  }, [isLoading]);
 
   // Scroll to bottom helper function with smooth animation
   const scrollToBottom = () => {
@@ -262,7 +270,11 @@ export function AIChatBox({
                     >
                       {message.role === "assistant" ? (
                         <div className="prose prose-sm dark:prose-invert max-w-none">
-                          <Streamdown>{message.content}</Streamdown>
+                          <Streamdown>
+                            {caughtMoodPlushie && isLastMessage && !isLoading
+                              ? `${getMoodPlushieOpening(caughtMoodPlushie, 'chat')}\n\n${message.content}`
+                              : message.content}
+                          </Streamdown>
                         </div>
                       ) : (
                         <p className="whitespace-pre-wrap text-sm">
@@ -292,8 +304,8 @@ export function AIChatBox({
                   <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center">
                     <Sparkles className="size-4 text-primary" />
                   </div>
-                  <div className="rounded-lg bg-muted px-4 py-2.5">
-                    <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                  <div className="max-w-[90%] rounded-lg bg-muted p-2.5">
+                    <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
                   </div>
                 </div>
               )}

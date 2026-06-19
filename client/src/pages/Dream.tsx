@@ -4,6 +4,7 @@ import { Link } from 'wouter';
 import { toast } from 'sonner';
 import { Streamdown } from 'streamdown';
 import PageLayout from '@/components/PageLayout';
+import { getMoodPlushieOpening, MoodClawMachine, type MoodPlushie } from '@/components/MoodClawMachine';
 import OracleSphere from '@/components/OracleSphere';
 import CosmicMist from '@/components/CosmicMist';
 import { CatPeeking } from '@/components/CatElements';
@@ -131,6 +132,7 @@ export default function DreamPage() {
   });
   const [dreamContent, setDreamContent] = useState('');
   const [interpretation, setInterpretation] = useState('');
+  const [caughtMoodPlushie, setCaughtMoodPlushie] = useState<MoodPlushie | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
@@ -243,6 +245,12 @@ export default function DreamPage() {
     followUpMutation.isPending,
     2400
   );
+
+  useEffect(() => {
+    if (interpretMutation.isPending) {
+      setCaughtMoodPlushie(null);
+    }
+  }, [interpretMutation.isPending]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -486,13 +494,21 @@ export default function DreamPage() {
                   </h2>
                 </div>
                 {interpretMutation.isPending ? (
-                  <p className="text-[13px] leading-[2.2] tracking-[0.12em] text-[#31353A]/54"
-                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                    {waitingMessage}
-                  </p>
+                  <div className="flex flex-col items-center gap-4">
+                    <p className="text-[13px] leading-[2.2] tracking-[0.12em] text-[#31353A]/54"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      {waitingMessage}
+                    </p>
+                    <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
+                  </div>
                 ) : (
                   <div className="text-[14px] leading-[2.15] tracking-[0.08em] text-[#31353A]/76"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    {caughtMoodPlushie && (
+                      <p className="rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/75 px-4 py-3 text-[#6F5A3A]/82">
+                        {getMoodPlushieOpening(caughtMoodPlushie, 'dream')}
+                      </p>
+                    )}
                     <Streamdown>{interpretation}</Streamdown>
                   </div>
                 )}

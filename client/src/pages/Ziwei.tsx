@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { CatListening, CatPeeking } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ReadingFeedback from '@/components/ReadingFeedback';
+import { getMoodPlushieOpening, MoodClawMachine, type MoodPlushie } from '@/components/MoodClawMachine';
 import { recommendForCategory, recommendForZiwei, type RecommendationCategory } from '@/data/recommend';
 import { getContextualRecommendationReason, getProductImageStyle, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
@@ -422,6 +423,7 @@ export default function ZiweiPage() {
   const [astrolabe, setAstrolabe] = useState<AstrolabeData | null>(null);
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(null);
   const [llmInterpretation, setLlmInterpretation] = useState('');
+  const [caughtMoodPlushie, setCaughtMoodPlushie] = useState<MoodPlushie | null>(null);
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
@@ -630,6 +632,12 @@ export default function ZiweiPage() {
     ZIWEI_FOLLOW_UP_WAITING_MESSAGES,
     followUpMutation.isPending
   );
+
+  useEffect(() => {
+    if (interpretMutation.isPending) {
+      setCaughtMoodPlushie(null);
+    }
+  }, [interpretMutation.isPending]);
 
   function handleGenerate() {
     if (!birthDate) {
@@ -1007,12 +1015,12 @@ export default function ZiweiPage() {
           </div>
         )}
         {interpretMutation.isPending && (
-          <div className="flex flex-col items-center py-8 gap-3">
-            <div className="text-[#D1BE9B] text-2xl animate-spin">☯</div>
+          <div className="flex flex-col items-center py-6 gap-4">
             <p className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
               {ziweiWaitingMessage}
             </p>
+            <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
           </div>
         )}
         {interpretMutation.isError && (
@@ -1028,6 +1036,11 @@ export default function ZiweiPage() {
           <div>
             <div className="ziwei-interpretation text-[12.5px] leading-[2.2] text-[#31353A]/75 tracking-wider [&_p]:my-3"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+              {caughtMoodPlushie && (
+                <p className="rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/75 px-4 py-3 text-[#6F5A3A]/82">
+                  {getMoodPlushieOpening(caughtMoodPlushie, 'ziwei')}
+                </p>
+              )}
               <Streamdown>{llmInterpretation}</Streamdown>
             </div>
 
@@ -1339,6 +1352,11 @@ export default function ZiweiPage() {
                     </span>
                   ) : '排出我的命盤'}
                 </button>
+                {interpretMutation.isPending && (
+                  <div className="mt-5 flex justify-center">
+                    <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
+                  </div>
+                )}
                 {creditsQuery.data?.enabled && (
                   <p className="mt-3 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
