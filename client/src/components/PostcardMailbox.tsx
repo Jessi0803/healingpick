@@ -188,9 +188,9 @@ export default function PostcardMailbox() {
                 className="h-full w-full object-cover"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#2F2722]/72 via-[#2F2722]/24 to-transparent px-5 pb-5 pt-20 md:px-8 md:pb-7">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#2F2722]/72 via-[#2F2722]/24 to-transparent px-4 pb-4 pt-14 sm:px-5 sm:pb-5 sm:pt-16 md:px-8 md:pb-7 md:pt-20">
                 <p
-                  className="mx-auto max-w-2xl text-center text-lg leading-[1.9] text-[#FFFDF8] drop-shadow md:text-2xl"
+                  className="mx-auto max-w-[17rem] text-center text-sm leading-[1.7] text-[#FFFDF8] drop-shadow sm:max-w-[22rem] sm:text-base md:max-w-2xl md:text-2xl md:leading-[1.9]"
                   style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                 >
                   {visiblePostcard.message}
