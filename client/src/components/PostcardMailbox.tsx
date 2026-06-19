@@ -6,12 +6,8 @@ import { trpc } from "@/lib/trpc";
 const recordedUsers = new Set<number>();
 const floatingLetterStyles = `
 @keyframes hp-letter-float {
-  0% { transform: translate3d(0, 0, 0) rotate(-8deg); }
-  18% { transform: translate3d(-18vw, 8vh, 0) rotate(9deg); }
-  36% { transform: translate3d(-8vw, 28vh, 0) rotate(-4deg); }
-  56% { transform: translate3d(-32vw, 18vh, 0) rotate(11deg); }
-  74% { transform: translate3d(-16vw, 42vh, 0) rotate(-10deg); }
-  100% { transform: translate3d(0, 0, 0) rotate(-8deg); }
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
+  50% { transform: translate3d(0, -7px, 0) rotate(2deg); }
 }
 @keyframes hp-letter-glow {
   0%, 100% { opacity: 0.58; transform: scale(0.92); }
@@ -117,8 +113,8 @@ export default function PostcardMailbox() {
           <button
             type="button"
             onClick={openPostcard}
-            className="hp-floating-letter group fixed right-6 top-[128px] z-[70] flex items-center gap-2 rounded-full px-1 py-1 outline-none transition duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#D1BE9B] focus-visible:ring-offset-4 md:right-10 md:top-[138px]"
-            style={{ animation: "hp-letter-float 18s ease-in-out infinite" }}
+            className="hp-floating-letter group fixed right-5 top-[118px] z-[70] flex items-center gap-2 rounded-full px-1 py-1 outline-none transition duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#D1BE9B] focus-visible:ring-offset-4 md:right-8 md:top-[128px]"
+            style={{ animation: "hp-letter-float 3.6s ease-in-out infinite" }}
             aria-label="Mochi 給你的信，打開明信片"
             title="Mochi 給你的信"
           >
