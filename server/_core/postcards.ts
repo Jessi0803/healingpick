@@ -64,9 +64,10 @@ function compactText(value: string, maxLength: number) {
 function normalizeMessage(value: string) {
   const firstLine = value
     .replace(/[「」"“”]/g, "")
+    .replace(/^[-*•\d.、\s]+/, "")
     .split(/\n+/)[0]
     ?.trim();
-  return compactText(firstLine || FALLBACK_MESSAGES[0], 42);
+  return compactText(firstLine || FALLBACK_MESSAGES[0], 48);
 }
 
 async function generatePostcardMessage(userId: number) {
@@ -77,23 +78,35 @@ async function generatePostcardMessage(userId: number) {
 
   const memory = summaries
     .map((row, index) => {
-      const question = row.question ? `｜問題：${compactText(row.question, 70)}` : "";
-      return `${index + 1}. ${row.type}${question}｜${compactText(row.summary ?? "", 140)}`;
+      const question = row.question ? `使用者問：${compactText(row.question, 90)}` : "使用者沒有留下明確問題";
+      return `${index + 1}. ${row.type}｜${question}｜摘要：${compactText(row.summary ?? "", 150)}`;
     })
     .join("\n");
 
   try {
     const response = await invokeLLM({
-      maxTokens: 80,
+      maxTokens: 120,
       messages: [
         {
           role: "system",
           content:
-            "你是 Healing Pick 的小貓郵差。只輸出一句繁體中文短句，不要標題、不要 Markdown、不要引號。",
+            "你是 Healing Pick 的小貓郵差。你會把會員最近問過的事，悄悄變成一張貼心明信片。只輸出一句繁體中文短句，不要標題、不要 Markdown、不要引號。",
         },
         {
           role: "user",
-          content: `根據會員近期紀錄摘要，寫一句 18-28 字的可愛療癒明信片文字。語氣像小貓悄悄寄來的鼓勵。不要提到「紀錄」「摘要」「占卜歷史」，不要提病症或沉重字眼。\n\n${memory}`,
+          content: `請根據會員近期問過的內容與摘要，寫一句 18-32 字的可愛療癒明信片文字。
+
+寫法要求：
+- 優先貼近最近 1-2 筆「使用者問」的具體主題，例如感情、工作、選擇、焦慮、等待、行動、自信。
+- 如果多筆都在問同一類事，就回應那個反覆出現的卡點。
+- 句子要像小貓郵差悄悄寄來的鼓勵，可以有「你」「今天」「慢慢」「先」這種親近語氣。
+- 不要直接說出隱私細節、人名、日期、具體事件。
+- 不要提到「紀錄」「摘要」「占卜歷史」「我看到你問過」。
+- 不要提病症、診斷或沉重字眼。
+- 不要寫成泛用雞湯；要讓使用者感覺「這句話好像懂我最近在問什麼」。
+
+會員近期脈絡：
+${memory}`,
         },
       ],
     });
