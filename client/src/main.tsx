@@ -5,7 +5,6 @@ import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
-import { getLoginUrl } from "./const";
 import { getAccessToken, supabaseEnabled } from "./lib/supabase";
 import { getAnonId } from "./lib/anon";
 import "./index.css";
@@ -27,7 +26,7 @@ const handleApiError = (error: unknown) => {
     if (supabaseEnabled) {
       window.dispatchEvent(new Event("open-login"));
     } else {
-      window.location.href = getLoginUrl();
+      console.warn("[Auth] Login requested but Supabase auth is not configured");
     }
   }
 };

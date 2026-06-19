@@ -171,7 +171,7 @@ function getDailyMochiVisitorCount(date = new Date()) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function Home() {
   // The userAuth hooks provides authentication state
-  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
+  // To implement login/logout functionality, simply call login() or logout().
   let { user, loading, error, isAuthenticated, logout } = useAuth();
 
   const [activeCrystal, setActiveCrystal] = useState<string | null>(null);

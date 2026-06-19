@@ -33,12 +33,6 @@ const GET_USER_INFO_WITH_JWT_PATH = `/webdev.v1.WebDevAuthPublicService/GetUserI
 
 class OAuthService {
   constructor(private client: ReturnType<typeof axios.create>) {
-    console.log("[OAuth] Initialized with baseURL:", ENV.oAuthServerUrl);
-    if (!ENV.oAuthServerUrl) {
-      console.error(
-        "[OAuth] ERROR: OAUTH_SERVER_URL is not configured! Set OAUTH_SERVER_URL environment variable."
-      );
-    }
   }
 
   private decodeState(state: string): string {
@@ -86,12 +80,29 @@ const createOAuthHttpClient = (): AxiosInstance =>
   });
 
 class SDKServer {
-  private readonly client: AxiosInstance;
-  private readonly oauthService: OAuthService;
+  private client: AxiosInstance | null;
+  private oauthService: OAuthService | null;
 
-  constructor(client: AxiosInstance = createOAuthHttpClient()) {
-    this.client = client;
-    this.oauthService = new OAuthService(this.client);
+  constructor(client?: AxiosInstance) {
+    this.client = client ?? null;
+    this.oauthService = client ? new OAuthService(client) : null;
+  }
+
+  private requireOAuthClient(): AxiosInstance {
+    if (!ENV.oAuthServerUrl) {
+      throw new Error("OAUTH_SERVER_URL is not configured");
+    }
+    if (!this.client) {
+      this.client = createOAuthHttpClient();
+    }
+    return this.client;
+  }
+
+  private requireOAuthService(): OAuthService {
+    if (!this.oauthService) {
+      this.oauthService = new OAuthService(this.requireOAuthClient());
+    }
+    return this.oauthService;
   }
 
   private deriveLoginMethod(
@@ -125,7 +136,7 @@ class SDKServer {
     code: string,
     state: string
   ): Promise<ExchangeTokenResponse> {
-    return this.oauthService.getTokenByCode(code, state);
+    return this.requireOAuthService().getTokenByCode(code, state);
   }
 
   /**
@@ -134,7 +145,7 @@ class SDKServer {
    * const userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
    */
   async getUserInfo(accessToken: string): Promise<GetUserInfoResponse> {
-    const data = await this.oauthService.getUserInfoByToken({
+    const data = await this.requireOAuthService().getUserInfoByToken({
       accessToken,
     } as ExchangeTokenResponse);
     const loginMethod = this.deriveLoginMethod(
@@ -242,7 +253,7 @@ class SDKServer {
       projectId: ENV.appId,
     };
 
-    const { data } = await this.client.post<GetUserInfoWithJwtResponse>(
+    const { data } = await this.requireOAuthClient().post<GetUserInfoWithJwtResponse>(
       GET_USER_INFO_WITH_JWT_PATH,
       payload
     );

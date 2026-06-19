@@ -10,7 +10,6 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
-import { getLoginUrl } from '@/const';
 import { Streamdown } from 'streamdown';
 
 const TYPE_LABELS: Record<string, string> = {
@@ -49,7 +48,7 @@ function isHourValue(value: string | null | undefined): value is HourValue {
 }
 
 export default function HistoryPage() {
-  const { user, isAuthenticated, loading: authLoading, refresh } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, refresh, login } = useAuth();
   const utils = trpc.useUtils();
   const [profileName, setProfileName] = useState('');
   const [profileBirthDate, setProfileBirthDate] = useState('');
@@ -122,13 +121,16 @@ export default function HistoryPage() {
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
             登入後即可查看你的占卜與運勢紀錄。
           </p>
-          <a href={getLoginUrl()}>
-            <button
-              className="px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              登入 Manus
-            </button>
-          </a>
+          <button
+            type="button"
+            onClick={() => void login({
+              title: '請先登入',
+              subtitle: '登入後即可查看你的占卜與運勢紀錄。',
+            })}
+            className="px-8 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            立即登入
+          </button>
         </div>
       </PageLayout>
     );
