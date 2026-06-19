@@ -188,14 +188,14 @@ export default function PostcardMailbox() {
                 className="h-full w-full object-cover"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#2F2722]/72 via-[#2F2722]/24 to-transparent px-4 pb-4 pt-14 sm:px-5 sm:pb-5 sm:pt-16 md:px-8 md:pb-7 md:pt-20">
-                <p
-                  className="mx-auto max-w-[17rem] text-center text-sm leading-[1.7] text-[#FFFDF8] drop-shadow sm:max-w-[22rem] sm:text-base md:max-w-2xl md:text-2xl md:leading-[1.9]"
-                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                >
-                  {visiblePostcard.message}
-                </p>
-              </div>
+            </div>
+            <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-3 sm:px-5 sm:py-4 md:px-8 md:py-5">
+              <p
+                className="mx-auto max-w-[18rem] text-center text-sm leading-[1.7] text-[#6F5648] sm:max-w-[24rem] sm:text-base md:max-w-2xl md:text-lg md:leading-[1.8]"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                {visiblePostcard.message}
+              </p>
             </div>
           </section>
         </div>
