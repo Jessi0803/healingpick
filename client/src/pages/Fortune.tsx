@@ -7,7 +7,7 @@
  *   - Lucky colors, numbers, directions
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, type RefObject } from 'react';
 import { Link } from 'wouter';
 import { Streamdown } from 'streamdown';
 import PageLayout from '@/components/PageLayout';
@@ -346,6 +346,8 @@ export default function FortunePage() {
   const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
   const [today] = useState(new Date());
   const savedFortuneRef = useRef<string>('');
+  const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
+  const fortuneResultRef = useRef<HTMLDivElement | null>(null);
 
   const creditsQuery = trpc.credits.state.useQuery();
   const credits = creditsQuery.data;
@@ -409,11 +411,29 @@ export default function FortunePage() {
   const aiData = dailyFortuneQuery.data;
   const fortuneWaitingMessage = useRotatingText(FORTUNE_WAITING_MESSAGES, dailyFortuneQuery.isLoading);
 
+  const scrollToSection = useCallback((ref: RefObject<HTMLDivElement | null>, block: ScrollLogicalPosition = 'center') => {
+    const scroll = () => ref.current?.scrollIntoView({ behavior: 'smooth', block });
+    window.requestAnimationFrame(() => {
+      scroll();
+      window.requestAnimationFrame(scroll);
+    });
+    window.setTimeout(scroll, 80);
+    window.setTimeout(scroll, 220);
+    window.setTimeout(scroll, 420);
+  }, []);
+
   useEffect(() => {
     if (dailyFortuneQuery.isLoading) {
       setCaughtMoodPlushie(null);
+      scrollToSection(moodClawSectionRef);
     }
-  }, [dailyFortuneQuery.isLoading]);
+  }, [dailyFortuneQuery.isLoading, scrollToSection]);
+
+  useEffect(() => {
+    if (!dailyFortuneQuery.isLoading && aiData) {
+      scrollToSection(fortuneResultRef, 'start');
+    }
+  }, [aiData, dailyFortuneQuery.isLoading, scrollToSection]);
 
   return (
     <PageLayout>
@@ -613,7 +633,7 @@ export default function FortunePage() {
                     <>
                         {/* Loading state */}
                         {dailyFortuneQuery.isLoading && (
-                          <div className="flex flex-col items-center gap-4 py-8">
+                          <div ref={moodClawSectionRef} className="flex flex-col items-center gap-4 py-8">
                             <p className="text-[12px] tracking-[0.2em] text-[#31353A]/54"
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                               {fortuneWaitingMessage}
@@ -640,7 +660,7 @@ export default function FortunePage() {
 
                         {/* AI Fortune content */}
                         {aiData && (
-                          <>
+                          <div ref={fortuneResultRef}>
                             {caughtMoodPlushie && (
                               <div className="mb-5 rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/75 px-4 py-3 text-[13px] leading-[2] tracking-[0.08em] text-[#6F5A3A]/82"
                                 style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
@@ -729,7 +749,7 @@ export default function FortunePage() {
                                 </div>
                               </div>
                             )}
-                          </>
+                          </div>
                         )}
                       </>
                   </div>

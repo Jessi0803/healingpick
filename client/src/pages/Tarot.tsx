@@ -565,9 +565,14 @@ export default function TarotPage() {
   }, []);
 
   const scrollToSection = useCallback((ref: RefObject<HTMLDivElement | null>, block: ScrollLogicalPosition = 'center') => {
+    const scroll = () => ref.current?.scrollIntoView({ behavior: 'smooth', block });
     window.requestAnimationFrame(() => {
-      ref.current?.scrollIntoView({ behavior: 'smooth', block });
+      scroll();
+      window.requestAnimationFrame(scroll);
     });
+    window.setTimeout(scroll, 80);
+    window.setTimeout(scroll, 220);
+    window.setTimeout(scroll, 420);
   }, []);
 
   const interpretMutation = trpc.tarot.interpret.useMutation({
