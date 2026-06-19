@@ -117,16 +117,16 @@ export default function PostcardMailbox() {
           <button
             type="button"
             onClick={openPostcard}
-            className="hp-floating-letter group fixed right-6 top-[128px] z-[70] grid h-16 w-16 place-items-center rounded-full outline-none transition duration-300 hover:scale-110 focus-visible:ring-2 focus-visible:ring-[#D1BE9B] focus-visible:ring-offset-4 md:right-10 md:top-[138px]"
+            className="hp-floating-letter group fixed right-6 top-[128px] z-[70] flex items-center gap-2 rounded-full px-1 py-1 outline-none transition duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#D1BE9B] focus-visible:ring-offset-4 md:right-10 md:top-[138px]"
             style={{ animation: "hp-letter-float 18s ease-in-out infinite" }}
-            aria-label="你有一封信，打開明信片"
-            title="你有一封信"
+            aria-label="Mochi 給你的信，打開明信片"
+            title="Mochi 給你的信"
           >
             <span
-              className="hp-floating-letter-glow absolute inset-0 rounded-full bg-[#F7D991]/40 blur-xl"
+              className="hp-floating-letter-glow absolute inset-0 rounded-full bg-[#F7D991]/45 blur-xl"
               style={{ animation: "hp-letter-glow 2.6s ease-in-out infinite" }}
             />
-            <span className="absolute inset-1 rounded-full bg-[#FFF8E8]/60 blur-md" />
+            <span className="absolute inset-1 rounded-full bg-[#FFF8E8]/65 blur-md" />
             <span className="relative grid h-14 w-14 place-items-center rounded-[18px] border border-[#D1BE9B]/55 bg-[#FFFDF8]/95 text-[#8A7250] shadow-[0_12px_34px_rgba(138,114,80,0.22),0_0_24px_rgba(247,217,145,0.5)] backdrop-blur-md transition group-hover:border-[#C8A96A]/80 group-hover:text-[#A38D6B]">
               <Mail
                 className="hp-floating-letter-icon"
@@ -137,10 +137,10 @@ export default function PostcardMailbox() {
               <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border border-white bg-[#E9A6A0] shadow-[0_0_14px_rgba(233,166,160,0.8)]" />
             </span>
             <span
-              className="pointer-events-none absolute left-1/2 top-[68px] hidden -translate-x-1/2 whitespace-nowrap rounded-full border border-[#D1BE9B]/35 bg-[#FFFDF8]/94 px-3 py-1.5 text-[11px] tracking-[0.16em] text-[#6F5648] shadow-sm backdrop-blur-sm group-hover:block md:group-hover:block"
+              className="relative max-w-[7.5rem] whitespace-nowrap rounded-full border border-[#D1BE9B]/45 bg-[#FFFDF8]/94 px-3 py-2 text-[11px] leading-none tracking-[0.13em] text-[#6F5648] shadow-[0_8px_24px_rgba(138,114,80,0.14)] backdrop-blur-md transition group-hover:border-[#C8A96A]/70 group-hover:text-[#A38D6B] sm:max-w-none sm:text-xs"
               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
             >
-              你有一封信
+              Mochi 給你的信
             </span>
           </button>
         </>
