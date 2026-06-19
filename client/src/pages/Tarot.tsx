@@ -1050,38 +1050,41 @@ export default function TarotPage() {
                       <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-[#FDFBF7] border-[#D1BE9B]/30" style={{ fontFamily: 'Noto Serif TC, serif' }}>
                       <DialogHeader>
                         <DialogTitle className="text-center text-lg tracking-[0.2em] font-extralight text-[#31353A] mb-2 mt-2">
-                          ✦ Mochi 的塔羅小秘密 ✦
+                          ✦ 為什麼 AI 算的也可以很準？ ✦
                         </DialogTitle>
                       </DialogHeader>
                       <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                         <p>
-                          如果你最近一直反覆想同一件事，卻怎麼想都想不出答案，很適合抽一次塔羅。<br/><br/>
-                          它會幫你看見現在卡住的原因、你忽略的盲點，以及這件事接下來可以怎麼面對。
+                          很多人一開始會覺得：「算命不是要真人老師看才準嗎？AI 真的懂嗎？」<br/><br/>
+                          其實塔羅不是隨便感覺一下而已。它會看牌義、牌陣位置、正逆位，也會搭配你的問題背景一起整理。
                         </p>
 
                         <div>
-                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🃏 為什麼先用這 22 張牌？</h4>
+                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>✦ AI 厲害在哪裡？</h4>
                           <p>
-                            這 22 張牌叫做「大阿爾卡納」，可以把它想成一套人生常見狀態的牌卡。裡面有開始、有選擇、有曖昧、有改變，也有低潮後重新站起來的提醒。<br/><br/>
-                            對第一次來算的人來說，這 22 張牌比較好理解，不會一下子資訊太多。你只要帶著一個最近最在意的問題來抽，Mochi 會幫你把牌面整理成白話文，讓你知道現在卡住的點在哪裡、接下來可以怎麼看。
+                            AI 最強的地方，就是很會把大量規則和細節快速整理出來。它可以在很短時間內，把牌面、位置、組合關係和你的問題放在一起看。<br/><br/>
+                            它不會因為累了就少看一點，也不會因為心情不同，讓前後解讀差太多。
                           </p>
                         </div>
 
                         <div>
-                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🤔 為什麼有時候會覺得很準？</h4>
-                          <p>很多時候，不是牌在替你決定人生，而是它剛好把你心裡已經有感覺、但還沒說出口的地方點出來。</p>
+                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>✦ 不是亂給答案，而是照規則分析</h4>
+                          <p>AI 算命不是隨便丟一段話給你，而是依照牌義、牌陣邏輯和你的問題去整理分析。</p>
                           <ul className="list-disc pl-5 mt-2 space-y-2">
-                            <li><strong className="font-medium">你會更快看見自己的狀態：</strong>牌面會把你的焦慮、期待、害怕或猶豫，用一種比較具體的方式呈現出來。</li>
-                            <li><strong className="font-medium">問題會變得比較好整理：</strong>原本腦中一團亂的事，會被拆成「現在發生什麼」「你真正擔心什麼」「下一步可以怎麼做」。</li>
+                            <li><strong className="font-medium">穩定：</strong>每次都照同一套邏輯整理，不會忽略基本規則。</li>
+                            <li><strong className="font-medium">細心：</strong>可以同時檢查很多細節，減少漏看的機會。</li>
+                            <li><strong className="font-medium">完整：</strong>會把明顯的線索、需要注意的地方和可能性一起整理出來。</li>
                           </ul>
                         </div>
 
                         <div>
-                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🧭 它適合問什麼？</h4>
-                          <p>
-                            如果你心裡有一個一直反覆想的問題，就很適合來抽牌。像是：這段關係該繼續嗎？對方現在的態度是什麼？我工作是不是該換方向？最近為什麼一直提不起勁？<br/><br/>
-                            塔羅不會跟你說「你只能怎樣」，而是幫你看見目前的能量、盲點和可以調整的方向。最後要不要走、怎麼走，還是你自己決定；只是你不用再一個人亂猜。
-                          </p>
+                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>✦ 為什麼有時候反而更不容易出錯？</h4>
+                          <ul className="list-disc pl-5 mt-2 space-y-2">
+                            <li>真人老師狀態不好時，可能講得比較少。</li>
+                            <li>問題太多時，有些細節可能沒說到。</li>
+                            <li>牌面太複雜時，可能漏掉某些組合。</li>
+                            <li>不同老師經驗不同，解讀角度也可能差很多。</li>
+                          </ul>
                         </div>
 
                         <div className="bg-[#D1BE9B]/10 p-5 rounded-2xl border border-[#D1BE9B]/20 text-[#31353A]/80 mt-8 shadow-sm">
@@ -1089,8 +1092,8 @@ export default function TarotPage() {
                             <CatListening className="w-7 h-7" /> Mochi 的悄悄話：
                           </div>
                           <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                            「不用怕抽到看起來比較沉重的牌，它通常不是壞消息，而是在提醒你：這裡需要被看見。<br/>
-                            先想一個你最近最想問的問題，慢慢抽牌，我陪你一起把答案整理清楚 🐾」
+                            「在整理資料、比對規則、避免漏看這件事上，AI 真的很有優勢。<br/>
+                            如果你想要的是穩定、完整、有依據的分析，AI 其實不是比較不準，反而可能比單純靠人工更不容易出錯。」
                           </p>
                         </div>
                       </div>

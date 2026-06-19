@@ -1134,59 +1134,51 @@ export default function ZiweiPage() {
                   <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-[#FDFBF7] border-[#D1BE9B]/30" style={{ fontFamily: 'Noto Serif TC, serif' }}>
                     <DialogHeader>
                       <DialogTitle className="text-center text-lg tracking-[0.2em] font-extralight text-[#31353A] mb-2 mt-2">
-                        ✦ Mochi 的紫微小祕密 ✦
+                        ✦ 為什麼 AI 算的也可以很準？ ✦
                       </DialogTitle>
                     </DialogHeader>
                     <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      <p>
+                        很多人一開始會覺得：「算命不是要真人老師看才準嗎？AI 真的懂嗎？」<br/><br/>
+                        其實紫微不是隨便感覺一下而已。它會看命宮、十二宮、主星、副星、四化、流年和大限，這些都需要很多規則和細節一起比對。
+                      </p>
+
                       <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🙋‍♀️ 算一次能幫你看到什麼？</h4>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>✦ AI 厲害在哪裡？</h4>
                         <p>
-                          你可能會想知道：為什麼我明明很努力，事情還是一直卡住？為什麼有些關係總是走到差不多的地方？為什麼一有壓力，就會變成自己也不太喜歡的樣子？
+                          AI 最強的地方，就是很會把大量命盤資料快速整理出來。它可以在很短時間內，把星曜、宮位、四化和流年變化放在一起看。<br/><br/>
+                          它不會因為累了就少看一點，也不會因為心情不同，讓前後解讀差太多。
                         </p>
-                        <p className="mt-3">
-                          很多人算完最有感的，通常是下面這幾件事：
-                        </p>
-                        <ul className="list-disc pl-5 mt-2 space-y-3">
-                          <li><strong className="font-medium text-[#A38D6B]">為什麼總在同一個地方卡住：</strong>你會更知道自己在壓力下的反應、容易繞進去的模式，還有那些反覆出現的關卡。</li>
-                          <li><strong className="font-medium text-[#A38D6B]">感情和人際裡的慣性：</strong>不是只看別人對你怎麼樣，也會看你自己在關係裡比較容易期待什麼、忍耐什麼、受傷在哪裡。</li>
-                          <li><strong className="font-medium text-[#A38D6B]">工作和人生節奏：</strong>你適合怎麼發揮、怎麼累積資源、什麼時候該衝、什麼時候該穩，會比一直硬撐來得清楚很多。</li>
+                      </div>
+
+                      <div>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>✦ 不是亂給答案，而是照規則分析</h4>
+                        <p>AI 算命不是隨便丟一段話給你，而是依照命盤規則和你的問題去整理分析。</p>
+                        <ul className="list-disc pl-5 mt-2 space-y-2">
+                          <li><strong className="font-medium">穩定：</strong>每次都照同一套邏輯整理，不會忽略基本規則。</li>
+                          <li><strong className="font-medium">細心：</strong>可以同時檢查很多細節，減少漏看的機會。</li>
+                          <li><strong className="font-medium">完整：</strong>會把明顯的線索、需要注意的地方和可能性一起整理出來。</li>
                         </ul>
-                        <p className="mt-3">
-                          當你知道自己是怎麼運作的，很多選擇就不會只能靠硬撐。紫微斗數不是要你迷信命運，而是讓你在混亂的時候，至少先看清楚自己。
-                        </p>
                       </div>
 
                       <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>🪐 不是算命，是看懂自己的使用說明書</h4>
-                        <p>
-                          紫微斗數會根據你的出生年、月、日和<strong className="font-medium">時辰</strong>排出一張命盤，把個性、感情、工作、金錢、家庭等面向分開來看。<br /><br />
-                          它不是替你下結論，而是把你的<strong className="font-medium text-[#A38D6B]">慣性、優勢、盲點</strong>和當下的人生節奏攤開來，讓你知道怎麼善加利用優勢、改善劣勢，替自己爭取更適合的機會。
-                        </p>
+                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>✦ 為什麼有時候反而更不容易出錯？</h4>
+                        <ul className="list-disc pl-5 mt-2 space-y-2">
+                          <li>真人老師狀態不好時，可能講得比較少。</li>
+                          <li>問題太多時，有些細節可能沒說到。</li>
+                          <li>命盤太複雜時，可能漏掉某些組合。</li>
+                          <li>不同老師經驗不同，解讀角度也可能差很多。</li>
+                        </ul>
                       </div>
 
-                      <div>
-                        <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-3" style={{ fontFamily: 'Noto Serif TC, serif' }}>◎ 命盤如何排列</h4>
-                        <div className="space-y-3">
-                          {[
-                            { icon: '📊', label: '生辰排盤', desc: '以 iztro 紫微斗數演算法，依生年月日時排出十二宮位' },
-                            { icon: '✦', label: '星曜落點', desc: '計算主星、輔星在各宮位的座落與亮度' },
-                            { icon: '◈', label: 'mochi解讀', desc: '將命盤資料與你關注的領域交給 Mochi，生成深度命盤解讀' },
-                          ].map((s) => (
-                            <div key={s.label} className="flex items-start gap-3 rounded-xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/55 px-3 py-3">
-                              <div className="w-8 h-8 flex-shrink-0 rounded-full bg-[#D1BE9B]/12 flex items-center justify-center text-sm text-[#A38D6B]">
-                                {s.icon}
-                              </div>
-                              <div>
-                                <p className="text-[11px] tracking-[0.18em] text-[#8A7250] mb-1" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                                  {s.label}
-                                </p>
-                                <p className="text-[12px] leading-[1.75] text-[#31353A]/64 tracking-wide">
-                                  {s.desc}
-                                </p>
-                              </div>
-                            </div>
-                          ))}
+                      <div className="bg-[#D1BE9B]/10 p-5 rounded-2xl border border-[#D1BE9B]/20 text-[#31353A]/80 mt-8 shadow-sm">
+                        <div className="font-medium text-[#A38D6B] mb-2 flex items-center gap-2 text-[14px]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
+                          Mochi 的悄悄話：
                         </div>
+                        <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          「在整理資料、比對規則、避免漏看這件事上，AI 真的很有優勢。<br/>
+                          如果你想要的是穩定、完整、有依據的分析，AI 其實不是比較不準，反而可能比單純靠人工更不容易出錯。」
+                        </p>
                       </div>
 
                     </div>
