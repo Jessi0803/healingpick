@@ -26,7 +26,16 @@ import { getContextualRecommendationReason, getProductImageStyle, type Product }
 import { useRotatingText } from '@/hooks/useRotatingText';
 
 // ─── Tarot Card Data ──────────────────────────────────────────────────────────
-const MAJOR_ARCANA = [
+type TarotCard = {
+  id: number;
+  name: string;
+  en: string;
+  symbol: string;
+  meaning: string;
+  reversed: string;
+};
+
+const MAJOR_ARCANA: TarotCard[] = [
   { id: 0,  name: '愚者',     en: 'The Fool',         symbol: '☽', meaning: '新的開始、純真、冒險、自由精神', reversed: '魯莽、缺乏計畫、天真過頭' },
   { id: 1,  name: '魔術師',   en: 'The Magician',     symbol: '✦', meaning: '意志力、技巧、資源豐富、顯化能力', reversed: '操縱、技巧不足、資源浪費' },
   { id: 2,  name: '女祭司',   en: 'The High Priestess',symbol: '◈', meaning: '直覺、神秘、內在智慧、潛意識', reversed: '壓抑直覺、秘密、表面化' },
@@ -50,6 +59,110 @@ const MAJOR_ARCANA = [
   { id: 20, name: '審判',     en: 'Judgement',        symbol: '♦', meaning: '覺醒、重生、召喚、反思', reversed: '自我懷疑、拒絕覺醒、過去的包袱' },
   { id: 21, name: '世界',     en: 'The World',        symbol: '○', meaning: '完成、整合、成就、旅程終點', reversed: '未完成、缺乏閉合、停滯' },
 ];
+
+const MINOR_SUITS = [
+  {
+    name: '權杖',
+    en: 'Wands',
+    symbol: '✦',
+    theme: '行動、熱情、創造力、目標推進',
+    cards: [
+      ['一', 'Ace', '新的動力、靈感萌芽、主動開始、熱情點燃', '衝勁不足、計畫延遲、熱情消退、難以啟動'],
+      ['二', 'Two', '規劃未來、選擇方向、掌握主導、等待時機', '猶豫不決、視野受限、計畫卡住、害怕跨出去'],
+      ['三', 'Three', '拓展機會、遠方消息、初步成果、向外發展', '進展延誤、合作不順、期待落空、視野太窄'],
+      ['四', 'Four', '穩定喜悅、慶祝成果、關係安定、階段完成', '安全感不足、表面和諧、聚會延遲、根基不穩'],
+      ['五', 'Five', '競爭摩擦、意見衝突、各自用力、需要協調', '避免衝突、內耗減少、勝負心退、重新找共識'],
+      ['六', 'Six', '被看見、勝利回應、公開肯定、局勢好轉', '認可不足、過度在意評價、短暫勝利、自信動搖'],
+      ['七', 'Seven', '守住立場、面對壓力、堅持界線、逆勢而上', '防衛過度、疲於抵抗、立場鬆動、不想再撐'],
+      ['八', 'Eight', '快速推進、訊息往來、行動加速、局勢明朗', '消息延遲、節奏混亂、衝太快、溝通卡住'],
+      ['九', 'Nine', '保持警覺、累積疲憊、最後防線、仍有韌性', '戒心太重、身心耗竭、放下防備、撐不下去'],
+      ['十', 'Ten', '責任沉重、壓力過載、獨自承擔、接近終點', '卸下負擔、分工求助、過勞警訊、責任重新分配'],
+      ['侍者', 'Page', '新訊息、好奇探索、嘗試行動、熱情邀請', '三分鐘熱度、消息不穩、幼稚衝動、缺乏後續'],
+      ['騎士', 'Knight', '積極追求、快速行動、熱烈表達、冒險精神', '衝動躁進、忽冷忽熱、承諾不足、來得快去得快'],
+      ['皇后', 'Queen', '自信魅力、溫暖支持、創造力旺盛、吸引力強', '情緒化控制、嫉妒心、過度付出、自我價值不穩'],
+      ['國王', 'King', '成熟領導、明確目標、掌控局面、穩定推進', '強勢固執、控制欲、急於主導、行動缺乏彈性'],
+    ],
+  },
+  {
+    name: '聖杯',
+    en: 'Cups',
+    symbol: '♡',
+    theme: '情感、關係、直覺、內在需求',
+    cards: [
+      ['一', 'Ace', '情感開始、心意流動、溫柔靠近、療癒感受', '情緒封閉、愛意受阻、心意未表達、感受混亂'],
+      ['二', 'Two', '互相吸引、真誠連結、關係靠近、情感交換', '失衡關係、誤會疏離、單方面付出、連結變弱'],
+      ['三', 'Three', '朋友支持、愉快聚會、情緒分享、共同慶祝', '小圈摩擦、第三方干擾、過度玩樂、情感不專注'],
+      ['四', 'Four', '情緒倦怠、提不起勁、錯過機會、需要整理心', '重新打開、願意接受、厭倦感退、看見新可能'],
+      ['五', 'Five', '失落遺憾、看著失去、情緒低潮、仍有未看見的支持', '走出難過、接受現實、慢慢修復、重新看見希望'],
+      ['六', 'Six', '回憶牽動、舊人舊事、單純善意、過去影響現在', '走出懷舊、放下過去、童年課題、舊情難續'],
+      ['七', 'Seven', '選項太多、幻想投射、難以決定、需要看清現實', '幻想落地、做出選擇、看清真相、減少混亂'],
+      ['八', 'Eight', '離開消耗、尋找更深意義、情感抽離、轉身前進', '放不下、反覆回頭、害怕離開、停在不滿足裡'],
+      ['九', 'Nine', '心願滿足、情緒享受、個人滿意、願望有機會', '滿足感空洞、貪心期待、表面快樂、願望延遲'],
+      ['十', 'Ten', '情感圓滿、家庭和諧、關係穩定、幸福感累積', '理想落差、關係失和、期待過高、幸福感不穩'],
+      ['侍者', 'Page', '曖昧訊息、溫柔示好、情感萌芽、直覺提醒', '情緒幼稚、訊息不明、害羞逃避、心意不成熟'],
+      ['騎士', 'Knight', '浪漫邀約、情感表達、靠近示好、心意流動', '甜言蜜語、行動不足、情緒化追求、承諾模糊'],
+      ['皇后', 'Queen', '溫柔共感、情緒包容、深度照顧、直覺敏銳', '過度敏感、情緒淹沒、界線不足、照顧到失衡'],
+      ['國王', 'King', '成熟情感、穩定支持、理性溫柔、情緒掌握', '壓抑感受、冷處理、情緒控制、愛得不表達'],
+    ],
+  },
+  {
+    name: '寶劍',
+    en: 'Swords',
+    symbol: '◇',
+    theme: '思考、溝通、判斷、壓力與真相',
+    cards: [
+      ['一', 'Ace', '清楚判斷、真相浮現、理性切入、明確溝通', '判斷混亂、話說不清、真相延遲、想法卡住'],
+      ['二', 'Two', '僵持不決、封閉心門、兩難選擇、暫時不表態', '逃避結束、被迫面對、做出選擇、防衛鬆動'],
+      ['三', 'Three', '心碎失望、刺痛真相、關係受傷、需要接受現實', '傷口修復、痛感減輕、釋放悲傷、慢慢復原'],
+      ['四', 'Four', '休息暫停、抽離恢復、沉澱思緒、暫不行動', '重新啟動、休息不足、焦慮回來、該醒來面對'],
+      ['五', 'Five', '爭執勝負、口舌傷害、贏了也失去、關係消耗', '停止爭勝、和解可能、退一步、承認代價'],
+      ['六', 'Six', '離開混亂、慢慢過渡、換環境、走向平靜', '過渡受阻、難以放下、舊問題跟隨、移動延遲'],
+      ['七', 'Seven', '隱瞞策略、保留真相、迂迴處理、需要防備', '真相揭露、計畫失手、坦白面對、停止逃避'],
+      ['八', 'Eight', '自我限制、看不見出口、焦慮綁住、困在想法裡', '限制鬆開、找到出口、停止自困、重新掌握'],
+      ['九', 'Nine', '焦慮失眠、過度擔心、內疚壓力、腦中反覆', '焦慮緩解、求助支持、放過自己、壓力下降'],
+      ['十', 'Ten', '結束低谷、痛到谷底、無法再撐、舊局告終', '谷底回升、痛苦收尾、慢慢復原、避免重蹈覆轍'],
+      ['侍者', 'Page', '觀察打探、訊息敏銳、謹慎開口、學習分析', '多疑窺探、話語尖銳、資訊不足、溝通幼稚'],
+      ['騎士', 'Knight', '快速決斷、直接溝通、衝向目標、突破阻礙', '言語衝動、魯莽決定、爭辯過度、缺乏耐心'],
+      ['皇后', 'Queen', '清醒界線、理性判斷、誠實溝通、不被情緒左右', '過度冷淡、批判尖銳、防衛太強、難以信任'],
+      ['國王', 'King', '專業判斷、權威決策、邏輯清楚、公正理性', '冷酷控制、固執己見、濫用權威、缺乏同理'],
+    ],
+  },
+  {
+    name: '錢幣',
+    en: 'Pentacles',
+    symbol: '○',
+    theme: '金錢、工作、身體、承諾與實際成果',
+    cards: [
+      ['一', 'Ace', '實際機會、金錢起點、穩定種子、可落地的開始', '機會延遲、資源不足、沒有落地、錯過好開端'],
+      ['二', 'Two', '平衡安排、多工調度、彈性應變、收支起伏', '失去平衡、顧此失彼、節奏混亂、壓力過載'],
+      ['三', 'Three', '合作建設、專業被看見、共同完成、技術累積', '合作不順、品質不足、分工混亂、努力未被認可'],
+      ['四', 'Four', '保守守成、抓住安全感、控制資源、害怕失去', '願意鬆手、資源流動、放下控制、花費失衡'],
+      ['五', 'Five', '匱乏感、現實壓力、被排除感、需要求助', '找到支持、困境改善、走出匱乏、願意接受幫忙'],
+      ['六', 'Six', '資源互助、公平給予、收到支援、金錢往來', '付出失衡、人情壓力、資源不公、依賴或控制'],
+      ['七', 'Seven', '等待成果、長期耕耘、評估投入、耐心觀察', '耐心不足、成果延遲、投資失準、想放棄'],
+      ['八', 'Eight', '專注練習、技能累積、穩定工作、細節打磨', '敷衍疲乏、重複無聊、技能停滯、缺少品質'],
+      ['九', 'Nine', '獨立富足、自我價值、享受成果、生活穩定', '依賴感、財務不安、表面富足、自我價值動搖'],
+      ['十', 'Ten', '長期穩定、家庭資源、累積成果、關係承諾', '家族壓力、穩定破口、資源分配問題、承諾不穩'],
+      ['侍者', 'Page', '學習新技能、實際消息、慢慢開始、腳踏實地', '進度慢、缺乏規劃、學習分心、機會未成熟'],
+      ['騎士', 'Knight', '穩定前進、負責承擔、務實執行、可靠但慢', '停滯固執、效率低、過度保守、缺乏彈性'],
+      ['皇后', 'Queen', '照顧生活、豐盛穩定、務實溫柔、身心滋養', '過度操心、物質焦慮、照顧失衡、缺少安全感'],
+      ['國王', 'King', '財務掌控、成熟承諾、事業穩定、可靠資源', '物質控制、固執保守、貪心壓力、承諾變沉重'],
+    ],
+  },
+] as const;
+
+const MINOR_ARCANA: TarotCard[] = MINOR_SUITS.flatMap((suit, suitIndex) =>
+  suit.cards.map(([rank, rankEn, meaning, reversed], rankIndex) => ({
+    id: 22 + suitIndex * 14 + rankIndex,
+    name: `${suit.name}${rank}`,
+    en: `${rankEn} of ${suit.en}`,
+    symbol: suit.symbol,
+    meaning: `${meaning}；${suit.theme}`,
+    reversed,
+  }))
+);
+
+const TAROT_DECK: TarotCard[] = [...MAJOR_ARCANA, ...MINOR_ARCANA];
 
 // Star spread positions (5 cards)
 const SPREAD_POSITIONS = [
@@ -105,33 +218,20 @@ const TAROT_FOLLOW_UP_WAITING_MESSAGES = [
 
 // Rider-Waite-Smith Tarot card images (public domain), self-hosted in
 // client/public/tarot to avoid Wikimedia hotlink rate-limiting (HTTP 429).
-const CARD_IMAGES: Record<number, string> = {
-  0:  '/tarot/00.jpg',
-  1:  '/tarot/01.jpg',
-  2:  '/tarot/02.jpg',
-  3:  '/tarot/03.jpg',
-  4:  '/tarot/04.jpg',
-  5:  '/tarot/05.jpg',
-  6:  '/tarot/06.jpg',
-  7:  '/tarot/07.jpg',
-  8:  '/tarot/08.jpg',
-  9:  '/tarot/09.jpg',
-  10: '/tarot/10.jpg',
-  11: '/tarot/11.jpg',
-  12: '/tarot/12.jpg',
-  13: '/tarot/13.jpg',
-  14: '/tarot/14.jpg',
-  15: '/tarot/15.jpg',
-  16: '/tarot/16.jpg',
-  17: '/tarot/17.jpg',
-  18: '/tarot/18.jpg',
-  19: '/tarot/19.jpg',
-  20: '/tarot/20.jpg',
-  21: '/tarot/21.jpg',
-};
+const CARD_IMAGES: Record<number, string> = Object.fromEntries(
+  Array.from({ length: 78 }, (_, id) => [id, `/tarot/${String(id).padStart(2, '0')}.jpg`])
+);
 
 const TAROT_CARD_IMAGE_URLS = Object.values(CARD_IMAGES);
 const preloadedTarotImages = new Set<string>();
+
+function getCardKeywords(card: TarotCard, reversed: boolean) {
+  return (reversed ? card.reversed : card.meaning)
+    .split(/[、；]/u)
+    .map((word) => word.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+}
 
 function preloadTarotCardImages(urls: string[]) {
   if (typeof window === 'undefined') return Promise.resolve();
@@ -160,26 +260,58 @@ function preloadTarotCardImagesWithTimeout(urls: string[], timeoutMs = 1200) {
 }
 
 // Card face using real Rider-Waite-Smith images
-const CardFace = ({ card, reversed = false }: { card: typeof MAJOR_ARCANA[0]; reversed?: boolean }) => {
+const CardFace = ({ card, reversed = false }: { card: TarotCard; reversed?: boolean }) => {
   const imgUrl = CARD_IMAGES[card.id];
+  const keywords = getCardKeywords(card, reversed);
   return (
     <div
-      className={`w-full h-full relative overflow-hidden rounded-lg border border-[#D1BE9B]/30 ${reversed ? 'rotate-180' : ''}`}
+      className="w-full h-full relative overflow-hidden rounded-lg border border-[#D1BE9B]/30"
       style={{ transition: 'transform 0.3s ease', background: '#F5EFE8' }}
     >
       {imgUrl ? (
         <img
           src={imgUrl}
           alt={card.name}
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover ${reversed ? 'rotate-180' : ''}`}
           loading="eager"
           decoding="async"
         />
       ) : (
-        // Fallback SVG if image fails
-        <div className="w-full h-full flex flex-col items-center justify-center bg-[#F0E8DC]">
-          <span className="text-2xl opacity-50" style={{ fontFamily: 'serif' }}>{card.symbol}</span>
-          <span className="text-[10px] tracking-widest text-[#31353A]/72 mt-1" style={{ fontFamily: 'Noto Serif TC, serif' }}>{card.name}</span>
+        <div className="relative w-full h-full overflow-hidden bg-[#F3EBDD] px-2 py-2 text-[#31353A]/76">
+          <div className="absolute inset-1 rounded-md border border-[#D1BE9B]/45" />
+          <div className="absolute inset-2 rounded-[4px] border border-[#F8F0DC]/85" />
+          <div className="relative z-10 flex h-full flex-col items-center justify-between text-center">
+            <div>
+              <p className="text-[9px] leading-tight tracking-[0.12em] text-[#6F5A3A]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {card.name}
+              </p>
+              <p className="mt-0.5 text-[6.5px] leading-tight tracking-[0.1em] text-[#A38D6B]"
+                style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}>
+                {card.en}
+              </p>
+            </div>
+
+            <div className="flex flex-1 flex-col items-center justify-center">
+              <div className="mb-1 flex items-center justify-center rounded-full border border-[#D1BE9B]/35 bg-[#FFFDF8]/55 text-[22px] leading-none text-[#6F5A3A]/76 shadow-[0_6px_14px_rgba(209,190,155,0.18)]"
+                style={{ width: '34%', aspectRatio: '1 / 1', fontFamily: 'Noto Serif TC, serif' }}>
+                {card.symbol}
+              </div>
+              <div className="flex flex-wrap justify-center gap-0.5 px-1">
+                {keywords.map((keyword) => (
+                  <span key={keyword} className="rounded-full border border-[#D1BE9B]/20 bg-[#FFFDF8]/50 px-1 py-[1px] text-[6.5px] leading-tight tracking-[0.05em] text-[#31353A]/58"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex w-full items-center justify-between px-1 text-[8px] text-[#D1BE9B]/85">
+              <span>{card.symbol}</span>
+              <span>{card.symbol}</span>
+            </div>
+          </div>
         </div>
       )}
       {reversed && (
@@ -258,8 +390,8 @@ const CardBack = () => (
 );
 
 // Shuffle and draw cards
-function drawCards(): Array<{ card: typeof MAJOR_ARCANA[0]; reversed: boolean }> {
-  const shuffled = [...MAJOR_ARCANA].sort(() => Math.random() - 0.5);
+function drawCards(): Array<{ card: TarotCard; reversed: boolean }> {
+  const shuffled = [...TAROT_DECK].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 5).map(card => ({
     card,
     reversed: Math.random() > 0.7,
@@ -546,7 +678,7 @@ export default function TarotPage() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [shuffling, setShuffling] = useState(false);
   const [isShufflingActive, setIsShufflingActive] = useState(false);
-  const [shuffledDeck, setShuffledDeck] = useState<typeof MAJOR_ARCANA>([]);
+  const [shuffledDeck, setShuffledDeck] = useState<TarotCard[]>([]);
   const [pickedIndices, setPickedIndices] = useState<number[]>([]);
   const [llmInterpretation, setLlmInterpretation] = useState<string>('');
   const [caughtMoodPlushie, setCaughtMoodPlushie] = useState<MoodPlushie | null>(null);
@@ -664,9 +796,8 @@ export default function TarotPage() {
   useEffect(() => {
     if (interpretMutation.isPending) {
       setCaughtMoodPlushie(null);
-      scrollToSection(moodClawSectionRef);
     }
-  }, [interpretMutation.isPending, scrollToSection]);
+  }, [interpretMutation.isPending]);
 
   useEffect(() => {
     if (!interpretMutation.isPending && llmInterpretation) {
@@ -870,7 +1001,7 @@ export default function TarotPage() {
   const handleStopShuffle = useCallback(() => {
     setIsShufflingActive(false);
     // 最終洗牌結果
-    const finalDeck = [...MAJOR_ARCANA].sort(() => Math.random() - 0.5);
+    const finalDeck = [...TAROT_DECK].sort(() => Math.random() - 0.5);
     setShuffledDeck(finalDeck);
     setPickedIndices([]);
     setStep('pick');
@@ -1460,8 +1591,8 @@ export default function TarotPage() {
                 )}
               </div>
 
-              {/* Card grid — 22 cards face down */}
-              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-11 gap-3 max-w-4xl mx-auto px-4">
+              {/* Card grid — full 78-card deck face down */}
+              <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-[repeat(13,minmax(0,1fr))] gap-2.5 max-w-5xl mx-auto px-4">
                 {shuffledDeck.map((_, deckIdx) => {
                   const pickOrder = pickedIndices.indexOf(deckIdx);
                   const isPicked = pickOrder !== -1;
