@@ -9,7 +9,7 @@
  *   - Crystal recommendation based on reading
  */
 
-import { useState, useEffect, useLayoutEffect, useRef, useCallback, type CSSProperties, type FormEvent } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, type CSSProperties, type FormEvent, type RefObject } from 'react';
 import { Link } from 'wouter';
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
@@ -555,6 +555,8 @@ export default function TarotPage() {
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
   const [pendingStartAfterLogin, setPendingStartAfterLogin] = useState(false);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
+  const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
+  const readingResultRef = useRef<HTMLDivElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
 
@@ -562,13 +564,16 @@ export default function TarotPage() {
     void preloadTarotCardImages(TAROT_CARD_IMAGE_URLS);
   }, []);
 
+  const scrollToSection = useCallback((ref: RefObject<HTMLDivElement | null>, block: ScrollLogicalPosition = 'center') => {
+    window.requestAnimationFrame(() => {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block });
+    });
+  }, []);
+
   const interpretMutation = trpc.tarot.interpret.useMutation({
     onSuccess: (data) => {
       setLlmInterpretation(data.interpretation);
       setReadingRecommendation(data.recommendation ?? null);
-      window.requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      });
     },
     onError: (error) => {
       if (error.message === 'NOT_SIGNED_IN') {
@@ -654,8 +659,15 @@ export default function TarotPage() {
   useEffect(() => {
     if (interpretMutation.isPending) {
       setCaughtMoodPlushie(null);
+      scrollToSection(moodClawSectionRef);
     }
-  }, [interpretMutation.isPending]);
+  }, [interpretMutation.isPending, scrollToSection]);
+
+  useEffect(() => {
+    if (!interpretMutation.isPending && llmInterpretation) {
+      scrollToSection(readingResultRef, 'start');
+    }
+  }, [interpretMutation.isPending, llmInterpretation, scrollToSection]);
 
   const getReadingCardsPayload = (cards = drawnCards) =>
     cards.map((d, i) => ({
@@ -1680,7 +1692,7 @@ export default function TarotPage() {
                   </div>
                 )}
                 {interpretMutation.isPending && (
-                  <div className="flex flex-col items-center justify-center py-8 gap-4">
+                  <div ref={moodClawSectionRef} className="flex flex-col items-center justify-center py-8 gap-4">
                     <p className="text-xs tracking-[0.2em] text-[#31353A]/58"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                       {tarotWaitingMessage}
@@ -1694,7 +1706,7 @@ export default function TarotPage() {
                   </div>
                 )}
                 {llmInterpretation && (
-                  <div>
+                  <div ref={readingResultRef}>
                     <div className="prose prose-sm max-w-none text-[14.5px] leading-[2.1] text-[#31353A]/80 tracking-wider
                       prose-headings:font-normal prose-headings:tracking-[0.08em] prose-headings:text-[#A38D6B]
                       prose-h1:text-[16px] prose-h1:font-medium prose-h1:mt-8 prose-h1:mb-2 prose-h1:pb-1 prose-h1:border-b prose-h1:border-[#D1BE9B]/25

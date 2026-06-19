@@ -9,7 +9,7 @@
  *   - AI interpretation
  */
 
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent, type RefObject } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
@@ -428,6 +428,8 @@ export default function ZiweiPage() {
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
+  const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
+  const readingResultRef = useRef<HTMLDivElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
   const appliedProfileDefaultsRef = useRef(false);
@@ -541,14 +543,17 @@ export default function ZiweiPage() {
     }));
   }, [birthDate, focusArea, gender, hourValue, partnerBirthDate]);
 
+  const scrollToSection = useCallback((ref: RefObject<HTMLDivElement | null>, block: ScrollLogicalPosition = 'center') => {
+    window.requestAnimationFrame(() => {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block });
+    });
+  }, []);
+
   const interpretMutation = trpc.ziwei.interpret.useMutation({
     onSuccess: (data) => {
       setAstrolabe(data.astrolabe as AstrolabeData);
       setLlmInterpretation(data.interpretation);
       setReadingRecommendation(data.recommendation ?? null);
-      window.requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      });
     },
     onError: (error) => {
       if (error.message === 'NOT_SIGNED_IN') {
@@ -636,8 +641,15 @@ export default function ZiweiPage() {
   useEffect(() => {
     if (interpretMutation.isPending) {
       setCaughtMoodPlushie(null);
+      scrollToSection(moodClawSectionRef);
     }
-  }, [interpretMutation.isPending]);
+  }, [interpretMutation.isPending, scrollToSection]);
+
+  useEffect(() => {
+    if (!interpretMutation.isPending && llmInterpretation) {
+      scrollToSection(readingResultRef, 'start');
+    }
+  }, [interpretMutation.isPending, llmInterpretation, scrollToSection]);
 
   function handleGenerate() {
     if (!birthDate) {
@@ -1015,7 +1027,7 @@ export default function ZiweiPage() {
           </div>
         )}
         {interpretMutation.isPending && (
-          <div className="flex flex-col items-center py-6 gap-4">
+          <div ref={moodClawSectionRef} className="flex flex-col items-center py-6 gap-4">
             <p className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
               {ziweiWaitingMessage}
@@ -1033,7 +1045,7 @@ export default function ZiweiPage() {
           </p>
         )}
         {llmInterpretation && (
-          <div>
+          <div ref={readingResultRef}>
             <div className="ziwei-interpretation text-[12.5px] leading-[2.2] text-[#31353A]/75 tracking-wider [&_p]:my-3"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               {caughtMoodPlushie && (

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { Loader2, Moon, Sparkles } from 'lucide-react';
 import { Link } from 'wouter';
 import { toast } from 'sonner';
@@ -136,6 +136,8 @@ export default function DreamPage() {
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
+  const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
+  const readingResultRef = useRef<HTMLDivElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
 
@@ -145,6 +147,12 @@ export default function DreamPage() {
     () => interpretation ? recommendForDream(dreamContent, interpretation) : [],
     [dreamContent, interpretation],
   );
+
+  const scrollToSection = useCallback((ref: RefObject<HTMLDivElement | null>, block: ScrollLogicalPosition = 'center') => {
+    window.requestAnimationFrame(() => {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block });
+    });
+  }, []);
 
   const interpretMutation = trpc.dream.interpret.useMutation({
     onSuccess: async (data) => {
@@ -249,8 +257,15 @@ export default function DreamPage() {
   useEffect(() => {
     if (interpretMutation.isPending) {
       setCaughtMoodPlushie(null);
+      scrollToSection(moodClawSectionRef);
     }
-  }, [interpretMutation.isPending]);
+  }, [interpretMutation.isPending, scrollToSection]);
+
+  useEffect(() => {
+    if (!interpretMutation.isPending && interpretation) {
+      scrollToSection(readingResultRef, 'start');
+    }
+  }, [interpretMutation.isPending, interpretation, scrollToSection]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -494,7 +509,7 @@ export default function DreamPage() {
                   </h2>
                 </div>
                 {interpretMutation.isPending ? (
-                  <div className="flex flex-col items-center gap-4">
+                  <div ref={moodClawSectionRef} className="flex flex-col items-center gap-4">
                     <p className="text-[13px] leading-[2.2] tracking-[0.12em] text-[#31353A]/54"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                       {waitingMessage}
@@ -502,7 +517,7 @@ export default function DreamPage() {
                     <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
                   </div>
                 ) : (
-                  <div className="text-[14px] leading-[2.15] tracking-[0.08em] text-[#31353A]/76"
+                  <div ref={readingResultRef} className="text-[14px] leading-[2.15] tracking-[0.08em] text-[#31353A]/76"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                     {caughtMoodPlushie && (
                       <p className="rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/75 px-4 py-3 text-[#6F5A3A]/82">

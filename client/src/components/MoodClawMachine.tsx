@@ -711,7 +711,96 @@ type MiniPlushieProps = {
   style?: React.CSSProperties;
 };
 
+type PlushieLook = {
+  silhouette: "round" | "long-ear" | "point-ear" | "winged" | "fin" | "shell" | "soft";
+  accessory:
+    | "none"
+    | "glow"
+    | "note"
+    | "cup"
+    | "map"
+    | "shield"
+    | "tool"
+    | "leaf"
+    | "direction"
+    | "soft"
+    | "battery";
+};
+
+function getPlushieLook(id: string): PlushieLook {
+  if (/(bunny|rabbit)/u.test(id)) {
+    return { silhouette: "long-ear", accessory: id.includes("lantern") ? "glow" : "none" };
+  }
+
+  if (/(cat|fox|lion)/u.test(id)) {
+    return { silhouette: "point-ear", accessory: id.includes("map") ? "map" : "none" };
+  }
+
+  if (/(penguin|duck|bird|owl|moth|swan|gull)/u.test(id)) {
+    return {
+      silhouette: "winged",
+      accessory: /(paper|postcard|bookmark)/u.test(id) ? "note" : id.includes("moon") ? "glow" : "none",
+    };
+  }
+
+  if (/(fish|whale)/u.test(id)) {
+    return { silhouette: "fin", accessory: id.includes("music") ? "note" : "none" };
+  }
+
+  if (/(turtle|snail|crab)/u.test(id)) {
+    return { silhouette: "shell", accessory: /(compass|anchor)/u.test(id) ? "direction" : "none" };
+  }
+
+  if (/(sheep|alpaca|koala|sloth|pig|dog|pillow|blanket|cushion)/u.test(id)) {
+    return { silhouette: "soft", accessory: /(pillow|blanket|cushion)/u.test(id) ? "soft" : id.includes("sunny") ? "glow" : "none" };
+  }
+
+  if (/(tea|soup|snack)/u.test(id)) {
+    return { silhouette: "round", accessory: "cup" };
+  }
+
+  if (/(memo|postcard|bookmark|eraser)/u.test(id)) {
+    return { silhouette: "round", accessory: "note" };
+  }
+
+  if (/(umbrella|raincoat)/u.test(id)) {
+    return { silhouette: "round", accessory: "shield" };
+  }
+
+  if (/(toolbox)/u.test(id)) {
+    return { silhouette: "round", accessory: "tool" };
+  }
+
+  if (/(seed|garden)/u.test(id)) {
+    return { silhouette: "round", accessory: "leaf" };
+  }
+
+  if (/(compass|anchor|plane|kite)/u.test(id)) {
+    return { silhouette: "round", accessory: "direction" };
+  }
+
+  if (/(battery)/u.test(id)) {
+    return { silhouette: "round", accessory: "battery" };
+  }
+
+  if (/(lamp|starlight|sunny|lantern|moon)/u.test(id)) {
+    return { silhouette: "round", accessory: "glow" };
+  }
+
+  return { silhouette: "round", accessory: "none" };
+}
+
 function MiniPlushie({ plushie, className, style }: MiniPlushieProps) {
+  const look = getPlushieLook(plushie.id);
+  const bodyRadius =
+    look.silhouette === "fin"
+      ? "48%_52%_54%_46%"
+      : look.silhouette === "shell"
+        ? "52%_52%_42%_42%"
+        : look.silhouette === "soft"
+          ? "46%_46%_52%_52%"
+          : "42%_42%_48%_48%";
+
   return (
     <div
       className={cn("flex w-16 flex-col items-center", className)}
@@ -719,25 +808,105 @@ function MiniPlushie({ plushie, className, style }: MiniPlushieProps) {
       aria-label={plushie.name}
     >
       <div className="relative h-14 w-12">
+        {look.silhouette === "long-ear" ? (
+          <>
+            <div
+              className="absolute left-2 top-[-4px] h-8 w-3 -rotate-12 rounded-full border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+            <div
+              className="absolute right-2 top-[-4px] h-8 w-3 rotate-12 rounded-full border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+            <div className="absolute left-[11px] top-0 h-5 w-1 rounded-full bg-white/35" />
+            <div className="absolute right-[11px] top-0 h-5 w-1 rounded-full bg-white/35" />
+          </>
+        ) : look.silhouette === "point-ear" ? (
+          <>
+            <div
+              className="absolute left-1 top-0 size-4 rotate-45 rounded-[35%_0_35%_0] border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+            <div
+              className="absolute right-1 top-0 size-4 rotate-45 rounded-[35%_0_35%_0] border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+          </>
+        ) : look.silhouette === "winged" ? (
+          <>
+            <div
+              className="absolute left-[-1px] top-7 h-5 w-4 -rotate-12 rounded-[90%_20%_80%_30%] border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+            <div
+              className="absolute right-[-1px] top-7 h-5 w-4 rotate-12 rounded-[20%_90%_30%_80%] border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+          </>
+        ) : look.silhouette === "fin" ? (
+          <>
+            <div
+              className="absolute right-[-3px] top-7 size-5 rotate-45 rounded-[0_80%_0_80%] border border-black/10"
+              style={{ backgroundColor: plushie.accent }}
+            />
+            <div
+              className="absolute left-[-1px] top-7 h-4 w-3 -rotate-12 rounded-full border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+          </>
+        ) : (
+          <>
+            <div
+              className="absolute left-1 top-0 size-4 rounded-full border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+            <div
+              className="absolute right-1 top-0 size-4 rounded-full border border-black/10"
+              style={{ backgroundColor: plushie.color }}
+            />
+          </>
+        )}
         <div
-          className="absolute left-1 top-0 size-4 rounded-full border border-black/10"
-          style={{ backgroundColor: plushie.color }}
+          className="absolute left-1/2 top-3 h-10 w-12 -translate-x-1/2 border border-black/10 shadow-sm"
+          style={{ backgroundColor: plushie.color, borderRadius: bodyRadius }}
         />
-        <div
-          className="absolute right-1 top-0 size-4 rounded-full border border-black/10"
-          style={{ backgroundColor: plushie.color }}
-        />
-        <div
-          className="absolute left-1/2 top-3 h-10 w-12 -translate-x-1/2 rounded-[42%_42%_48%_48%] border border-black/10 shadow-sm"
-          style={{ backgroundColor: plushie.color }}
-        />
+        {look.silhouette === "shell" && (
+          <div
+            className="absolute left-1/2 top-5 h-6 w-9 -translate-x-1/2 rounded-[48%] border border-black/10 bg-white/20"
+            style={{ boxShadow: `inset 0 -5px 0 ${plushie.accent}` }}
+          />
+        )}
         <div
           className="absolute left-1/2 top-6 h-4 w-6 -translate-x-1/2 rounded-full"
           style={{ backgroundColor: plushie.accent }}
         />
         <div className="absolute left-[17px] top-6 size-1.5 rounded-full bg-foreground/70" />
         <div className="absolute right-[17px] top-6 size-1.5 rounded-full bg-foreground/70" />
+        {look.silhouette === "winged" && (
+          <div
+            className="absolute left-1/2 top-[30px] h-2 w-3 -translate-x-1/2 rounded-[0_0_80%_80%]"
+            style={{ backgroundColor: plushie.accent }}
+          />
+        )}
         <div className="absolute left-1/2 top-[34px] h-px w-3 -translate-x-1/2 rounded-full bg-foreground/50" />
+        {look.accessory !== "none" && (
+          <div
+            className="absolute bottom-0 right-0 flex size-4 items-center justify-center rounded-full border border-black/10 bg-background/90 text-[9px] leading-none shadow-sm"
+            style={{ color: plushie.accent }}
+            aria-hidden="true"
+          >
+            {look.accessory === "glow" && "✦"}
+            {look.accessory === "note" && "□"}
+            {look.accessory === "cup" && "◡"}
+            {look.accessory === "map" && "◇"}
+            {look.accessory === "shield" && "⌂"}
+            {look.accessory === "tool" && "┬"}
+            {look.accessory === "leaf" && "⌒"}
+            {look.accessory === "direction" && "⌁"}
+            {look.accessory === "soft" && "∿"}
+            {look.accessory === "battery" && "▭"}
+          </div>
+        )}
       </div>
       <span className="mt-1 max-w-full truncate rounded bg-background/80 px-1.5 py-0.5 text-[10px] leading-none text-foreground shadow-sm">
         {plushie.name}
