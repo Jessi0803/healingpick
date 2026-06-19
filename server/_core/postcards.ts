@@ -4,6 +4,7 @@ import {
   getCurrentNotifiedPostcard,
   getPostcardForDelivery,
   getRecentReadingSummariesByUser,
+  getUserById,
   incrementUserLoginCount,
   markPostcardNotified,
 } from "../db";
@@ -28,6 +29,22 @@ const FALLBACK_MESSAGES = [
   "把心放軟一點，今天先照顧好自己就很棒。",
   "願你被小小的好事接住，像被陽光抱一下。",
   "你不用一次變勇敢，一小步也算很了不起。",
+];
+
+const READING_TYPE_LABELS = {
+  tarot: "塔羅",
+  ziwei: "紫微",
+  fortune: "運勢",
+  dream: "解夢",
+} as const;
+
+const THEME_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
+  { label: "感情與關係", pattern: /(感情|喜歡|曖昧|前任|分手|對象|關係|告白|聊天|聯絡|復合|愛情|婚)/u },
+  { label: "工作與方向", pattern: /(工作|職場|離職|轉職|面試|老闆|同事|事業|方向|選擇|專案|升遷)/u },
+  { label: "等待與結果", pattern: /(等待|結果|消息|通知|回覆|錄取|會不會|何時|進展|機會)/u },
+  { label: "焦慮與壓力", pattern: /(焦慮|壓力|累|害怕|擔心|不安|卡住|煩|緊張|失眠)/u },
+  { label: "自信與行動", pattern: /(自信|勇敢|行動|跨出去|決定|開始|改變|主動|相信自己)/u },
+  { label: "金錢與生活", pattern: /(金錢|錢|收入|財運|花費|存款|生活|搬家|家人|家庭)/u },
 ];
 
 export type PostcardPayload = Pick<
@@ -67,19 +84,62 @@ function normalizeMessage(value: string) {
     .replace(/^[-*•\d.、\s]+/, "")
     .split(/\n+/)[0]
     ?.trim();
-  return compactText(firstLine || FALLBACK_MESSAGES[0], 48);
+  return compactText(firstLine || FALLBACK_MESSAGES[0], 42);
+}
+
+function inferThemes(text: string) {
+  return THEME_PATTERNS
+    .filter((entry) => entry.pattern.test(text))
+    .map((entry) => entry.label);
+}
+
+function buildRecentFocus(
+  summaries: Array<{ type: string; question: string | null; summary: string | null }>
+) {
+  return summaries
+    .slice(0, 2)
+    .map((row, index) => {
+      const question = compactText(row.question ?? row.summary ?? "", 60);
+      return `${index + 1}. ${READING_TYPE_LABELS[row.type as keyof typeof READING_TYPE_LABELS] ?? row.type}：${question || "沒有明確問題"}`;
+    })
+    .join("\n");
+}
+
+function buildRecurringThemes(
+  summaries: Array<{ type: string; question: string | null; summary: string | null }>
+) {
+  const counts = new Map<string, number>();
+  for (const row of summaries) {
+    const base = `${row.question ?? ""} ${row.summary ?? ""}`;
+    for (const theme of inferThemes(base)) {
+      counts.set(theme, (counts.get(theme) ?? 0) + 1);
+    }
+  }
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([label, count]) => `${label} x${count}`)
+    .join("、");
 }
 
 async function generatePostcardMessage(userId: number) {
-  const summaries = await getRecentReadingSummariesByUser(userId, 5);
+  const [user, summaries] = await Promise.all([
+    getUserById(userId),
+    getRecentReadingSummariesByUser(userId, 5),
+  ]);
   if (summaries.length === 0) {
     return FALLBACK_MESSAGES[userId % FALLBACK_MESSAGES.length];
   }
 
+  const displayName = compactText((user?.name ?? "").trim(), 18);
+  const latestQuestion = compactText(summaries[0]?.question ?? summaries[0]?.summary ?? "", 70);
+  const recurringThemes = buildRecurringThemes(summaries);
+  const recentFocus = buildRecentFocus(summaries);
   const memory = summaries
     .map((row, index) => {
       const question = row.question ? `使用者問：${compactText(row.question, 90)}` : "使用者沒有留下明確問題";
-      return `${index + 1}. ${row.type}｜${question}｜摘要：${compactText(row.summary ?? "", 150)}`;
+      const typeLabel = READING_TYPE_LABELS[row.type as keyof typeof READING_TYPE_LABELS] ?? row.type;
+      return `${index + 1}. ${typeLabel}｜${question}｜摘要：${compactText(row.summary ?? "", 150)}`;
     })
     .join("\n");
 
@@ -90,22 +150,30 @@ async function generatePostcardMessage(userId: number) {
         {
           role: "system",
           content:
-            "你是 Healing Pick 的小貓郵差。你會把會員最近問過的事，悄悄變成一張貼心明信片。只輸出一句繁體中文短句，不要標題、不要 Markdown、不要引號。",
+            "你是 Healing Pick 的小貓郵差。你會把會員最近問過的事，悄悄變成一張貼心明信片。只輸出一句繁體中文短句，不要標題、不要 Markdown、不要引號，語氣要像真的在安靜回應這個人的近況。",
         },
         {
           role: "user",
-          content: `請根據會員近期問過的內容與摘要，寫一句 18-32 字的可愛療癒明信片文字。
+          content: `請根據會員近期問過的內容與摘要，寫一句 16-28 字的可愛療癒明信片文字。
 
 寫法要求：
-- 優先貼近最近 1-2 筆「使用者問」的具體主題，例如感情、工作、選擇、焦慮、等待、行動、自信。
-- 如果多筆都在問同一類事，就回應那個反覆出現的卡點。
+- 優先回應「最近一筆最在意的事」，再用「重複出現的主題」當底色。
+- 如果多筆都在問同一類事，就回應那個反覆出現的卡點，不要平均分配。
 - 句子要像小貓郵差悄悄寄來的鼓勵，可以有「你」「今天」「慢慢」「先」這種親近語氣。
+- 可以參考會員稱呼，但只有在自然時才用，不要每次都硬塞名字。
 - 不要直接說出隱私細節、人名、日期、具體事件。
 - 不要提到「紀錄」「摘要」「占卜歷史」「我看到你問過」。
 - 不要提病症、診斷或沉重字眼。
-- 不要寫成泛用雞湯；要讓使用者感覺「這句話好像懂我最近在問什麼」。
+- 不要寫成泛用雞湯；要讓使用者感覺「這句話好像懂我最近卡在哪裡」。
+- 句子要簡短，適合放在明信片底部，不要超過 28 字。
 
-會員近期脈絡：
+會員稱呼：${displayName || "未提供"}
+最近一筆重點：${latestQuestion || "未提供"}
+重複主題：${recurringThemes || "沒有明顯重複"}
+最近兩筆聚焦：
+${recentFocus}
+
+完整近期脈絡：
 ${memory}`,
         },
       ],

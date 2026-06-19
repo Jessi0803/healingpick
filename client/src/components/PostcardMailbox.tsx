@@ -181,7 +181,7 @@ export default function PostcardMailbox() {
               <X size={18} />
             </button>
 
-            <div className="relative aspect-[16/11] w-full bg-[#F8EFE5]">
+            <div className="relative aspect-[16/10] w-full bg-[#F8EFE5] md:aspect-[16/11]">
               <img
                 src={imageUrl}
                 alt="會員明信片"
@@ -189,9 +189,9 @@ export default function PostcardMailbox() {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-3 sm:px-5 sm:py-4 md:px-8 md:py-5">
+            <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-2.5 sm:px-5 sm:py-3 md:px-8 md:py-4">
               <p
-                className="mx-auto max-w-[18rem] text-center text-sm leading-[1.7] text-[#6F5648] sm:max-w-[24rem] sm:text-base md:max-w-2xl md:text-lg md:leading-[1.8]"
+                className="mx-auto max-w-[16rem] text-center text-[12px] leading-[1.6] text-[#6F5648] sm:max-w-[22rem] sm:text-[13px] md:max-w-2xl md:text-base md:leading-[1.75]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 {visiblePostcard.message}
