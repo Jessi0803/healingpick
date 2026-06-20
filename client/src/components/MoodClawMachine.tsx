@@ -440,6 +440,19 @@ const PLUSHIES: Plushie[] = [
   },
 ];
 
+const FEATURED_PLUSHIE_IDS = [
+  "hug-bear",
+  "brave-bunny",
+  "tea-cat",
+  "lamp-penguin",
+  "cloud-sheep",
+  "compass-turtle",
+  "starlight-deer",
+  "raincoat-mouse",
+  "anchor-crab",
+  "moon-moth",
+];
+
 type MachinePhase = "ready" | "dropping" | "lifting" | "won" | "missed";
 
 type MoodClawMachineProps = {
@@ -547,23 +560,73 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
   );
 
   return (
-    <div className="w-full max-w-[480px] overflow-hidden rounded-lg border border-border bg-background text-foreground shadow-sm">
-      <div className="flex items-center justify-between gap-3 border-b border-border bg-card px-3 py-2">
+    <div className="w-full max-w-[500px] overflow-hidden rounded-[28px] border border-[#D1BE9B]/35 bg-[#FFFDF8]/82 text-[#31353A] shadow-[0_22px_70px_rgba(122,99,72,0.16)] backdrop-blur-md">
+      <div className="relative flex items-center justify-between gap-3 border-b border-[#D1BE9B]/20 bg-[linear-gradient(180deg,rgba(255,253,248,0.98),rgba(243,235,221,0.82))] px-5 py-4">
+        <div className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#D1BE9B]/70 to-transparent" />
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">心情抓娃娃機</p>
-          <p className="truncate text-xs text-muted-foreground">
+          <p className="truncate text-[15px] font-medium tracking-[0.12em] text-[#6F5A3A]"
+            style={{ fontFamily: "Noto Serif TC, serif" }}>
+            心情抓娃娃機
+          </p>
+          <p className="truncate text-[12px] leading-relaxed tracking-[0.08em] text-[#31353A]/52">
             等回覆時，抓一隻陪你一下
           </p>
         </div>
-        <div className="flex items-center gap-1 rounded-md border border-border bg-muted px-2 py-1 text-xs text-muted-foreground">
-          <Sparkles className="size-3.5" />
+        <div className="flex items-center gap-1.5 rounded-full border border-[#D1BE9B]/35 bg-white/70 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] shadow-[0_8px_18px_rgba(209,190,155,0.16)]">
+          <Sparkles className="size-3.5 fill-[#F3D88D]/40" />
           <span>生成中</span>
         </div>
       </div>
 
-      <div className="relative h-[248px] overflow-hidden bg-[linear-gradient(180deg,rgba(229,223,238,0.5),rgba(250,247,244,0.95))]">
-        <div className="absolute inset-x-5 top-4 h-[168px] rounded-md border border-primary/20 bg-white/35 shadow-inner" />
-        <div className="absolute inset-x-9 top-8 h-2 rounded-full bg-primary/20" />
+      <div className="relative h-[288px] overflow-hidden bg-[radial-gradient(circle_at_50%_6%,rgba(255,245,214,0.94),rgba(243,235,221,0.72)_38%,rgba(232,223,238,0.32)_100%)]">
+        <div className="absolute left-6 right-6 top-5 h-[204px] rounded-[24px] border border-white/75 bg-white/38 shadow-[inset_0_1px_18px_rgba(255,255,255,0.72),inset_0_-16px_28px_rgba(209,190,155,0.12),0_16px_32px_rgba(111,90,58,0.08)]" />
+        {phase === "won" && caught && (
+          <div className="pointer-events-none absolute left-6 right-6 top-5 z-10 h-[204px] overflow-hidden rounded-[24px]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(255,246,210,0.58),transparent_46%)]" />
+            {[
+              [22, 34, 0],
+              [38, 24, 0.18],
+              [55, 42, 0.06],
+              [71, 29, 0.24],
+              [82, 54, 0.12],
+              [30, 62, 0.28],
+            ].map(([left, top, delay]) => (
+              <span
+                key={`${left}-${top}`}
+                className="absolute text-[18px] leading-none text-[#F1CF7A]/90 animate-pulse"
+                style={{
+                  left: `${left}%`,
+                  top: `${top}%`,
+                  animationDelay: `${delay}s`,
+                  textShadow: "0 0 14px rgba(241,207,122,0.55)",
+                }}
+              >
+                ✦
+              </span>
+            ))}
+          </div>
+        )}
+        <div className="absolute left-10 right-10 top-9 h-2 rounded-full bg-gradient-to-r from-transparent via-[#D1BE9B]/36 to-transparent" />
+        <div className="absolute left-12 top-9 h-36 w-16 rotate-12 rounded-full bg-white/34 blur-[1px]" />
+        <div className="absolute right-12 top-12 h-28 w-10 rotate-12 rounded-full bg-white/24 blur-[1px]" />
+        <div className="absolute left-1/2 top-3 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-[#D1BE9B]/28 bg-[#FFFDF8]/78 px-3 py-1 text-[10px] tracking-[0.18em] text-[#A38D6B] shadow-sm">
+          <span className="size-1.5 rounded-full bg-[#EAA8AC]/70" />
+          <span className="size-1.5 rounded-full bg-[#F1CF7A]/80" />
+          <span className="size-1.5 rounded-full bg-[#B9A6C5]/70" />
+          <span className="ml-1">MOCHI PRIZE</span>
+        </div>
+        <div className="absolute left-12 right-12 top-[58px] h-7 rounded-full border border-[#D1BE9B]/20 bg-[#FFFDF8]/42 shadow-[inset_0_1px_8px_rgba(255,255,255,0.72)]">
+          <div className="absolute left-4 right-4 top-1/2 h-1 -translate-y-1/2 rounded-full bg-[#D1BE9B]/28" />
+          <div className="absolute left-4 top-1/2 size-2 -translate-y-1/2 rounded-full bg-[#D1BE9B]/46" />
+          <div className="absolute right-4 top-1/2 size-2 -translate-y-1/2 rounded-full bg-[#D1BE9B]/46" />
+          <div
+            className="absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#A38D6B]/35 bg-[#FFFDF8] shadow-[0_4px_10px_rgba(111,90,58,0.14)] transition-all duration-500"
+            style={{ left: `${clawX}%` }}
+          />
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] tracking-[0.18em] text-[#A38D6B]/70">
+            左右移動爪子
+          </div>
+        </div>
 
         <div
           className={cn(
@@ -572,22 +635,25 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
           )}
           style={{ left: `${clawX}%`, top: clawTop }}
         >
-          <div className="h-12 w-px bg-primary/40" />
-          <div className="relative size-10">
-            <div className="absolute left-1/2 top-1 size-5 -translate-x-1/2 rounded-b-full border border-primary/50 bg-card" />
-            <div className="absolute bottom-1 left-1/2 h-7 w-px origin-top -rotate-35 bg-primary/60" />
-            <div className="absolute bottom-1 left-1/2 h-7 w-px origin-top rotate-35 bg-primary/60" />
+          <div className="h-14 w-[2px] rounded-full bg-gradient-to-b from-[#D1BE9B]/20 via-[#A38D6B]/55 to-[#A38D6B]/20" />
+          <div className="relative size-12 drop-shadow-[0_8px_14px_rgba(111,90,58,0.18)]">
+            <div className="absolute left-1/2 top-1 size-6 -translate-x-1/2 rounded-b-full border border-[#A38D6B]/36 bg-[#FFFDF8]" />
+            <div className="absolute left-1/2 top-2.5 h-4 w-7 -translate-x-1/2 rounded-full border border-[#D1BE9B]/30 bg-[#F3EBDD]" />
+            <div className="absolute bottom-1 left-1/2 h-8 w-[2px] origin-top -rotate-35 rounded-full bg-[#A38D6B]/70" />
+            <div className="absolute bottom-1 left-1/2 h-8 w-[2px] origin-top rotate-35 rounded-full bg-[#A38D6B]/70" />
+            <div className="absolute bottom-0 left-[14px] size-2 rounded-full bg-[#A38D6B]/72" />
+            <div className="absolute bottom-0 right-[14px] size-2 rounded-full bg-[#A38D6B]/72" />
           </div>
           {caught && phase === "lifting" && (
             <MiniPlushie
               plushie={caught}
-              className="mt-[-8px] scale-75 shadow-lg"
+              className="mt-[-10px] scale-75 drop-shadow-[0_12px_18px_rgba(111,90,58,0.28)]"
             />
           )}
         </div>
 
-        <div className="absolute inset-x-5 bottom-14 h-16 rounded-t-[100%] bg-primary/10 blur-sm" />
-        <div className="absolute inset-x-7 bottom-11 h-5 rounded-full bg-primary/15" />
+        <div className="absolute inset-x-7 bottom-[58px] h-20 rounded-[100%_100%_18%_18%] bg-[#D1BE9B]/12 blur-sm" />
+        <div className="absolute inset-x-10 bottom-[53px] h-6 rounded-full bg-[#A38D6B]/12" />
 
         {visiblePlushies.map((plushie, index) => {
           const isHidden = caught?.id === plushie.id && phase === "lifting";
@@ -597,7 +663,7 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
               key={plushie.id}
               plushie={plushie}
               className={cn(
-                "absolute bottom-[58px] -translate-x-1/2 transition-opacity",
+                "absolute bottom-[66px] -translate-x-1/2 transition-opacity",
                 isHidden && "opacity-0"
               )}
               style={{
@@ -608,49 +674,80 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
           );
         })}
 
-        <div className="absolute bottom-0 left-0 right-0 h-14 border-t border-border bg-card">
-          <div className="absolute left-1/2 top-2 h-8 w-28 -translate-x-1/2 rounded-b-lg border border-primary/20 bg-background/80" />
-          <div className="absolute left-1/2 top-4 flex -translate-x-1/2 items-center gap-1 text-xs text-muted-foreground">
+        <div className="absolute bottom-0 left-0 right-0 h-[62px] border-t border-[#D1BE9B]/24 bg-[linear-gradient(180deg,rgba(255,253,248,0.92),rgba(231,216,201,0.82))]">
+          <div className="absolute left-1/2 top-2 h-10 w-32 -translate-x-1/2 rounded-b-2xl border border-[#D1BE9B]/30 bg-[#FFFDF8]/86 shadow-[inset_0_6px_12px_rgba(111,90,58,0.06)]" />
+          <div className="absolute left-1/2 top-5 flex -translate-x-1/2 items-center gap-1 text-[11px] tracking-[0.12em] text-[#A38D6B]">
             <Gift className="size-3.5" />
             <span>出口</span>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-3 border-t border-border bg-background p-3">
-        <div className="min-h-[58px] rounded-md bg-muted px-3 py-2">
+      <div className="grid gap-3 border-t border-[#D1BE9B]/20 bg-[#FFFDF8]/86 p-4">
+        <div className="min-h-[76px] rounded-2xl border border-[#D1BE9B]/18 bg-white/58 px-4 py-3 shadow-[0_8px_22px_rgba(111,90,58,0.06)]">
           {phase === "won" && caught ? (
             <>
-              <p className="text-sm font-medium">
+              <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">
                 你抓到了：{caught.name}｜{caught.role}
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
                 {caught.message}
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-primary">
+              <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#A38D6B]">
                 已收進 Mochi 小收藏，答案開頭也會帶著它一起出現。
               </p>
             </>
           ) : phase === "missed" ? (
             <>
-              <p className="text-sm font-medium">差一點就抓到了</p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                可以再調整一下位置。答案也正在路上，先把注意力放回手上。
+              <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">差一點就抓到了</p>
+              <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
+                小傢伙滑走了一點點。再調整位置，答案也正在路上。
               </p>
             </>
           ) : (
             <>
-              <p className="text-sm font-medium">
+              <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">
                 目前瞄準：{nearestPlushie.name}
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
                 用左右鍵對準娃娃，再按下降抓取。
               </p>
             </>
           )}
         </div>
 
-        <div className="grid grid-cols-[1fr_auto_1fr] gap-2">
+        {phase === "won" && caught && (
+          <div className="grid grid-cols-[104px_1fr] items-center gap-4 rounded-[24px] border border-[#D1BE9B]/24 bg-[linear-gradient(135deg,rgba(255,253,248,0.92),rgba(243,235,221,0.74))] p-4 shadow-[0_14px_32px_rgba(111,90,58,0.10)]">
+            <div className="relative flex h-28 items-center justify-center rounded-[22px] border border-white/70 bg-white/54 shadow-[inset_0_1px_14px_rgba(255,255,255,0.72)]">
+              <div className="absolute inset-3 rounded-full bg-[#F1CF7A]/12 blur-md" />
+              <MiniPlushie plushie={caught} className="relative z-10 scale-125" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] tracking-[0.28em] text-[#D1BE9B]"
+                style={{ fontFamily: "Cormorant Garamond, serif" }}>
+                TODAY'S COMPANION
+              </p>
+              <p className="mt-1 text-[16px] font-medium tracking-[0.1em] text-[#6F5A3A]"
+                style={{ fontFamily: "Noto Serif TC, serif" }}>
+                {caught.name}
+              </p>
+              <p className="mt-1 inline-flex rounded-full border border-[#D1BE9B]/24 bg-white/64 px-2.5 py-1 text-[11px] tracking-[0.1em] text-[#A38D6B]">
+                {caught.role}
+              </p>
+              <p className="mt-2 text-[12px] leading-[1.8] tracking-[0.05em] text-[#31353A]/66">
+                {caught.message}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="rounded-[22px] border border-[#D1BE9B]/18 bg-[#F8F4EC]/58 p-2 shadow-[inset_0_1px_8px_rgba(255,255,255,0.54)]">
+          <div className="mb-2 flex items-center justify-center gap-2 text-[10px] tracking-[0.18em] text-[#A38D6B]/80">
+            <ChevronLeft className="size-3" />
+            <span>移動爪子</span>
+            <ChevronRight className="size-3" />
+          </div>
+          <div className="grid grid-cols-[1fr_auto_1fr] gap-2">
           <Button
             type="button"
             variant="outline"
@@ -658,15 +755,17 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
             disabled={isMoving}
             onClick={() => moveClaw(-1)}
             aria-label="向左移動爪子"
+            className="h-11 rounded-full border-[#D1BE9B]/45 bg-white/86 text-[#6F5A3A] shadow-[0_8px_16px_rgba(111,90,58,0.08)] hover:bg-[#F3EBDD]"
           >
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="size-5" />
+            <span className="text-[11px] tracking-[0.12em]">向左</span>
           </Button>
           <Button
             type="button"
             size="sm"
             disabled={isMoving}
             onClick={grab}
-            className="min-w-24"
+            className="h-11 min-w-28 rounded-full bg-[#6F5A3A] text-[#FFFDF8] shadow-[0_10px_22px_rgba(111,90,58,0.18)] hover:bg-[#A38D6B]"
           >
             <ChevronDown className="size-4" />
             下降抓取
@@ -678,21 +777,24 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
             disabled={isMoving}
             onClick={() => moveClaw(1)}
             aria-label="向右移動爪子"
+            className="h-11 rounded-full border-[#D1BE9B]/45 bg-white/86 text-[#6F5A3A] shadow-[0_8px_16px_rgba(111,90,58,0.08)] hover:bg-[#F3EBDD]"
           >
-            <ChevronRight className="size-4" />
+            <span className="text-[11px] tracking-[0.12em]">向右</span>
+            <ChevronRight className="size-5" />
           </Button>
+          </div>
         </div>
 
         {todayCollection.length > 0 && (
-          <div className="rounded-md border border-border bg-card px-3 py-2">
-            <p className="text-xs font-medium text-foreground">
+          <div className="rounded-2xl border border-[#D1BE9B]/18 bg-white/52 px-4 py-3">
+            <p className="text-[12px] font-medium tracking-[0.1em] text-[#6F5A3A]">
               今日心情娃娃 · {todayCollection.length}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {todayCollection.slice(0, 6).map((item) => (
                 <span
                   key={`${item.id}-${item.caughtAt}`}
-                  className="rounded bg-muted px-2 py-1 text-xs text-muted-foreground"
+                  className="rounded-full border border-[#D1BE9B]/16 bg-[#F8F4EC]/72 px-2.5 py-1 text-[11px] text-[#31353A]/58"
                 >
                   {item.name}
                 </span>
@@ -726,6 +828,55 @@ type PlushieLook = {
     | "soft"
     | "battery";
 };
+
+const PLUSHIE_BADGES: Record<string, string> = {
+  "hug-bear": "♡",
+  "brave-bunny": "⚑",
+  "tea-cat": "☕",
+  "lamp-penguin": "✦",
+  "cloud-sheep": "☁",
+  "reset-otter": "↻",
+  "blanket-dog": "∿",
+  "battery-hamster": "▭",
+  "umbrella-duck": "☂",
+  "map-fox": "◇",
+  "pillow-koala": "◐",
+  "tiny-captain": "⚓",
+  "snack-squirrel": "◒",
+  "bubble-fish": "○",
+  "memo-frog": "□",
+  "tiny-lion": "♕",
+  "music-whale": "♪",
+  "paper-plane-bird": "✈",
+  "compass-turtle": "⌖",
+  "moon-moth": "☽",
+  "pocket-elephant": "◔",
+  "eraser-panda": "▱",
+  "sunny-alpaca": "☀",
+  "quiet-owl": "◉",
+  "raincoat-mouse": "☂",
+  "anchor-crab": "⚓",
+  "starlight-deer": "✦",
+  "laundry-bear": "⌁",
+  "toolbox-beaver": "⚒",
+  "seed-hedgehog": "◌",
+  "clock-sloth": "◷",
+  "postcard-gull": "✉",
+  "lantern-rabbit": "✧",
+  "cushion-pig": "▰",
+  "bookmark-goat": "▯",
+  "soup-bear": "◡",
+  "kite-kangaroo": "⌁",
+  "mirror-swan": "◈",
+  "sock-monkey": "≋",
+  "garden-snail": "⌒",
+};
+
+function getPlushiePattern(id: string) {
+  const patterns = ["scarf", "belly", "stripe", "pocket", "spark"] as const;
+  const total = Array.from(id).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return patterns[total % patterns.length];
+}
 
 function getPlushieLook(id: string): PlushieLook {
   if (/(bunny|rabbit)/u.test(id)) {
@@ -790,125 +941,325 @@ function getPlushieLook(id: string): PlushieLook {
   return { silhouette: "round", accessory: "none" };
 }
 
-function MiniPlushie({ plushie, className, style }: MiniPlushieProps) {
-  const look = getPlushieLook(plushie.id);
-  const bodyRadius =
-    look.silhouette === "fin"
-      ? "48%_52%_54%_46%"
-      : look.silhouette === "shell"
-        ? "52%_52%_42%_42%"
-        : look.silhouette === "soft"
-          ? "46%_46%_52%_52%"
-          : "42%_42%_48%_48%";
+function FeaturedMiniPlushie({ plushie, className, style }: MiniPlushieProps) {
+  const isBear = plushie.id === "hug-bear";
+  const isBunny = plushie.id === "brave-bunny";
+  const isCat = plushie.id === "tea-cat";
+  const isPenguin = plushie.id === "lamp-penguin";
+  const isSheep = plushie.id === "cloud-sheep";
+  const isTurtle = plushie.id === "compass-turtle";
+  const isDeer = plushie.id === "starlight-deer";
+  const isMouse = plushie.id === "raincoat-mouse";
+  const isCrab = plushie.id === "anchor-crab";
+  const isMoth = plushie.id === "moon-moth";
 
   return (
     <div
-      className={cn("flex w-16 flex-col items-center", className)}
+      className={cn("flex w-[78px] flex-col items-center", className)}
       style={style}
       aria-label={plushie.name}
     >
-      <div className="relative h-14 w-12">
+      <div className="relative h-[78px] w-[70px] drop-shadow-[0_10px_14px_rgba(111,90,58,0.18)]">
+        <div className="absolute bottom-0 left-1/2 h-2.5 w-12 -translate-x-1/2 rounded-full bg-[#6F5A3A]/10 blur-[1px]" />
+
+        {isBear && (
+          <>
+            <div className="absolute left-2 top-4 size-5 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute right-2 top-4 size-5 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-5 h-[52px] w-14 -translate-x-1/2 rounded-[48%] border border-white/55 shadow-[inset_0_8px_0_rgba(255,255,255,0.18)]" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-10 h-6 w-9 -translate-x-1/2 rounded-full border border-white/45" style={{ backgroundColor: plushie.accent }} />
+            <div className="absolute left-[23px] top-[35px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute right-[23px] top-[35px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute left-1/2 top-[45px] h-px w-4 -translate-x-1/2 bg-[#31353A]/45" />
+            <div className="absolute left-1/2 bottom-2 flex h-5 w-7 -translate-x-1/2 items-center justify-center rounded-[45%_45%_55%_55%] border border-white/65 bg-[#FFF4F2] text-[10px] text-[#EAA8AC] shadow-sm">♡</div>
+          </>
+        )}
+
+        {isBunny && (
+          <>
+            <div className="absolute left-4 top-0 h-10 w-3.5 -rotate-12 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute right-4 top-0 h-10 w-3.5 rotate-12 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-[19px] top-2 h-6 w-1.5 rounded-full bg-white/40" />
+            <div className="absolute right-[19px] top-2 h-6 w-1.5 rounded-full bg-white/40" />
+            <div className="absolute left-1/2 top-8 h-11 w-[52px] -translate-x-1/2 rounded-[50%_50%_44%_44%] border border-white/55 shadow-[inset_0_8px_0_rgba(255,255,255,0.2)]" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-[23px] top-[40px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute right-[23px] top-[40px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute left-1/2 top-[50px] h-px w-4 -translate-x-1/2 bg-[#31353A]/45" />
+            <div className="absolute right-1 bottom-4 h-9 w-px -rotate-12 bg-[#A38D6B]/70" />
+            <div className="absolute right-[-2px] bottom-10 h-4 w-5 rounded-[2px_8px_8px_2px] border border-white/65 bg-[#EAA8AC]/80 text-[8px]" />
+          </>
+        )}
+
+        {isCat && (
+          <>
+            <div className="absolute left-2 top-5 size-5 rotate-45 rounded-[45%_0_45%_0] border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute right-2 top-5 size-5 rotate-45 rounded-[45%_0_45%_0] border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-7 h-11 w-14 -translate-x-1/2 rounded-[48%] border border-white/55 shadow-[inset_0_8px_0_rgba(255,255,255,0.18)]" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-[23px] top-[39px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute right-[23px] top-[39px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute left-1/2 top-[47px] h-1.5 w-2 -translate-x-1/2 rounded-full bg-[#9F775A]" />
+            <div className="absolute left-2 top-[48px] h-px w-5 rotate-12 bg-[#31353A]/30" />
+            <div className="absolute right-2 top-[48px] h-px w-5 -rotate-12 bg-[#31353A]/30" />
+            <div className="absolute right-0 bottom-2 flex size-6 items-center justify-center rounded-full border border-white/70 bg-[#FFFDF8] text-[11px] text-[#9F775A] shadow-sm">☕</div>
+          </>
+        )}
+
+        {isPenguin && (
+          <>
+            <div className="absolute left-1/2 top-4 h-14 w-[52px] -translate-x-1/2 rounded-[50%_50%_46%_46%] border border-white/55 shadow-[inset_0_8px_0_rgba(255,255,255,0.14)]" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-10 h-7 w-9 -translate-x-1/2 rounded-full bg-white/70" />
+            <div className="absolute left-[24px] top-[31px] size-2 rounded-full bg-[#31353A]/80" />
+            <div className="absolute right-[24px] top-[31px] size-2 rounded-full bg-[#31353A]/80" />
+            <div className="absolute left-1/2 top-[40px] size-2 -translate-x-1/2 rotate-45 rounded-[0_70%_0_70%]" style={{ backgroundColor: plushie.accent }} />
+            <div className="absolute left-1/2 bottom-4 flex size-6 -translate-x-1/2 items-center justify-center rounded-full border border-white/70 bg-[#FFF8D8] text-[11px] text-[#D1A84D] shadow-[0_0_14px_rgba(241,207,122,0.48)]">✦</div>
+          </>
+        )}
+
+        {isSheep && (
+          <>
+            {[8, 17, 27, 38, 48].map((left, index) => (
+              <div key={left} className="absolute top-4 size-5 rounded-full border border-white/65 bg-white/78" style={{ left, transform: `translateY(${index % 2 ? 3 : 0}px)` }} />
+            ))}
+            <div className="absolute left-1/2 top-8 h-11 w-14 -translate-x-1/2 rounded-[50%_50%_46%_46%] border border-white/60 shadow-[inset_0_8px_0_rgba(255,255,255,0.24)]" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-[23px] top-[40px] size-2 rounded-full bg-[#31353A]/70" />
+            <div className="absolute right-[23px] top-[40px] size-2 rounded-full bg-[#31353A]/70" />
+            <div className="absolute left-1/2 top-[50px] h-px w-4 -translate-x-1/2 bg-[#31353A]/35" />
+            <div className="absolute left-2 bottom-3 size-4 rounded-full bg-white/72" />
+            <div className="absolute right-2 bottom-3 size-4 rounded-full bg-white/72" />
+          </>
+        )}
+
+        {isTurtle && (
+          <>
+            <div className="absolute left-1/2 top-3 h-10 w-11 -translate-x-1/2 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-9 h-12 w-[60px] -translate-x-1/2 rounded-[48%] border border-white/55 shadow-[inset_0_-8px_0_rgba(255,255,255,0.16)]" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-11 flex size-9 -translate-x-1/2 items-center justify-center rounded-full border border-white/60 text-[15px] text-[#6F5A3A]" style={{ backgroundColor: plushie.accent }}>⌖</div>
+            <div className="absolute left-[25px] top-[23px] size-1.5 rounded-full bg-[#31353A]/75" />
+            <div className="absolute right-[25px] top-[23px] size-1.5 rounded-full bg-[#31353A]/75" />
+            <div className="absolute left-0 bottom-5 size-4 rounded-full border border-white/45" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute right-0 bottom-5 size-4 rounded-full border border-white/45" style={{ backgroundColor: plushie.color }} />
+          </>
+        )}
+
+        {isDeer && (
+          <>
+            <div className="absolute left-5 top-0 h-8 w-px -rotate-25 bg-[#8A7250]/65" />
+            <div className="absolute left-[17px] top-2 h-4 w-px rotate-35 bg-[#8A7250]/65" />
+            <div className="absolute right-5 top-0 h-8 w-px rotate-25 bg-[#8A7250]/65" />
+            <div className="absolute right-[17px] top-2 h-4 w-px -rotate-35 bg-[#8A7250]/65" />
+            <div className="absolute left-2 top-6 size-5 rounded-full border border-white/50" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute right-2 top-6 size-5 rounded-full border border-white/50" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-6 h-12 w-[52px] -translate-x-1/2 rounded-[48%] border border-white/55 shadow-[inset_0_8px_0_rgba(255,255,255,0.16)]" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-8 -translate-x-1/2 text-[13px] text-[#F3E0A0]">✦</div>
+            <div className="absolute left-[24px] top-[40px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute right-[24px] top-[40px] size-2 rounded-full bg-[#31353A]/75" />
+          </>
+        )}
+
+        {isMouse && (
+          <>
+            <div className="absolute left-1 top-5 size-6 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute right-1 top-5 size-6 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-6 h-12 w-14 -translate-x-1/2 rounded-[52%_52%_45%_45%] border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-5 h-9 w-12 -translate-x-1/2 rounded-t-full border border-white/65 bg-[#F2D36E]/88" />
+            <div className="absolute left-[23px] top-[40px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute right-[23px] top-[40px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute right-0 bottom-5 h-8 w-8 rounded-t-full border-2 border-[#F2D36E]/90 border-b-0" />
+          </>
+        )}
+
+        {isCrab && (
+          <>
+            <div className="absolute left-0 top-7 size-6 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute right-0 top-7 size-6 rounded-full border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-7 h-12 w-14 -translate-x-1/2 rounded-[52%_52%_42%_42%] border border-white/55 shadow-[inset_0_8px_0_rgba(255,255,255,0.16)]" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-[23px] top-[39px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute right-[23px] top-[39px] size-2 rounded-full bg-[#31353A]/75" />
+            <div className="absolute left-1/2 bottom-4 flex size-6 -translate-x-1/2 items-center justify-center rounded-full border border-white/70 bg-[#FFFDF8]/90 text-[12px] text-[#6E8792] shadow-sm">⚓</div>
+          </>
+        )}
+
+        {isMoth && (
+          <>
+            <div className="absolute left-0 top-7 h-10 w-8 -rotate-12 rounded-[85%_30%_80%_36%] border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute right-0 top-7 h-10 w-8 rotate-12 rounded-[30%_85%_36%_80%] border border-white/55" style={{ backgroundColor: plushie.color }} />
+            <div className="absolute left-1/2 top-5 h-[52px] w-9 -translate-x-1/2 rounded-full border border-white/55 shadow-[inset_0_8px_0_rgba(255,255,255,0.14)]" style={{ backgroundColor: plushie.accent }} />
+            <div className="absolute left-[28px] top-[35px] size-1.5 rounded-full bg-[#31353A]/70" />
+            <div className="absolute right-[28px] top-[35px] size-1.5 rounded-full bg-[#31353A]/70" />
+            <div className="absolute left-3 top-10 text-[10px] text-[#EEE4A6]">☽</div>
+            <div className="absolute right-3 top-10 text-[10px] text-[#EEE4A6]">☾</div>
+          </>
+        )}
+      </div>
+      <span className="mt-1 max-w-full truncate rounded-full border border-[#D1BE9B]/20 bg-[#FFFDF8]/86 px-2 py-0.5 text-[10px] leading-none tracking-[0.04em] text-[#6F5A3A] shadow-sm">
+        {plushie.name}
+      </span>
+    </div>
+  );
+}
+
+function MiniPlushie({ plushie, className, style }: MiniPlushieProps) {
+  if (FEATURED_PLUSHIE_IDS.includes(plushie.id)) {
+    return <FeaturedMiniPlushie plushie={plushie} className={className} style={style} />;
+  }
+
+  const look = getPlushieLook(plushie.id);
+  const headRadius =
+    look.silhouette === "fin"
+      ? "54% 46% 52% 48%"
+      : look.silhouette === "shell"
+        ? "50% 50% 44% 44%"
+        : "48% 48% 46% 46%";
+  const badge = PLUSHIE_BADGES[plushie.id] ?? "✦";
+  const pattern = getPlushiePattern(plushie.id);
+
+  return (
+    <div
+      className={cn("flex w-[76px] flex-col items-center", className)}
+      style={style}
+      aria-label={plushie.name}
+    >
+      <div className="relative h-[74px] w-[66px] drop-shadow-[0_10px_14px_rgba(111,90,58,0.18)]">
+        <div className="absolute bottom-0 left-1/2 h-2 w-11 -translate-x-1/2 rounded-full bg-[#6F5A3A]/10 blur-[1px]" />
         {look.silhouette === "long-ear" ? (
           <>
             <div
-              className="absolute left-2 top-[-4px] h-8 w-3 -rotate-12 rounded-full border border-black/10"
-              style={{ backgroundColor: plushie.color }}
+              className="absolute left-[13px] top-0 h-9 w-3.5 -rotate-12 rounded-full border border-white/45 shadow-sm"
+              style={{ backgroundColor: plushie.color, boxShadow: `inset 0 7px 0 rgba(255,255,255,0.22)` }}
             />
             <div
-              className="absolute right-2 top-[-4px] h-8 w-3 rotate-12 rounded-full border border-black/10"
-              style={{ backgroundColor: plushie.color }}
+              className="absolute right-[13px] top-0 h-9 w-3.5 rotate-12 rounded-full border border-white/45 shadow-sm"
+              style={{ backgroundColor: plushie.color, boxShadow: `inset 0 7px 0 rgba(255,255,255,0.22)` }}
             />
-            <div className="absolute left-[11px] top-0 h-5 w-1 rounded-full bg-white/35" />
-            <div className="absolute right-[11px] top-0 h-5 w-1 rounded-full bg-white/35" />
+            <div className="absolute left-[17px] top-2 h-5 w-1.5 rounded-full bg-white/38" />
+            <div className="absolute right-[17px] top-2 h-5 w-1.5 rounded-full bg-white/38" />
           </>
         ) : look.silhouette === "point-ear" ? (
           <>
             <div
-              className="absolute left-1 top-0 size-4 rotate-45 rounded-[35%_0_35%_0] border border-black/10"
+              className="absolute left-2 top-2 size-5 rotate-45 rounded-[45%_0_45%_0] border border-white/45 shadow-sm"
               style={{ backgroundColor: plushie.color }}
             />
             <div
-              className="absolute right-1 top-0 size-4 rotate-45 rounded-[35%_0_35%_0] border border-black/10"
+              className="absolute right-2 top-2 size-5 rotate-45 rounded-[45%_0_45%_0] border border-white/45 shadow-sm"
               style={{ backgroundColor: plushie.color }}
             />
           </>
         ) : look.silhouette === "winged" ? (
           <>
             <div
-              className="absolute left-[-1px] top-7 h-5 w-4 -rotate-12 rounded-[90%_20%_80%_30%] border border-black/10"
-              style={{ backgroundColor: plushie.color }}
+              className="absolute left-0 top-9 h-7 w-5 -rotate-12 rounded-[90%_20%_80%_30%] border border-white/45"
+              style={{ backgroundColor: plushie.accent }}
             />
             <div
-              className="absolute right-[-1px] top-7 h-5 w-4 rotate-12 rounded-[20%_90%_30%_80%] border border-black/10"
-              style={{ backgroundColor: plushie.color }}
+              className="absolute right-0 top-9 h-7 w-5 rotate-12 rounded-[20%_90%_30%_80%] border border-white/45"
+              style={{ backgroundColor: plushie.accent }}
             />
           </>
         ) : look.silhouette === "fin" ? (
           <>
             <div
-              className="absolute right-[-3px] top-7 size-5 rotate-45 rounded-[0_80%_0_80%] border border-black/10"
+              className="absolute right-0 top-9 size-6 rotate-45 rounded-[0_80%_0_80%] border border-white/45"
               style={{ backgroundColor: plushie.accent }}
             />
             <div
-              className="absolute left-[-1px] top-7 h-4 w-3 -rotate-12 rounded-full border border-black/10"
+              className="absolute left-1 top-10 h-4 w-3 -rotate-12 rounded-full border border-white/45"
               style={{ backgroundColor: plushie.color }}
             />
           </>
         ) : (
           <>
             <div
-              className="absolute left-1 top-0 size-4 rounded-full border border-black/10"
+              className="absolute left-2 top-4 size-5 rounded-full border border-white/45"
               style={{ backgroundColor: plushie.color }}
             />
             <div
-              className="absolute right-1 top-0 size-4 rounded-full border border-black/10"
+              className="absolute right-2 top-4 size-5 rounded-full border border-white/45"
               style={{ backgroundColor: plushie.color }}
             />
           </>
         )}
         <div
-          className="absolute left-1/2 top-3 h-10 w-12 -translate-x-1/2 border border-black/10 shadow-sm"
-          style={{ backgroundColor: plushie.color, borderRadius: bodyRadius }}
+          className="absolute left-1/2 top-5 h-12 w-14 -translate-x-1/2 border border-white/55 shadow-[inset_0_8px_0_rgba(255,255,255,0.18),0_8px_16px_rgba(111,90,58,0.12)]"
+          style={{ backgroundColor: plushie.color, borderRadius: headRadius }}
         />
         {look.silhouette === "shell" && (
           <div
-            className="absolute left-1/2 top-5 h-6 w-9 -translate-x-1/2 rounded-[48%] border border-black/10 bg-white/20"
-            style={{ boxShadow: `inset 0 -5px 0 ${plushie.accent}` }}
+            className="absolute left-1/2 top-8 h-8 w-11 -translate-x-1/2 rounded-[48%] border border-white/55 bg-white/22"
+            style={{ boxShadow: `inset 0 -7px 0 ${plushie.accent}` }}
           />
         )}
         <div
-          className="absolute left-1/2 top-6 h-4 w-6 -translate-x-1/2 rounded-full"
+          className="absolute left-1/2 top-9 h-5 w-8 -translate-x-1/2 rounded-full border border-white/36"
           style={{ backgroundColor: plushie.accent }}
         />
-        <div className="absolute left-[17px] top-6 size-1.5 rounded-full bg-foreground/70" />
-        <div className="absolute right-[17px] top-6 size-1.5 rounded-full bg-foreground/70" />
-        {look.silhouette === "winged" && (
+        {pattern === "scarf" && (
           <div
-            className="absolute left-1/2 top-[30px] h-2 w-3 -translate-x-1/2 rounded-[0_0_80%_80%]"
+            className="absolute left-1/2 top-[52px] h-2.5 w-10 -translate-x-1/2 rounded-full border border-white/45 shadow-sm"
             style={{ backgroundColor: plushie.accent }}
           />
         )}
-        <div className="absolute left-1/2 top-[34px] h-px w-3 -translate-x-1/2 rounded-full bg-foreground/50" />
+        {pattern === "belly" && (
+          <div className="absolute left-1/2 top-[49px] size-5 -translate-x-1/2 rounded-full border border-white/55 bg-white/32" />
+        )}
+        {pattern === "stripe" && (
+          <>
+            <div className="absolute left-1/2 top-[51px] h-px w-8 -translate-x-1/2 rounded-full bg-white/45" />
+            <div className="absolute left-1/2 top-[56px] h-px w-7 -translate-x-1/2 rounded-full bg-white/35" />
+          </>
+        )}
+        {pattern === "pocket" && (
+          <div className="absolute left-1/2 top-[50px] h-4 w-5 -translate-x-1/2 rounded-b-full border border-white/55 bg-[#FFFDF8]/34" />
+        )}
+        {pattern === "spark" && (
+          <div className="absolute left-1/2 top-[52px] -translate-x-1/2 text-[11px] leading-none text-white/74">{badge}</div>
+        )}
+        <div className="absolute left-[23px] top-9 size-2 rounded-full bg-[#31353A]/75" />
+        <div className="absolute right-[23px] top-9 size-2 rounded-full bg-[#31353A]/75" />
+        <div className="absolute left-[18px] top-[43px] size-2 rounded-full bg-[#EAA8AC]/34" />
+        <div className="absolute right-[18px] top-[43px] size-2 rounded-full bg-[#EAA8AC]/34" />
+        {look.silhouette === "winged" && (
+          <div
+            className="absolute left-1/2 top-[45px] h-2.5 w-4 -translate-x-1/2 rounded-[0_0_80%_80%] bg-white/45"
+          />
+        )}
+        <div className="absolute left-1/2 top-[47px] h-px w-4 -translate-x-1/2 rounded-full bg-[#31353A]/45" />
+        <div
+          className="absolute bottom-2 left-[14px] h-3 w-2.5 -rotate-12 rounded-full border border-white/36"
+          style={{ backgroundColor: plushie.color }}
+        />
+        <div
+          className="absolute bottom-2 right-[14px] h-3 w-2.5 rotate-12 rounded-full border border-white/36"
+          style={{ backgroundColor: plushie.color }}
+        />
+        <div
+          className="absolute bottom-0 left-[19px] h-2.5 w-4 rounded-full border border-white/36"
+          style={{ backgroundColor: plushie.accent }}
+        />
+        <div
+          className="absolute bottom-0 right-[19px] h-2.5 w-4 rounded-full border border-white/36"
+          style={{ backgroundColor: plushie.accent }}
+        />
         {look.accessory !== "none" && (
           <div
-            className="absolute bottom-0 right-0 flex size-4 items-center justify-center rounded-full border border-black/10 bg-background/90 text-[9px] leading-none shadow-sm"
+            className="absolute bottom-3 right-1 flex size-5 items-center justify-center rounded-full border border-white/70 bg-[#FFFDF8]/94 text-[10px] leading-none shadow-[0_5px_10px_rgba(111,90,58,0.16)]"
             style={{ color: plushie.accent }}
             aria-hidden="true"
           >
-            {look.accessory === "glow" && "✦"}
-            {look.accessory === "note" && "□"}
-            {look.accessory === "cup" && "◡"}
-            {look.accessory === "map" && "◇"}
-            {look.accessory === "shield" && "⌂"}
-            {look.accessory === "tool" && "┬"}
-            {look.accessory === "leaf" && "⌒"}
-            {look.accessory === "direction" && "⌁"}
-            {look.accessory === "soft" && "∿"}
-            {look.accessory === "battery" && "▭"}
+            {badge}
+          </div>
+        )}
+        {look.accessory === "none" && (
+          <div
+            className="absolute bottom-3 right-1 flex size-5 items-center justify-center rounded-full border border-white/70 bg-[#FFFDF8]/94 text-[10px] leading-none shadow-[0_5px_10px_rgba(111,90,58,0.16)]"
+            style={{ color: plushie.accent }}
+            aria-hidden="true"
+          >
+            {badge}
           </div>
         )}
       </div>
-      <span className="mt-1 max-w-full truncate rounded bg-background/80 px-1.5 py-0.5 text-[10px] leading-none text-foreground shadow-sm">
+      <span className="mt-1 max-w-full truncate rounded-full border border-[#D1BE9B]/20 bg-[#FFFDF8]/86 px-2 py-0.5 text-[10px] leading-none tracking-[0.04em] text-[#6F5A3A] shadow-sm">
         {plushie.name}
       </span>
     </div>
