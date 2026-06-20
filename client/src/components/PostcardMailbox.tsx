@@ -38,11 +38,97 @@ function driveViewUrl(url: string) {
   return id ? `https://drive.google.com/file/d/${id}/view` : url;
 }
 
+function loadImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.referrerPolicy = "no-referrer";
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+function drawCoverImage(
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) {
+  const imageRatio = image.naturalWidth / image.naturalHeight;
+  const targetRatio = width / height;
+  const sourceWidth = imageRatio > targetRatio ? image.naturalHeight * targetRatio : image.naturalWidth;
+  const sourceHeight = imageRatio > targetRatio ? image.naturalHeight : image.naturalWidth / targetRatio;
+  const sourceX = (image.naturalWidth - sourceWidth) / 2;
+  const sourceY = (image.naturalHeight - sourceHeight) / 2;
+  ctx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, x, y, width, height);
+}
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
+  const lines: string[] = [];
+  let line = "";
+  for (const char of text) {
+    const nextLine = `${line}${char}`;
+    if (line && ctx.measureText(nextLine).width > maxWidth) {
+      lines.push(line);
+      line = char;
+    } else {
+      line = nextLine;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+async function createPostcardImageUrl(imageSrc: string, message: string) {
+  const image = await loadImage(imageSrc);
+  const canvas = document.createElement("canvas");
+  const width = 1600;
+  const imageHeight = 1000;
+  const textHeight = 190;
+  canvas.width = width;
+  canvas.height = imageHeight + textHeight;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas is not available");
+
+  ctx.fillStyle = "#FFFDF8";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawCoverImage(ctx, image, 0, 0, width, imageHeight);
+
+  ctx.fillStyle = "#FFF9F1";
+  ctx.fillRect(0, imageHeight, width, textHeight);
+  ctx.strokeStyle = "#E8DCCB";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, imageHeight);
+  ctx.lineTo(width, imageHeight);
+  ctx.stroke();
+
+  ctx.fillStyle = "#6F5648";
+  ctx.font = '300 42px "Noto Serif TC", serif';
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  const lines = wrapText(ctx, message, 1280).slice(0, 2);
+  const lineHeight = 66;
+  const firstLineY = imageHeight + textHeight / 2 - ((lines.length - 1) * lineHeight) / 2;
+  lines.forEach((line, index) => {
+    ctx.fillText(line, width / 2, firstLineY + index * lineHeight);
+  });
+
+  return canvas.toDataURL("image/png");
+}
+
 export default function PostcardMailbox() {
   const { user, isAuthenticated } = useAuth();
   const utils = trpc.useUtils();
   const [isOpen, setIsOpen] = useState(false);
   const [activePostcard, setActivePostcard] = useState<typeof pendingQuery.data>(null);
+  const [compositedImageUrl, setCompositedImageUrl] = useState("");
+  const [compositedImageStatus, setCompositedImageStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const openedRef = useRef<number | null>(null);
 
   const pendingQuery = trpc.postcards.pending.useQuery(undefined, {
@@ -80,6 +166,32 @@ export default function PostcardMailbox() {
     () => (visiblePostcard?.imageUrl ? driveViewUrl(visiblePostcard.imageUrl) : ""),
     [visiblePostcard?.imageUrl],
   );
+
+  useEffect(() => {
+    let cancelled = false;
+    setCompositedImageUrl("");
+    setCompositedImageStatus("idle");
+    if (!imageUrl || !visiblePostcard?.message) return;
+    setCompositedImageStatus("loading");
+
+    createPostcardImageUrl(imageUrl, visiblePostcard.message)
+      .then((url) => {
+        if (!cancelled) {
+          setCompositedImageUrl(url);
+          setCompositedImageStatus("ready");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCompositedImageUrl("");
+          setCompositedImageStatus("error");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [imageUrl, visiblePostcard?.message]);
 
   if (!isAuthenticated || !visiblePostcard) return null;
 
@@ -162,26 +274,42 @@ export default function PostcardMailbox() {
               <X size={18} />
             </button>
 
-            <div className="relative aspect-[16/10] w-full bg-[#F8EFE5] md:aspect-[16/11]">
-              <img
-                src={imageUrl}
-                alt="會員明信片"
-                className="h-full w-full object-cover"
-                referrerPolicy="no-referrer"
-              />
+            <div className="relative aspect-[160/119] w-full bg-[#F8EFE5]">
+              {compositedImageUrl ? (
+                <img
+                  src={compositedImageUrl}
+                  alt="會員明信片"
+                  className="h-full w-full object-contain"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="flex h-full w-full flex-col">
+                  <div
+                    className="min-h-0 flex-1 bg-cover bg-center"
+                    style={{ backgroundImage: imageUrl ? `url(${imageUrl})` : undefined }}
+                    aria-hidden="true"
+                  />
+                  <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-4 sm:px-6 sm:py-5">
+                    <p
+                      className="mx-auto max-w-[16rem] text-center text-[12px] leading-[1.6] text-[#6F5648] sm:max-w-[22rem] sm:text-[13px] md:max-w-2xl md:text-base md:leading-[1.75]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      {visiblePostcard.message}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-2.5 sm:px-5 sm:py-3 md:px-8 md:py-4">
+            <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-2.5 sm:px-5 sm:py-3">
               <p
-                className="mb-1.5 text-center text-[11px] leading-[1.5] text-[#A38D6B] sm:mb-2 sm:text-xs"
+                className="text-center text-[11px] leading-[1.5] text-[#A38D6B] sm:text-xs"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                長按照片可儲存明信片
-              </p>
-              <p
-                className="mx-auto max-w-[16rem] text-center text-[12px] leading-[1.6] text-[#6F5648] sm:max-w-[22rem] sm:text-[13px] md:max-w-2xl md:text-base md:leading-[1.75]"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                {visiblePostcard.message}
+                {compositedImageStatus === "ready"
+                  ? "長按照片可儲存包含文字的明信片"
+                  : compositedImageStatus === "error"
+                    ? "明信片文字已顯示，請稍後再長按儲存"
+                    : "正在產生可儲存的明信片"}
               </p>
             </div>
           </section>
