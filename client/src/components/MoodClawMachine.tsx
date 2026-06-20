@@ -569,12 +569,12 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
             心情抓娃娃機
           </p>
           <p className="truncate text-[12px] leading-relaxed tracking-[0.08em] text-[#31353A]/52">
-            等回覆時，抓一隻陪你一下
+            先夾隻娃娃等待吧
           </p>
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-[#D1BE9B]/35 bg-white/70 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] shadow-[0_8px_18px_rgba(209,190,155,0.16)]">
           <Sparkles className="size-3.5 fill-[#F3D88D]/40" />
-          <span>生成中</span>
+          <span>解析生成中</span>
         </div>
       </div>
 
