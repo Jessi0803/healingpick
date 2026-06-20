@@ -30,7 +30,7 @@ function driveFileId(url: string) {
 
 function drivePreviewUrl(url: string) {
   const id = driveFileId(url);
-  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1600` : url;
+  return id ? `/api/postcards/image/${encodeURIComponent(id)}` : url;
 }
 
 function driveViewUrl(url: string) {
