@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Download, ExternalLink, Mail, X } from "lucide-react";
+import { ExternalLink, Mail, X } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 
@@ -31,11 +31,6 @@ function driveFileId(url: string) {
 function drivePreviewUrl(url: string) {
   const id = driveFileId(url);
   return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1600` : url;
-}
-
-function driveDownloadUrl(url: string) {
-  const id = driveFileId(url);
-  return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
 }
 
 function driveViewUrl(url: string) {
@@ -79,10 +74,6 @@ export default function PostcardMailbox() {
   const visiblePostcard = activePostcard ?? postcard;
   const imageUrl = useMemo(
     () => (visiblePostcard?.imageUrl ? drivePreviewUrl(visiblePostcard.imageUrl) : ""),
-    [visiblePostcard?.imageUrl],
-  );
-  const downloadUrl = useMemo(
-    () => (visiblePostcard?.imageUrl ? driveDownloadUrl(visiblePostcard.imageUrl) : ""),
     [visiblePostcard?.imageUrl],
   );
   const originalUrl = useMemo(
@@ -152,16 +143,6 @@ export default function PostcardMailbox() {
           <section className="relative w-full max-w-3xl overflow-hidden rounded-[8px] border border-white/70 bg-[#FFFDF8] shadow-[0_24px_70px_rgba(49,53,58,0.24)]">
             <div className="absolute left-3 top-3 z-10 flex gap-2">
               <a
-                href={downloadUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="grid h-9 w-9 place-items-center rounded-full bg-white/82 text-[#6F5648] shadow-sm transition hover:bg-white"
-                aria-label="下載明信片圖片"
-                title="下載圖片"
-              >
-                <Download size={17} />
-              </a>
-              <a
                 href={originalUrl}
                 target="_blank"
                 rel="noreferrer"
@@ -190,6 +171,12 @@ export default function PostcardMailbox() {
               />
             </div>
             <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-2.5 sm:px-5 sm:py-3 md:px-8 md:py-4">
+              <p
+                className="mb-1.5 text-center text-[11px] leading-[1.5] text-[#A38D6B] sm:mb-2 sm:text-xs"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                長按照片可儲存明信片
+              </p>
               <p
                 className="mx-auto max-w-[16rem] text-center text-[12px] leading-[1.6] text-[#6F5648] sm:max-w-[22rem] sm:text-[13px] md:max-w-2xl md:text-base md:leading-[1.75]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
