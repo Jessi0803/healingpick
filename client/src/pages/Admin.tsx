@@ -832,8 +832,6 @@ function ReadingsTable({ rows }: { rows: AdminReadingRow[] }) {
               {isDreamRecord ? (
                 <>
                   <RecordBlock title="夢境紀錄" value={parsedInput?.dreamContent ?? row.question} />
-                  <RecordBlock title="醒來感受" value={parsedInput?.wakeEmotion} />
-                  <RecordBlock title="近期狀態" value={parsedInput?.recentStatus} />
                 </>
               ) : (
                 <>
