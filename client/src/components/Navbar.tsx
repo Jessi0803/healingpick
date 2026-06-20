@@ -121,7 +121,7 @@ export default function Navbar() {
               className="text-[11px] tracking-[0.18em] text-[#8A7250]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
             >
-              註冊會員贈送五次免費占卜 🐾
+              會員會不定時收到客製化明信片喔( ˘͈ ᵕ ˘͈♡)
             </span>
           ))}
         </div>
