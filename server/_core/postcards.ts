@@ -57,9 +57,19 @@ function driveImageUrl(id: string) {
 }
 
 function configuredImageUrls() {
-  const raw = process.env.POSTCARD_IMAGE_URLS;
-  if (!raw) return DEFAULT_POSTCARD_IMAGE_IDS.map(driveImageUrl);
-  const urls = raw
+  const rawIds = process.env.POSTCARD_IMAGE_IDS;
+  if (rawIds) {
+    const urls = rawIds
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean)
+      .map(driveImageUrl);
+    if (urls.length > 0) return urls;
+  }
+
+  const rawUrls = process.env.POSTCARD_IMAGE_URLS;
+  if (!rawUrls) return DEFAULT_POSTCARD_IMAGE_IDS.map(driveImageUrl);
+  const urls = rawUrls
     .split(",")
     .map((url) => url.trim())
     .filter(Boolean);
@@ -68,7 +78,8 @@ function configuredImageUrls() {
 
 function pickImageUrl(userId: number, loginCount: number) {
   const urls = configuredImageUrls();
-  const index = Math.abs((userId * 31 + loginCount * 17) % urls.length);
+  const postcardSequence = Math.max(0, Math.floor((loginCount - 1) / 2));
+  const index = (Math.abs(userId) + postcardSequence) % urls.length;
   return urls[index];
 }
 
