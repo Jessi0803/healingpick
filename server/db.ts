@@ -841,6 +841,21 @@ export async function getRecentReadingSummariesByUser(userId: number, limit = 5)
     .limit(limit);
 }
 
+export async function getAllReadingSummariesByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({
+      type: readings.type,
+      question: readings.question,
+      summary: readings.summary,
+      createdAt: readings.createdAt,
+    })
+    .from(readings)
+    .where(sql`${readings.userId} = ${userId} AND ${readings.summary} IS NOT NULL AND ${readings.summary} <> ''`)
+    .orderBy(desc(readings.createdAt));
+}
+
 export type EligibleReadingFollowup = {
   readingId: number;
   userId: number;

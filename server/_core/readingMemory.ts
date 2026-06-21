@@ -1,5 +1,5 @@
 import type { User } from "../../drizzle/schema";
-import { getRecentReadingSummariesByUser } from "../db";
+import { getAllReadingSummariesByUser } from "../db";
 import { extractTextContent, invokeLLM } from "./llm";
 
 const TYPE_LABELS = {
@@ -45,7 +45,7 @@ export async function buildReadingSummary(input: {
         },
         {
           role: "user",
-          content: `請把這次${TYPE_LABELS[input.type]}紀錄整理成 80-120 字會員記憶摘要，保留：主題、核心結論、使用者反覆情緒或狀態、後續方向。\n\n${source}`,
+          content: `請把這次${TYPE_LABELS[input.type]}紀錄整理成 40-80 字會員記憶摘要，只保留：使用者問什麼、這次解讀的核心判斷。不要加入情緒分析、後續方向或新建議。\n\n${source}`,
         },
       ],
     });
@@ -63,7 +63,7 @@ export async function buildReadingSummary(input: {
 export async function getMemberMemoryContext(user: Pick<User, "id"> | null | undefined) {
   if (!user) return "";
 
-  const rows = await getRecentReadingSummariesByUser(user.id, 5);
+  const rows = await getAllReadingSummariesByUser(user.id);
   if (rows.length === 0) return "";
 
   const memory = rows
@@ -74,5 +74,5 @@ export async function getMemberMemoryContext(user: Pick<User, "id"> | null | und
     })
     .join("\n");
 
-  return `\n\n【會員近期占卜記憶】\n以下是這位會員最近幾次占卜的短摘要，只作為理解脈絡，不要主動提到「我看到你的歷史紀錄」，也不要洩漏資料來源。若本次問題和近期摘要無關，請以本次問題為主。\n${memory}`;
+  return `\n\n【會員歷史占卜記憶】\n以下是這位會員過去所有占卜的短摘要，只作為理解脈絡，不要主動提到「我看到你的歷史紀錄」，也不要洩漏資料來源。若本次問題和歷史摘要無關，請以本次問題為主。\n${memory}`;
 }
