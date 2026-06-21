@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { creditTransactions, feedbacks, readings, users } from "../../drizzle/schema";
 import { DEFAULT_DAILY_FREE_QUOTA, MAX_DAILY_FREE_QUOTA, getDailyFreeQuota, getDb, setDailyFreeQuota } from "../db";
+import { normalizeEmailList, sendBatchEmail } from "../_core/email";
 import { adminProcedure, router } from "../_core/trpc";
 
 const limitInput = z.object({
@@ -27,6 +28,30 @@ function taipeiDateKey(date: Date): string {
 
 function todayFreeUsed(row: { freeUsedToday: number; lastFreeReset: Date }): number {
   return taipeiDateKey(new Date()) === taipeiDateKey(row.lastFreeReset) ? row.freeUsedToday : 0;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function textToEmailHtml(content: string): string {
+  const paragraphs = content
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replaceAll("\n", "<br />")}</p>`)
+    .join("\n");
+
+  return `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.8; color: #31353A;">
+      ${paragraphs}
+    </div>
+  `;
 }
 
 export const adminRouter = router({
@@ -197,6 +222,41 @@ export const adminRouter = router({
         readings: readingRows,
         feedbacks: feedbackRows,
       };
+    }),
+  sendMemberEmail: adminProcedure
+    .input(
+      z.object({
+        subject: z.string().trim().min(1, "請輸入 email 主旨").max(160),
+        content: z.string().trim().min(1, "請輸入 email 內容").max(12000),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database unavailable",
+        });
+      }
+
+      const recipientRows = await db
+        .select({ email: users.email })
+        .from(users)
+        .where(sql`${users.email} IS NOT NULL AND btrim(${users.email}) <> ''`);
+      const recipients = normalizeEmailList(recipientRows.map((row) => row.email));
+
+      if (recipients.length === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "目前沒有可寄送的會員 email",
+        });
+      }
+
+      return sendBatchEmail({
+        recipients,
+        subject: input.subject,
+        html: textToEmailHtml(input.content),
+      });
     }),
   userReadings: adminProcedure
     .input(
