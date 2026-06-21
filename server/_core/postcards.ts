@@ -24,11 +24,17 @@ const DEFAULT_POSTCARD_IMAGE_IDS = [
 ];
 
 const FALLBACK_MESSAGES = [
-  "今天也有好好往前一點點，Mochi 有看見。",
-  "慢慢來也沒關係，先把今天過好就好。",
-  "今天不用想太多，先照顧好自己就很棒。",
-  "希望今天有一件小事，讓你覺得輕鬆一點。",
-  "不用一次變勇敢，先做一點點就很好。",
+  "你今天已經很努力了，先休息一下吧。",
+  "不用急，先把眼前這一步走好就好。",
+  "想不清楚也沒關係，先讓自己喘口氣。",
+  "今天先別逼自己太多，一點點也算前進。",
+  "先照顧好自己，答案會慢慢清楚一點。",
+];
+
+const UNCLEAR_MESSAGE_PATTERNS = [
+  /[…]/u,
+  /(缺口|留白|留著才有|宇宙|能量|靈魂|課題|頻率|綻放|被接住|顯化)/u,
+  /(分析一下|分析一點|看透|看清對方|對方看透)/u,
 ];
 
 const READING_TYPE_LABELS = {
@@ -89,13 +95,25 @@ function compactText(value: string, maxLength: number) {
   return `${normalized.slice(0, maxLength - 1)}…`;
 }
 
-function normalizeMessage(value: string) {
+function fallbackMessage(seed: number) {
+  return FALLBACK_MESSAGES[Math.abs(seed) % FALLBACK_MESSAGES.length];
+}
+
+function isClearPostcardMessage(value: string) {
+  const text = value.trim();
+  if (text.length < 8 || text.length > 28) return false;
+  if (UNCLEAR_MESSAGE_PATTERNS.some((pattern) => pattern.test(text))) return false;
+  if ((text.match(/[，、。！？]/gu)?.length ?? 0) > 2) return false;
+  return true;
+}
+
+function normalizeMessage(value: string, seed: number) {
   const firstLine = value
     .replace(/[「」"“”]/g, "")
     .replace(/^[-*•\d.、\s]+/, "")
     .split(/\n+/)[0]
     ?.trim();
-  return compactText(firstLine || FALLBACK_MESSAGES[0], 42);
+  return firstLine && isClearPostcardMessage(firstLine) ? firstLine : fallbackMessage(seed);
 }
 
 function inferThemes(text: string) {
@@ -139,7 +157,7 @@ async function generatePostcardMessage(userId: number) {
     getRecentReadingSummariesByUser(userId, 5),
   ]);
   if (summaries.length === 0) {
-    return FALLBACK_MESSAGES[userId % FALLBACK_MESSAGES.length];
+    return fallbackMessage(userId);
   }
 
   const displayName = compactText((user?.name ?? "").trim(), 18);
@@ -161,24 +179,27 @@ async function generatePostcardMessage(userId: number) {
         {
           role: "system",
           content:
-            "你是 Healing Pick 的小貓郵差。你會把會員最近問過的事，變成一張簡短、白話、像朋友輕輕提醒的明信片。只輸出一句繁體中文短句，不要標題、不要 Markdown、不要引號。",
+            "你是 Healing Pick 的小貓郵差。你會把會員最近問過的事，改寫成一句很白話、像朋友傳訊息提醒的明信片文字。只輸出一句繁體中文短句，不要標題、不要 Markdown、不要引號。",
         },
         {
           role: "user",
-          content: `請根據會員近期問過的內容與摘要，寫一句 16-28 字的白話明信片文字。
+          content: `請根據會員近期問過的內容與摘要，寫一句 12-24 字的白話明信片文字。
 
 寫法要求：
 - 優先回應「最近一筆最在意的事」，再用「重複出現的主題」當底色。
 - 如果多筆都在問同一類事，就回應那個反覆出現的卡點，不要平均分配。
-- 句子要像朋友或小貓郵差輕輕講一句話，可以有「你」「今天」「慢慢」「先」這種親近語氣。
-- 用日常說法，不要太詩意、不要太像廣告文案、不要用抽象比喻。
+- 句子要像朋友用 LINE 傳來的一句話，可以有「你」「今天」「先」「沒關係」「慢慢來」這種親近語氣。
+- 用日常講法，越像真人說話越好，不要像占卜結論、廣告文案、詩句或心理測驗結果。
+- 可以用簡單口語，例如：「先別急著決定」「你其實已經很努力了」「這件事慢慢看就好」。
+- 不要用「看透」「分析」「缺口」「留白」這類不好懂或不自然的說法。
 - 少用「光」「宇宙」「能量」「綻放」「被接住」「溫柔地」這類文青或靈性詞。
+- 避免「相信宇宙安排」「內在力量」「靈魂課題」這類抽象說法。
 - 可以參考會員稱呼，但只有在自然時才用，不要每次都硬塞名字。
 - 不要直接說出隱私細節、人名、日期、具體事件。
 - 不要提到「紀錄」「摘要」「占卜歷史」「我看到你問過」。
 - 不要提病症、診斷或沉重字眼。
 - 不要寫成泛用雞湯；要讓使用者感覺「這句話好像懂我最近卡在哪裡」。
-- 句子要簡短，適合放在明信片底部，不要超過 28 字。
+- 句子要簡短，適合放在明信片底部，不要超過 24 字。
 
 會員稱呼：${displayName || "未提供"}
 最近一筆重點：${latestQuestion || "未提供"}
@@ -193,9 +214,9 @@ ${memory}`,
     });
     const raw = response.choices?.[0]?.message?.content;
     const text = raw ? extractTextContent(raw as string | Array<{ type: string; text?: string }>) : "";
-    return normalizeMessage(text);
+    return normalizeMessage(text, userId);
   } catch {
-    return FALLBACK_MESSAGES[userId % FALLBACK_MESSAGES.length];
+    return fallbackMessage(userId);
   }
 }
 
@@ -204,7 +225,7 @@ function serializePostcard(postcard: UserPostcard | undefined): PostcardPayload 
   return {
     id: postcard.id,
     imageUrl: postcard.imageUrl,
-    message: postcard.message,
+    message: normalizeMessage(postcard.message, postcard.userId),
     createdLoginCount: postcard.createdLoginCount,
     deliverLoginCount: postcard.deliverLoginCount,
     status: postcard.status,
