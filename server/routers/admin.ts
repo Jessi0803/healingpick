@@ -8,7 +8,7 @@ import { adminProcedure, router } from "../_core/trpc";
 
 const limitInput = z.object({
   limit: z.number().int().min(1).max(200).default(100),
-  tab: z.enum(["users", "email", "orders", "inputs", "visitors", "feedbacks", "transactions"]).default("users"),
+  tab: z.enum(["users", "orders", "visitors", "feedbacks", "transactions"]).default("users"),
 });
 
 function toNumber(value: unknown): number {
@@ -134,7 +134,14 @@ export const adminRouter = router({
               lastSignedIn: users.lastSignedIn,
             })
             .from(users)
-            .orderBy(desc(users.createdAt))
+            .orderBy(
+              sql`(
+                SELECT max(${readings.createdAt})
+                FROM ${readings}
+                WHERE ${readings.userId} = ${users.id}
+              ) DESC NULLS LAST`,
+              desc(users.createdAt)
+            )
             .limit(limit) : emptyQuery,
           tab === "orders" ? db
             .select({
@@ -167,7 +174,7 @@ export const adminRouter = router({
             .leftJoin(users, eq(creditTransactions.userId, users.id))
             .orderBy(desc(creditTransactions.createdAt))
             .limit(limit) : emptyQuery,
-          tab === "inputs" || tab === "visitors" ? db
+          tab === "visitors" ? db
             .select({
               id: readings.id,
               userId: readings.userId,

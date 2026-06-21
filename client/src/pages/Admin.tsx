@@ -1,13 +1,11 @@
-import { Fragment, FormEvent, useEffect, useMemo, useState } from 'react';
+import { Dispatch, Fragment, FormEvent, SetStateAction, useEffect, useMemo, useState } from 'react';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 
 const tabs = [
   { id: 'users', label: '會員管理' },
-  { id: 'email', label: '寄會員 Email' },
   { id: 'orders', label: '訂單管理' },
-  { id: 'inputs', label: '會員問答' },
   { id: 'visitors', label: '訪客問答' },
   { id: 'feedbacks', label: '顧客回饋' },
   { id: 'transactions', label: '點數紀錄' },
@@ -173,7 +171,6 @@ export default function AdminPage() {
   const [userActionMessage, setUserActionMessage] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailContent, setEmailContent] = useState('');
-  const [emailRecipientMode, setEmailRecipientMode] = useState<'all' | 'selected'>('all');
   const [selectedEmailUserIds, setSelectedEmailUserIds] = useState<number[]>([]);
   const [emailMessage, setEmailMessage] = useState('');
 
@@ -270,15 +267,13 @@ export default function AdminPage() {
       setEmailMessage('請輸入主旨與內容');
       return;
     }
-    if (emailRecipientMode === 'selected' && selectedEmailUserIds.length === 0) {
+    if (selectedEmailUserIds.length === 0) {
       setEmailMessage('請至少選擇一位收件會員');
       return;
     }
 
-    const recipientText =
-      emailRecipientMode === 'selected' ? `${selectedEmailUserIds.length} 位指定會員` : '所有有 email 的會員';
     const confirmed = window.confirm(
-      `確定要寄出這封 email 給${recipientText}嗎？\n\n主旨：${subject}`
+      `確定要寄出這封 email 給 ${selectedEmailUserIds.length} 位指定會員嗎？\n\n主旨：${subject}`
     );
     if (!confirmed) return;
 
@@ -286,7 +281,7 @@ export default function AdminPage() {
     sendMemberEmailMutation.mutate({
       subject,
       content,
-      recipientUserIds: emailRecipientMode === 'selected' ? selectedEmailUserIds : undefined,
+      recipientUserIds: selectedEmailUserIds,
     });
   };
 
@@ -330,6 +325,11 @@ export default function AdminPage() {
     [data?.users]
   );
 
+  useEffect(() => {
+    const validIds = new Set(emailRecipientUsers.map((row) => row.id));
+    setSelectedEmailUserIds((current) => current.filter((id) => validIds.has(id)));
+  }, [emailRecipientUsers]);
+
   const filteredOrders = useMemo(() => {
     const rows = data?.orders ?? [];
     if (!normalizedQuery) return rows;
@@ -350,10 +350,6 @@ export default function AdminPage() {
     );
   }, [data?.readings, normalizedQuery]);
 
-  const memberReadings = useMemo(
-    () => filteredReadings.filter((row) => !isVisitor(row)),
-    [filteredReadings]
-  );
   const visitorReadings = useMemo(
     () => filteredReadings.filter((row) => isVisitor(row)),
     [filteredReadings]
@@ -523,169 +519,82 @@ export default function AdminPage() {
           ) : (
             <div className="rounded-lg border border-[#D1BE9B]/20 bg-white/55 shadow-[0_12px_40px_rgba(49,53,58,0.06)] overflow-hidden">
               {activeTab === 'users' && (
-                <UsersTable
-                  rows={filteredUsers}
-                  dailyFreeQuota={data?.settings.dailyFreeQuota ?? 2}
-                  adjustingUserId={updateUserCreditsMutation.variables?.userId ?? null}
-                  isAdjusting={updateUserCreditsMutation.isPending}
-                  deletingUserId={deleteUserMutation.variables?.userId ?? null}
-                  isDeleting={deleteUserMutation.isPending}
-                  savingNoteUserId={updateUserNoteMutation.variables?.userId ?? null}
-                  isSavingNote={updateUserNoteMutation.isPending}
-                  message={userActionMessage}
-                  currentUserId={user.id}
-                  onUpdateCredits={handleUpdateUserCredits}
-                  onUpdateNote={handleUpdateUserNote}
-                  onDeleteUser={handleDeleteUser}
-                />
-              )}
-              {activeTab === 'email' && (
-                <form onSubmit={handleMemberEmailSubmit} className="p-4">
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                      <div>
-                        <p className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          會員 Email
-                        </p>
-                        <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
-                          可寄給所有有 email 的會員，或只寄給指定會員；送出前會再次確認。
-                        </p>
-                      </div>
-                      <button
-                        type="submit"
-                        disabled={sendMemberEmailMutation.isPending}
-                        className="rounded-lg border border-[#D1BE9B]/30 bg-[#31353A] px-4 py-2.5 text-xs tracking-[0.16em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-55"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                      >
-                        {sendMemberEmailMutation.isPending ? '寄送中' : '寄給會員'}
-                      </button>
-                    </div>
-                    <div className="rounded-lg border border-[#D1BE9B]/25 bg-white/55 p-3">
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEmailRecipientMode('all');
-                            setEmailMessage('');
-                          }}
-                          className={`rounded-md border px-3 py-2 text-[11px] tracking-[0.14em] transition ${
-                            emailRecipientMode === 'all'
-                              ? 'border-[#31353A] bg-[#31353A] text-[#FAF7F4]'
-                              : 'border-[#D1BE9B]/30 bg-white/60 text-[#31353A]/62 hover:border-[#D1BE9B]/60'
-                          }`}
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                        >
-                          全部會員
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEmailRecipientMode('selected');
-                            setEmailMessage('');
-                          }}
-                          className={`rounded-md border px-3 py-2 text-[11px] tracking-[0.14em] transition ${
-                            emailRecipientMode === 'selected'
-                              ? 'border-[#31353A] bg-[#31353A] text-[#FAF7F4]'
-                              : 'border-[#D1BE9B]/30 bg-white/60 text-[#31353A]/62 hover:border-[#D1BE9B]/60'
-                          }`}
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                        >
-                          指定會員
-                        </button>
-                      </div>
-                      {emailRecipientMode === 'selected' && (
-                        <div className="mt-3">
-                          <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-[11px] tracking-[0.08em] text-[#31353A]/48">
-                            <span>已選 {selectedEmailUserIds.length} / {emailRecipientUsers.length}</span>
-                            <div className="flex gap-2">
-                              <button
-                                type="button"
-                                onClick={() => setSelectedEmailUserIds(emailRecipientUsers.map((row) => row.id))}
-                                className="text-[#A38D6B] hover:text-[#31353A]"
-                              >
-                                全選
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setSelectedEmailUserIds([])}
-                                className="text-[#A38D6B] hover:text-[#31353A]"
-                              >
-                                清除
-                              </button>
-                            </div>
-                          </div>
-                          <div className="max-h-56 overflow-y-auto rounded-md border border-[#D1BE9B]/20 bg-white/50">
-                            {emailRecipientUsers.length === 0 ? (
-                              <div className="px-3 py-3 text-xs tracking-[0.08em] text-[#31353A]/45">
-                                目前沒有可選擇的會員 email
-                              </div>
-                            ) : emailRecipientUsers.map((row) => (
-                              <label
-                                key={row.id}
-                                className="flex cursor-pointer items-center gap-3 border-b border-[#D1BE9B]/15 px-3 py-2 last:border-b-0 hover:bg-[#D1BE9B]/8"
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={selectedEmailUserIds.includes(row.id)}
-                                  onChange={(event) => {
-                                    setEmailMessage('');
-                                    setSelectedEmailUserIds((current) =>
-                                      event.target.checked
-                                        ? Array.from(new Set([...current, row.id]))
-                                        : current.filter((id) => id !== row.id)
-                                    );
-                                  }}
-                                  className="h-4 w-4 accent-[#A38D6B]"
-                                />
-                                <span className="min-w-0 text-xs tracking-[0.06em] text-[#31353A]/72">
-                                  <span className="block truncate">{row.email}</span>
-                                  <span className="block truncate text-[11px] text-[#31353A]/42">
-                                    {row.name ?? `會員 #${row.id}`}
-                                  </span>
-                                </span>
-                              </label>
-                            ))}
-                          </div>
+                <div>
+                  <form onSubmit={handleMemberEmailSubmit} className="border-b border-[#D1BE9B]/16 p-4">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                        <div>
+                          <p className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                            會員 Email
+                          </p>
+                          <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
+                            直接勾選下方會員列作為收件人；會員問答可在每列展開查看。
+                          </p>
                         </div>
-                      )}
+                        <button
+                          type="submit"
+                          disabled={sendMemberEmailMutation.isPending || selectedEmailUserIds.length === 0}
+                          className="rounded-lg border border-[#D1BE9B]/30 bg-[#31353A] px-4 py-2.5 text-xs tracking-[0.16em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-55"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        >
+                          {sendMemberEmailMutation.isPending ? '寄送中' : `寄給 ${selectedEmailUserIds.length} 位會員`}
+                        </button>
+                      </div>
+                      <input
+                        value={emailSubject}
+                        onChange={(event) => {
+                          setEmailSubject(event.target.value);
+                          setEmailMessage('');
+                        }}
+                        maxLength={160}
+                        placeholder="Email 主旨"
+                        className="rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-2.5 text-xs tracking-[0.08em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      />
+                      <textarea
+                        value={emailContent}
+                        onChange={(event) => {
+                          setEmailContent(event.target.value);
+                          setEmailMessage('');
+                        }}
+                        maxLength={12000}
+                        rows={6}
+                        placeholder="Email 內容。空一行會變成下一段。"
+                        className="min-h-36 resize-y rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-xs leading-[1.8] tracking-[0.06em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      />
+                      <div className="flex flex-col gap-2 text-[11px] tracking-[0.1em] text-[#31353A]/42 sm:flex-row sm:items-center sm:justify-between">
+                        <span>已選 {selectedEmailUserIds.length} / {emailRecipientUsers.length} 位可寄送會員 · {emailContent.length}/12000</span>
+                        {emailMessage && (
+                          <span className={sendMemberEmailMutation.isError ? 'text-[#C9837A]' : 'text-[#A38D6B]'}>
+                            {emailMessage}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <input
-                      value={emailSubject}
-                      onChange={(event) => {
-                        setEmailSubject(event.target.value);
-                        setEmailMessage('');
-                      }}
-                      maxLength={160}
-                      placeholder="Email 主旨"
-                      className="rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-2.5 text-xs tracking-[0.08em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    />
-                    <textarea
-                      value={emailContent}
-                      onChange={(event) => {
-                        setEmailContent(event.target.value);
-                        setEmailMessage('');
-                      }}
-                      maxLength={12000}
-                      rows={8}
-                      placeholder="Email 內容。空一行會變成下一段。"
-                      className="min-h-44 resize-y rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-xs leading-[1.8] tracking-[0.06em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    />
-                    <div className="flex flex-col gap-2 text-[11px] tracking-[0.1em] text-[#31353A]/42 sm:flex-row sm:items-center sm:justify-between">
-                      <span>{emailContent.length}/12000</span>
-                      {emailMessage && (
-                        <span className={sendMemberEmailMutation.isError ? 'text-[#C9837A]' : 'text-[#A38D6B]'}>
-                          {emailMessage}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </form>
+                  </form>
+                  <UsersTable
+                    rows={filteredUsers}
+                    emailRecipientUserIds={emailRecipientUsers.map((row) => row.id)}
+                    selectedEmailUserIds={selectedEmailUserIds}
+                    onSelectedEmailUserIdsChange={setSelectedEmailUserIds}
+                    dailyFreeQuota={data?.settings.dailyFreeQuota ?? 2}
+                    adjustingUserId={updateUserCreditsMutation.variables?.userId ?? null}
+                    isAdjusting={updateUserCreditsMutation.isPending}
+                    deletingUserId={deleteUserMutation.variables?.userId ?? null}
+                    isDeleting={deleteUserMutation.isPending}
+                    savingNoteUserId={updateUserNoteMutation.variables?.userId ?? null}
+                    isSavingNote={updateUserNoteMutation.isPending}
+                    message={userActionMessage}
+                    currentUserId={user.id}
+                    onUpdateCredits={handleUpdateUserCredits}
+                    onUpdateNote={handleUpdateUserNote}
+                    onDeleteUser={handleDeleteUser}
+                  />
+                </div>
               )}
               {activeTab === 'orders' && <OrdersTable rows={filteredOrders} />}
-              {activeTab === 'inputs' && <ReadingsTable rows={memberReadings} />}
               {activeTab === 'visitors' && <ReadingsTable rows={visitorReadings} />}
               {activeTab === 'feedbacks' && <FeedbacksTable rows={filteredFeedbacks} />}
               {activeTab === 'transactions' && <TransactionsTable rows={filteredTransactions} />}
@@ -724,6 +633,9 @@ function EmptyRow({ colSpan }: { colSpan: number }) {
 
 function UsersTable({
   rows,
+  emailRecipientUserIds,
+  selectedEmailUserIds,
+  onSelectedEmailUserIdsChange,
   dailyFreeQuota,
   adjustingUserId,
   isAdjusting,
@@ -738,6 +650,9 @@ function UsersTable({
   onDeleteUser,
 }: {
   rows: AdminUserRow[];
+  emailRecipientUserIds: number[];
+  selectedEmailUserIds: number[];
+  onSelectedEmailUserIdsChange: Dispatch<SetStateAction<number[]>>;
   dailyFreeQuota: number;
   adjustingUserId: number | null;
   isAdjusting: boolean;
@@ -755,6 +670,11 @@ function UsersTable({
   const [noteInputs, setNoteInputs] = useState<Record<number, string>>({});
   const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
   const selectedUser = rows.find((row) => row.id === expandedUserId) ?? null;
+  const selectableRowIds = rows
+    .filter((row) => row.email && emailRecipientUserIds.includes(row.id))
+    .map((row) => row.id);
+  const selectedVisibleCount = selectableRowIds.filter((id) => selectedEmailUserIds.includes(id)).length;
+  const allVisibleSelected = selectableRowIds.length > 0 && selectedVisibleCount === selectableRowIds.length;
   const userReadingsQuery = trpc.admin.userReadings.useQuery(
     { userId: expandedUserId ?? 0, limit: 100 },
     { enabled: expandedUserId != null }
@@ -782,9 +702,29 @@ function UsersTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1320px] text-left">
+      <table className="w-full min-w-[1380px] text-left">
         <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
           <tr>
+            <th className="px-4 py-3 font-normal">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={allVisibleSelected}
+                  disabled={selectableRowIds.length === 0}
+                  onChange={(event) => {
+                    onSelectedEmailUserIdsChange((current) => {
+                      const visible = new Set(selectableRowIds);
+                      if (event.target.checked) {
+                        return Array.from(new Set([...current, ...selectableRowIds]));
+                      }
+                      return current.filter((id) => !visible.has(id));
+                    });
+                  }}
+                  className="h-4 w-4 accent-[#A38D6B]"
+                />
+                <span>Email</span>
+              </div>
+            </th>
             <th className="px-4 py-3 font-normal">ID</th>
             <th className="px-4 py-3 font-normal">會員</th>
             <th className="px-4 py-3 font-normal">角色</th>
@@ -800,12 +740,12 @@ function UsersTable({
         <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
           {message && (
             <tr>
-              <td colSpan={10} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
+              <td colSpan={11} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
                 {message}
               </td>
             </tr>
           )}
-          {rows.length === 0 ? <EmptyRow colSpan={10} /> : rows.map((row) => {
+          {rows.length === 0 ? <EmptyRow colSpan={11} /> : rows.map((row) => {
             const inputValue = creditInputs[row.id] ?? String(row.credits);
             const noteValue = noteInputs[row.id] ?? row.adminNote ?? '';
             const parsedCredits = Number(inputValue.trim());
@@ -826,9 +766,27 @@ function UsersTable({
             const isRowDeleting = isDeleting && deletingUserId === row.id;
             const isExpanded = expandedUserId === row.id;
             const freeRemaining = Math.max(0, dailyFreeQuota - row.freeUsedToday);
+            const canReceiveEmail = Boolean(row.email && emailRecipientUserIds.includes(row.id));
+            const isSelectedForEmail = selectedEmailUserIds.includes(row.id);
             return (
             <Fragment key={row.id}>
               <tr key={row.id} className={isExpanded ? 'bg-[#D1BE9B]/5' : undefined}>
+                <td className="px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={isSelectedForEmail}
+                    disabled={!canReceiveEmail}
+                    onChange={(event) => {
+                      onSelectedEmailUserIdsChange((current) =>
+                        event.target.checked
+                          ? Array.from(new Set([...current, row.id]))
+                          : current.filter((id) => id !== row.id)
+                      );
+                    }}
+                    className="h-4 w-4 accent-[#A38D6B] disabled:opacity-30"
+                    title={canReceiveEmail ? '選為 Email 收件人' : '此會員沒有 email'}
+                  />
+                </td>
                 <td className="px-4 py-3">{row.id}</td>
                 <td className="px-4 py-3">
                   <div>{row.email ?? '—'}</div>
@@ -923,7 +881,7 @@ function UsersTable({
               </tr>
               {isExpanded && (
                 <tr key={`${row.id}-readings`}>
-                  <td colSpan={10} className="bg-[#FAF7F4]/70 px-4 py-4">
+                  <td colSpan={11} className="bg-[#FAF7F4]/70 px-4 py-4">
                     <UserReadingHistory
                       user={selectedUser}
                       rows={userReadingsQuery.data ?? []}
