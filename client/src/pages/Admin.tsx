@@ -173,6 +173,8 @@ export default function AdminPage() {
   const [userActionMessage, setUserActionMessage] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailContent, setEmailContent] = useState('');
+  const [emailRecipientMode, setEmailRecipientMode] = useState<'all' | 'selected'>('all');
+  const [selectedEmailUserIds, setSelectedEmailUserIds] = useState<number[]>([]);
   const [emailMessage, setEmailMessage] = useState('');
 
   const dashboardQuery = trpc.admin.dashboard.useQuery(
@@ -268,14 +270,24 @@ export default function AdminPage() {
       setEmailMessage('請輸入主旨與內容');
       return;
     }
+    if (emailRecipientMode === 'selected' && selectedEmailUserIds.length === 0) {
+      setEmailMessage('請至少選擇一位收件會員');
+      return;
+    }
 
+    const recipientText =
+      emailRecipientMode === 'selected' ? `${selectedEmailUserIds.length} 位指定會員` : '所有有 email 的會員';
     const confirmed = window.confirm(
-      `確定要寄出這封 email 給所有有 email 的會員嗎？\n\n主旨：${subject}`
+      `確定要寄出這封 email 給${recipientText}嗎？\n\n主旨：${subject}`
     );
     if (!confirmed) return;
 
     setEmailMessage('');
-    sendMemberEmailMutation.mutate({ subject, content });
+    sendMemberEmailMutation.mutate({
+      subject,
+      content,
+      recipientUserIds: emailRecipientMode === 'selected' ? selectedEmailUserIds : undefined,
+    });
   };
 
   const handleUpdateUserCredits = (row: AdminUserRow, credits: number) => {
@@ -312,6 +324,11 @@ export default function AdminPage() {
       )
     );
   }, [data?.users, normalizedQuery]);
+
+  const emailRecipientUsers = useMemo(
+    () => (data?.users ?? []).filter((row) => row.email && row.email.trim()),
+    [data?.users]
+  );
 
   const filteredOrders = useMemo(() => {
     const rows = data?.orders ?? [];
@@ -532,7 +549,7 @@ export default function AdminPage() {
                           會員 Email
                         </p>
                         <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
-                          寄給所有有 email 的會員；送出前會再次確認。
+                          可寄給所有有 email 的會員，或只寄給指定會員；送出前會再次確認。
                         </p>
                       </div>
                       <button
@@ -543,6 +560,95 @@ export default function AdminPage() {
                       >
                         {sendMemberEmailMutation.isPending ? '寄送中' : '寄給會員'}
                       </button>
+                    </div>
+                    <div className="rounded-lg border border-[#D1BE9B]/25 bg-white/55 p-3">
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEmailRecipientMode('all');
+                            setEmailMessage('');
+                          }}
+                          className={`rounded-md border px-3 py-2 text-[11px] tracking-[0.14em] transition ${
+                            emailRecipientMode === 'all'
+                              ? 'border-[#31353A] bg-[#31353A] text-[#FAF7F4]'
+                              : 'border-[#D1BE9B]/30 bg-white/60 text-[#31353A]/62 hover:border-[#D1BE9B]/60'
+                          }`}
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        >
+                          全部會員
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEmailRecipientMode('selected');
+                            setEmailMessage('');
+                          }}
+                          className={`rounded-md border px-3 py-2 text-[11px] tracking-[0.14em] transition ${
+                            emailRecipientMode === 'selected'
+                              ? 'border-[#31353A] bg-[#31353A] text-[#FAF7F4]'
+                              : 'border-[#D1BE9B]/30 bg-white/60 text-[#31353A]/62 hover:border-[#D1BE9B]/60'
+                          }`}
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        >
+                          指定會員
+                        </button>
+                      </div>
+                      {emailRecipientMode === 'selected' && (
+                        <div className="mt-3">
+                          <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-[11px] tracking-[0.08em] text-[#31353A]/48">
+                            <span>已選 {selectedEmailUserIds.length} / {emailRecipientUsers.length}</span>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedEmailUserIds(emailRecipientUsers.map((row) => row.id))}
+                                className="text-[#A38D6B] hover:text-[#31353A]"
+                              >
+                                全選
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedEmailUserIds([])}
+                                className="text-[#A38D6B] hover:text-[#31353A]"
+                              >
+                                清除
+                              </button>
+                            </div>
+                          </div>
+                          <div className="max-h-56 overflow-y-auto rounded-md border border-[#D1BE9B]/20 bg-white/50">
+                            {emailRecipientUsers.length === 0 ? (
+                              <div className="px-3 py-3 text-xs tracking-[0.08em] text-[#31353A]/45">
+                                目前沒有可選擇的會員 email
+                              </div>
+                            ) : emailRecipientUsers.map((row) => (
+                              <label
+                                key={row.id}
+                                className="flex cursor-pointer items-center gap-3 border-b border-[#D1BE9B]/15 px-3 py-2 last:border-b-0 hover:bg-[#D1BE9B]/8"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedEmailUserIds.includes(row.id)}
+                                  onChange={(event) => {
+                                    setEmailMessage('');
+                                    setSelectedEmailUserIds((current) =>
+                                      event.target.checked
+                                        ? Array.from(new Set([...current, row.id]))
+                                        : current.filter((id) => id !== row.id)
+                                    );
+                                  }}
+                                  className="h-4 w-4 accent-[#A38D6B]"
+                                />
+                                <span className="min-w-0 text-xs tracking-[0.06em] text-[#31353A]/72">
+                                  <span className="block truncate">{row.email}</span>
+                                  <span className="block truncate text-[11px] text-[#31353A]/42">
+                                    {row.name ?? `會員 #${row.id}`}
+                                  </span>
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <input
                       value={emailSubject}

@@ -1,4 +1,4 @@
-import { desc, eq, like, sql } from "drizzle-orm";
+import { desc, eq, inArray, like, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { creditTransactions, feedbacks, readings, users } from "../../drizzle/schema";
@@ -233,6 +233,7 @@ export const adminRouter = router({
       z.object({
         subject: z.string().trim().min(1, "請輸入 email 主旨").max(160),
         content: z.string().trim().min(1, "請輸入 email 內容").max(12000),
+        recipientUserIds: z.array(z.number().int().positive()).max(200).optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -244,16 +245,24 @@ export const adminRouter = router({
         });
       }
 
-      const recipientRows = await db
-        .select({ email: users.email })
-        .from(users)
-        .where(sql`${users.email} IS NOT NULL AND btrim(${users.email}) <> ''`);
+      const selectedUserIds = Array.from(new Set(input.recipientUserIds ?? []));
+      const recipientRows = selectedUserIds.length > 0
+        ? await db
+            .select({ email: users.email })
+            .from(users)
+            .where(
+              sql`${inArray(users.id, selectedUserIds)} AND ${users.email} IS NOT NULL AND btrim(${users.email}) <> ''`
+            )
+        : await db
+            .select({ email: users.email })
+            .from(users)
+            .where(sql`${users.email} IS NOT NULL AND btrim(${users.email}) <> ''`);
       const recipients = normalizeEmailList(recipientRows.map((row) => row.email));
 
       if (recipients.length === 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "目前沒有可寄送的會員 email",
+          message: selectedUserIds.length > 0 ? "選取的會員沒有可寄送的 email" : "目前沒有可寄送的會員 email",
         });
       }
 
