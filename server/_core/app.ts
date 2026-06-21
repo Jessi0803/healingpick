@@ -7,6 +7,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { handleGumroadPing } from "./gumroad";
+import { resetDailyFreeQuotas } from "../db";
 
 // Builds the API-only Express app (no Vite, no static, no listen).
 // Reused by the local dev server (server/_core/index.ts) and the Vercel
@@ -19,6 +20,23 @@ export function createApp(): Express {
   registerPostcardImageProxy(app);
   registerLineRoutes(app);
   app.post("/api/gumroad-webhook", handleGumroadPing);
+  app.get("/api/cron/reset-free-quota", async (req, res) => {
+    const cronSecret = process.env.CRON_SECRET;
+    if (cronSecret) {
+      const auth = req.headers.authorization;
+      if (auth !== `Bearer ${cronSecret}`) {
+        return res.status(401).json({ error: "unauthorized" });
+      }
+    }
+
+    try {
+      const result = await resetDailyFreeQuotas();
+      return res.json({ ok: true, result });
+    } catch (error) {
+      console.error("[Cron] Failed to reset free quotas:", error);
+      return res.status(500).json({ ok: false, error: "reset_failed" });
+    }
+  });
   app.use(
     "/api/trpc",
     createExpressMiddleware({

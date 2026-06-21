@@ -3,6 +3,12 @@
   "framework": null,
   "buildCommand": "pnpm run build:vercel",
   "outputDirectory": "dist/public",
+  "crons": [
+    {
+      "path": "/api/cron/reset-free-quota",
+      "schedule": "0 16 * * *"
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
     { "source": "/manus-storage/(.*)", "destination": "/api" },

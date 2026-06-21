@@ -53,7 +53,7 @@ export async function getDb(): Promise<Db | null> {
 }
 
 /** Fallback number of free readings granted per day. */
-export const DEFAULT_DAILY_FREE_QUOTA = 1;
+export const DEFAULT_DAILY_FREE_QUOTA = 2;
 export const DAILY_FREE_QUOTA = DEFAULT_DAILY_FREE_QUOTA;
 export const MAX_DAILY_FREE_QUOTA = 100;
 /** Logged-out visitors can only use the first free reading before signing in. */
@@ -360,6 +360,30 @@ export async function setDailyFreeQuota(value: number): Promise<number> {
       set: { integerValue: normalized, updatedAt: new Date() },
     });
   return normalized;
+}
+
+/** Reset all daily free counters. Intended for the Taiwan 00:00 cron. */
+export async function resetDailyFreeQuotas(): Promise<{
+  users: number;
+  anonymousSessions: number;
+  ipQuotas: number;
+}> {
+  const db = await getDb();
+  if (!db) return { users: 0, anonymousSessions: 0, ipQuotas: 0 };
+  const now = new Date();
+  const [userRows, anonRows, ipRows] = await Promise.all([
+    db.update(users).set({ freeUsedToday: 0, lastFreeReset: now }).returning({ id: users.id }),
+    db
+      .update(anonymousSessions)
+      .set({ freeUsedToday: 0, lastFreeReset: now })
+      .returning({ anonId: anonymousSessions.anonId }),
+    db.update(ipQuotas).set({ freeUsedToday: 0, lastFreeReset: now }).returning({ ipHash: ipQuotas.ipHash }),
+  ]);
+  return {
+    users: userRows.length,
+    anonymousSessions: anonRows.length,
+    ipQuotas: ipRows.length,
+  };
 }
 
 /** Reset the daily free counter if we've crossed into a new day. */

@@ -14,6 +14,21 @@ function toNumber(value: unknown): number {
   return Number(value ?? 0);
 }
 
+function taipeiDateKey(date: Date): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+function todayFreeUsed(row: { freeUsedToday: number; lastFreeReset: Date }): number {
+  return taipeiDateKey(new Date()) === taipeiDateKey(row.lastFreeReset) ? row.freeUsedToday : 0;
+}
+
 export const adminRouter = router({
   dashboard: adminProcedure
     .input(limitInput.optional())
@@ -173,7 +188,10 @@ export const adminRouter = router({
         settings: {
           dailyFreeQuota,
         },
-        users: userRows,
+        users: userRows.map((row) => ({
+          ...row,
+          freeUsedToday: todayFreeUsed(row),
+        })),
         orders: orderRows,
         transactions: transactionRows,
         readings: readingRows,

@@ -90,7 +90,7 @@ export default function BuyPage() {
     refetchOnWindowFocus: true,
   });
   const credits = creditsQuery.data;
-  const dailyFreeQuota = credits?.dailyFreeQuota ?? 1;
+  const dailyFreeQuota = credits?.dailyFreeQuota ?? 2;
   const isAdmin = user?.role === 'admin';
 
   const [topupEmail, setTopupEmail] = useState('');

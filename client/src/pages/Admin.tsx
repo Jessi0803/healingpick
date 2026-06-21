@@ -399,7 +399,7 @@ export default function AdminPage() {
                   免費點數設定
                 </p>
                 <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
-                  每位顧客每天共可免費使用 {data?.settings.dailyFreeQuota ?? 1} 次；訪客可匿名使用第 1 次，第 2 次起需登入。
+                  每位顧客每天共可免費使用 {data?.settings.dailyFreeQuota ?? 2} 次；訪客可匿名使用第 1 次，第 2 次起需登入。
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -465,6 +465,7 @@ export default function AdminPage() {
               {activeTab === 'users' && (
                 <UsersTable
                   rows={filteredUsers}
+                  dailyFreeQuota={data?.settings.dailyFreeQuota ?? 2}
                   adjustingUserId={updateUserCreditsMutation.variables?.userId ?? null}
                   isAdjusting={updateUserCreditsMutation.isPending}
                   deletingUserId={deleteUserMutation.variables?.userId ?? null}
@@ -518,6 +519,7 @@ function EmptyRow({ colSpan }: { colSpan: number }) {
 
 function UsersTable({
   rows,
+  dailyFreeQuota,
   adjustingUserId,
   isAdjusting,
   deletingUserId,
@@ -531,6 +533,7 @@ function UsersTable({
   onDeleteUser,
 }: {
   rows: AdminUserRow[];
+  dailyFreeQuota: number;
   adjustingUserId: number | null;
   isAdjusting: boolean;
   deletingUserId: number | null;
@@ -581,7 +584,7 @@ function UsersTable({
             <th className="px-4 py-3 font-normal">會員</th>
             <th className="px-4 py-3 font-normal">角色</th>
             <th className="px-4 py-3 font-normal">點數</th>
-            <th className="px-4 py-3 font-normal">今日免費已用</th>
+            <th className="px-4 py-3 font-normal">今日免費剩餘</th>
             <th className="px-4 py-3 font-normal">註冊時間</th>
             <th className="px-4 py-3 font-normal">最後登入</th>
             <th className="px-4 py-3 font-normal">備註</th>
@@ -617,6 +620,7 @@ function UsersTable({
             const isCurrentUser = row.id === currentUserId;
             const isRowDeleting = isDeleting && deletingUserId === row.id;
             const isExpanded = expandedUserId === row.id;
+            const freeRemaining = Math.max(0, dailyFreeQuota - row.freeUsedToday);
             return (
             <Fragment key={row.id}>
               <tr key={row.id} className={isExpanded ? 'bg-[#D1BE9B]/5' : undefined}>
@@ -654,7 +658,7 @@ function UsersTable({
                     </button>
                   </div>
                 </td>
-                <td className="px-4 py-3">{row.freeUsedToday}</td>
+                <td className="px-4 py-3">{freeRemaining}/{dailyFreeQuota}</td>
                 <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
                 <td className="px-4 py-3">{formatDate(row.lastSignedIn)}</td>
                 <td className="px-4 py-3">
