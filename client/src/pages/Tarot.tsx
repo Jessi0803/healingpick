@@ -687,6 +687,7 @@ export default function TarotPage() {
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
   const [pendingStartAfterLogin, setPendingStartAfterLogin] = useState(false);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
+  const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const readingResultRef = useRef<HTMLDivElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
@@ -1071,6 +1072,18 @@ export default function TarotPage() {
     setQuestionType(type);
     setActiveQuestionCategory(type);
     if (nextStep) setStep(nextStep);
+    if (typeof window === 'undefined') return;
+
+    const jumpToQuestionInput = () => {
+      const input = questionInputRef.current;
+      if (!input) return;
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.setTimeout(() => input.focus({ preventScroll: true }), 180);
+    };
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(jumpToQuestionInput);
+    });
   };
 
   const renderPopularQuestions = (nextStep?: Step) => {
@@ -1285,6 +1298,7 @@ export default function TarotPage() {
                     </span>
                   </div>
                   <textarea
+                    ref={questionInputRef}
                     value={question}
                     onChange={e => setQuestion(e.target.value.slice(0, 300))}
                     maxLength={300}
@@ -1417,6 +1431,7 @@ export default function TarotPage() {
                     你的問題（選填）
                   </label>
                   <textarea
+                    ref={questionInputRef}
                     value={question}
                     onChange={e => setQuestion(e.target.value.slice(0, 300))}
                     maxLength={300}
