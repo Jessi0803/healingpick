@@ -125,6 +125,11 @@ export const adminRouter = router({
               credits: users.credits,
               freeUsedToday: users.freeUsedToday,
               lastFreeReset: users.lastFreeReset,
+              lastReadingAt: sql<Date | null>`(
+                SELECT max(${readings.createdAt})
+                FROM ${readings}
+                WHERE ${readings.userId} = ${users.id}
+              )`,
               createdAt: users.createdAt,
               lastSignedIn: users.lastSignedIn,
             })

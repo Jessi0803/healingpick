@@ -86,3 +86,27 @@ export async function sendBatchEmail({
     errors,
   };
 }
+
+export async function sendEmail({
+  to,
+  subject,
+  html,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+}): Promise<boolean> {
+  const resend = getResendClient();
+  const from = getFromEmail();
+  const { error } = await resend.emails.send({
+    from,
+    to,
+    subject,
+    html,
+  });
+  if (error) {
+    console.warn(`[Email] Failed to send to ${to}: ${error.message}`);
+    return false;
+  }
+  return true;
+}

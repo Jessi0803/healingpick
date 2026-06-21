@@ -45,6 +45,7 @@ type AdminUserRow = {
   adminNote: string | null;
   credits: number;
   freeUsedToday: number;
+  lastReadingAt: Date | null;
   createdAt: Date;
   lastSignedIn: Date;
 };
@@ -101,6 +102,14 @@ function formatDate(value: string | Date | null | undefined) {
     hour: '2-digit',
     minute: '2-digit',
   });
+}
+
+function formatLastReading(value: string | Date | null | undefined) {
+  if (!value) return '從未占卜';
+  const date = new Date(value);
+  const diffDays = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+  const relative = diffDays <= 0 ? '今天' : `${diffDays} 天前`;
+  return `${formatDate(date)}（${relative}）`;
 }
 
 function shortText(value: string | null | undefined, max = 90) {
@@ -676,7 +685,7 @@ function UsersTable({
             <th className="px-4 py-3 font-normal">點數</th>
             <th className="px-4 py-3 font-normal">今日免費剩餘</th>
             <th className="px-4 py-3 font-normal">註冊時間</th>
-            <th className="px-4 py-3 font-normal">最後登入</th>
+            <th className="px-4 py-3 font-normal">最後占卜</th>
             <th className="px-4 py-3 font-normal">備註</th>
             <th className="px-4 py-3 font-normal">歷史</th>
             <th className="px-4 py-3 font-normal">操作</th>
@@ -750,7 +759,7 @@ function UsersTable({
                 </td>
                 <td className="px-4 py-3">{freeRemaining}/{dailyFreeQuota}</td>
                 <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
-                <td className="px-4 py-3">{formatDate(row.lastSignedIn)}</td>
+                <td className="px-4 py-3">{formatLastReading(row.lastReadingAt)}</td>
                 <td className="px-4 py-3">
                   <div className="flex min-w-64 flex-col gap-2">
                     <textarea

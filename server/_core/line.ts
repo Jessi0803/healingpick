@@ -13,6 +13,7 @@ const LINE_RETURN_COOKIE = "line_oauth_return_to";
 const LINE_AUTH_URL = "https://access.line.me/oauth2/v2.1/authorize";
 const LINE_TOKEN_URL = "https://api.line.me/oauth2/v2.1/token";
 const LINE_PROFILE_URL = "https://api.line.me/v2/profile";
+const LINE_PUSH_URL = "https://api.line.me/v2/bot/message/push";
 const LINE_ISSUER = "https://access.line.me";
 const LINE_JWKS = createRemoteJWKSet(new URL("https://api.line.me/oauth2/v2.1/certs"));
 
@@ -110,6 +111,27 @@ async function getVerifiedLineEmail(idToken: string | undefined, expectedUserId:
     console.warn("[LINE] Failed to verify email id_token; continuing without email", error);
     return null;
   }
+}
+
+export async function pushLineTextMessage(lineUserId: string, text: string): Promise<boolean> {
+  if (!ENV.lineMessagingAccessToken) return false;
+  const response = await fetch(LINE_PUSH_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${ENV.lineMessagingAccessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      to: lineUserId,
+      messages: [{ type: "text", text }],
+    }),
+  });
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    console.warn(`[LINE] Push message failed (${response.status}): ${body}`);
+    return false;
+  }
+  return true;
 }
 
 export function registerLineRoutes(app: Express) {
@@ -219,6 +241,7 @@ export function registerLineRoutes(app: Express) {
             email: existingUser.email ?? email,
             loginMethod: existingUser.loginMethod ?? "line",
           });
+          await db.updateUserLineIdentity(existingUser.id, profile.userId);
           sessionOpenId = existingUser.openId;
         } else {
           await db.upsertUser({
@@ -226,6 +249,7 @@ export function registerLineRoutes(app: Express) {
             name,
             email,
             loginMethod: "line",
+            lineUserId: profile.userId,
             lastSignedIn: new Date(),
           });
         }

@@ -19,6 +19,7 @@ export const users = pgTable("users", {
   gender: varchar("gender", { length: 16 }),
   adminNote: text("adminNote"),
   loginMethod: varchar("loginMethod", { length: 64 }),
+  lineUserId: varchar("lineUserId", { length: 128 }),
   role: roleEnum("role").default("user").notNull(),
   /** Purchasable point balance. Each paid reading consumes from here. */
   credits: integer("credits").default(0).notNull(),
@@ -137,6 +138,26 @@ export const readings = pgTable("readings", {
 
 export type Reading = typeof readings.$inferSelect;
 export type InsertReading = typeof readings.$inferInsert;
+
+/**
+ * One-time care messages sent when a member has not returned after a reading.
+ */
+export const readingFollowups = pgTable("reading_followups", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId").notNull(),
+  readingId: integer("readingId").notNull(),
+  channel: varchar("channel", { length: 24 }).notNull(),
+  status: varchar("status", { length: 24 }).default("pending").notNull(),
+  subject: text("subject"),
+  message: text("message"),
+  failureReason: text("failureReason"),
+  scheduledAt: timestamp("scheduledAt").defaultNow().notNull(),
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ReadingFollowup = typeof readingFollowups.$inferSelect;
+export type InsertReadingFollowup = typeof readingFollowups.$inferInsert;
 
 /**
  * Delayed postcard letters. Odd authenticated opens create the postcard;

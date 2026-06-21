@@ -3,12 +3,14 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import {
   InsertUserPostcard,
+  InsertReadingFollowup,
   InsertReading,
   InsertUser,
   anonymousSessions,
   appSettings,
   creditTransactions,
   ipQuotas,
+  readingFollowups,
   readings,
   userEmailAliases,
   userPostcards,
@@ -24,7 +26,9 @@ let userAdminNoteColumnReady = false;
 let readingTypeValuesReady = false;
 let userEmailAliasesTableReady = false;
 let userLoginCountColumnReady = false;
+let userLineColumnsReady = false;
 let userPostcardsTableReady = false;
+let readingFollowupsTableReady = false;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 // Uses postgres-js against Supabase's pooled connection (prepare:false is
@@ -43,7 +47,9 @@ export async function getDb(): Promise<Db | null> {
       await ensureReadingSummaryColumn(_db);
       await ensureUserEmailAliasesTable(_db);
       await ensureUserLoginCountColumn(_db);
+      await ensureUserLineColumns(_db);
       await ensureUserPostcardsTable(_db);
+      await ensureReadingFollowupsTable(_db);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -124,6 +130,17 @@ async function ensureUserLoginCountColumn(db: Db) {
   userLoginCountColumnReady = true;
 }
 
+async function ensureUserLineColumns(db: Db) {
+  if (userLineColumnsReady) return;
+  await db.execute(sql`
+    ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "lineUserId" varchar(128)
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS "users_lineUserId_idx" ON "users" ("lineUserId")
+  `);
+  userLineColumnsReady = true;
+}
+
 async function ensureUserPostcardsTable(db: Db) {
   if (userPostcardsTableReady) return;
   await db.execute(sql`
@@ -149,6 +166,34 @@ async function ensureUserPostcardsTable(db: Db) {
       ON "user_postcards" ("userId", "deliverLoginCount", "status")
   `);
   userPostcardsTableReady = true;
+}
+
+async function ensureReadingFollowupsTable(db: Db) {
+  if (readingFollowupsTableReady) return;
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS "reading_followups" (
+      "id" serial PRIMARY KEY NOT NULL,
+      "userId" integer NOT NULL,
+      "readingId" integer NOT NULL,
+      "channel" varchar(24) NOT NULL,
+      "status" varchar(24) DEFAULT 'pending' NOT NULL,
+      "subject" text,
+      "message" text,
+      "failureReason" text,
+      "scheduledAt" timestamp DEFAULT now() NOT NULL,
+      "sentAt" timestamp,
+      "createdAt" timestamp DEFAULT now() NOT NULL
+    )
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS "reading_followups_reading_created_idx"
+      ON "reading_followups" ("readingId")
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS "reading_followups_user_status_idx"
+      ON "reading_followups" ("userId", "status")
+  `);
+  readingFollowupsTableReady = true;
 }
 
 function taipeiDateKey(date: Date): string {
@@ -188,6 +233,7 @@ export async function upsertUser(user: InsertUser) {
         name: user.name ?? existing.name,
         email: user.email ?? existing.email,
         loginMethod: user.loginMethod ?? existing.loginMethod,
+        lineUserId: user.lineUserId ?? existing.lineUserId,
         lastSignedIn: new Date(),
       })
       .where(eq(users.openId, user.openId));
@@ -202,6 +248,7 @@ export async function upsertUser(user: InsertUser) {
       name: user.name ?? null,
       email: user.email ?? null,
       loginMethod: user.loginMethod ?? null,
+      lineUserId: user.lineUserId ?? null,
       role,
       credits: SIGNUP_BONUS_CREDITS,
       lastSignedIn: new Date(),
@@ -278,6 +325,20 @@ export async function touchUserSignInById(
       name: values.name ?? null,
       email: values.email ?? null,
       loginMethod: values.loginMethod ?? null,
+      lastSignedIn: new Date(),
+    })
+    .where(eq(users.id, id));
+  return getUserById(id);
+}
+
+export async function updateUserLineIdentity(id: number, lineUserId: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db
+    .update(users)
+    .set({
+      lineUserId,
+      loginMethod: "line",
       lastSignedIn: new Date(),
     })
     .where(eq(users.id, id));
@@ -778,6 +839,103 @@ export async function getRecentReadingSummariesByUser(userId: number, limit = 5)
     .where(sql`${readings.userId} = ${userId} AND ${readings.summary} IS NOT NULL AND ${readings.summary} <> ''`)
     .orderBy(desc(readings.createdAt))
     .limit(limit);
+}
+
+export type EligibleReadingFollowup = {
+  readingId: number;
+  userId: number;
+  type: string;
+  question: string | null;
+  inputData: string | null;
+  interpretation: string | null;
+  summary: string | null;
+  readingCreatedAt: Date;
+  name: string | null;
+  email: string | null;
+  lineUserId: string | null;
+  followupCount: number;
+  lastFollowupAt: Date | null;
+};
+
+export async function getEligibleReadingFollowups(limit = 25): Promise<EligibleReadingFollowup[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const result = await db.execute(sql`
+    WITH latest_readings AS (
+      SELECT DISTINCT ON (${readings.userId})
+        ${readings.id} AS "readingId",
+        ${readings.userId} AS "userId",
+        ${readings.type} AS "type",
+        ${readings.question} AS "question",
+        ${readings.inputData} AS "inputData",
+        ${readings.interpretation} AS "interpretation",
+        ${readings.summary} AS "summary",
+        ${readings.createdAt} AS "readingCreatedAt"
+      FROM ${readings}
+      WHERE ${readings.userId} IS NOT NULL
+      ORDER BY ${readings.userId}, ${readings.createdAt} DESC, ${readings.id} DESC
+    )
+    , latest_followups AS (
+      SELECT
+        ${readingFollowups.readingId} AS "readingId",
+        count(*) AS "followupCount",
+        max(${readingFollowups.createdAt}) AS "lastFollowupAt"
+      FROM ${readingFollowups}
+      GROUP BY ${readingFollowups.readingId}
+    )
+    SELECT
+      latest_readings."readingId",
+      latest_readings."userId",
+      latest_readings."type",
+      latest_readings."question",
+      latest_readings."inputData",
+      latest_readings."interpretation",
+      latest_readings."summary",
+      latest_readings."readingCreatedAt",
+      ${users.name} AS "name",
+      ${users.email} AS "email",
+      ${users.lineUserId} AS "lineUserId",
+      coalesce(latest_followups."followupCount", 0) AS "followupCount",
+      latest_followups."lastFollowupAt" AS "lastFollowupAt"
+    FROM latest_readings
+    INNER JOIN ${users} ON ${users.id} = latest_readings."userId"
+    LEFT JOIN latest_followups ON latest_followups."readingId" = latest_readings."readingId"
+    WHERE latest_readings."readingCreatedAt" <= now() - interval '3 days'
+      AND (
+        latest_followups."lastFollowupAt" IS NULL
+        OR latest_followups."lastFollowupAt" <= now() - interval '7 days'
+      )
+      AND ${users.role} = 'user'
+    ORDER BY latest_readings."readingCreatedAt" ASC
+    LIMIT ${limit}
+  `);
+  return Array.from(result as unknown as EligibleReadingFollowup[]);
+}
+
+export async function createReadingFollowup(data: InsertReadingFollowup) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const inserted = await db
+    .insert(readingFollowups)
+    .values(data)
+    .returning();
+  return inserted[0];
+}
+
+export async function updateReadingFollowupStatus(
+  id: number,
+  values: Partial<Pick<InsertReadingFollowup, "status" | "failureReason" | "message" | "subject" | "channel">> & {
+    sentAt?: Date | null;
+  },
+) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const updated = await db
+    .update(readingFollowups)
+    .set(values)
+    .where(eq(readingFollowups.id, id))
+    .returning();
+  return updated[0];
 }
 
 // ─── Delayed postcard letters ───────────────────────────────────────────────
