@@ -5,6 +5,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 
 const tabs = [
   { id: 'users', label: '會員管理' },
+  { id: 'email', label: '寄會員 Email' },
   { id: 'orders', label: '訂單管理' },
   { id: 'inputs', label: '會員問答' },
   { id: 'visitors', label: '訪客問答' },
@@ -468,64 +469,6 @@ export default function AdminPage() {
             )}
           </form>
 
-          <form
-            onSubmit={handleMemberEmailSubmit}
-            className="mb-6 rounded-lg border border-[#D1BE9B]/20 bg-white/55 p-4 shadow-[0_12px_40px_rgba(49,53,58,0.05)]"
-          >
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <p className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    會員 Email
-                  </p>
-                  <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
-                    寄給所有有 email 的會員；送出前會再次確認。
-                  </p>
-                </div>
-                <button
-                  type="submit"
-                  disabled={sendMemberEmailMutation.isPending}
-                  className="rounded-lg border border-[#D1BE9B]/30 bg-[#31353A] px-4 py-2.5 text-xs tracking-[0.16em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-55"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  {sendMemberEmailMutation.isPending ? '寄送中' : '寄給會員'}
-                </button>
-              </div>
-              <input
-                value={emailSubject}
-                onChange={(event) => {
-                  setEmailSubject(event.target.value);
-                  setEmailMessage('');
-                }}
-                maxLength={160}
-                placeholder="Email 主旨"
-                className="rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-2.5 text-xs tracking-[0.08em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              />
-              <textarea
-                value={emailContent}
-                onChange={(event) => {
-                  setEmailContent(event.target.value);
-                  setEmailMessage('');
-                }}
-                maxLength={12000}
-                rows={8}
-                placeholder="Email 內容。空一行會變成下一段。"
-                className="min-h-44 resize-y rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-xs leading-[1.8] tracking-[0.06em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              />
-              <div className="flex flex-col gap-2 text-[11px] tracking-[0.1em] text-[#31353A]/42 sm:flex-row sm:items-center sm:justify-between">
-                <span>{emailContent.length}/12000</span>
-                {emailMessage && (
-                  <span className={sendMemberEmailMutation.isError ? 'text-[#C9837A]' : 'text-[#A38D6B]'}>
-                    {emailMessage}
-                  </span>
-                )}
-              </div>
-            </div>
-          </form>
-
           <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
             {tabs.map((tab) => (
               <button
@@ -569,6 +512,62 @@ export default function AdminPage() {
                   onUpdateNote={handleUpdateUserNote}
                   onDeleteUser={handleDeleteUser}
                 />
+              )}
+              {activeTab === 'email' && (
+                <form onSubmit={handleMemberEmailSubmit} className="p-4">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                      <div>
+                        <p className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          會員 Email
+                        </p>
+                        <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
+                          寄給所有有 email 的會員；送出前會再次確認。
+                        </p>
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={sendMemberEmailMutation.isPending}
+                        className="rounded-lg border border-[#D1BE9B]/30 bg-[#31353A] px-4 py-2.5 text-xs tracking-[0.16em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-55"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        {sendMemberEmailMutation.isPending ? '寄送中' : '寄給會員'}
+                      </button>
+                    </div>
+                    <input
+                      value={emailSubject}
+                      onChange={(event) => {
+                        setEmailSubject(event.target.value);
+                        setEmailMessage('');
+                      }}
+                      maxLength={160}
+                      placeholder="Email 主旨"
+                      className="rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-2.5 text-xs tracking-[0.08em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    />
+                    <textarea
+                      value={emailContent}
+                      onChange={(event) => {
+                        setEmailContent(event.target.value);
+                        setEmailMessage('');
+                      }}
+                      maxLength={12000}
+                      rows={8}
+                      placeholder="Email 內容。空一行會變成下一段。"
+                      className="min-h-44 resize-y rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-xs leading-[1.8] tracking-[0.06em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                    />
+                    <div className="flex flex-col gap-2 text-[11px] tracking-[0.1em] text-[#31353A]/42 sm:flex-row sm:items-center sm:justify-between">
+                      <span>{emailContent.length}/12000</span>
+                      {emailMessage && (
+                        <span className={sendMemberEmailMutation.isError ? 'text-[#C9837A]' : 'text-[#A38D6B]'}>
+                          {emailMessage}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </form>
               )}
               {activeTab === 'orders' && <OrdersTable rows={filteredOrders} />}
               {activeTab === 'inputs' && <ReadingsTable rows={memberReadings} />}

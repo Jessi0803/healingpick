@@ -8,7 +8,7 @@ import { adminProcedure, router } from "../_core/trpc";
 
 const limitInput = z.object({
   limit: z.number().int().min(1).max(200).default(100),
-  tab: z.enum(["users", "orders", "inputs", "visitors", "feedbacks", "transactions"]).default("users"),
+  tab: z.enum(["users", "email", "orders", "inputs", "visitors", "feedbacks", "transactions"]).default("users"),
 });
 
 function toNumber(value: unknown): number {
