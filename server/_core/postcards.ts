@@ -212,6 +212,11 @@ function serializePostcard(postcard: UserPostcard | undefined): PostcardPayload 
 }
 
 export async function handleAuthenticatedOpen(userId: number) {
+  const pendingPostcard = await getCurrentNotifiedPostcard(userId);
+  if (pendingPostcard) {
+    return { loginCount: null, postcard: serializePostcard(pendingPostcard) };
+  }
+
   const loginCount = await incrementUserLoginCount(userId);
   if (!loginCount) {
     return { loginCount: null, postcard: null };

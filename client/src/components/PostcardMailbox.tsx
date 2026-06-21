@@ -4,6 +4,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 
 const recordedUsers = new Set<number>();
+const sessionRecordedPrefix = "healingpick-postcard-open:";
 const floatingLetterStyles = `
 @keyframes hp-letter-float {
   0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
@@ -151,8 +152,13 @@ export default function PostcardMailbox() {
 
   useEffect(() => {
     if (!user?.id) return;
+    const sessionKey = `${sessionRecordedPrefix}${user.id}`;
+    if (typeof window !== "undefined" && window.sessionStorage.getItem(sessionKey)) return;
     if (recordedUsers.has(user.id)) return;
     recordedUsers.add(user.id);
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(sessionKey, "1");
+    }
     authenticatedOpenMutation.mutate();
   }, [authenticatedOpenMutation, user?.id]);
 
