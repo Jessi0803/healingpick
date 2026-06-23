@@ -15,6 +15,7 @@ const TYPE_LABELS: Record<string, string> = {
   fortune: "每日運勢",
   dream: "Mochi 解夢",
 };
+const FOLLOWUP_READING_TYPES = ["tarot", "ziwei"] as const;
 
 function compactText(value: string | null | undefined, maxLength: number) {
   const normalized = (value ?? "").replace(/\s+/g, " ").trim();
@@ -46,7 +47,7 @@ function buildEmailHtml(message: string) {
 
 async function generateCareMessage(row: EligibleReadingFollowup) {
   const typeLabel = TYPE_LABELS[row.type] ?? row.type;
-  const recentSummaries = await getRecentReadingSummariesByUser(row.userId, 5);
+  const recentSummaries = await getRecentReadingSummariesByUser(row.userId, 5, [...FOLLOWUP_READING_TYPES]);
   const recentContext = recentSummaries
     .map((summary, index) => {
       const summaryType = TYPE_LABELS[summary.type] ?? summary.type;

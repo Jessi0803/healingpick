@@ -825,9 +825,15 @@ export async function getReadingsByUser(userId: number, limit = 20) {
     .limit(limit);
 }
 
-export async function getRecentReadingSummariesByUser(userId: number, limit = 5) {
+type ReadingType = "tarot" | "ziwei" | "fortune" | "dream";
+
+export async function getRecentReadingSummariesByUser(userId: number, limit = 5, readingTypes?: ReadingType[]) {
   const db = await getDb();
   if (!db) return [];
+  const typeFilter =
+    readingTypes && readingTypes.length > 0
+      ? sql`AND ${readings.type} IN (${sql.join(readingTypes.map((type) => sql`${type}`), sql`, `)})`
+      : sql``;
   return db
     .select({
       type: readings.type,
@@ -836,7 +842,12 @@ export async function getRecentReadingSummariesByUser(userId: number, limit = 5)
       createdAt: readings.createdAt,
     })
     .from(readings)
-    .where(sql`${readings.userId} = ${userId} AND ${readings.summary} IS NOT NULL AND ${readings.summary} <> ''`)
+    .where(sql`
+      ${readings.userId} = ${userId}
+      AND ${readings.summary} IS NOT NULL
+      AND ${readings.summary} <> ''
+      ${typeFilter}
+    `)
     .orderBy(desc(readings.createdAt))
     .limit(limit);
 }
@@ -888,6 +899,7 @@ export async function getEligibleReadingFollowups(limit = 25): Promise<EligibleR
         ${readings.createdAt} AS "readingCreatedAt"
       FROM ${readings}
       WHERE ${readings.userId} IS NOT NULL
+        AND ${readings.type} IN ('tarot', 'ziwei')
       ORDER BY ${readings.userId}, ${readings.createdAt} DESC, ${readings.id} DESC
     )
     , latest_followups AS (
