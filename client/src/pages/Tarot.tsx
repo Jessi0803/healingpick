@@ -222,7 +222,8 @@ const CARD_IMAGES: Record<number, string> = Object.fromEntries(
   Array.from({ length: 78 }, (_, id) => [id, `/tarot/${String(id).padStart(2, '0')}.jpg`])
 );
 
-const TAROT_CARD_IMAGE_URLS = Object.values(CARD_IMAGES);
+const CARD_BACK_IMAGE = '/tarot/back.jpg';
+const TAROT_CARD_IMAGE_URLS = [...Object.values(CARD_IMAGES), CARD_BACK_IMAGE];
 const preloadedTarotImages = new Set<string>();
 
 function getCardKeywords(card: TarotCard, reversed: boolean) {
@@ -324,69 +325,18 @@ const CardFace = ({ card, reversed = false }: { card: TarotCard; reversed?: bool
   );
 };
 
-// Card back — branded moon seal with layered frame
+// Card back — custom deck back image
 const CardBack = () => (
-  <svg viewBox="0 0 120 200" fill="none" className="w-full h-full drop-shadow-[0_12px_24px_rgba(49,53,58,0.18)]">
-    {/* Solid fills only — no gradient/defs, which can render transparent
-        inside the 3D flip container (preserve-3d + backface-visibility). */}
-    <rect width="120" height="200" rx="11" fill="#31353A" />
-    <rect x="4" y="4" width="112" height="192" rx="9" fill="#3D4144" />
-    <rect x="8" y="8" width="104" height="184" rx="7" fill="#4A4641" fillOpacity="0.32" />
-    {/* Soft centre halo, layered translucent discs instead of a gradient */}
-    <circle cx="60" cy="100" r="50" fill="#D1BE9B" fillOpacity="0.10" />
-    <circle cx="60" cy="100" r="36" fill="#F3E7CC" fillOpacity="0.12" />
-    {/* Frames */}
-    <rect x="6" y="6" width="108" height="188" rx="8" stroke="#F3E7CC" strokeWidth="1.2" opacity="0.88" />
-    <rect x="12" y="12" width="96" height="176" rx="5" stroke="#D1BE9B" strokeWidth="0.7" strokeDasharray="2.4 3" opacity="0.75" />
-    <path d="M26 25 H94 M26 175 H94" stroke="#F3E7CC" strokeWidth="0.7" strokeLinecap="round" opacity="0.55" />
-    <path d="M25 26 V66 M95 26 V66 M25 134 V174 M95 134 V174" stroke="#F3E7CC" strokeWidth="0.7" strokeLinecap="round" opacity="0.45" />
-    {/* Corner moons */}
-    {[[24, 25], [96, 25], [24, 175], [96, 175]].map(([x, y], i) => (
-      <g key={`moon-${i}`} opacity="0.78">
-        <circle cx={x} cy={y} r="3.6" fill="#F8F0DC" />
-        <circle cx={x + (i % 2 === 0 ? 1.6 : -1.6)} cy={y - 0.4} r="3.5" fill="#3D4144" />
-      </g>
-    ))}
-    {/* Sunburst rays */}
-    {Array.from({ length: 24 }).map((_, i) => {
-      const a = (i * 15 * Math.PI) / 180;
-      return (
-        <line key={`r${i}`}
-          x1={60 + 18 * Math.cos(a)} y1={100 + 18 * Math.sin(a)}
-          x2={60 + 43 * Math.cos(a)} y2={100 + 43 * Math.sin(a)}
-          stroke="#F3E7CC" strokeWidth={i % 2 ? 0.35 : 0.72} strokeOpacity="0.62" />
-      );
-    })}
-    {/* Concentric rings */}
-    <circle cx="60" cy="100" r="44" stroke="#D1BE9B" strokeWidth="0.9" opacity="0.85" fill="none" />
-    <circle cx="60" cy="100" r="33" stroke="#F3E7CC" strokeWidth="0.55" opacity="0.68" fill="none" />
-    <circle cx="60" cy="100" r="20" stroke="#F5EAD5" strokeWidth="0.9" fill="#F8F0DC" fillOpacity="0.12" />
-    {/* Inner petals */}
-    {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
-      const rad = (deg * Math.PI) / 180;
-      return (
-        <line key={`p${i}`}
-          x1={60 + 7 * Math.cos(rad)} y1={100 + 7 * Math.sin(rad)}
-          x2={60 + 20 * Math.cos(rad)} y2={100 + 20 * Math.sin(rad)}
-          stroke="#F8F0DC" strokeWidth="0.75" strokeOpacity="0.84" />
-      );
-    })}
-    {/* Centre moon disc */}
-    <circle cx="60" cy="100" r="8.5" fill="#F8F0DC" fillOpacity="0.88" />
-    <circle cx="63.2" cy="98" r="8.2" fill="#3D4144" fillOpacity="0.95" />
-    <circle cx="60" cy="100" r="2.2" fill="#D1BE9B" fillOpacity="0.85" />
-    {/* Scattered stars */}
-    {[[60, 60], [60, 140], [34, 100], [86, 100], [43, 76], [77, 124], [77, 76], [43, 124], [36, 52], [84, 148]].map(([x, y], i) => (
-      <path key={`s${i}`}
-        d={`M${x} ${y - 2.4} L${x + 0.7} ${y - 0.7} L${x + 2.4} ${y} L${x + 0.7} ${y + 0.7} L${x} ${y + 2.4} L${x - 0.7} ${y + 0.7} L${x - 2.4} ${y} L${x - 0.7} ${y - 0.7} Z`}
-        fill="#F8F1DE" fillOpacity="0.9" />
-    ))}
-    {/* Brand text */}
-    <text x="60" y="184" textAnchor="middle" fontSize="7.68" fill="#F3E7CC" fillOpacity="0.72"
-      fontFamily="Cormorant Garamond, serif" letterSpacing="2.5" fontStyle="italic">
-      Healing Pick
-    </text>
-  </svg>
+  <div className="w-full h-full overflow-hidden rounded-[11px] bg-[#31353A] drop-shadow-[0_12px_24px_rgba(49,53,58,0.18)]">
+    <img
+      src={CARD_BACK_IMAGE}
+      alt="塔羅牌背面"
+      className="w-full h-full object-cover"
+      loading="eager"
+      decoding="async"
+      draggable={false}
+    />
+  </div>
 );
 
 // Shuffle and draw cards
