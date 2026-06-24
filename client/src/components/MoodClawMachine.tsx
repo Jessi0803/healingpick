@@ -536,11 +536,17 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [showPrize, setShowPrize] = useState(false);
   const [collection, setCollection] = useState<PlushieRecord[]>([]);
+  const [isMachineVisible, setIsMachineVisible] = useState(false);
+  const [useCompactScene, setUseCompactScene] = useState(false);
   const reduceMotion = useReducedMotion();
   const [clawScope, animateClaw] = useAnimate();
+  const machineRef = useRef<HTMLDivElement>(null);
   const playAreaRef = useRef<HTMLDivElement>(null);
+  const pendingClawXRef = useRef<number | null>(null);
+  const pointerFrameRef = useRef<number | null>(null);
+  const shouldAnimateAmbient = !reduceMotion && isMachineVisible && !isDragging;
   const visiblePlushies = useMemo<DisplayPlushie[]>(() => {
-    const positions = [12, 24, 37, 50, 63, 76, 88];
+    const positions = useCompactScene ? [16, 32, 50, 68, 84] : [12, 24, 37, 50, 63, 76, 88];
     return [...PLUSHIES]
       .sort(() => Math.random() - 0.5)
       .slice(0, positions.length)
@@ -548,6 +554,33 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
         ...plushie,
         x: positions[index],
       }));
+  }, [useCompactScene]);
+
+  useEffect(() => {
+    const compactQuery = window.matchMedia("(max-width: 640px), (prefers-reduced-motion: reduce)");
+    const updateCompactScene = () => setUseCompactScene(compactQuery.matches);
+
+    updateCompactScene();
+    compactQuery.addEventListener("change", updateCompactScene);
+    return () => compactQuery.removeEventListener("change", updateCompactScene);
+  }, []);
+
+  useEffect(() => {
+    const el = machineRef.current;
+    if (!el) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setIsMachineVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsMachineVisible(entry.isIntersecting),
+      { rootMargin: "120px 0px", threshold: 0.08 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -562,6 +595,14 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
     } catch {
       setCollection([]);
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (pointerFrameRef.current !== null) {
+        window.cancelAnimationFrame(pointerFrameRef.current);
+      }
+    };
   }, []);
 
   const nearestPlushie = useMemo(() => {
@@ -665,7 +706,16 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
     if (!el) return;
     const rect = el.getBoundingClientRect();
     const pct = ((clientX - rect.left) / rect.width) * 100;
-    setClawX(Math.min(88, Math.max(12, pct)));
+    pendingClawXRef.current = Math.min(88, Math.max(12, pct));
+
+    if (pointerFrameRef.current !== null) return;
+    pointerFrameRef.current = window.requestAnimationFrame(() => {
+      pointerFrameRef.current = null;
+      const next = pendingClawXRef.current;
+      if (next !== null) {
+        setClawX(next);
+      }
+    });
   }, []);
 
   const handlePointerDown = useCallback(
@@ -709,7 +759,11 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
   );
 
   return (
-    <div className="relative w-full max-w-[500px] overflow-hidden rounded-[28px] border border-[#D1BE9B]/35 bg-[#FFFDF8]/82 text-[#31353A] shadow-[0_22px_70px_rgba(122,99,72,0.16)] backdrop-blur-md">
+    <div
+      ref={machineRef}
+      className="relative w-full max-w-[500px] overflow-hidden rounded-[28px] border border-[#D1BE9B]/35 bg-[#FFFDF8]/82 text-[#31353A] shadow-[0_18px_46px_rgba(122,99,72,0.13)] backdrop-blur-sm"
+      style={{ contentVisibility: "auto", containIntrinsicSize: "560px", contain: "layout paint style" }}
+    >
       <div className="relative flex items-center justify-between gap-3 border-b border-[#D1BE9B]/20 bg-[linear-gradient(180deg,rgba(255,253,248,0.98),rgba(243,235,221,0.82))] px-5 py-4">
         <div className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#D1BE9B]/70 to-transparent" />
         <div className="min-w-0">
@@ -738,10 +792,10 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
           isMoving ? "cursor-default" : isDragging ? "cursor-grabbing" : "cursor-grab"
         )}
       >
-        <div className="absolute left-6 right-6 top-5 h-[204px] rounded-[24px] border border-white/75 bg-white/38 shadow-[inset_0_1px_18px_rgba(255,255,255,0.72),inset_0_-16px_28px_rgba(209,190,155,0.12),0_16px_32px_rgba(111,90,58,0.08)]" />
+        <div className="absolute left-6 right-6 top-5 h-[204px] rounded-[24px] border border-white/75 bg-white/38 shadow-[inset_0_1px_14px_rgba(255,255,255,0.68),inset_0_-12px_22px_rgba(209,190,155,0.1),0_12px_24px_rgba(111,90,58,0.07)]" />
         <div className="absolute left-10 right-10 top-9 h-2 rounded-full bg-gradient-to-r from-transparent via-[#D1BE9B]/36 to-transparent" />
-        <div className="absolute left-12 top-9 h-36 w-16 rotate-12 rounded-full bg-white/34 blur-[1px]" />
-        <div className="absolute right-12 top-12 h-28 w-10 rotate-12 rounded-full bg-white/24 blur-[1px]" />
+        <div className="absolute left-12 top-9 h-36 w-16 rotate-12 rounded-full bg-white/30" />
+        <div className="absolute right-12 top-12 h-28 w-10 rotate-12 rounded-full bg-white/20" />
         <div className="absolute left-1/2 top-3 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-[#D1BE9B]/28 bg-[#FFFDF8]/78 px-3 py-1 text-[10px] tracking-[0.18em] text-[#A38D6B] shadow-sm">
           <span className="size-1.5 rounded-full bg-[#EAA8AC]/70" />
           <span className="size-1.5 rounded-full bg-[#F1CF7A]/80" />
@@ -767,7 +821,7 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
           initial={false}
           animate={{ left: `${clawX}%` }}
           transition={
-            reduceMotion || isDragging
+            reduceMotion || isDragging || !isMachineVisible
               ? { duration: 0 }
               : { type: "spring", stiffness: 120, damping: 14 }
           }
@@ -778,7 +832,7 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
             style={{ transformOrigin: "top center" }}
           >
             <div className="h-14 w-[2px] rounded-full bg-gradient-to-b from-[#D1BE9B]/20 via-[#A38D6B]/55 to-[#A38D6B]/20" />
-            <div className="relative size-12 drop-shadow-[0_8px_14px_rgba(111,90,58,0.18)]">
+            <div className="relative size-12 drop-shadow-[0_6px_10px_rgba(111,90,58,0.14)]">
               <div className="absolute left-1/2 top-1 size-6 -translate-x-1/2 rounded-b-full border border-[#A38D6B]/36 bg-[#FFFDF8]" />
               <div className="absolute left-1/2 top-2.5 h-4 w-7 -translate-x-1/2 rounded-full border border-[#D1BE9B]/30 bg-[#F3EBDD]" />
               <motion.div
@@ -805,7 +859,7 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
           </motion.div>
         </motion.div>
 
-        <div className="absolute inset-x-7 bottom-[58px] h-20 rounded-[100%_100%_18%_18%] bg-[#D1BE9B]/12 blur-sm" />
+        <div className="absolute inset-x-7 bottom-[58px] h-20 rounded-[100%_100%_18%_18%] bg-[#D1BE9B]/10" />
         <div className="absolute inset-x-10 bottom-[53px] h-6 rounded-full bg-[#A38D6B]/12" />
 
         {visiblePlushies.map((plushie, index) => {
@@ -819,12 +873,12 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
                 isHidden && "opacity-0"
               )}
               style={{ left: `${plushie.x}%`, x: "-50%" }}
-              animate={reduceMotion || isHidden ? { y: 0 } : { y: [0, -3, 0] }}
+              animate={!shouldAnimateAmbient || isHidden ? { y: 0 } : { y: [0, -3, 0] }}
               transition={
-                reduceMotion || isHidden
+                !shouldAnimateAmbient || isHidden
                   ? { duration: 0 }
                   : {
-                      duration: 2.4 + (index % 3) * 0.5,
+                      duration: 3 + (index % 3) * 0.6,
                       repeat: Infinity,
                       ease: "easeInOut",
                       delay: index * 0.18,
