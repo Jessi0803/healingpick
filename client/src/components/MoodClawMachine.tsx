@@ -25,6 +25,13 @@ type Plushie = MoodPlushie & {
   openings: Record<MoodPlushieScene, string>;
   color: string;
   accent: string;
+  /**
+   * Optional cut-out (transparent PNG) photo of the real plush toy. When set,
+   * the figure renders this image instead of the CSS-shape doll. Drop the file
+   * in `client/public/plushies/` and point here, e.g. "/plushies/hug-bear.png".
+   * If the image is missing or fails to load, it falls back to the CSS doll.
+   */
+  image?: string;
 };
 
 type DisplayPlushie = Plushie & {
@@ -52,6 +59,7 @@ const makeOpenings = (
 const PLUSHIES: Plushie[] = [
   {
     id: "hug-bear",
+    image: "/plushies/hug-bear.png",
     name: "抱抱熊",
     role: "被接住",
     message: "抱抱熊來了。你現在不用解釋太多，先被好好接住也可以。",
@@ -67,6 +75,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "brave-bunny",
+    image: "/plushies/brave-bunny.png",
     name: "勇氣兔",
     role: "下一小步",
     message: "勇氣兔陪你先走一小步，不需要一下子變得很堅強。",
@@ -82,6 +91,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "tea-cat",
+    image: "/plushies/tea-cat.png",
     name: "熱茶貓",
     role: "慢慢放鬆",
     message: "熱茶貓幫你把節奏放慢一點，先讓心裡緊繃的地方鬆一下。",
@@ -97,6 +107,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "lamp-penguin",
+    image: "/plushies/lamp-penguin.png",
     name: "小夜燈企鵝",
     role: "一點方向",
     message: "小夜燈企鵝陪你看見一點點路，不用一次看完整條。",
@@ -112,6 +123,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "cloud-sheep",
+    image: "/plushies/cloud-sheep.png",
     name: "雲朵羊",
     role: "允許柔軟",
     message: "雲朵羊提醒你，今天柔軟一點也沒有關係。",
@@ -127,6 +139,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "reset-otter",
+    image: "/plushies/reset-otter.png",
     name: "重開機水獺",
     role: "重新整理",
     message: "重開機水獺提醒你，卡住時可以先重整一下，不一定要硬撐。",
@@ -136,6 +149,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "blanket-dog",
+    image: "/plushies/blanket-dog.png",
     name: "毛毯狗",
     role: "先休息",
     message: "毛毯狗把休息遞給你。你可以先不用急著處理全部。",
@@ -145,6 +159,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "battery-hamster",
+    image: "/plushies/battery-hamster.png",
     name: "低電量倉鼠",
     role: "保留力氣",
     message: "低電量倉鼠說，電量不多時先省著用，這很合理。",
@@ -154,6 +169,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "umbrella-duck",
+    image: "/plushies/umbrella-duck.png",
     name: "小傘鴨",
     role: "擋一下",
     message: "小傘鴨幫你擋一下外面的雨，先不用什麼都淋在身上。",
@@ -163,6 +179,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "map-fox",
+    image: "/plushies/map-fox.png",
     name: "地圖狐狸",
     role: "找路線",
     message: "地圖狐狸不是要你立刻出發，是先陪你看有哪些路可以走。",
@@ -172,6 +189,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "pillow-koala",
+    image: "/plushies/pillow-koala.png",
     name: "枕頭無尾熊",
     role: "不要硬撐",
     message: "枕頭無尾熊提醒你，累了就靠一下，不會因此變差。",
@@ -181,6 +199,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "tiny-captain",
+    image: "/plushies/tiny-captain.png",
     name: "小隊長海豹",
     role: "穩住節奏",
     message: "小隊長海豹幫你喊一聲集合。先穩住，再看下一步。",
@@ -190,6 +209,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "snack-squirrel",
+    image: "/plushies/snack-squirrel.png",
     name: "點心松鼠",
     role: "補一點能量",
     message: "點心松鼠帶了小點心。你可以先補一點能量再繼續。",
@@ -199,6 +219,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "bubble-fish",
+    image: "/plushies/bubble-fish.png",
     name: "泡泡魚",
     role: "慢慢呼吸",
     message: "泡泡魚吐了一串泡泡。先吸一口氣，再慢慢吐掉。",
@@ -208,6 +229,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "memo-frog",
+    image: "/plushies/memo-frog.png",
     name: "便利貼青蛙",
     role: "整理重點",
     message: "便利貼青蛙幫你貼好重點。事情可以一張一張看。",
@@ -217,6 +239,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "tiny-lion",
+    image: "/plushies/tiny-lion.png",
     name: "小獅子",
     role: "一點自信",
     message: "小獅子小聲吼一下。你不需要很大聲，也可以有一點自信。",
@@ -226,6 +249,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "music-whale",
+    image: "/plushies/music-whale.png",
     name: "哼歌鯨魚",
     role: "放鬆心情",
     message: "哼歌鯨魚用很低的聲音陪你放鬆一下。",
@@ -235,6 +259,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "paper-plane-bird",
+    image: "/plushies/paper-plane-bird.png",
     name: "紙飛機鳥",
     role: "把話送出去",
     message: "紙飛機鳥提醒你，有些話可以先輕輕送出去，不用一次說完。",
@@ -244,6 +269,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "compass-turtle",
+    image: "/plushies/compass-turtle.png",
     name: "指南針烏龜",
     role: "慢慢找方向",
     message: "指南針烏龜走很慢，但方向感很好。慢也可以有進度。",
@@ -253,6 +279,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "moon-moth",
+    image: "/plushies/moon-moth.png",
     name: "月光蛾",
     role: "看見細節",
     message: "月光蛾幫你看見那些很小、但其實很重要的感覺。",
@@ -262,6 +289,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "pocket-elephant",
+    image: "/plushies/pocket-elephant.png",
     name: "口袋象",
     role: "記得自己",
     message: "口袋象提醒你，不要只記得別人的感受，也要記得自己。",
@@ -271,6 +299,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "eraser-panda",
+    image: "/plushies/eraser-panda.png",
     name: "橡皮擦熊貓",
     role: "擦掉自責",
     message: "橡皮擦熊貓想幫你擦掉一點自責，不用全都算在自己頭上。",
@@ -280,6 +309,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "sunny-alpaca",
+    image: "/plushies/sunny-alpaca.png",
     name: "小太陽羊駝",
     role: "補一點光",
     message: "小太陽羊駝帶來一點光，不多，但剛好夠你看清下一步。",
@@ -289,6 +319,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "quiet-owl",
+    image: "/plushies/quiet-owl.png",
     name: "安靜貓頭鷹",
     role: "先觀察",
     message: "安靜貓頭鷹說，先觀察一下也很好，不用立刻反應。",
@@ -298,6 +329,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "raincoat-mouse",
+    image: "/plushies/raincoat-mouse.png",
     name: "雨衣小鼠",
     role: "保護自己",
     message: "雨衣小鼠把扣子扣好。照顧自己不是太敏感，是很必要。",
@@ -307,6 +339,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "anchor-crab",
+    image: "/plushies/anchor-crab.png",
     name: "小錨螃蟹",
     role: "穩定下來",
     message: "小錨螃蟹把你拉回地面。先穩一點，再想下一步。",
@@ -316,6 +349,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "starlight-deer",
+    image: "/plushies/starlight-deer.png",
     name: "星光鹿",
     role: "相信直覺",
     message: "星光鹿提醒你，有些感覺不用馬上證明，也值得被聽見。",
@@ -325,6 +359,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "laundry-bear",
+    image: "/plushies/laundry-bear.png",
     name: "曬衣熊",
     role: "把心晾一晾",
     message: "曬衣熊說，心情太濕的時候，可以先晾一下，不用馬上收好。",
@@ -334,6 +369,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "toolbox-beaver",
+    image: "/plushies/toolbox-beaver.png",
     name: "工具箱河狸",
     role: "找方法",
     message: "工具箱河狸打開工具箱。事情不一定完美，但一定可以先修一點。",
@@ -343,6 +379,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "seed-hedgehog",
+    image: "/plushies/seed-hedgehog.png",
     name: "種子刺蝟",
     role: "慢慢長大",
     message: "種子刺蝟帶了一顆小種子。現在很小，也可以慢慢長大。",
@@ -352,6 +389,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "clock-sloth",
+    image: "/plushies/clock-sloth.png",
     name: "慢時鐘樹懶",
     role: "給自己時間",
     message: "慢時鐘樹懶提醒你，慢一點不是落後，是還在路上。",
@@ -361,6 +399,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "postcard-gull",
+    image: "/plushies/postcard-gull.png",
     name: "明信片海鷗",
     role: "說出想法",
     message: "明信片海鷗帶來一句話：你可以先說一點，不用一次說滿。",
@@ -370,6 +409,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "lantern-rabbit",
+    image: "/plushies/lantern-rabbit.png",
     name: "燈籠兔",
     role: "照亮盲點",
     message: "燈籠兔提著小燈籠，幫你看見剛剛沒注意到的地方。",
@@ -379,6 +419,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "cushion-pig",
+    image: "/plushies/cushion-pig.png",
     name: "靠墊豬",
     role: "先靠一下",
     message: "靠墊豬說，靠一下沒關係，沒有人規定你要一直站著。",
@@ -388,6 +429,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "bookmark-goat",
+    image: "/plushies/bookmark-goat.png",
     name: "書籤山羊",
     role: "先停在這裡",
     message: "書籤山羊幫你做記號。想不完的事，可以先停在這裡。",
@@ -397,6 +439,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "soup-bear",
+    image: "/plushies/soup-bear.png",
     name: "熱湯小熊",
     role: "照顧身體",
     message: "熱湯小熊端來一碗湯。心累的時候，身體也要被照顧。",
@@ -406,6 +449,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "kite-kangaroo",
+    image: "/plushies/kite-kangaroo.png",
     name: "風箏袋鼠",
     role: "放開一點",
     message: "風箏袋鼠把線放鬆一點。有些事抓太緊，反而不好飛。",
@@ -415,6 +459,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "mirror-swan",
+    image: "/plushies/mirror-swan.png",
     name: "鏡子天鵝",
     role: "看見自己",
     message: "鏡子天鵝提醒你，別只看問題，也要看看自己其實已經很努力。",
@@ -424,6 +469,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "sock-monkey",
+    image: "/plushies/sock-monkey.png",
     name: "襪子猴",
     role: "輕鬆一點",
     message: "襪子猴跳出來提醒你，事情可以認真，但不用把自己繃到不能動。",
@@ -433,6 +479,7 @@ const PLUSHIES: Plushie[] = [
   },
   {
     id: "garden-snail",
+    image: "/plushies/garden-snail.png",
     name: "花園蝸牛",
     role: "慢慢來",
     message: "花園蝸牛說，慢慢來也會到，只是路上多看幾朵花。",
@@ -1382,6 +1429,36 @@ function FeaturedMiniPlushie({ plushie, className, style }: MiniPlushieProps) {
 }
 
 function MiniPlushie({ plushie, className, style }: MiniPlushieProps) {
+  const [imageBroken, setImageBroken] = useState(false);
+
+  // Photo-real path: a cut-out PNG of the actual plush toy. Falls back to the
+  // CSS doll below if no image is set or the file fails to load.
+  if (plushie.image && !imageBroken) {
+    return (
+      <div
+        className={cn("flex w-[78px] flex-col items-center", className)}
+        style={style}
+        aria-label={plushie.name}
+      >
+        <div className="relative h-[78px] w-[70px] drop-shadow-[0_12px_16px_rgba(111,90,58,0.22)]">
+          {/* Soft contact shadow so the toy reads as sitting on the machine floor. */}
+          <div className="absolute bottom-0 left-1/2 h-2.5 w-12 -translate-x-1/2 rounded-full bg-[#6F5A3A]/14 blur-[2px]" />
+          <img
+            src={plushie.image}
+            alt={plushie.name}
+            loading="lazy"
+            draggable={false}
+            onError={() => setImageBroken(true)}
+            className="absolute inset-0 h-full w-full select-none object-contain"
+          />
+        </div>
+        <span className="mt-1 max-w-full truncate rounded-full border border-[#D1BE9B]/20 bg-[#FFFDF8]/86 px-2 py-0.5 text-[10px] leading-none tracking-[0.04em] text-[#6F5A3A] shadow-sm">
+          {plushie.name}
+        </span>
+      </div>
+    );
+  }
+
   if (FEATURED_PLUSHIE_IDS.includes(plushie.id)) {
     return <FeaturedMiniPlushie plushie={plushie} className={className} style={style} />;
   }
