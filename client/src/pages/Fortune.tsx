@@ -425,9 +425,8 @@ export default function FortunePage() {
   useEffect(() => {
     if (dailyFortuneQuery.isLoading) {
       setCaughtMoodPlushie(null);
-      scrollToSection(moodClawSectionRef);
     }
-  }, [dailyFortuneQuery.isLoading, scrollToSection]);
+  }, [dailyFortuneQuery.isLoading]);
 
   useEffect(() => {
     if (!dailyFortuneQuery.isLoading && aiData) {

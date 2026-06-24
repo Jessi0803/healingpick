@@ -6,8 +6,10 @@ import {
   ChevronRight,
   Gift,
   Sparkles,
+  X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, useAnimate, useReducedMotion } from "framer-motion";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type MoodPlushieScene = "dream" | "tarot" | "ziwei" | "fortune" | "chat";
 
@@ -455,6 +457,61 @@ const FEATURED_PLUSHIE_IDS = [
 
 type MachinePhase = "ready" | "dropping" | "lifting" | "won" | "missed";
 
+const CONFETTI_COLORS = ["#F1CF7A", "#EAA8AC", "#B9A6C5", "#F3D88D", "#C5A6B8"];
+
+const CONFETTI_PIECES = Array.from({ length: 18 }, (_, i) => {
+  const angle = (i / 18) * Math.PI * 2 + (i % 2 ? 0.2 : -0.2);
+  const distance = 54 + (i % 4) * 24;
+  return {
+    id: i,
+    dx: Math.cos(angle) * distance,
+    dy: Math.sin(angle) * distance - 24,
+    rotate: (i % 2 ? 1 : -1) * (140 + i * 14),
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    isStar: i % 3 === 0,
+    size: 5 + (i % 3) * 3,
+    delay: (i % 6) * 0.035,
+  };
+});
+
+function WinConfetti() {
+  return (
+    <div className="pointer-events-none absolute left-1/2 top-[40%] z-20 -translate-x-1/2">
+      {CONFETTI_PIECES.map((piece) => (
+        <motion.span
+          key={piece.id}
+          className="absolute left-0 top-0 block leading-none"
+          initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
+          animate={{
+            x: [0, piece.dx],
+            y: [0, piece.dy, piece.dy + 78],
+            rotate: [0, piece.rotate],
+            scale: [0, 1, 0.6],
+            opacity: [0, 1, 0],
+          }}
+          transition={{ duration: 1.2, delay: piece.delay, ease: "easeOut" }}
+          style={
+            piece.isStar
+              ? {
+                  color: piece.color,
+                  fontSize: piece.size + 9,
+                  textShadow: "0 0 10px rgba(241,207,122,0.5)",
+                }
+              : {
+                  width: piece.size,
+                  height: piece.size,
+                  borderRadius: 2,
+                  backgroundColor: piece.color,
+                }
+          }
+        >
+          {piece.isStar ? "✦" : ""}
+        </motion.span>
+      ))}
+    </div>
+  );
+}
+
 type MoodClawMachineProps = {
   onPrizeCaught?: (plushie: MoodPlushie) => void;
 };
@@ -475,7 +532,13 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
   const [clawX, setClawX] = useState(50);
   const [phase, setPhase] = useState<MachinePhase>("ready");
   const [caught, setCaught] = useState<DisplayPlushie | null>(null);
+  const [clawClosed, setClawClosed] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [showPrize, setShowPrize] = useState(false);
   const [collection, setCollection] = useState<PlushieRecord[]>([]);
+  const reduceMotion = useReducedMotion();
+  const [clawScope, animateClaw] = useAnimate();
+  const playAreaRef = useRef<HTMLDivElement>(null);
   const visiblePlushies = useMemo<DisplayPlushie[]>(() => {
     const positions = [12, 24, 37, 50, 63, 76, 88];
     return [...PLUSHIES]
@@ -509,30 +572,8 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
     }, visiblePlushies[0]);
   }, [clawX, visiblePlushies]);
 
-  const moveClaw = useCallback((direction: -1 | 1) => {
-    setCaught(null);
-    setPhase("ready");
-    setClawX((current) => Math.min(88, Math.max(12, current + direction * 8)));
-  }, []);
-
-  const grab = useCallback(() => {
-    if (phase === "dropping" || phase === "lifting") return;
-
-    const target = nearestPlushie;
-    const isCloseEnough = Math.abs(target.x - clawX) <= 7;
-
-    setPhase("dropping");
-    setCaught(null);
-
-    window.setTimeout(() => {
-      setPhase("lifting");
-      setCaught(isCloseEnough ? target : null);
-    }, 640);
-
-    window.setTimeout(() => {
-      setPhase(isCloseEnough ? "won" : "missed");
-      if (!isCloseEnough) return;
-
+  const recordWin = useCallback(
+    (target: DisplayPlushie) => {
       const prize: PlushieRecord = {
         id: target.id,
         name: target.name,
@@ -548,11 +589,119 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
         window.localStorage.setItem(COLLECTION_STORAGE_KEY, JSON.stringify(next));
         return next;
       });
-    }, 1380);
-  }, [clawX, nearestPlushie, onPrizeCaught, phase]);
+    },
+    [onPrizeCaught]
+  );
 
-  const clawTop =
-    phase === "dropping" ? "58%" : phase === "lifting" ? "22%" : "16%";
+  const moveClaw = useCallback(
+    (direction: -1 | 1) => {
+      if (phase === "dropping" || phase === "lifting") return;
+      setCaught(null);
+      setShowPrize(false);
+      setPhase("ready");
+      setClawX((current) => Math.min(88, Math.max(12, current + direction * 8)));
+      if (!reduceMotion) {
+        // 繩子帶動爪子的鐘擺殘留
+        void animateClaw(
+          clawScope.current,
+          { rotate: [0, direction * 6, 0] },
+          { duration: 0.55, ease: "easeOut" }
+        );
+      }
+    },
+    [animateClaw, clawScope, phase, reduceMotion]
+  );
+
+  const grab = useCallback(async () => {
+    if (phase === "dropping" || phase === "lifting") return;
+
+    const target = nearestPlushie;
+    const isCloseEnough = Math.abs(target.x - clawX) <= 7;
+
+    setCaught(null);
+    setShowPrize(false);
+    setPhase("dropping");
+
+    if (reduceMotion) {
+      setCaught(isCloseEnough ? target : null);
+      setClawClosed(isCloseEnough);
+      setPhase(isCloseEnough ? "won" : "missed");
+      if (isCloseEnough) {
+        recordWin(target);
+        setShowPrize(true);
+      }
+      setClawClosed(false);
+      return;
+    }
+
+    // 下降
+    await animateClaw(
+      clawScope.current,
+      { y: 121 },
+      { type: "spring", stiffness: 130, damping: 18 }
+    );
+    // 夾合：爪子收合 + 觸底一頓
+    setCaught(isCloseEnough ? target : null);
+    setClawClosed(true);
+    setPhase("lifting");
+    await animateClaw(clawScope.current, { y: 128 }, { duration: 0.12 });
+    // 上升回到頂端
+    await animateClaw(
+      clawScope.current,
+      { y: 0 },
+      { type: "spring", stiffness: 90, damping: 16 }
+    );
+    // 收尾：鬆開爪子、揭曉結果
+    setClawClosed(false);
+    setPhase(isCloseEnough ? "won" : "missed");
+    if (isCloseEnough) {
+      recordWin(target);
+      setShowPrize(true);
+    }
+  }, [animateClaw, clawScope, clawX, nearestPlushie, phase, reduceMotion, recordWin]);
+
+  const setClawFromPointer = useCallback((clientX: number) => {
+    const el = playAreaRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const pct = ((clientX - rect.left) / rect.width) * 100;
+    setClawX(Math.min(88, Math.max(12, pct)));
+  }, []);
+
+  const handlePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (phase === "dropping" || phase === "lifting") return;
+      setCaught(null);
+      setShowPrize(false);
+      setPhase("ready");
+      event.currentTarget.setPointerCapture(event.pointerId);
+      setIsDragging(true);
+      setClawFromPointer(event.clientX);
+    },
+    [phase, setClawFromPointer]
+  );
+
+  const handlePointerMove = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!isDragging) return;
+      setClawFromPointer(event.clientX);
+    },
+    [isDragging, setClawFromPointer]
+  );
+
+  const endDrag = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!isDragging) return;
+      setIsDragging(false);
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      } catch {
+        // pointer already released
+      }
+    },
+    [isDragging]
+  );
+
   const isMoving = phase === "dropping" || phase === "lifting";
   const todayKey = new Date().toDateString();
   const todayCollection = collection.filter(
@@ -560,7 +709,7 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
   );
 
   return (
-    <div className="w-full max-w-[500px] overflow-hidden rounded-[28px] border border-[#D1BE9B]/35 bg-[#FFFDF8]/82 text-[#31353A] shadow-[0_22px_70px_rgba(122,99,72,0.16)] backdrop-blur-md">
+    <div className="relative w-full max-w-[500px] overflow-hidden rounded-[28px] border border-[#D1BE9B]/35 bg-[#FFFDF8]/82 text-[#31353A] shadow-[0_22px_70px_rgba(122,99,72,0.16)] backdrop-blur-md">
       <div className="relative flex items-center justify-between gap-3 border-b border-[#D1BE9B]/20 bg-[linear-gradient(180deg,rgba(255,253,248,0.98),rgba(243,235,221,0.82))] px-5 py-4">
         <div className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#D1BE9B]/70 to-transparent" />
         <div className="min-w-0">
@@ -578,34 +727,18 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
         </div>
       </div>
 
-      <div className="relative h-[288px] overflow-hidden bg-[radial-gradient(circle_at_50%_6%,rgba(255,245,214,0.94),rgba(243,235,221,0.72)_38%,rgba(232,223,238,0.32)_100%)]">
-        <div className="absolute left-6 right-6 top-5 h-[204px] rounded-[24px] border border-white/75 bg-white/38 shadow-[inset_0_1px_18px_rgba(255,255,255,0.72),inset_0_-16px_28px_rgba(209,190,155,0.12),0_16px_32px_rgba(111,90,58,0.08)]" />
-        {phase === "won" && caught && (
-          <div className="pointer-events-none absolute left-6 right-6 top-5 z-10 h-[204px] overflow-hidden rounded-[24px]">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(255,246,210,0.58),transparent_46%)]" />
-            {[
-              [22, 34, 0],
-              [38, 24, 0.18],
-              [55, 42, 0.06],
-              [71, 29, 0.24],
-              [82, 54, 0.12],
-              [30, 62, 0.28],
-            ].map(([left, top, delay]) => (
-              <span
-                key={`${left}-${top}`}
-                className="absolute text-[18px] leading-none text-[#F1CF7A]/90 animate-pulse"
-                style={{
-                  left: `${left}%`,
-                  top: `${top}%`,
-                  animationDelay: `${delay}s`,
-                  textShadow: "0 0 14px rgba(241,207,122,0.55)",
-                }}
-              >
-                ✦
-              </span>
-            ))}
-          </div>
+      <div
+        ref={playAreaRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        className={cn(
+          "relative h-[288px] touch-none select-none overflow-hidden bg-[radial-gradient(circle_at_50%_6%,rgba(255,245,214,0.94),rgba(243,235,221,0.72)_38%,rgba(232,223,238,0.32)_100%)]",
+          isMoving ? "cursor-default" : isDragging ? "cursor-grabbing" : "cursor-grab"
         )}
+      >
+        <div className="absolute left-6 right-6 top-5 h-[204px] rounded-[24px] border border-white/75 bg-white/38 shadow-[inset_0_1px_18px_rgba(255,255,255,0.72),inset_0_-16px_28px_rgba(209,190,155,0.12),0_16px_32px_rgba(111,90,58,0.08)]" />
         <div className="absolute left-10 right-10 top-9 h-2 rounded-full bg-gradient-to-r from-transparent via-[#D1BE9B]/36 to-transparent" />
         <div className="absolute left-12 top-9 h-36 w-16 rotate-12 rounded-full bg-white/34 blur-[1px]" />
         <div className="absolute right-12 top-12 h-28 w-10 rotate-12 rounded-full bg-white/24 blur-[1px]" />
@@ -624,33 +757,53 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
             style={{ left: `${clawX}%` }}
           />
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] tracking-[0.18em] text-[#A38D6B]/70">
-            左右移動爪子
+            拖曳移動爪子
           </div>
         </div>
 
-        <div
-          className={cn(
-            "absolute z-20 flex -translate-x-1/2 flex-col items-center transition-all duration-500 ease-in-out",
-            isMoving && "duration-700"
-          )}
-          style={{ left: `${clawX}%`, top: clawTop }}
+        <motion.div
+          className="absolute z-20 flex flex-col items-center"
+          style={{ left: `${clawX}%`, x: "-50%", top: "16%" }}
+          initial={false}
+          animate={{ left: `${clawX}%` }}
+          transition={
+            reduceMotion || isDragging
+              ? { duration: 0 }
+              : { type: "spring", stiffness: 120, damping: 14 }
+          }
         >
-          <div className="h-14 w-[2px] rounded-full bg-gradient-to-b from-[#D1BE9B]/20 via-[#A38D6B]/55 to-[#A38D6B]/20" />
-          <div className="relative size-12 drop-shadow-[0_8px_14px_rgba(111,90,58,0.18)]">
-            <div className="absolute left-1/2 top-1 size-6 -translate-x-1/2 rounded-b-full border border-[#A38D6B]/36 bg-[#FFFDF8]" />
-            <div className="absolute left-1/2 top-2.5 h-4 w-7 -translate-x-1/2 rounded-full border border-[#D1BE9B]/30 bg-[#F3EBDD]" />
-            <div className="absolute bottom-1 left-1/2 h-8 w-[2px] origin-top -rotate-35 rounded-full bg-[#A38D6B]/70" />
-            <div className="absolute bottom-1 left-1/2 h-8 w-[2px] origin-top rotate-35 rounded-full bg-[#A38D6B]/70" />
-            <div className="absolute bottom-0 left-[14px] size-2 rounded-full bg-[#A38D6B]/72" />
-            <div className="absolute bottom-0 right-[14px] size-2 rounded-full bg-[#A38D6B]/72" />
-          </div>
-          {caught && phase === "lifting" && (
-            <MiniPlushie
-              plushie={caught}
-              className="mt-[-10px] scale-75 drop-shadow-[0_12px_18px_rgba(111,90,58,0.28)]"
-            />
-          )}
-        </div>
+          <motion.div
+            ref={clawScope}
+            className="flex flex-col items-center"
+            style={{ transformOrigin: "top center" }}
+          >
+            <div className="h-14 w-[2px] rounded-full bg-gradient-to-b from-[#D1BE9B]/20 via-[#A38D6B]/55 to-[#A38D6B]/20" />
+            <div className="relative size-12 drop-shadow-[0_8px_14px_rgba(111,90,58,0.18)]">
+              <div className="absolute left-1/2 top-1 size-6 -translate-x-1/2 rounded-b-full border border-[#A38D6B]/36 bg-[#FFFDF8]" />
+              <div className="absolute left-1/2 top-2.5 h-4 w-7 -translate-x-1/2 rounded-full border border-[#D1BE9B]/30 bg-[#F3EBDD]" />
+              <motion.div
+                className="absolute bottom-1 left-1/2 h-8 w-[2px] origin-top rounded-full bg-[#A38D6B]/70"
+                initial={false}
+                animate={{ rotate: clawClosed ? -20 : -35 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+              />
+              <motion.div
+                className="absolute bottom-1 left-1/2 h-8 w-[2px] origin-top rounded-full bg-[#A38D6B]/70"
+                initial={false}
+                animate={{ rotate: clawClosed ? 20 : 35 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+              />
+              <div className="absolute bottom-0 left-[14px] size-2 rounded-full bg-[#A38D6B]/72" />
+              <div className="absolute bottom-0 right-[14px] size-2 rounded-full bg-[#A38D6B]/72" />
+            </div>
+            {caught && phase === "lifting" && (
+              <MiniPlushie
+                plushie={caught}
+                className="mt-[-10px] scale-75 drop-shadow-[0_12px_18px_rgba(111,90,58,0.28)]"
+              />
+            )}
+          </motion.div>
+        </motion.div>
 
         <div className="absolute inset-x-7 bottom-[58px] h-20 rounded-[100%_100%_18%_18%] bg-[#D1BE9B]/12 blur-sm" />
         <div className="absolute inset-x-10 bottom-[53px] h-6 rounded-full bg-[#A38D6B]/12" />
@@ -659,18 +812,31 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
           const isHidden = caught?.id === plushie.id && phase === "lifting";
 
           return (
-            <MiniPlushie
+            <motion.div
               key={plushie.id}
-              plushie={plushie}
               className={cn(
-                "absolute bottom-[66px] -translate-x-1/2 transition-opacity",
+                "pointer-events-none absolute bottom-[66px] transition-opacity",
                 isHidden && "opacity-0"
               )}
-              style={{
-                left: `${plushie.x}%`,
-                transform: `translateX(-50%) rotate(${index % 2 === 0 ? -5 : 4}deg)`,
-              }}
-            />
+              style={{ left: `${plushie.x}%`, x: "-50%" }}
+              animate={reduceMotion || isHidden ? { y: 0 } : { y: [0, -3, 0] }}
+              transition={
+                reduceMotion || isHidden
+                  ? { duration: 0 }
+                  : {
+                      duration: 2.4 + (index % 3) * 0.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: index * 0.18,
+                    }
+              }
+            >
+              <div
+                style={{ transform: `rotate(${index % 2 === 0 ? -5 : 4}deg)` }}
+              >
+                <MiniPlushie plushie={plushie} />
+              </div>
+            </motion.div>
           );
         })}
 
@@ -684,62 +850,45 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
       </div>
 
       <div className="grid gap-3 border-t border-[#D1BE9B]/20 bg-[#FFFDF8]/86 p-4">
-        <div className="min-h-[76px] rounded-2xl border border-[#D1BE9B]/18 bg-white/58 px-4 py-3 shadow-[0_8px_22px_rgba(111,90,58,0.06)]">
-          {phase === "won" && caught ? (
-            <>
-              <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">
-                你抓到了：{caught.name}｜{caught.role}
-              </p>
-              <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
-                {caught.message}
-              </p>
-              <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#A38D6B]">
-                已收進 Mochi 小收藏，答案開頭也會帶著它一起出現。
-              </p>
-            </>
-          ) : phase === "missed" ? (
-            <>
-              <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">差一點就抓到了</p>
-              <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
-                小傢伙滑走了一點點。再調整位置，答案也正在路上。
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">
-                目前瞄準：{nearestPlushie.name}
-              </p>
-              <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
-                用左右鍵對準娃娃，再按下降抓取。
-              </p>
-            </>
-          )}
+        <div className="relative min-h-[76px] overflow-hidden rounded-2xl border border-[#D1BE9B]/18 bg-white/58 px-4 py-3 shadow-[0_8px_22px_rgba(111,90,58,0.06)]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={phase === "won" ? "won" : phase === "missed" ? "missed" : "aim"}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={reduceMotion ? { duration: 0 } : { duration: 0.28, ease: "easeOut" }}
+            >
+              {phase === "won" && caught ? (
+                <>
+                  <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">
+                    你抓到了：{caught.name}
+                  </p>
+                  <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#A38D6B]">
+                    已收進 Mochi 小收藏 ✦
+                  </p>
+                </>
+              ) : phase === "missed" ? (
+                <>
+                  <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">差一點就抓到了</p>
+                  <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
+                    小傢伙滑走了一點點。再調整位置，答案也正在路上。
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">
+                    目前瞄準：{nearestPlushie.name}
+                  </p>
+                  <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
+                    直接拖曳或用左右鍵對準娃娃，再按下降抓取。
+                  </p>
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {phase === "won" && caught && (
-          <div className="grid grid-cols-[104px_1fr] items-center gap-4 rounded-[24px] border border-[#D1BE9B]/24 bg-[linear-gradient(135deg,rgba(255,253,248,0.92),rgba(243,235,221,0.74))] p-4 shadow-[0_14px_32px_rgba(111,90,58,0.10)]">
-            <div className="relative flex h-28 items-center justify-center rounded-[22px] border border-white/70 bg-white/54 shadow-[inset_0_1px_14px_rgba(255,255,255,0.72)]">
-              <div className="absolute inset-3 rounded-full bg-[#F1CF7A]/12 blur-md" />
-              <MiniPlushie plushie={caught} className="relative z-10 scale-125" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] tracking-[0.28em] text-[#D1BE9B]"
-                style={{ fontFamily: "Cormorant Garamond, serif" }}>
-                TODAY'S COMPANION
-              </p>
-              <p className="mt-1 text-[16px] font-medium tracking-[0.1em] text-[#6F5A3A]"
-                style={{ fontFamily: "Noto Serif TC, serif" }}>
-                {caught.name}
-              </p>
-              <p className="mt-1 inline-flex rounded-full border border-[#D1BE9B]/24 bg-white/64 px-2.5 py-1 text-[11px] tracking-[0.1em] text-[#A38D6B]">
-                {caught.role}
-              </p>
-              <p className="mt-2 text-[12px] leading-[1.8] tracking-[0.05em] text-[#31353A]/66">
-                {caught.message}
-              </p>
-            </div>
-          </div>
-        )}
 
         <div className="rounded-[22px] border border-[#D1BE9B]/18 bg-[#F8F4EC]/58 p-2 shadow-[inset_0_1px_8px_rgba(255,255,255,0.54)]">
           <div className="mb-2 flex items-center justify-center gap-2 text-[10px] tracking-[0.18em] text-[#A38D6B]/80">
@@ -803,6 +952,86 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {showPrize && caught && (
+          <motion.div
+            className="absolute inset-0 z-40 flex items-center justify-center p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <button
+              type="button"
+              aria-label="關閉"
+              onClick={() => setShowPrize(false)}
+              className="absolute inset-0 cursor-default bg-[#31353A]/35 backdrop-blur-[3px]"
+            />
+            {!reduceMotion && <WinConfetti />}
+            <motion.div
+              className="relative z-10 w-full max-w-[300px] overflow-hidden rounded-[26px] border border-[#D1BE9B]/35 bg-[linear-gradient(160deg,rgba(255,253,248,0.98),rgba(243,235,221,0.92))] p-5 text-center shadow-[0_24px_60px_rgba(111,90,58,0.28)]"
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.86, y: 14 }}
+              animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 8 }}
+              transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 260, damping: 22 }}
+            >
+              <button
+                type="button"
+                aria-label="關閉"
+                onClick={() => setShowPrize(false)}
+                className="absolute right-3 top-3 z-10 flex size-7 items-center justify-center rounded-full border border-[#D1BE9B]/30 bg-white/70 text-[#A38D6B] shadow-sm transition hover:bg-[#F3EBDD]"
+              >
+                <X className="size-4" />
+              </button>
+              <p
+                className="text-[10px] tracking-[0.28em] text-[#D1BE9B]"
+                style={{ fontFamily: "Cormorant Garamond, serif" }}
+              >
+                TODAY'S COMPANION
+              </p>
+              <div className="relative mx-auto mt-3 flex h-32 w-32 items-center justify-center rounded-[24px] border border-white/70 bg-white/56 shadow-[inset_0_1px_14px_rgba(255,255,255,0.72)]">
+                <div className="absolute inset-4 rounded-full bg-[#F1CF7A]/14 blur-md" />
+                <motion.div
+                  className="relative z-10"
+                  initial={reduceMotion ? false : { scale: 0 }}
+                  animate={{ scale: 1.3 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0 }
+                      : { type: "spring", stiffness: 320, damping: 15, delay: 0.1 }
+                  }
+                >
+                  <MiniPlushie plushie={caught} />
+                </motion.div>
+              </div>
+              <p
+                className="mt-4 text-[17px] font-medium tracking-[0.1em] text-[#6F5A3A]"
+                style={{ fontFamily: "Noto Serif TC, serif" }}
+              >
+                {caught.name}
+              </p>
+              <p className="mt-1.5 inline-flex rounded-full border border-[#D1BE9B]/24 bg-white/64 px-3 py-1 text-[11px] tracking-[0.1em] text-[#A38D6B]">
+                {caught.role}
+              </p>
+              <p className="mx-auto mt-3 max-w-[240px] text-[12px] leading-[1.9] tracking-[0.05em] text-[#31353A]/68">
+                {caught.message}
+              </p>
+              <p className="mt-3 text-[11px] tracking-[0.08em] text-[#A38D6B]">
+                已收進 Mochi 小收藏，答案開頭也會帶著它一起出現。
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setShowPrize(false)}
+                className="mt-4 h-10 w-full rounded-full bg-[#6F5A3A] text-[#FFFDF8] shadow-[0_10px_22px_rgba(111,90,58,0.18)] hover:bg-[#A38D6B]"
+              >
+                繼續抓娃娃
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -262,9 +262,8 @@ export default function DreamPage() {
   useEffect(() => {
     if (interpretMutation.isPending) {
       setCaughtMoodPlushie(null);
-      scrollToSection(moodClawSectionRef);
     }
-  }, [interpretMutation.isPending, scrollToSection]);
+  }, [interpretMutation.isPending]);
 
   useEffect(() => {
     if (!interpretMutation.isPending && interpretation) {
