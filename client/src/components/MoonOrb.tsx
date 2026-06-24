@@ -8,11 +8,23 @@
  * when the tab is hidden, and respects prefers-reduced-motion (renders a still frame).
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 export default function MoonOrb({ className = '' }: { className?: string }) {
   const mountRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const [reduceMotion] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
+  );
+
+  // Gentle "rise" entrance — the moon emerges rather than blinking into existence.
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -101,7 +113,8 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
       mouseX = (e.clientX / window.innerWidth) * 2 - 1;
       mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
     };
-    window.addEventListener('mousemove', onMouseMove);
+    // Reduced motion means no tilt-follow at all — skip the listener entirely.
+    if (!prefersReduced) window.addEventListener('mousemove', onMouseMove);
 
     const resize = () => {
       width = mount.clientWidth || 1;
@@ -116,22 +129,33 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
     let raf = 0;
     let running = true;
 
-    const renderFrame = (t: number) => {
-      moonGroup.rotation.x += (mouseY * 0.2 - moonGroup.rotation.x) * 0.05;
-      moonGroup.rotation.z += (mouseX * 0.1 - moonGroup.rotation.z) * 0.05;
+    // Frame-rate independence: scale every per-frame delta by how long the frame
+    // actually took (relative to 60fps), so the moon spins and tilts at the same
+    // speed on 60Hz and 120Hz displays. Clamped so a long pause (tab switch) can't
+    // make it jump on the first frame back.
+    const FRAME_MS = 1000 / 60;
+    let lastTime = 0;
+    const damp = (current: number, target: number, rate: number, dtScale: number) =>
+      current + (target - current) * (1 - Math.pow(1 - rate, dtScale));
+
+    const renderFrame = (t: number, dtScale: number) => {
+      moonGroup.rotation.x = damp(moonGroup.rotation.x, mouseY * 0.2, 0.05, dtScale);
+      moonGroup.rotation.z = damp(moonGroup.rotation.z, mouseX * 0.1, 0.05, dtScale);
       glowMat.uniforms.c.value = 0.16 + Math.sin(t * 0.002) * 0.035; // pulsing glow
       renderer.render(scene, camera);
     };
 
     const animate = (t: number) => {
       if (!running) return;
-      moonGroup.rotation.y += 0.005; // subtle spin
-      renderFrame(t);
+      const dtScale = lastTime ? Math.min((t - lastTime) / FRAME_MS, 4) : 1;
+      lastTime = t;
+      moonGroup.rotation.y += 0.005 * dtScale; // subtle spin
+      renderFrame(t, dtScale);
       raf = requestAnimationFrame(animate);
     };
 
     if (prefersReduced) {
-      renderFrame(0);
+      renderFrame(0, 1);
     } else {
       raf = requestAnimationFrame(animate);
     }
@@ -142,6 +166,7 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
         cancelAnimationFrame(raf);
       } else if (!prefersReduced) {
         running = true;
+        lastTime = 0; // reset so the first frame after resuming uses a normal delta
         raf = requestAnimationFrame(animate);
       }
     };
@@ -165,7 +190,18 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
   }, []);
 
   return (
-    <div aria-hidden="true" className={`pointer-events-none relative ${className}`}>
+    <div
+      aria-hidden="true"
+      className={`pointer-events-none relative ${className}`}
+      style={{
+        opacity: mounted ? 1 : 0,
+        // Reduced motion: fade only, no scale (movement is what triggers motion sickness).
+        transform: reduceMotion ? undefined : `scale(${mounted ? 1 : 0.95})`,
+        transition: reduceMotion
+          ? 'opacity 800ms cubic-bezier(0.23, 1, 0.32, 1)'
+          : 'opacity 800ms cubic-bezier(0.23, 1, 0.32, 1), transform 800ms cubic-bezier(0.23, 1, 0.32, 1)',
+      }}
+    >
       {/* Soft warm backdrop so the moon reads cleanly on light pages. */}
       <div
         className="absolute left-1/2 top-1/2 -z-10 h-[138%] w-[138%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"

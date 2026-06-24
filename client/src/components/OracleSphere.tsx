@@ -8,11 +8,23 @@
  * when the tab is hidden, and respects prefers-reduced-motion (renders a still frame).
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 export default function OracleSphere({ className = '' }: { className?: string }) {
   const mountRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const [reduceMotion] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
+  );
+
+  // Gentle "materialise" entrance — nothing in the real world appears from nothing.
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -86,7 +98,8 @@ export default function OracleSphere({ className = '' }: { className?: string })
       mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
       mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     };
-    window.addEventListener('mousemove', onMouseMove);
+    // Reduced motion means no parallax follow at all — skip the listener entirely.
+    if (!prefersReduced) window.addEventListener('mousemove', onMouseMove);
 
     const resize = () => {
       width = mount.clientWidth || 1;
@@ -101,26 +114,37 @@ export default function OracleSphere({ className = '' }: { className?: string })
     let raf = 0;
     let running = true;
 
-    const renderFrame = () => {
-      const t = Date.now() * 0.001;
+    // Frame-rate independence: scale every per-frame delta by how long the frame
+    // actually took (relative to 60fps), so the crystal spins and follows the mouse
+    // at the same speed on 60Hz and 120Hz displays. Clamped so a long pause (tab
+    // switch) can't make it jump on the first frame back.
+    const FRAME_MS = 1000 / 60;
+    let lastTime = 0;
+    const damp = (current: number, target: number, rate: number, dtScale: number) =>
+      current + (target - current) * (1 - Math.pow(1 - rate, dtScale));
+
+    const renderFrame = (now: number, dtScale: number) => {
+      const t = now * 0.001;
       group.position.y = Math.sin(t) * 0.15;
-      group.rotation.x += (mouseY * 0.1 - group.rotation.x) * 0.05;
-      group.rotation.y += (mouseX * 0.1 - group.rotation.y) * 0.05;
+      group.rotation.x = damp(group.rotation.x, mouseY * 0.1, 0.05, dtScale);
+      group.rotation.y = damp(group.rotation.y, mouseX * 0.1, 0.05, dtScale);
       // Gentle twinkle on the glints.
       pointsMaterial.opacity = 0.4 + 0.25 * Math.sin(t * 1.6);
       renderer.render(scene, camera);
     };
 
-    const animate = () => {
+    const animate = (now: number) => {
       if (!running) return;
-      group.rotation.y += 0.008;
-      group.rotation.z += 0.003;
-      renderFrame();
+      const dtScale = lastTime ? Math.min((now - lastTime) / FRAME_MS, 4) : 1;
+      lastTime = now;
+      group.rotation.y += 0.008 * dtScale;
+      group.rotation.z += 0.003 * dtScale;
+      renderFrame(now, dtScale);
       raf = requestAnimationFrame(animate);
     };
 
     if (prefersReduced) {
-      renderFrame(); // single still frame
+      renderFrame(0, 1); // single still frame
     } else {
       raf = requestAnimationFrame(animate);
     }
@@ -131,6 +155,7 @@ export default function OracleSphere({ className = '' }: { className?: string })
         cancelAnimationFrame(raf);
       } else if (!prefersReduced) {
         running = true;
+        lastTime = 0; // reset so the first frame after resuming uses a normal delta
         raf = requestAnimationFrame(animate);
       }
     };
@@ -154,6 +179,18 @@ export default function OracleSphere({ className = '' }: { className?: string })
   }, []);
 
   return (
-    <div ref={mountRef} aria-hidden="true" className={`pointer-events-none ${className}`} />
+    <div
+      ref={mountRef}
+      aria-hidden="true"
+      className={`pointer-events-none ${className}`}
+      style={{
+        opacity: mounted ? 1 : 0,
+        // Reduced motion: fade only, no scale (movement is what triggers motion sickness).
+        transform: reduceMotion ? undefined : `scale(${mounted ? 1 : 0.95})`,
+        transition: reduceMotion
+          ? 'opacity 800ms cubic-bezier(0.23, 1, 0.32, 1)'
+          : 'opacity 800ms cubic-bezier(0.23, 1, 0.32, 1), transform 800ms cubic-bezier(0.23, 1, 0.32, 1)',
+      }}
+    />
   );
 }
