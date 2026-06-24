@@ -38,11 +38,11 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
     // Moon sphere.
     const geometry = new THREE.SphereGeometry(1.5, 64, 64);
     const material = new THREE.MeshPhongMaterial({
-      color: 0xe0e0e0,
-      emissive: 0x222222,
-      shininess: 10,
+      color: 0xf8f2e6,
+      emissive: 0x8f846f,
+      shininess: 18,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.96,
     });
     const moon = new THREE.Mesh(geometry, material);
     moonGroup.add(moon);
@@ -53,7 +53,7 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
       uniforms: {
         c: { value: 0.1 },
         p: { value: 4.5 },
-        glowColor: { value: new THREE.Color(0x8a7250) }, // muted gold (original)
+        glowColor: { value: new THREE.Color(0xf3dfb7) },
         viewVector: { value: camera.position },
       },
       vertexShader: `
@@ -85,11 +85,14 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
     moonGroup.add(glow);
 
     // Lights.
-    const ambientLight = new THREE.AmbientLight(0x404040, 2);
+    const ambientLight = new THREE.AmbientLight(0xfff7e8, 2.2);
     scene.add(ambientLight);
-    const mainLight = new THREE.PointLight(0xffffff, 1);
+    const mainLight = new THREE.PointLight(0xfffbf2, 1.35);
     mainLight.position.set(5, 3, 5);
     scene.add(mainLight);
+    const frontFillLight = new THREE.PointLight(0xf3dfb7, 1.1);
+    frontFillLight.position.set(0, 0, 5);
+    scene.add(frontFillLight);
 
     // Mouse tilt.
     let mouseX = 0;
@@ -116,7 +119,7 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
     const renderFrame = (t: number) => {
       moonGroup.rotation.x += (mouseY * 0.2 - moonGroup.rotation.x) * 0.05;
       moonGroup.rotation.z += (mouseX * 0.1 - moonGroup.rotation.z) * 0.05;
-      glowMat.uniforms.c.value = 0.2 + Math.sin(t * 0.002) * 0.05; // pulsing glow
+      glowMat.uniforms.c.value = 0.16 + Math.sin(t * 0.002) * 0.035; // pulsing glow
       renderer.render(scene, camera);
     };
 
@@ -163,12 +166,12 @@ export default function MoonOrb({ className = '' }: { className?: string }) {
 
   return (
     <div aria-hidden="true" className={`pointer-events-none relative ${className}`}>
-      {/* Soft deep-space backdrop so the moon + gold rim glow read as designed */}
+      {/* Soft warm backdrop so the moon reads cleanly on light pages. */}
       <div
-        className="absolute left-1/2 top-1/2 -z-10 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+        className="absolute left-1/2 top-1/2 -z-10 h-[138%] w-[138%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
         style={{
           background:
-            'radial-gradient(circle, rgba(20,22,33,0.92) 0%, rgba(28,26,44,0.55) 42%, rgba(40,38,60,0.15) 64%, transparent 78%)',
+            'radial-gradient(circle, rgba(255,250,238,0.88) 0%, rgba(243,223,183,0.38) 43%, rgba(209,190,155,0.16) 63%, transparent 78%)',
         }}
       />
       <div ref={mountRef} className="h-full w-full" />
