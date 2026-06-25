@@ -1266,16 +1266,16 @@ export default function TarotPage() {
                   align-items: center;
                   justify-content: center;
                   border-radius: 999px;
-                  border: 1px solid var(--choice-line);
-                  background: rgba(255, 255, 255, 0.48);
-                  padding: 12px 28px;
-                  color: #6f5a3a;
+                  border: 1px solid rgba(176, 146, 85, 0.42);
+                  background: linear-gradient(180deg, rgba(255, 253, 247, 0.94), rgba(241, 231, 207, 0.72));
+                  padding: 14px 32px;
+                  color: #4f3f28;
                   font-family: 'Noto Serif TC', serif;
-                  font-size: 12px;
-                  font-weight: 300;
-                  letter-spacing: 0.16em;
+                  font-size: 15px;
+                  font-weight: 700;
+                  letter-spacing: 0.12em;
                   line-height: 1.8;
-                  box-shadow: inset 0 1px 0 rgba(255,255,255,0.74), 0 12px 34px rgba(120, 102, 70, 0.08);
+                  box-shadow: inset 0 1px 0 rgba(255,255,255,0.88), 0 16px 38px rgba(120, 102, 70, 0.16);
                   backdrop-filter: blur(8px);
                 }
                 .tarot-choice-grid {

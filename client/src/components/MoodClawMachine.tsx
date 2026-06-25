@@ -27,7 +27,9 @@ type Plushie = MoodPlushie & {
   accent: string;
   /**
    * Optional cut-out (transparent PNG) photo of the real plush toy. When set,
-   * the figure renders this image instead of the CSS-shape doll.
+   * the figure renders this image instead of the CSS-shape doll. Drop the file
+   * in `client/public/plushies/` and point here, e.g. "/plushies/hug-bear.png".
+   * If the image is missing or fails to load, it falls back to the CSS doll.
    */
   image?: string;
 };
@@ -1429,6 +1431,8 @@ function FeaturedMiniPlushie({ plushie, className, style }: MiniPlushieProps) {
 const MiniPlushie = memo(function MiniPlushie({ plushie, className, style }: MiniPlushieProps) {
   const [imageBroken, setImageBroken] = useState(false);
 
+  // Photo-real path: a cut-out PNG of the actual plush toy. Falls back to the
+  // CSS doll below if no image is set or the file fails to load.
   if (plushie.image && !imageBroken) {
     return (
       <div
@@ -1437,6 +1441,7 @@ const MiniPlushie = memo(function MiniPlushie({ plushie, className, style }: Min
         aria-label={plushie.name}
       >
         <div className="relative h-[78px] w-[70px] will-change-transform drop-shadow-[0_12px_16px_rgba(111,90,58,0.22)]">
+          {/* Soft contact shadow so the toy reads as sitting on the machine floor. */}
           <div className="absolute bottom-0 left-1/2 h-2.5 w-12 -translate-x-1/2 rounded-full bg-[#6F5A3A]/14 blur-[2px]" />
           <img
             src={plushie.image}

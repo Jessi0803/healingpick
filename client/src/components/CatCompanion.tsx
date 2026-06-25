@@ -25,24 +25,20 @@ const PEARLS: Pearl[] = [
   },
 ];
 
-// ─── 貓咪 SVG ─────────────────────────────────────────────────────────────────
+// ─── 貓咪圖片守護靈 ───────────────────────────────────────────────────────────
 type CatMood = 'idle' | 'happy' | 'curious';
 
-function CompanionCatSVG({ mood, onClick }: { mood: CatMood; onClick: () => void }) {
-  const [tailSway, setTailSway] = useState(false);
+function CompanionCat({ mood, onClick }: { mood: CatMood; onClick: () => void }) {
   const [blink, setBlink] = useState(false);
-
-  useEffect(() => {
-    const t = setInterval(() => setTailSway((p) => !p), 1400);
-    return () => clearInterval(t);
-  }, []);
+  const [isReacting, setIsReacting] = useState(false);
+  const [look, setLook] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const schedule = () => {
-      const delay = 3000 + Math.random() * 3000;
+      const delay = 1800 + Math.random() * 2200;
       return setTimeout(() => {
         setBlink(true);
-        setTimeout(() => setBlink(false), 120);
+        setTimeout(() => setBlink(false), 190);
         schedule();
       }, delay);
     };
@@ -50,83 +46,63 @@ function CompanionCatSVG({ mood, onClick }: { mood: CatMood; onClick: () => void
     return () => clearTimeout(t);
   }, []);
 
-  const renderEyes = () => {
-    if (blink) {
-      return (
-        <>
-          <path d="M22 26 Q26 24 30 26" stroke="#D1BE9B" strokeWidth="1.1" fill="none" />
-          <path d="M30 26 Q34 24 38 26" stroke="#D1BE9B" strokeWidth="1.1" fill="none" />
-        </>
-      );
-    }
-    if (mood === 'happy') {
-      return (
-        <>
-          <path d="M22 27 Q26 23 30 27" stroke="#D1BE9B" strokeWidth="1.1" fill="none" />
-          <path d="M30 27 Q34 23 38 27" stroke="#D1BE9B" strokeWidth="1.1" fill="none" />
-        </>
-      );
-    }
-    if (mood === 'curious') {
-      return (
-        <>
-          <circle cx="26" cy="26" r="3.5" stroke="#D1BE9B" strokeWidth="1" fill="rgba(209,190,155,0.15)" />
-          <circle cx="34" cy="26" r="3.5" stroke="#D1BE9B" strokeWidth="1" fill="rgba(209,190,155,0.15)" />
-          <circle cx="27" cy="25.5" r="1.2" fill="#D1BE9B" opacity="0.6" />
-          <circle cx="35" cy="25.5" r="1.2" fill="#D1BE9B" opacity="0.6" />
-        </>
-      );
-    }
-    return (
-      <>
-        <circle cx="26" cy="26" r="3" stroke="#D1BE9B" strokeWidth="1" fill="rgba(209,190,155,0.1)" />
-        <circle cx="34" cy="26" r="3" stroke="#D1BE9B" strokeWidth="1" fill="rgba(209,190,155,0.1)" />
-        <circle cx="26.8" cy="25.5" r="1" fill="#D1BE9B" opacity="0.5" />
-        <circle cx="34.8" cy="25.5" r="1" fill="#D1BE9B" opacity="0.5" />
-      </>
-    );
+  useEffect(() => {
+    const gazes = [
+      { x: -0.85, y: -0.15 },
+      { x: 0.75, y: -0.05 },
+      { x: 0.18, y: -0.65 },
+      { x: 0, y: 0 },
+    ];
+    let index = 0;
+    const t = window.setInterval(() => {
+      index = (index + 1) % gazes.length;
+      setLook(gazes[index]);
+    }, 1700);
+    return () => window.clearInterval(t);
+  }, []);
+
+  const handleClick = () => {
+    setIsReacting(true);
+    window.setTimeout(() => setIsReacting(false), 520);
+    onClick();
   };
 
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setLook({
+      x: Math.max(-1, Math.min(1, x * 2)),
+      y: Math.max(-1, Math.min(1, y * 2)),
+    });
+  };
+
+  const resetLook = () => {};
+
   return (
-    <svg
-      viewBox="0 0 60 80"
-      width="64" height="80"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      onClick={onClick}
-      style={{ cursor: 'pointer' }}
+    <button
+      type="button"
+      onClick={handleClick}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetLook}
+      className={`mochi-guardian mochi-guardian--${mood} ${isReacting ? 'is-reacting' : ''} ${blink ? 'is-blinking' : ''}`}
+      style={{
+        '--mochi-look-x': `${look.x}`,
+        '--mochi-look-y': `${look.y}`,
+      } as React.CSSProperties}
+      aria-label="打開 Mochi 的話"
     >
-      <ellipse cx="30" cy="55" rx="18" ry="20" stroke="#D1BE9B" strokeWidth="1.2" fill="rgba(209,190,155,0.06)" />
-      <circle cx="30" cy="25" r="16" stroke="#D1BE9B" strokeWidth="1.2" fill="rgba(209,190,155,0.08)" />
-      <path d="M16 14 L12 4 L22 10 Z" stroke="#D1BE9B" strokeWidth="1" fill="rgba(209,190,155,0.1)" />
-      <path d="M44 14 L48 4 L38 10 Z" stroke="#D1BE9B" strokeWidth="1" fill="rgba(209,190,155,0.1)" />
-      <path d="M17 13 L14 6 L21 11 Z" fill="rgba(209,190,155,0.2)" />
-      <path d="M43 13 L46 6 L39 11 Z" fill="rgba(209,190,155,0.2)" />
-      {renderEyes()}
-      <path d="M29 31 L30 33 L31 31 Q30 29.5 29 31 Z" fill="#D1BE9B" opacity="0.6" />
-      {mood === 'happy' ? (
-        <path d="M26 35 Q30 39 34 35" stroke="#D1BE9B" strokeWidth="0.9" fill="none" />
-      ) : (
-        <path d="M27 35 Q30 37.5 33 35" stroke="#D1BE9B" strokeWidth="0.8" fill="none" />
-      )}
-      <line x1="8" y1="30" x2="22" y2="31" stroke="#D1BE9B" strokeWidth="0.6" />
-      <line x1="7" y1="33" x2="21" y2="33" stroke="#D1BE9B" strokeWidth="0.6" />
-      <line x1="52" y1="30" x2="38" y2="31" stroke="#D1BE9B" strokeWidth="0.6" />
-      <line x1="53" y1="33" x2="39" y2="33" stroke="#D1BE9B" strokeWidth="0.6" />
-      <path d="M15 42 Q30 46 45 42" stroke="#D1BE9B" strokeWidth="0.7" fill="none" />
-      <path d="M28 44 L30 47 L32 44" stroke="#D1BE9B" strokeWidth="0.6" strokeLinejoin="round" />
-      <path
-        d="M46 68 Q58 60 54 48 Q50 38 46 46"
-        stroke="#D1BE9B" strokeWidth="1.3" fill="none"
-        style={{
-          transform: tailSway ? 'rotate(14deg)' : 'rotate(-10deg)',
-          transformOrigin: '46px 68px',
-          transition: 'transform 1.2s cubic-bezier(0.23,1,0.32,1)',
-        }}
-      />
-      <ellipse cx="21" cy="71" rx="6" ry="3.5" stroke="#D1BE9B" strokeWidth="1" />
-      <ellipse cx="39" cy="71" rx="6" ry="3.5" stroke="#D1BE9B" strokeWidth="1" />
-    </svg>
+      <span className="mochi-guardian__aura" aria-hidden="true" />
+      <span className="mochi-guardian__sparkle mochi-guardian__sparkle--one" aria-hidden="true" />
+      <span className="mochi-guardian__sparkle mochi-guardian__sparkle--two" aria-hidden="true" />
+      <span className="mochi-guardian__sparkle mochi-guardian__sparkle--three" aria-hidden="true" />
+      <span className="mochi-guardian__body">
+        <img src="/cat-companion.png" alt="" draggable={false} />
+        <span className="mochi-guardian__blink mochi-guardian__blink--left" aria-hidden="true" />
+        <span className="mochi-guardian__blink mochi-guardian__blink--right" aria-hidden="true" />
+      </span>
+      <span className="mochi-guardian__shadow" aria-hidden="true" />
+    </button>
   );
 }
 
@@ -340,6 +316,215 @@ export default function CatCompanion() {
 
   return (
     <>
+      <style>{`
+        .mochi-guardian {
+          position: relative;
+          width: 96px;
+          height: 124px;
+          border: 0;
+          padding: 0;
+          background: transparent;
+          cursor: pointer;
+          transform-origin: 50% 92%;
+          animation: mochi-presence 5.2s ease-in-out infinite;
+          filter: drop-shadow(0 16px 20px rgba(138, 114, 80, 0.22));
+          perspective: 600px;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .mochi-guardian:focus-visible {
+          outline: 2px solid rgba(209, 190, 155, 0.65);
+          outline-offset: 6px;
+          border-radius: 999px;
+        }
+
+        .mochi-guardian__body {
+          position: absolute;
+          inset: 0;
+          display: block;
+          overflow: visible;
+          transform-origin: 50% 88%;
+          animation: mochi-breathe 3.4s ease-in-out infinite;
+          transition: transform 360ms cubic-bezier(0.22, 0.78, 0.28, 1);
+        }
+
+        .mochi-guardian__body img {
+          position: absolute;
+          left: 50%;
+          bottom: -2px;
+          width: 118px;
+          max-width: none;
+          transform:
+            translateX(calc(-50% + (var(--mochi-look-x, 0) * 7px)))
+            translateY(calc(var(--mochi-look-y, 0) * 3px))
+            rotate(calc(var(--mochi-look-x, 0) * 4deg));
+          transition: transform 520ms cubic-bezier(0.2, 0.84, 0.3, 1), filter 220ms ease-out;
+          user-select: none;
+          pointer-events: none;
+        }
+
+        .mochi-guardian__aura {
+          position: absolute;
+          inset: 4px -6px -4px -6px;
+          border-radius: 999px;
+          background:
+            radial-gradient(circle at 48% 38%, rgba(255, 218, 121, 0.32), transparent 44%),
+            radial-gradient(circle at 50% 72%, rgba(209, 190, 155, 0.22), transparent 60%);
+          filter: blur(10px);
+          opacity: 0.78;
+          animation: mochi-aura 3.8s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        .mochi-guardian__shadow {
+          position: absolute;
+          left: 18px;
+          right: 18px;
+          bottom: 3px;
+          height: 11px;
+          border-radius: 999px;
+          background: rgba(84, 66, 45, 0.16);
+          filter: blur(5px);
+          animation: mochi-shadow 4.2s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        .mochi-guardian__sparkle {
+          position: absolute;
+          width: 7px;
+          height: 7px;
+          border-radius: 999px;
+          background: rgba(255, 221, 107, 0.92);
+          box-shadow: 0 0 12px rgba(255, 214, 88, 0.75);
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .mochi-guardian__sparkle--one {
+          top: 14px;
+          left: 7px;
+          animation: mochi-sparkle 5.6s ease-in-out infinite;
+        }
+
+        .mochi-guardian__sparkle--two {
+          top: 30px;
+          right: 2px;
+          width: 5px;
+          height: 5px;
+          animation: mochi-sparkle 6.2s 1.4s ease-in-out infinite;
+        }
+
+        .mochi-guardian__sparkle--three {
+          left: 18px;
+          bottom: 24px;
+          width: 4px;
+          height: 4px;
+          animation: mochi-sparkle 6.8s 2.6s ease-in-out infinite;
+        }
+
+        .mochi-guardian__blink {
+          position: absolute;
+          top: 44px;
+          width: 18px;
+          height: 2px;
+          border-radius: 999px;
+          background: rgba(52, 25, 9, 0.88);
+          opacity: 0;
+          transform: scaleX(0.7);
+          pointer-events: none;
+        }
+
+        .mochi-guardian__blink--left {
+          left: 27px;
+          rotate: -3deg;
+        }
+
+        .mochi-guardian__blink--right {
+          right: 24px;
+          rotate: 3deg;
+        }
+
+        .mochi-guardian.is-blinking .mochi-guardian__blink {
+          opacity: 1;
+        }
+
+        .mochi-guardian.is-blinking .mochi-guardian__body img {
+          filter: brightness(1.02) saturate(1.05);
+        }
+
+        .mochi-guardian--happy {
+          animation: mochi-acknowledge 0.62s ease-out, mochi-presence 5.2s 0.62s ease-in-out infinite;
+        }
+
+        .mochi-guardian--happy .mochi-guardian__aura {
+          opacity: 0.92;
+          filter: blur(9px) saturate(1.2);
+        }
+
+        .mochi-guardian--curious .mochi-guardian__body {
+          animation: mochi-listen 0.8s ease-in-out, mochi-breathe 3.4s 0.8s ease-in-out infinite;
+        }
+
+        .mochi-guardian.is-reacting .mochi-guardian__body {
+          animation: mochi-soft-react 0.62s ease-out, mochi-breathe 3.4s 0.62s ease-in-out infinite;
+        }
+
+        .mochi-guardian:hover .mochi-guardian__body {
+          transform: translateY(-2px);
+        }
+
+        @keyframes mochi-presence {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+
+        @keyframes mochi-breathe {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          28% { transform: translateY(-2px) rotate(-1.2deg); }
+          64% { transform: translateY(1px) rotate(1deg); }
+        }
+
+        @keyframes mochi-acknowledge {
+          0%, 100% { transform: translateY(0); }
+          42% { transform: translateY(-8px); }
+        }
+
+        @keyframes mochi-listen {
+          0%, 100% { transform: rotate(0deg); }
+          50% { transform: rotate(-1.8deg); }
+        }
+
+        @keyframes mochi-soft-react {
+          0%, 100% { transform: translateY(0); }
+          45% { transform: translateY(-8px) rotate(-2.5deg); }
+        }
+
+        @keyframes mochi-aura {
+          0%, 100% { opacity: 0.58; transform: scale(0.96); }
+          50% { opacity: 0.9; transform: scale(1.05); }
+        }
+
+        @keyframes mochi-shadow {
+          0%, 100% { opacity: 0.72; transform: scaleX(1); }
+          50% { opacity: 0.46; transform: scaleX(0.84); }
+        }
+
+        @keyframes mochi-sparkle {
+          0%, 100% { opacity: 0; transform: translateY(5px) scale(0.4); }
+          42% { opacity: 0.95; transform: translateY(0) scale(1); }
+          70% { opacity: 0.25; transform: translateY(-4px) scale(0.72); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .mochi-guardian,
+          .mochi-guardian__body,
+          .mochi-guardian__aura,
+          .mochi-guardian__shadow,
+          .mochi-guardian__sparkle {
+            animation: none !important;
+          }
+        }
+      `}</style>
       <div
         className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2"
         style={{
@@ -539,17 +724,17 @@ export default function CatCompanion() {
         {/* 貓咪本體 */}
         <div
           className="relative"
-          style={{ width: '64px', height: '80px', pointerEvents: 'auto', position: 'relative', zIndex: 2 }}
+          style={{ width: '96px', height: '138px', pointerEvents: 'auto', position: 'relative', zIndex: 2 }}
         >
           <div
             className="absolute inset-0 rounded-full"
             style={{
-              background: 'radial-gradient(circle, rgba(209,190,155,0.15) 0%, transparent 70%)',
-              transform: 'scale(1.4)',
+              background: 'radial-gradient(circle, rgba(209,190,155,0.14) 0%, transparent 68%)',
+              transform: 'scale(1.35)',
               pointerEvents: 'none',
             }}
           />
-          <CompanionCatSVG mood={mood} onClick={handleCatClick} />
+          <CompanionCat mood={mood} onClick={handleCatClick} />
           <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap">
             <span
               className="text-[10px] tracking-[0.15em]"
