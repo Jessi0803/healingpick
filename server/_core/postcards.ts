@@ -42,12 +42,6 @@ const FALLBACK_MESSAGES = [
   "先照顧好自己，答案會慢慢清楚一點。",
 ];
 
-const UNCLEAR_MESSAGE_PATTERNS = [
-  /[…]/u,
-  /(缺口|留白|留著才有|宇宙|能量|靈魂|課題|頻率|綻放|被接住|顯化)/u,
-  /(分析一下|分析一點|看透|看清對方|對方看透)/u,
-];
-
 const READING_TYPE_LABELS = {
   tarot: "塔羅",
   ziwei: "紫微",
@@ -113,8 +107,6 @@ function fallbackMessage(seed: number) {
 function isClearPostcardMessage(value: string) {
   const text = value.trim();
   if (text.length < 8 || text.length > 28) return false;
-  if (UNCLEAR_MESSAGE_PATTERNS.some((pattern) => pattern.test(text))) return false;
-  if ((text.match(/[，、。！？]/gu)?.length ?? 0) > 2) return false;
   return true;
 }
 
@@ -162,13 +154,14 @@ function buildRecurringThemes(
     .join("、");
 }
 
-async function generatePostcardMessage(userId: number) {
+async function generatePostcardMessage(userId: number, loginCount: number) {
+  const fallbackSeed = userId + loginCount;
   const [user, summaries] = await Promise.all([
     getUserById(userId),
     getRecentReadingSummariesByUser(userId, 5),
   ]);
   if (summaries.length === 0) {
-    return fallbackMessage(userId);
+    return fallbackMessage(fallbackSeed);
   }
 
   const displayName = compactText((user?.name ?? "").trim(), 18);
@@ -202,9 +195,6 @@ async function generatePostcardMessage(userId: number) {
 - 句子要像朋友用 LINE 傳來的一句話，可以有「你」「今天」「先」「沒關係」「慢慢來」這種親近語氣。
 - 用日常講法，越像真人說話越好，不要像占卜結論、廣告文案、詩句或心理測驗結果。
 - 可以用簡單口語，例如：「先別急著決定」「你其實已經很努力了」「這件事慢慢看就好」。
-- 不要用「看透」「分析」「缺口」「留白」這類不好懂或不自然的說法。
-- 少用「光」「宇宙」「能量」「綻放」「被接住」「溫柔地」這類文青或靈性詞。
-- 避免「相信宇宙安排」「內在力量」「靈魂課題」這類抽象說法。
 - 可以參考會員稱呼，但只有在自然時才用，不要每次都硬塞名字。
 - 不要直接說出隱私細節、人名、日期、具體事件。
 - 不要提到「紀錄」「摘要」「占卜歷史」「我看到你問過」。
@@ -225,9 +215,9 @@ ${memory}`,
     });
     const raw = response.choices?.[0]?.message?.content;
     const text = raw ? extractTextContent(raw as string | Array<{ type: string; text?: string }>) : "";
-    return normalizeMessage(text, userId);
+    return normalizeMessage(text, fallbackSeed);
   } catch {
-    return fallbackMessage(userId);
+    return fallbackMessage(fallbackSeed);
   }
 }
 
@@ -236,7 +226,7 @@ function serializePostcard(postcard: UserPostcard | undefined): PostcardPayload 
   return {
     id: postcard.id,
     imageUrl: postcard.imageUrl,
-    message: normalizeMessage(postcard.message, postcard.userId),
+    message: postcard.message,
     createdLoginCount: postcard.createdLoginCount,
     deliverLoginCount: postcard.deliverLoginCount,
     status: postcard.status,
@@ -255,7 +245,7 @@ export async function handleAuthenticatedOpen(userId: number) {
   }
 
   if (loginCount % 2 === 1) {
-    const message = await generatePostcardMessage(userId);
+    const message = await generatePostcardMessage(userId, loginCount);
     await createScheduledPostcard({
       userId,
       createdLoginCount: loginCount,
