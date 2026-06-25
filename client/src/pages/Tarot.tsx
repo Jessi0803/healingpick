@@ -1888,7 +1888,7 @@ export default function TarotPage() {
                       </DialogHeader>
                       <div className="text-[13px] text-[#31353A]/80 leading-[2.2] tracking-wider space-y-6 mt-2" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                         <p>
-                          很多人一開始會覺得：「算命不是要真人老師看才準嗎？AI 真的懂嗎？」<br/><br/>
+                          很多人一開始會覺得：「AI 真的懂塔羅嗎？會不會只是隨便生成一段話？」<br/><br/>
                           其實塔羅不是隨便感覺一下而已。它會看牌義、牌陣位置、正逆位，也會搭配你的問題背景一起整理。
                         </p>
 
@@ -1896,7 +1896,7 @@ export default function TarotPage() {
                           <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>✦ AI 厲害在哪裡？</h4>
                           <p>
                             AI 最強的地方，就是很會把大量規則和細節快速整理出來。它可以在很短時間內，把牌面、位置、組合關係和你的問題放在一起看。<br/><br/>
-                            它不會因為累了就少看一點，也不會因為心情不同，讓前後解讀差太多。
+                            它會依照同一套解讀架構，把牌面中重複出現的訊號、需要注意的地方和可能性整理得更清楚。
                           </p>
                         </div>
 
@@ -1910,23 +1910,13 @@ export default function TarotPage() {
                           </ul>
                         </div>
 
-                        <div>
-                          <h4 className="text-[#A38D6B] text-[15px] font-medium tracking-[0.1em] mb-2" style={{ fontFamily: 'Noto Serif TC, serif' }}>✦ 為什麼有時候反而更不容易出錯？</h4>
-                          <ul className="list-disc pl-5 mt-2 space-y-2">
-                            <li>真人老師狀態不好時，可能講得比較少。</li>
-                            <li>問題太多時，有些細節可能沒說到。</li>
-                            <li>牌面太複雜時，可能漏掉某些組合。</li>
-                            <li>不同老師經驗不同，解讀角度也可能差很多。</li>
-                          </ul>
-                        </div>
-
                         <div className="bg-[#D1BE9B]/10 p-5 rounded-2xl border border-[#D1BE9B]/20 text-[#31353A]/80 mt-8 shadow-sm">
                           <div className="font-medium text-[#A38D6B] mb-2 flex items-center gap-2 text-[14px]" style={{ fontFamily: 'Noto Serif TC, serif' }}>
                             <CatListening className="w-7 h-7" /> Mochi 的悄悄話：
                           </div>
                           <p className="text-[13px] leading-[2.2] tracking-wider italic" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                             「在整理資料、比對規則、避免漏看這件事上，AI 真的很有優勢。<br/>
-                            如果你想要的是穩定、完整、有依據的分析，AI 其實不是比較不準，反而可能比單純靠人工更不容易出錯。」
+                            如果你想要的是穩定、完整、有依據的分析，AI 可以先幫你把牌面訊息整理成一個清楚的方向。」
                           </p>
                         </div>
                       </div>
@@ -2611,51 +2601,6 @@ export default function TarotPage() {
                   </div>
 
                   <div className="flex flex-col gap-3">
-                    <div className="rounded-2xl border border-[#06C755]/22 bg-[#F7FFF9]/72 p-5 shadow-[0_14px_38px_rgba(38,115,69,0.07)] backdrop-blur-sm">
-                      <div className="mb-3 flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-2 text-[#267345]">
-                          <MessageCircle className="h-4 w-4" />
-                          <p className="text-[14px] tracking-[0.16em]"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                            真人塔羅
-                          </p>
-                        </div>
-                        <span className="shrink-0 rounded-full border border-[#06C755]/24 bg-white/70 px-3 py-1 text-[11px] tracking-[0.14em] text-[#267345]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                          付費
-                        </span>
-                      </div>
-                      <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/66"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        真人塔羅師重新開牌，適合深入看關係走向、對方想法、下一步行動。
-                      </p>
-                      <p className="mt-3 text-[12px] tracking-[0.1em] text-[#267345]"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                        單題 NT$300｜30 分鐘問到飽 NT$500
-                      </p>
-                      <div className="mt-4 flex flex-col gap-3">
-                        <a href={OFFICIAL_LINE_URL} target="_blank" rel="noreferrer">
-                          <button
-                            type="button"
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#06C755] px-5 py-3 text-[11px] tracking-[0.16em] text-white transition-all duration-300 hover:bg-[#05B84F] active:scale-95"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                          >
-                            官方 LINE 諮詢預約
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </button>
-                        </a>
-                        <Link href="/tarot/teacher">
-                          <button
-                            type="button"
-                            className="inline-flex w-full items-center justify-center rounded-full border border-[#267345]/25 bg-white/60 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] transition-all duration-300 hover:bg-white active:scale-95"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                          >
-                            查看塔羅師資歷
-                          </button>
-                        </Link>
-                      </div>
-                    </div>
-
                     <div className="glass-panel rounded-2xl border border-[#D1BE9B]/20 p-5">
                       <div className="mb-3 flex items-start justify-between gap-3">
                         <p className="text-[14px] tracking-[0.16em] text-[#8A7250]"
@@ -2743,6 +2688,51 @@ export default function TarotPage() {
                           ))}
                         </div>
                       )}
+                    </div>
+
+                    <div className="rounded-2xl border border-[#06C755]/22 bg-[#F7FFF9]/72 p-5 shadow-[0_14px_38px_rgba(38,115,69,0.07)] backdrop-blur-sm">
+                      <div className="mb-3 flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-2 text-[#267345]">
+                          <MessageCircle className="h-4 w-4" />
+                          <p className="text-[14px] tracking-[0.16em]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                            真人塔羅
+                          </p>
+                        </div>
+                        <span className="shrink-0 rounded-full border border-[#06C755]/24 bg-white/70 px-3 py-1 text-[11px] tracking-[0.14em] text-[#267345]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          付費
+                        </span>
+                      </div>
+                      <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/66"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        真人塔羅師重新開牌，適合深入看關係走向、對方想法、下一步行動。
+                      </p>
+                      <p className="mt-3 text-[12px] tracking-[0.1em] text-[#267345]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                        單題 NT$300｜30 分鐘問到飽 NT$500
+                      </p>
+                      <div className="mt-4 flex flex-col gap-3">
+                        <a href={OFFICIAL_LINE_URL} target="_blank" rel="noreferrer">
+                          <button
+                            type="button"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#06C755] px-5 py-3 text-[11px] tracking-[0.16em] text-white transition-all duration-300 hover:bg-[#05B84F] active:scale-95"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          >
+                            官方 LINE 諮詢預約
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </button>
+                        </a>
+                        <Link href="/tarot/teacher">
+                          <button
+                            type="button"
+                            className="inline-flex w-full items-center justify-center rounded-full border border-[#267345]/25 bg-white/60 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] transition-all duration-300 hover:bg-white active:scale-95"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          >
+                            查看塔羅師資歷
+                          </button>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
