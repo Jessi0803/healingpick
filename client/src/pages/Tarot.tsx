@@ -20,7 +20,7 @@ import { CatWaving, CatListening } from '@/components/CatElements';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ReadingFeedback from '@/components/ReadingFeedback';
 import { getMoodPlushieOpening, MoodClawMachine, type MoodPlushie } from '@/components/MoodClawMachine';
-import { Copy, ExternalLink, Mail, MessageCircle } from 'lucide-react';
+import { ExternalLink, Mail, MessageCircle } from 'lucide-react';
 import { recommendForCategory, recommendForTarot, type RecommendationCategory } from '@/data/recommend';
 import { getContextualRecommendationReason, getProductImageStyle, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
@@ -1074,30 +1074,6 @@ export default function TarotPage() {
     readingRecommendation?.message ??
     TAROT_RECOMMENDATION_MESSAGES[questionType] ??
     TAROT_RECOMMENDATION_MESSAGES.growth;
-  const humanTarotBrief = [
-    '我想預約真人塔羅。',
-    '',
-    `我的問題：${question.trim() || '想請塔羅師協助我整理目前最需要看的問題。'}`,
-    '',
-    '這次 AI 占卜讓我想深入看的地方：',
-    drawnCards.length > 0
-      ? drawnCards
-          .map((drawn, index) => `${SPREAD_POSITIONS[index].readingLabel}：${drawn.card.name}${drawn.reversed ? '逆位' : '正位'}`)
-          .join('\n')
-      : '我已經在網站做過 AI 占卜，想請真人塔羅師重新開牌深入解讀。',
-    '',
-    '我知道真人塔羅會使用另一副牌卡重新開牌，費用與時段請再協助我確認。',
-  ].join('\n');
-
-  async function copyHumanTarotBrief() {
-    try {
-      await navigator.clipboard.writeText(humanTarotBrief);
-      toast.success('已複製給官方 LINE 的預約摘要');
-    } catch {
-      toast.error('複製失敗，可以直接加入 LINE 後手動傳送問題');
-    }
-  }
-
   const handleTarotChoiceMove = (event: PointerEvent<HTMLElement>) => {
     if (
       typeof window === 'undefined' ||
@@ -2619,92 +2595,6 @@ export default function TarotPage() {
                 )}
               </div>
 
-              {llmInterpretation && (
-                <div className="mb-8 overflow-hidden rounded-2xl border border-[#06C755]/22 bg-[#F7FFF9]/72 shadow-[0_16px_46px_rgba(38,115,69,0.08)] backdrop-blur-sm">
-                  <div className="grid grid-cols-1 gap-0 lg:grid-cols-[1fr_0.9fr]">
-                    <div className="p-6 md:p-7">
-                      <div className="mb-4 flex items-center gap-2 text-[#267345]">
-                        <MessageCircle className="h-4 w-4" />
-                        <p className="text-[12px] tracking-[0.22em]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                          真人塔羅師諮詢
-                        </p>
-                      </div>
-                      <h3 className="text-[17px] leading-[1.8] tracking-[0.12em] text-[#31353A]"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        針對結果還有問題嗎？可以來問問真人塔羅師 ♡
-                      </h3>
-                      <p className="mt-3 text-[12.5px] leading-[2] tracking-[0.08em] text-[#31353A]/66"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        如果看完 AI 解讀後，還想針對對方想法、關係走向或下一步行動深入追問，可以加入官方 LINE 預約真人塔羅。
-                      </p>
-
-                      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                        <Link href="/tarot/teacher">
-                          <button
-                            type="button"
-                            className="inline-flex w-full items-center justify-center rounded-full border border-[#267345]/25 bg-white/60 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] transition-all duration-300 hover:bg-white active:scale-95 sm:w-auto"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                          >
-                            查看塔羅師資歷
-                          </button>
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={copyHumanTarotBrief}
-                          className="inline-flex items-center justify-center gap-2 rounded-full border border-[#267345]/25 bg-white/60 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] transition-all duration-300 hover:bg-white active:scale-95"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                        >
-                          <Copy className="h-3.5 w-3.5" />
-                          複製預約摘要
-                        </button>
-                        <a href={OFFICIAL_LINE_URL} target="_blank" rel="noreferrer">
-                          <button
-                            type="button"
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#06C755] px-5 py-3 text-[11px] tracking-[0.16em] text-white transition-all duration-300 hover:bg-[#05B84F] active:scale-95 sm:w-auto"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                          >
-                            開啟官方 LINE
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </button>
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-[#06C755]/16 bg-white/46 p-6 lg:border-l lg:border-t-0 md:p-7">
-                      <p className="text-[11px] tracking-[0.24em] text-[#267345]"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                        真人塔羅價格
-                      </p>
-                      <div className="mt-4 space-y-3">
-                        {[
-                          ['30 分鐘問到飽', 'NT$500'],
-                          ['單題解讀', 'NT$300'],
-                        ].map(([label, price]) => (
-                          <div key={label} className="flex items-center justify-between gap-4 rounded-xl border border-[#06C755]/14 bg-[#F7FFF9]/72 px-4 py-3">
-                            <span className="flex items-center gap-3">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#06C755]" />
-                            <span className="text-[12px] tracking-[0.1em] text-[#31353A]/70"
-                              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                              {label}
-                            </span>
-                            </span>
-                            <strong className="text-[15px] tracking-[0.08em] text-[#267345]"
-                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                              {price}
-                            </strong>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="mt-4 text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/54"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        可預約時段與服務細節，請至官方 LINE 確認。
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Paid follow-up */}
               {llmInterpretation && (
                 <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
@@ -2775,6 +2665,83 @@ export default function TarotPage() {
                       ))}
                     </div>
                   )}
+                </div>
+              )}
+
+              {llmInterpretation && (
+                <div className="mb-8 overflow-hidden rounded-2xl border border-[#06C755]/22 bg-[#F7FFF9]/72 shadow-[0_16px_46px_rgba(38,115,69,0.08)] backdrop-blur-sm">
+                  <div className="grid grid-cols-1 gap-0 lg:grid-cols-[1fr_0.9fr]">
+                    <div className="p-6 md:p-7">
+                      <div className="mb-4 flex items-center gap-2 text-[#267345]">
+                        <MessageCircle className="h-4 w-4" />
+                        <p className="text-[12px] tracking-[0.22em]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                          真人塔羅師諮詢
+                        </p>
+                      </div>
+                      <h3 className="text-[17px] leading-[1.8] tracking-[0.12em] text-[#31353A]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        針對結果還有問題嗎？可以來問問真人塔羅師 ♡
+                      </h3>
+                      <p className="mt-3 text-[12.5px] leading-[2] tracking-[0.08em] text-[#31353A]/66"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        如果看完 AI 解讀後，還想針對對方想法、關係走向或下一步行動深入追問，可以加入官方 LINE 預約真人塔羅。
+                      </p>
+
+                      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                        <Link href="/tarot/teacher">
+                          <button
+                            type="button"
+                            className="inline-flex w-full items-center justify-center rounded-full border border-[#267345]/25 bg-white/60 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] transition-all duration-300 hover:bg-white active:scale-95 sm:w-auto"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          >
+                            查看塔羅師資歷
+                          </button>
+                        </Link>
+                        <a href={OFFICIAL_LINE_URL} target="_blank" rel="noreferrer">
+                          <button
+                            type="button"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#06C755] px-5 py-3 text-[11px] tracking-[0.16em] text-white transition-all duration-300 hover:bg-[#05B84F] active:scale-95 sm:w-auto"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          >
+                            官方 LINE 諮詢預約
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </button>
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-[#06C755]/16 bg-white/46 p-6 lg:border-l lg:border-t-0 md:p-7">
+                      <p className="text-[11px] tracking-[0.24em] text-[#267345]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                        真人塔羅價格
+                      </p>
+                      <div className="mt-4 space-y-3">
+                        {[
+                          ['30 分鐘問到飽', 'NT$500'],
+                          ['單題解讀', 'NT$300'],
+                        ].map(([label, price]) => (
+                          <div key={label} className="flex items-center justify-between gap-4 rounded-xl border border-[#06C755]/14 bg-[#F7FFF9]/72 px-4 py-3">
+                            <span className="flex items-center gap-3">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#06C755]" />
+                              <span className="text-[12px] tracking-[0.1em] text-[#31353A]/70"
+                                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                {label}
+                              </span>
+                            </span>
+                            <strong className="text-[15px] tracking-[0.08em] text-[#267345]"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
+                              {price}
+                            </strong>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-4 text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/54"
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                        可預約時段與服務細節，請至官方 LINE 確認。
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
 

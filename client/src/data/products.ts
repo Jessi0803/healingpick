@@ -431,24 +431,13 @@ export function getProductImageStyle(product: Product): {
   };
 }
 
-function trimContext(context?: string): string | null {
-  if (!context) return null;
-  const normalized = context.replace(/\s+/g, ' ').replace(/[。.!！?？]+$/g, '').trim();
-  if (!normalized) return null;
-  return normalized.length > 42 ? `${normalized.slice(0, 42)}...` : normalized;
-}
-
 export function getContextualRecommendationReason(
   product: Product,
-  context?: string,
+  _context?: string,
   role: 'primary' | 'secondary' = 'primary',
 ): string {
-  const contextText = trimContext(context);
-  const opening = contextText
-    ? `你這次的訊息裡，有「${contextText}」的提醒。`
-    : '如果你最近也有類似的感覺，';
   const body = role === 'secondary' ? product.pairingReason : product.gentleRecommendation;
-  return `${opening}${body}`;
+  return body;
 }
 
 export const CATEGORY_OPTIONS: { id: string; label: string }[] = [
