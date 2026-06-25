@@ -637,6 +637,7 @@ export default function TarotPage() {
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
+  const [isFollowUpOpen, setIsFollowUpOpen] = useState(false);
   const [pendingStartAfterLogin, setPendingStartAfterLogin] = useState(false);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -896,6 +897,7 @@ export default function TarotPage() {
     setReadingRecommendation(null);
     setFollowUpQuestion('');
     setFollowUpExchanges([]);
+    setIsFollowUpOpen(false);
     setPendingFollowUpAfterLogin(false);
     interpretMutation.mutate({
       question,
@@ -2595,151 +2597,152 @@ export default function TarotPage() {
                 )}
               </div>
 
-              {/* Paid follow-up */}
               {llmInterpretation && (
-                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 mb-8">
-                  <div className="flex flex-col gap-2 mb-4">
-                    <p className="text-[13px] tracking-[0.2em] text-[#8A7250]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                      ◎ 想繼續問下去嗎
-                    </p>
-                    <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+                <div className="mb-8">
+                  <div className="mb-4">
+                    <h3 className="text-[18px] leading-[1.7] tracking-[0.14em] text-[#31353A]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                      針對結果還有問題嗎？
+                    </h3>
+                    <p className="mt-2 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
                       style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      Mochi 會基於剛剛的牌面，給你一段更貼近問題的補充回應。
+                      選一種方式繼續看下去。
                     </p>
                   </div>
 
-                  <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
-                    <textarea
-                      value={followUpQuestion}
-                      onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
-                      maxLength={300}
-                      placeholder="例如：他現在還喜歡我嗎？我接下來該主動嗎？"
-                      className="min-h-[72px] resize-none rounded-xl border border-[#D1BE9B]/20 bg-white/55 px-3.5 py-2.5 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                    />
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                      <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        {followUpQuestion.length}/300
-                      </span>
-                      <button
-                        type="submit"
-                        disabled={!followUpQuestion.trim() || followUpMutation.isPending}
-                        className="px-6 py-2.5 text-[11px] tracking-[0.18em] bg-[#3D4144] text-[#FAF7F4] rounded-full transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 hover:bg-[#D1BE9B] hover:text-[#31353A]"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                      >
-                        {followUpMutation.isPending
-                          ? tarotFollowUpWaitingMessage
-                          : '請 Mochi 回應'}
-                      </button>
-                    </div>
-                  </form>
-
-                  {followUpMutation.isError && (
-                    <p className="mt-3 text-[12px] tracking-[0.08em] text-[#EAA8AC]"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                      追問暫時無法送出，請稍後再試。
-                    </p>
-                  )}
-
-                  {followUpExchanges.length > 0 && (
-                    <div className="mt-5 flex flex-col gap-3">
-                      {followUpExchanges.map((item, index) => (
-                        <div key={`${index}-${item.question}`} className="rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
-                          <div className="mb-3 flex flex-col gap-1">
-                            <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
-                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                              Mochi 的補充回應
-                            </p>
-                            <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
-                              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                              你的追問：{item.question}
-                            </p>
-                          </div>
-                          <p className="text-[14.5px] leading-[2.1] tracking-[0.08em] text-[#31353A]/78 whitespace-pre-wrap"
-                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                            {item.answer}
+                  <div className="flex flex-col gap-3">
+                    <div className="rounded-2xl border border-[#06C755]/22 bg-[#F7FFF9]/72 p-5 shadow-[0_14px_38px_rgba(38,115,69,0.07)] backdrop-blur-sm">
+                      <div className="mb-3 flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-2 text-[#267345]">
+                          <MessageCircle className="h-4 w-4" />
+                          <p className="text-[14px] tracking-[0.16em]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                            真人塔羅
                           </p>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {llmInterpretation && (
-                <div className="mb-8 overflow-hidden rounded-2xl border border-[#06C755]/22 bg-[#F7FFF9]/72 shadow-[0_16px_46px_rgba(38,115,69,0.08)] backdrop-blur-sm">
-                  <div className="grid grid-cols-1 gap-0 lg:grid-cols-[1fr_0.9fr]">
-                    <div className="p-6 md:p-7">
-                      <div className="mb-4 flex items-center gap-2 text-[#267345]">
-                        <MessageCircle className="h-4 w-4" />
-                        <p className="text-[12px] tracking-[0.22em]"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                          真人塔羅師諮詢
-                        </p>
+                        <span className="shrink-0 rounded-full border border-[#06C755]/24 bg-white/70 px-3 py-1 text-[11px] tracking-[0.14em] text-[#267345]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          付費
+                        </span>
                       </div>
-                      <h3 className="text-[17px] leading-[1.8] tracking-[0.12em] text-[#31353A]"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                        針對結果還有問題嗎？可以來問問真人塔羅師 ♡
-                      </h3>
-                      <p className="mt-3 text-[12.5px] leading-[2] tracking-[0.08em] text-[#31353A]/66"
+                      <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/66"
                         style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        如果看完 AI 解讀後，還想針對對方想法、關係走向或下一步行動深入追問，可以加入官方 LINE 預約真人塔羅。
+                        真人塔羅師重新開牌，適合深入看關係走向、對方想法、下一步行動。
                       </p>
-
-                      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                        <Link href="/tarot/teacher">
-                          <button
-                            type="button"
-                            className="inline-flex w-full items-center justify-center rounded-full border border-[#267345]/25 bg-white/60 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] transition-all duration-300 hover:bg-white active:scale-95 sm:w-auto"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                          >
-                            查看塔羅師資歷
-                          </button>
-                        </Link>
+                      <p className="mt-3 text-[12px] tracking-[0.1em] text-[#267345]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                        單題 NT$300｜30 分鐘問到飽 NT$500
+                      </p>
+                      <div className="mt-4 flex flex-col gap-3">
                         <a href={OFFICIAL_LINE_URL} target="_blank" rel="noreferrer">
                           <button
                             type="button"
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#06C755] px-5 py-3 text-[11px] tracking-[0.16em] text-white transition-all duration-300 hover:bg-[#05B84F] active:scale-95 sm:w-auto"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#06C755] px-5 py-3 text-[11px] tracking-[0.16em] text-white transition-all duration-300 hover:bg-[#05B84F] active:scale-95"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                           >
                             官方 LINE 諮詢預約
                             <ExternalLink className="h-3.5 w-3.5" />
                           </button>
                         </a>
+                        <Link href="/tarot/teacher">
+                          <button
+                            type="button"
+                            className="inline-flex w-full items-center justify-center rounded-full border border-[#267345]/25 bg-white/60 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] transition-all duration-300 hover:bg-white active:scale-95"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          >
+                            查看塔羅師資歷
+                          </button>
+                        </Link>
                       </div>
                     </div>
 
-                    <div className="border-t border-[#06C755]/16 bg-white/46 p-6 lg:border-l lg:border-t-0 md:p-7">
-                      <p className="text-[11px] tracking-[0.24em] text-[#267345]"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                        真人塔羅價格
-                      </p>
-                      <div className="mt-4 space-y-3">
-                        {[
-                          ['30 分鐘問到飽', 'NT$500'],
-                          ['單題解讀', 'NT$300'],
-                        ].map(([label, price]) => (
-                          <div key={label} className="flex items-center justify-between gap-4 rounded-xl border border-[#06C755]/14 bg-[#F7FFF9]/72 px-4 py-3">
-                            <span className="flex items-center gap-3">
-                              <span className="h-1.5 w-1.5 rounded-full bg-[#06C755]" />
-                              <span className="text-[12px] tracking-[0.1em] text-[#31353A]/70"
-                                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                                {label}
-                              </span>
-                            </span>
-                            <strong className="text-[15px] tracking-[0.08em] text-[#267345]"
-                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
-                              {price}
-                            </strong>
-                          </div>
-                        ))}
+                    <div className="glass-panel rounded-2xl border border-[#D1BE9B]/20 p-5">
+                      <div className="mb-3 flex items-start justify-between gap-3">
+                        <p className="text-[14px] tracking-[0.16em] text-[#8A7250]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                          Mochi 回覆
+                        </p>
+                        <span className="shrink-0 rounded-full border border-[#D1BE9B]/28 bg-white/55 px-3 py-1 text-[11px] tracking-[0.14em] text-[#8A7250]"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          免費
+                        </span>
                       </div>
-                      <p className="mt-4 text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/54"
+                      <p className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
                         style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                        可預約時段與服務細節，請至官方 LINE 確認。
+                        根據剛剛的牌面，免費補充回答一個追問。
                       </p>
+
+                      {!isFollowUpOpen && (
+                        <button
+                          type="button"
+                          onClick={() => setIsFollowUpOpen(true)}
+                          className="mt-4 w-full rounded-full bg-[#3D4144] px-5 py-3 text-[11px] tracking-[0.18em] text-[#FAF7F4] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        >
+                          免費追問 Mochi
+                        </button>
+                      )}
+
+                      {isFollowUpOpen && (
+                        <div className="mt-4">
+                          <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
+                            <textarea
+                              value={followUpQuestion}
+                              onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
+                              maxLength={300}
+                              placeholder="例如：他現在還喜歡我嗎？我接下來該主動嗎？"
+                              className="min-h-[82px] resize-none rounded-xl border border-[#D1BE9B]/20 bg-white/55 px-3.5 py-2.5 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
+                              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                            />
+                            <div className="flex flex-col items-stretch gap-3">
+                              <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
+                                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                {followUpQuestion.length}/300
+                              </span>
+                              <button
+                                type="submit"
+                                disabled={!followUpQuestion.trim() || followUpMutation.isPending}
+                                className="w-full rounded-full bg-[#3D4144] px-6 py-3 text-[11px] tracking-[0.18em] text-[#FAF7F4] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
+                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                              >
+                                {followUpMutation.isPending
+                                  ? tarotFollowUpWaitingMessage
+                                  : '請 Mochi 回應'}
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      )}
+
+                      {followUpMutation.isError && (
+                        <p className="mt-3 text-[12px] tracking-[0.08em] text-[#EAA8AC]"
+                          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                          追問暫時無法送出，請稍後再試。
+                        </p>
+                      )}
+
+                      {followUpExchanges.length > 0 && (
+                        <div className="mt-5 flex flex-col gap-3">
+                          {followUpExchanges.map((item, index) => (
+                            <div key={`${index}-${item.question}`} className="rounded-2xl border border-[#D1BE9B]/18 bg-white/45 px-5 py-4">
+                              <div className="mb-3 flex flex-col gap-1">
+                                <p className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
+                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                                  Mochi 的補充回應
+                                </p>
+                                <p className="text-[12px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
+                                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                  你的追問：{item.question}
+                                </p>
+                              </div>
+                              <p className="text-[14.5px] leading-[2.1] tracking-[0.08em] text-[#31353A]/78 whitespace-pre-wrap"
+                                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                {item.answer}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2763,6 +2766,7 @@ export default function TarotPage() {
                       setQuestion('');
                       setFollowUpQuestion('');
                       setFollowUpExchanges([]);
+                      setIsFollowUpOpen(false);
                     }}
                     className="w-full sm:w-44 px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
