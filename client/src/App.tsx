@@ -4,10 +4,12 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import CatCompanion from "./components/CatCompanion";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Tarot from "./pages/Tarot";
+import TarotKnowledge from "./pages/TarotKnowledge";
+import TarotReviews from "./pages/TarotReviews";
+import TarotTeacher from "./pages/TarotTeacher";
 import Ziwei from "./pages/Ziwei";
 import Dream from "./pages/Dream";
 import Fortune from "./pages/Fortune";
@@ -28,6 +30,9 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
+      <Route path="/tarot/knowledge" component={TarotKnowledge} />
+      <Route path="/tarot/reviews" component={TarotReviews} />
+      <Route path="/tarot/teacher" component={TarotTeacher} />
       <Route path="/tarot" component={Tarot} />
       <Route path="/ziwei" component={Ziwei} />
       <Route path="/dream" component={Dream} />
@@ -55,7 +60,6 @@ function App() {
           <Toaster />
           <Seo />
           <Router />
-          <CatCompanion />
           <PostcardMailbox />
           <LoginDialog />
         </TooltipProvider>

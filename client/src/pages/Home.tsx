@@ -18,6 +18,8 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { PRODUCTS, getProductImageStyle } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
+const OFFICIAL_LINE_URL = 'https://lin.ee/6PBHLFX';
+
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
   <svg viewBox="0 0 80 100" fill="none" className="w-full h-full drop-shadow-[0_4px_16px_rgba(160,142,195,0.5)]">
@@ -109,6 +111,24 @@ const features = [
     desc: '你是別人的什麼香味？前世忙什麼？零預算趣味心理測驗，測出你的專屬水晶。',
     href: '/quiz',
     color: '#D4C9B8',  // 精選暖灰，比背景深一階
+  },
+];
+
+const divinationFlow = [
+  {
+    step: '01',
+    title: '免費 AI 占卜',
+    desc: '使用 AI 專屬牌卡，先把心裡的問題、目前狀態和可能方向整理出來。',
+  },
+  {
+    step: '02',
+    title: '看完結果再決定',
+    desc: 'AI 解讀會完整呈現，不把重點藏起來；你可以先自己消化，也可以繼續追問。',
+  },
+  {
+    step: '03',
+    title: '官方 LINE 預約真人',
+    desc: '想深入時，到官方 LINE 確認費用、時段與塔羅師安排，由真人使用另一副牌卡重新開牌。',
   },
 ];
 
@@ -408,6 +428,121 @@ export default function Home() {
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 pointer-events-none">
           <span className="text-[10px] tracking-[0.3em] text-[#31353A]" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>SCROLL</span>
           <div className="w-px h-8 bg-gradient-to-b from-[#D1BE9B] to-transparent" />
+        </div>
+      </section>
+
+      {/* ── AI TO HUMAN TAROT FLOW ───────────────────────────────────────── */}
+      <section className="px-6 py-18 md:px-10 md:py-22">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="animate-fade-in-up">
+            <span
+              className="text-[11px] uppercase tracking-[0.4em] text-[#D1BE9B]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
+            >
+              AI & Human Tarot
+            </span>
+            <h2
+              className="mt-3 text-xl font-extralight leading-[1.9] tracking-[0.16em] text-[#31353A] md:text-2xl"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
+            >
+              先免費整理方向，想深入再預約真人塔羅
+            </h2>
+            <p
+              className="mt-4 max-w-xl text-[13px] leading-[2.1] tracking-[0.08em] text-[#31353A]/66"
+              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+            >
+              AI 占卜和真人塔羅會使用不同牌卡。AI 適合先看見輪廓；真人塔羅則由塔羅師依照你的問題與背景重新開牌，付費做更細緻的個人解讀。
+            </p>
+
+            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {divinationFlow.map((item) => (
+                <div
+                  key={item.step}
+                  className="rounded-xl border border-[#D1BE9B]/20 bg-white/42 px-5 py-5 shadow-[0_10px_34px_rgba(180,160,130,0.08)] backdrop-blur-sm"
+                >
+                  <p
+                    className="text-[11px] tracking-[0.24em] text-[#A38D6B]"
+                    style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                  >
+                    {item.step}
+                  </p>
+                  <h3
+                    className="mt-2 text-[13px] tracking-[0.14em] text-[#31353A]/88"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="mt-3 text-[12px] leading-[1.9] tracking-[0.06em] text-[#31353A]/60"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                  >
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/tarot">
+                <button
+                  className="w-full rounded-full bg-[#3D4144] px-7 py-3 text-xs tracking-[0.22em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 sm:w-auto"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  開始免費 AI 占卜
+                </button>
+              </Link>
+              <a href={OFFICIAL_LINE_URL} target="_blank" rel="noreferrer">
+                <button
+                  className="w-full rounded-full border border-[#06C755]/35 bg-[#06C755]/10 px-7 py-3 text-xs tracking-[0.2em] text-[#267345] transition-all duration-500 hover:bg-[#06C755] hover:text-white active:scale-95 sm:w-auto"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  用 LINE 預約真人塔羅
+                </button>
+              </a>
+            </div>
+          </div>
+
+          <div className="relative mx-auto h-[360px] w-full max-w-[420px] animate-fade-in-up delay-200">
+            <div className="absolute left-4 top-6 w-40 rotate-[-8deg] rounded-xl border border-[#D1BE9B]/28 bg-[#FBF7EF] p-4 shadow-[0_18px_48px_rgba(61,65,68,0.16)]">
+              <div className="aspect-[2/3] rounded-lg border border-[#D1BE9B]/22 bg-[linear-gradient(145deg,#F9F4EC,#ECE5D9)] p-4">
+                <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+                  <span className="text-2xl text-[#A38D6B]">✦</span>
+                  <p
+                    className="text-[11px] leading-[1.8] tracking-[0.18em] text-[#6F5A3A]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    AI 專屬牌卡
+                  </p>
+                </div>
+              </div>
+              <p
+                className="mt-3 text-center text-[11px] tracking-[0.16em] text-[#31353A]/58"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                免費整理方向
+              </p>
+            </div>
+
+            <div className="absolute bottom-2 right-2 w-48 rotate-[7deg] rounded-xl border border-[#3D4144]/16 bg-[#3D4144] p-4 shadow-[0_22px_60px_rgba(61,65,68,0.22)]">
+              <div className="aspect-[2/3] rounded-lg border border-[#D1BE9B]/45 bg-[linear-gradient(145deg,#272A2E,#4B4035)] p-4">
+                <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+                  <span className="text-2xl text-[#D1BE9B]">◇</span>
+                  <p
+                    className="text-[11px] leading-[1.8] tracking-[0.18em] text-[#F7EFE2]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    真人塔羅牌卡
+                  </p>
+                </div>
+              </div>
+              <p
+                className="mt-3 text-center text-[11px] tracking-[0.16em] text-[#F7EFE2]/72"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                付費重新開牌
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -53,10 +53,16 @@ const sections = [
     ],
   },
   {
+    title: '素材授權說明',
+    items: [
+      'Tarot card images are based on the public domain Rider-Waite-Smith tarot deck, illustrated by Pamela Colman Smith and first published in 1909.',
+    ],
+  },
+  {
     title: '客服與申訴方式',
     items: [
       'Email：baby90522@gmail.com',
-      'LINE 官方帳號：https://line.me/R/ti/p/%40180itfru',
+      'LINE 官方帳號：https://lin.ee/6PBHLFX',
       'Instagram：https://www.instagram.com/healing.pick_',
     ],
   },

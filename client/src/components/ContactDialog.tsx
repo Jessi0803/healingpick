@@ -109,7 +109,7 @@ export default function ContactDialog({ isOpen, onClose, productName }: ContactD
 
         <div className="flex flex-col gap-3 relative z-10">
           <a
-            href="https://line.me/R/ti/p/%40180itfru"
+            href="https://lin.ee/6PBHLFX"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onClose}

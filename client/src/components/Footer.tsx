@@ -99,7 +99,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { label: 'Instagram', href: 'https://www.instagram.com/healing.pick_?igsh=MWQwOWViNXB2MTg5cA%3D%3D&utm_source=qr' },
-                { label: 'LINE 官方帳號', href: 'https://line.me/R/ti/p/%40180itfru' },
+                { label: 'LINE 官方帳號', href: 'https://lin.ee/6PBHLFX' },
                 { label: 'Email：baby90522@gmail.com', href: 'mailto:baby90522@gmail.com' },
               ].map((item) => (
                 <li key={item.label}>
