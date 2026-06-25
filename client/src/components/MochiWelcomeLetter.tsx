@@ -41,7 +41,7 @@ export default function MochiWelcomeLetter() {
           <X size={18} />
         </button>
 
-        <div className="relative overflow-y-auto px-5 py-7 sm:px-8 sm:py-9">
+        <div className="relative max-h-[88vh] overflow-y-auto px-5 py-7 sm:px-8 sm:py-9">
           <div className="mb-5 flex items-center justify-center gap-3 text-[#A38D6B]">
             <span className="h-px w-12 bg-[#D1BE9B]/65" />
             <Sparkles size={18} strokeWidth={1.45} />
@@ -88,7 +88,7 @@ export default function MochiWelcomeLetter() {
               href="https://lin.ee/6PBHLFX"
               target="_blank"
               rel="noreferrer"
-              className="mx-auto inline-flex min-h-11 items-center justify-center rounded-full border border-[#A38D6B]/45 bg-[#31353A] px-5 py-2.5 text-[13px] tracking-[0.12em] text-[#FFFDF8] shadow-[0_12px_26px_rgba(49,53,58,0.18)] transition hover:bg-[#4B4440] focus-visible:ring-2 focus-visible:ring-[#D1BE9B] sm:text-[14px]"
+              className="mx-auto mt-1 inline-flex min-h-11 items-center justify-center rounded-full border border-[#A38D6B]/45 bg-[#31353A] px-5 py-2.5 text-[13px] tracking-[0.12em] text-[#FFFDF8] shadow-[0_12px_26px_rgba(49,53,58,0.18)] transition hover:bg-[#4B4440] focus-visible:ring-2 focus-visible:ring-[#D1BE9B] sm:text-[14px]"
             >
               打開官方 LINE
             </a>
