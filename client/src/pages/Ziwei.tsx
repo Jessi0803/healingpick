@@ -23,6 +23,7 @@ import { getMoodPlushieOpening, MoodClawMachine, type MoodPlushie } from '@/comp
 import { recommendForCategory, recommendForZiwei, type RecommendationCategory } from '@/data/recommend';
 import { getContextualRecommendationReason, getProductImageStyle, type Product } from '@/data/products';
 import { useRotatingText } from '@/hooks/useRotatingText';
+import { normalizeDateInput, toDateInputValue } from '@/lib/dateInput';
 
 const ZIWEI_WAITING_MESSAGES = [
   'Mochi 正在整理線索，但看起來像在發呆。',
@@ -400,6 +401,7 @@ type FollowUpExchange = {
 
 const ZIWEI_PENDING_FOLLOW_UP_KEY = 'healingpick:ziwei-pending-follow-up';
 const ZIWEI_PENDING_GENERATE_KEY = 'healingpick:ziwei-pending-generate';
+const MIN_BIRTH_DATE = '1900-01-01';
 const FOLLOW_UP_LOGIN_PROMPT = {
   title: '登入會員，獲得更準確的個人解析',
   subtitle: '加入會員後，系統能依據你過往的資料與使用紀錄，讓每次解析更符合你的狀態與脈絡。',
@@ -534,12 +536,15 @@ export default function ZiweiPage() {
 
   const savePendingGenerate = useCallback(() => {
     if (typeof window === 'undefined') return;
+    const today = toDateInputValue();
     window.sessionStorage.setItem(ZIWEI_PENDING_GENERATE_KEY, JSON.stringify({
-      birthDate,
+      birthDate: normalizeDateInput(birthDate, { min: MIN_BIRTH_DATE, max: today }) ?? birthDate,
       hourValue,
       gender,
       focusArea,
-      partnerBirthDate,
+      partnerBirthDate: partnerBirthDate
+        ? normalizeDateInput(partnerBirthDate, { min: MIN_BIRTH_DATE, max: today }) ?? partnerBirthDate
+        : '',
     }));
   }, [birthDate, focusArea, gender, hourValue, partnerBirthDate]);
 
@@ -656,10 +661,27 @@ export default function ZiweiPage() {
   }, [interpretMutation.isPending, llmInterpretation, scrollToSection]);
 
   function handleGenerate() {
-    if (!birthDate) {
-      toast.error('請輸入出生日期');
+    const today = toDateInputValue();
+    const normalizedBirthDate = normalizeDateInput(birthDate, { min: MIN_BIRTH_DATE, max: today });
+    const normalizedPartnerBirthDate = partnerBirthDate
+      ? normalizeDateInput(partnerBirthDate, { min: MIN_BIRTH_DATE, max: today })
+      : null;
+
+    if (!normalizedBirthDate) {
+      toast.error('請輸入有效的出生日期', {
+        description: '可輸入 1998-08-03、1998/8/3 或 19980803',
+      });
       return;
     }
+    if (partnerBirthDate && !normalizedPartnerBirthDate) {
+      toast.error('請輸入有效的對方生日', {
+        description: '可輸入 1998-08-03、1998/8/3 或 19980803',
+      });
+      return;
+    }
+    setBirthDate(normalizedBirthDate);
+    setPartnerBirthDate(normalizedPartnerBirthDate ?? '');
+
     const c = creditsQuery.data;
     if (
       c?.enabled &&
@@ -698,11 +720,11 @@ export default function ZiweiPage() {
     setPendingFollowUpAfterLogin(false);
     setSelectedPalaceName(null);
     interpretMutation.mutate({
-      solarDate: birthDate,
+      solarDate: normalizedBirthDate,
       timeIndex: parseInt(hourValue),
       gender,
       focusArea: focusArea || undefined,
-      partnerSolarDate: partnerBirthDate || undefined,
+      partnerSolarDate: normalizedPartnerBirthDate || undefined,
     });
   }
 
@@ -795,11 +817,14 @@ export default function ZiweiPage() {
         focusArea?: string;
         partnerBirthDate?: string;
       };
-      const nextBirthDate = pending.birthDate || birthDate;
+      const today = toDateInputValue();
+      const nextBirthDate = normalizeDateInput(pending.birthDate ?? '', { min: MIN_BIRTH_DATE, max: today }) ?? birthDate;
       const nextHourValue = pending.hourValue || hourValue;
       const nextGender = pending.gender || gender;
       const nextFocusArea = pending.focusArea ?? '';
-      const nextPartnerBirthDate = pending.partnerBirthDate ?? '';
+      const nextPartnerBirthDate = pending.partnerBirthDate
+        ? normalizeDateInput(pending.partnerBirthDate, { min: MIN_BIRTH_DATE, max: today }) ?? ''
+        : '';
 
       setBirthDate(nextBirthDate);
       setHourValue(nextHourValue);
@@ -872,7 +897,10 @@ export default function ZiweiPage() {
       const trimmedQuestion = pending.followUpQuestion?.trim();
       if (!trimmedQuestion || !pending.interpretation) return;
 
-      const nextBirthDate = pending.birthDate ?? birthDate;
+      const nextBirthDate = normalizeDateInput(pending.birthDate ?? '', {
+        min: MIN_BIRTH_DATE,
+        max: toDateInputValue(),
+      }) ?? birthDate;
       const nextHourValue = pending.hourValue ?? hourValue;
       const nextGender = pending.gender ?? gender;
       const nextFocusArea = pending.focusArea ?? '';
@@ -1273,17 +1301,31 @@ export default function ZiweiPage() {
                     陽曆生日
                   </label>
                   <input
-                    type="date"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="bday"
+                    placeholder="例如 1998-08-03 或 19980803"
                     value={birthDate}
-                    onChange={e => setBirthDate(e.target.value)}
-                    max={new Date().toISOString().split('T')[0]}
-                    min="1900-01-01"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setBirthDate(normalizeDateInput(value, {
+                        min: MIN_BIRTH_DATE,
+                        max: toDateInputValue(),
+                      }) ?? value);
+                    }}
+                    onBlur={(e) => {
+                      const normalized = normalizeDateInput(e.currentTarget.value, {
+                        min: MIN_BIRTH_DATE,
+                        max: toDateInputValue(),
+                      });
+                      if (normalized) setBirthDate(normalized);
+                    }}
                     className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-2.5 text-xs text-[#31353A]/80 tracking-wider focus:outline-none focus:border-[#D1BE9B]/50"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
                   <p className="mt-1.5 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                    ✦ 請輸入陽曆（國曆）生日，系統會自動換算農曆
+                    ✦ 請輸入陽曆（國曆）生日，可打 1998-08-03 或 19980803
                   </p>
                 </div>
 
@@ -1342,11 +1384,26 @@ export default function ZiweiPage() {
                     對方生日（選填，問感情用）
                   </label>
                   <input
-                    type="date"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder="例如 1998-08-03 或 19980803"
                     value={partnerBirthDate}
-                    onChange={e => setPartnerBirthDate(e.target.value)}
-                    max={new Date().toISOString().split('T')[0]}
-                    min="1900-01-01"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setPartnerBirthDate(normalizeDateInput(value, {
+                        min: MIN_BIRTH_DATE,
+                        max: toDateInputValue(),
+                      }) ?? value);
+                    }}
+                    onBlur={(e) => {
+                      if (!e.currentTarget.value) return;
+                      const normalized = normalizeDateInput(e.currentTarget.value, {
+                        min: MIN_BIRTH_DATE,
+                        max: toDateInputValue(),
+                      });
+                      if (normalized) setPartnerBirthDate(normalized);
+                    }}
                     className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-2.5 text-xs text-[#31353A]/80 tracking-wider focus:outline-none focus:border-[#D1BE9B]/50"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   />
@@ -1358,7 +1415,7 @@ export default function ZiweiPage() {
 
                 <button
                   onClick={handleGenerate}
-                  disabled={interpretMutation.isPending || !birthDate}
+                  disabled={interpretMutation.isPending || !birthDate.trim()}
                   className="w-full py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95 disabled:opacity-60"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   {interpretMutation.isPending ? (

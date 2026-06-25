@@ -11,6 +11,7 @@ import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Streamdown } from 'streamdown';
+import { normalizeDateInput, toDateInputValue } from '@/lib/dateInput';
 
 const TYPE_LABELS: Record<string, string> = {
   tarot: '塔羅牌占卜',
@@ -40,6 +41,8 @@ const HOURS = [
   { label: '戌時 (19:00-21:00)', value: '10' },
   { label: '亥時 (21:00-23:00)', value: '11' },
 ] as const;
+
+const MIN_BIRTH_DATE = '1900-01-01';
 
 type HourValue = typeof HOURS[number]['value'];
 
@@ -82,9 +85,17 @@ export default function HistoryPage() {
   const handleProfileSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setProfileMessage(null);
+    const normalizedBirthDate = profileBirthDate
+      ? normalizeDateInput(profileBirthDate, { min: MIN_BIRTH_DATE, max: toDateInputValue() })
+      : null;
+    if (profileBirthDate && !normalizedBirthDate) {
+      setProfileMessage('請輸入有效的陽曆生日，例如 1998-08-03 或 19980803');
+      return;
+    }
+    if (normalizedBirthDate) setProfileBirthDate(normalizedBirthDate);
     updateProfileMutation.mutate({
       name: profileName.trim() || null,
-      birthDate: profileBirthDate || null,
+      birthDate: normalizedBirthDate,
       birthTime: profileBirthTime || null,
       gender: profileGender || null,
     });
@@ -196,11 +207,25 @@ export default function HistoryPage() {
                   陽曆生日
                 </span>
                 <input
-                  type="date"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="bday"
+                  placeholder="例如 1998-08-03 或 19980803"
                   value={profileBirthDate}
-                  onChange={(event) => setProfileBirthDate(event.target.value)}
-                  min="1900-01-01"
-                  max={new Date().toISOString().split('T')[0]}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setProfileBirthDate(normalizeDateInput(value, {
+                      min: MIN_BIRTH_DATE,
+                      max: toDateInputValue(),
+                    }) ?? value);
+                  }}
+                  onBlur={(event) => {
+                    const normalized = normalizeDateInput(event.currentTarget.value, {
+                      min: MIN_BIRTH_DATE,
+                      max: toDateInputValue(),
+                    });
+                    if (normalized) setProfileBirthDate(normalized);
+                  }}
                   className="rounded-xl border border-[#D1BE9B]/22 bg-white/50 px-3.5 py-2.5 text-[12px] tracking-[0.08em] text-[#31353A]/78 outline-none transition-colors focus:border-[#D1BE9B]/55"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
                 />
