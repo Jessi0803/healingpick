@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Heart, Sparkles, X } from "lucide-react";
 
-const STORAGE_KEY = "healingpick-mochi-welcome-letter:v1";
+const STORAGE_KEY = "healingpick-mochi-welcome-letter:v2";
 
 export default function MochiWelcomeLetter() {
   const [isVisible, setIsVisible] = useState(false);
