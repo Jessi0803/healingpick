@@ -870,137 +870,159 @@ function UsersTable({
       row.email && emailRecipientUserIds.includes(row.id)
     );
     const isSelectedForEmail = selectedEmailUserIds.includes(row.id);
+    const displayName = row.name ?? row.email ?? `會員 #${row.id}`;
+    const secondaryLabel = row.name
+      ? (row.email ?? row.loginMethod ?? `會員 #${row.id}`)
+      : (row.loginMethod ?? `會員 #${row.id}`);
 
     return (
       <div
         key={row.id}
-        className={`border-b border-[#D1BE9B]/12 p-4 ${isExpanded ? "bg-[#D1BE9B]/5" : ""}`}
+        className={`border-b border-[#D1BE9B]/12 ${isExpanded ? "bg-[#D1BE9B]/5" : ""}`}
       >
-        <div className="mb-4 flex min-w-0 items-start justify-between gap-3">
-          <div className="min-w-0">
+        <button
+          type="button"
+          onClick={() => setExpandedUserId(isExpanded ? null : row.id)}
+          className="flex w-full min-w-0 items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-[#D1BE9B]/8"
+          aria-expanded={isExpanded}
+          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+        >
+          <div className="min-w-0 flex-1">
             <div className="break-words text-xs tracking-[0.1em] text-[#31353A]/82">
-              {row.email ?? row.name ?? `會員 #${row.id}`}
+              {displayName}
             </div>
             <div className="mt-1 break-words text-[11px] tracking-[0.08em] text-[#31353A]/42">
-              ID {row.id} · {row.role}
+              {secondaryLabel}
             </div>
           </div>
-          <input
-            type="checkbox"
-            checked={isSelectedForEmail}
-            disabled={!canReceiveEmail}
-            onChange={event => {
-              onSelectedEmailUserIdsChange(current =>
-                event.target.checked
-                  ? Array.from(new Set([...current, row.id]))
-                  : current.filter(id => id !== row.id)
-              );
-            }}
-            className="mt-0.5 h-4 w-4 shrink-0 accent-[#A38D6B] disabled:opacity-30"
-            title={canReceiveEmail ? "選為 Email 收件人" : "此會員沒有 email"}
-          />
-        </div>
-        <div className="space-y-3">
-          <MobileInfoRow label="姓名 / 登入">
-            {row.name ?? row.loginMethod ?? "—"}
-          </MobileInfoRow>
-          <MobileInfoRow label="免費剩餘">
-            {freeRemaining}/{dailyFreeQuota}
-          </MobileInfoRow>
-          <MobileInfoRow label="註冊時間">
-            {formatDate(row.createdAt)}
-          </MobileInfoRow>
-          <MobileInfoRow label="最後占卜">
-            {formatLastReading(row.lastReadingAt)}
-          </MobileInfoRow>
-          <MobileInfoRow label="點數">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <input
-                type="number"
-                min={0}
-                max={100000}
-                step={1}
-                value={inputValue}
-                onChange={event => {
-                  setCreditInputs(current => ({
-                    ...current,
-                    [row.id]: event.target.value,
-                  }));
-                }}
-                className="w-full rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60 sm:w-28"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              />
-              <button
-                type="button"
-                disabled={!canSaveCredits}
-                onClick={() => onUpdateCredits(row, parsedCredits)}
-                className="rounded-md border border-[#D1BE9B]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                {isRowAdjusting ? "儲存中" : "儲存"}
-              </button>
+          <div className="shrink-0 text-right">
+            <div className="text-[11px] tracking-[0.12em] text-[#A38D6B]">
+              剩 {freeRemaining}/{dailyFreeQuota}
             </div>
-          </MobileInfoRow>
-          <MobileInfoRow label="備註">
-            <div className="flex flex-col gap-2">
-              <textarea
-                value={noteValue}
-                maxLength={2000}
-                rows={3}
-                onChange={event => {
-                  setNoteInputs(current => ({
-                    ...current,
-                    [row.id]: event.target.value,
-                  }));
-                }}
-                placeholder="寫給自己的會員小筆記"
-                className="min-h-20 w-full resize-y rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs leading-[1.7] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              />
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <span className="text-[10px] tracking-[0.08em] text-[#31353A]/38">
-                  {noteValue.length}/2000
-                </span>
+            <div className="mt-1 text-[10px] tracking-[0.1em] text-[#31353A]/42">
+              {isExpanded ? "收合" : "展開"}
+            </div>
+          </div>
+        </button>
+        {isExpanded && (
+          <div className="space-y-3 px-4 pb-4">
+            <MobileInfoRow label="Email 收件">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={isSelectedForEmail}
+                  disabled={!canReceiveEmail}
+                  onChange={event => {
+                    onSelectedEmailUserIdsChange(current =>
+                      event.target.checked
+                        ? Array.from(new Set([...current, row.id]))
+                        : current.filter(id => id !== row.id)
+                    );
+                  }}
+                  className="h-4 w-4 shrink-0 accent-[#A38D6B] disabled:opacity-30"
+                  title={
+                    canReceiveEmail ? "選為 Email 收件人" : "此會員沒有 email"
+                  }
+                />
+                <span>{canReceiveEmail ? "選為收件人" : "沒有 email"}</span>
+              </label>
+            </MobileInfoRow>
+            <MobileInfoRow label="ID / 角色">
+              ID {row.id} · {row.role}
+            </MobileInfoRow>
+            <MobileInfoRow label="姓名 / 登入">
+              {row.name ?? row.loginMethod ?? "—"}
+            </MobileInfoRow>
+            <MobileInfoRow label="註冊時間">
+              {formatDate(row.createdAt)}
+            </MobileInfoRow>
+            <MobileInfoRow label="最後占卜">
+              {formatLastReading(row.lastReadingAt)}
+            </MobileInfoRow>
+            <MobileInfoRow label="點數">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <input
+                  type="number"
+                  min={0}
+                  max={100000}
+                  step={1}
+                  value={inputValue}
+                  onChange={event => {
+                    setCreditInputs(current => ({
+                      ...current,
+                      [row.id]: event.target.value,
+                    }));
+                  }}
+                  className="w-full rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60 sm:w-28"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
+                />
                 <button
                   type="button"
-                  disabled={!canSaveNote}
-                  onClick={() => onUpdateNote(row, noteValue)}
+                  disabled={!canSaveCredits}
+                  onClick={() => onUpdateCredits(row, parsedCredits)}
                   className="rounded-md border border-[#D1BE9B]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
                   style={{
                     fontFamily: "Noto Serif TC, serif",
                     fontWeight: 300,
                   }}
                 >
-                  {isRowSavingNote ? "儲存中" : "儲存備註"}
+                  {isRowAdjusting ? "儲存中" : "儲存"}
                 </button>
               </div>
-            </div>
-          </MobileInfoRow>
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => setExpandedUserId(isExpanded ? null : row.id)}
-            className="rounded-md border border-[#D1BE9B]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12"
-            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-          >
-            {isExpanded ? "收合" : "歷史問答"}
-          </button>
-          <button
-            type="button"
-            disabled={isCurrentUser || isDeleting}
-            onClick={() => onDeleteUser(row)}
-            className="rounded-md border border-[#C9837A]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
-            title={
-              isCurrentUser ? "不能刪除目前登入中的管理員帳號" : "刪除會員"
-            }
-            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-          >
-            {isRowDeleting ? "刪除中" : "刪除"}
-          </button>
-        </div>
-        {isExpanded && (
-          <div className="mt-4">
+            </MobileInfoRow>
+            <MobileInfoRow label="備註">
+              <div className="flex flex-col gap-2">
+                <textarea
+                  value={noteValue}
+                  maxLength={2000}
+                  rows={3}
+                  onChange={event => {
+                    setNoteInputs(current => ({
+                      ...current,
+                      [row.id]: event.target.value,
+                    }));
+                  }}
+                  placeholder="寫給自己的會員小筆記"
+                  className="min-h-20 w-full resize-y rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs leading-[1.7] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
+                />
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <span className="text-[10px] tracking-[0.08em] text-[#31353A]/38">
+                    {noteValue.length}/2000
+                  </span>
+                  <button
+                    type="button"
+                    disabled={!canSaveNote}
+                    onClick={() => onUpdateNote(row, noteValue)}
+                    className="rounded-md border border-[#D1BE9B]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    {isRowSavingNote ? "儲存中" : "儲存備註"}
+                  </button>
+                </div>
+              </div>
+            </MobileInfoRow>
+            <button
+              type="button"
+              disabled={isCurrentUser || isDeleting}
+              onClick={() => onDeleteUser(row)}
+              className="w-full rounded-md border border-[#C9837A]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
+              title={
+                isCurrentUser ? "不能刪除目前登入中的管理員帳號" : "刪除會員"
+              }
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              {isRowDeleting ? "刪除中" : "刪除會員"}
+            </button>
             <UserReadingHistory
               user={selectedUser}
               rows={userReadingsQuery.data ?? []}
