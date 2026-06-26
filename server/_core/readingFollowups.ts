@@ -16,6 +16,8 @@ const TYPE_LABELS: Record<string, string> = {
   dream: "Mochi 解夢",
 };
 const FOLLOWUP_READING_TYPES = ["tarot", "ziwei"] as const;
+const FOLLOWUP_EMOJI = "🫶";
+const EMOJI_PATTERN = /\p{Extended_Pictographic}/gu;
 
 function compactText(value: string | null | undefined, maxLength: number) {
   const normalized = (value ?? "").replace(/\s+/g, " ").trim();
@@ -33,7 +35,7 @@ function escapeHtml(value: string) {
 
 function fallbackMessage(row: EligibleReadingFollowup) {
   const typeLabel = TYPE_LABELS[row.type] ?? "占卜";
-  return `上次那個${typeLabel}後來有比較清楚嗎？還是你現在卡住的點，跟那時候其實不太一樣了？`;
+  return withRequiredEmoji(`上次那個${typeLabel}後來有比較清楚嗎？還是你現在卡住的點，跟那時候其實不太一樣了？`);
 }
 
 function buildEmailHtml(message: string) {
@@ -43,6 +45,16 @@ function buildEmailHtml(message: string) {
       <p style="font-size: 13px; color: #9a8068; margin: 24px 0 0;">Healing Pick Mochi</p>
     </div>
   `;
+}
+
+function withRequiredEmoji(value: string) {
+  const normalized = value
+    .replace(/[「」"“”]/g, "")
+    .replace(EMOJI_PATTERN, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const suffix = ` ${FOLLOWUP_EMOJI}`;
+  return `${compactText(normalized, 140 - suffix.length)}${suffix}`;
 }
 
 async function generateCareMessage(row: EligibleReadingFollowup) {
@@ -90,6 +102,7 @@ async function generateCareMessage(row: EligibleReadingFollowup) {
 - 要抓最近五次摘要裡重複出現的情緒或卡點，但只能點到為止。
 - 不要雞湯，不要金句，不要寫得太文青、太靈性、太正式；避免「宇宙、能量、光、顯化、課題、療癒」。
 - 可以用「那件事」「那個選擇」「心裡那個結」「一直反覆想的地方」這種模糊說法。
+- 一定要使用剛好 1 個柔和、陪伴感的 emoji，放在最後；不要使用超過 1 個 emoji。
 - 不要使用 Markdown、標題或引號。
 
 脈絡：
@@ -99,7 +112,7 @@ ${context || "沒有明確文字脈絡，請寫泛用但溫暖的關心。"}`,
     });
     const raw = response.choices?.[0]?.message?.content;
     const text = raw ? extractTextContent(raw as string | Array<{ type: string; text?: string }>) : "";
-    return compactText(text.replace(/[「」"“”]/g, "").trim(), 140) || fallbackMessage(row);
+    return text.trim() ? withRequiredEmoji(text) : fallbackMessage(row);
   } catch (error) {
     console.warn("[Followup] Failed to generate AI care message:", error);
     return fallbackMessage(row);
