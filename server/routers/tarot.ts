@@ -5,6 +5,7 @@ import { invokeLLM, extractTextContent } from "../_core/llm";
 import { chargeReading } from "../_core/credits";
 import { getVisitorCreditState, saveReading } from "../db";
 import { buildReadingSummary, getMemberMemoryContext } from "../_core/readingMemory";
+import { formatLineToneForMochi } from "../_core/lineToneFormatter";
 
 const cardSchema = z.object({
   name: z.string(),
@@ -298,7 +299,7 @@ ${memberMemoryContext}
         ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
         : "解讀暫時無法取得，請稍後再試。";
       const extracted = extractRecommendation(textContent);
-      const interpretation = cleanMochiInterpretation(extracted.interpretation);
+      const interpretation = formatLineToneForMochi(cleanMochiInterpretation(extracted.interpretation));
       const recommendation = extracted.recommendation;
       const finalRecommendation =
         recommendation ??
@@ -415,8 +416,10 @@ ${memberMemoryContext}
 
       const rawContent = response.choices?.[0]?.message?.content;
       const answer = rawContent
-        ? cleanMochiInterpretation(
-            extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+        ? formatLineToneForMochi(
+            cleanMochiInterpretation(
+              extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+            )
           )
         : "Mochi 暫時讀不到這個追問，請稍後再試。";
 

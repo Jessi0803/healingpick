@@ -7,6 +7,7 @@ import { astro } from "iztro";
 import { t, translateChineseDate } from "./ziwei-locale";
 import { getVisitorCreditState, saveReading } from "../db";
 import { buildReadingSummary, getMemberMemoryContext } from "../_core/readingMemory";
+import { formatLineToneForMochi } from "../_core/lineToneFormatter";
 
 const recommendationSchema = z.object({
   category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
@@ -319,7 +320,7 @@ ${CONTENT_VARIATION_RULES}
         ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
         : "解讀暫時無法取得，請稍後再試。";
       const extracted = extractRecommendation(textContent);
-      const interpretation = cleanZiweiInterpretation(extracted.interpretation);
+      const interpretation = formatLineToneForMochi(cleanZiweiInterpretation(extracted.interpretation));
 
       const isMember = Boolean(ctx.user);
       const inputData = JSON.stringify({
@@ -447,8 +448,10 @@ ${CONTENT_VARIATION_RULES}
 
       const rawContent = response.choices?.[0]?.message?.content;
       const answer = rawContent
-        ? cleanZiweiInterpretation(
-            extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+        ? formatLineToneForMochi(
+            cleanZiweiInterpretation(
+              extractTextContent(rawContent as string | Array<{ type: string; text?: string }>)
+            )
           )
         : "Mochi 暫時讀不到這個追問，請稍後再試。";
 
