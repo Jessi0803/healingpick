@@ -1,32 +1,40 @@
-import { Dispatch, Fragment, FormEvent, SetStateAction, useEffect, useMemo, useState } from 'react';
-import PageLayout from '@/components/PageLayout';
-import { trpc } from '@/lib/trpc';
-import { useAuth } from '@/_core/hooks/useAuth';
+import {
+  Dispatch,
+  Fragment,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import PageLayout from "@/components/PageLayout";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const tabs = [
-  { id: 'users', label: '會員管理' },
-  { id: 'orders', label: '訂單管理' },
-  { id: 'visitors', label: '訪客問答' },
-  { id: 'feedbacks', label: '顧客回饋' },
-  { id: 'transactions', label: '點數紀錄' },
+  { id: "users", label: "會員管理" },
+  { id: "orders", label: "訂單管理" },
+  { id: "visitors", label: "訪客問答" },
+  { id: "feedbacks", label: "顧客回饋" },
+  { id: "transactions", label: "點數紀錄" },
 ] as const;
 
-type TabId = typeof tabs[number]['id'];
+type TabId = (typeof tabs)[number]["id"];
 const DAILY_FREE_QUOTA_MAX = 100;
 
 const typeLabels: Record<string, string> = {
-  tarot: '塔羅',
-  ziwei: '紫微',
-  fortune: '每日運勢',
-  dream: 'Mochi 解夢',
+  tarot: "塔羅",
+  ziwei: "紫微",
+  fortune: "每日運勢",
+  dream: "Mochi 解夢",
 };
 
-function getReadingKind(row: Pick<AdminReadingRow, 'type' | 'inputData'>) {
+function getReadingKind(row: Pick<AdminReadingRow, "type" | "inputData">) {
   if (row.inputData) {
     try {
       const parsed = JSON.parse(row.inputData) as { recordKind?: string };
-      if (parsed.recordKind === 'tarot_followup') return '塔羅追問';
-      if (parsed.recordKind === 'ziwei_followup') return '紫微追問';
+      if (parsed.recordKind === "tarot_followup") return "塔羅追問";
+      if (parsed.recordKind === "ziwei_followup") return "紫微追問";
     } catch {
       // Older records may store plain text instead of JSON.
     }
@@ -38,7 +46,7 @@ type AdminUserRow = {
   id: number;
   name: string | null;
   email: string | null;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
   loginMethod: string | null;
   adminNote: string | null;
   credits: number;
@@ -85,41 +93,47 @@ type AdminFeedbackRow = {
   userId: number | null;
   email: string | null;
   name: string | null;
-  source: 'tarot' | 'ziwei';
+  source: "tarot" | "ziwei";
   message: string;
   context: string | null;
   createdAt: Date;
 };
 
 function formatDate(value: string | Date | null | undefined) {
-  if (!value) return '—';
-  return new Date(value).toLocaleString('zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
+  if (!value) return "—";
+  return new Date(value).toLocaleString("zh-TW", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
 function formatLastReading(value: string | Date | null | undefined) {
-  if (!value) return '從未占卜';
+  if (!value) return "從未占卜";
   const date = new Date(value);
-  const diffDays = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
-  const relative = diffDays <= 0 ? '今天' : `${diffDays} 天前`;
+  const diffDays = Math.floor(
+    (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const relative = diffDays <= 0 ? "今天" : `${diffDays} 天前`;
   return `${formatDate(date)}（${relative}）`;
 }
 
 function shortText(value: string | null | undefined, max = 90) {
-  if (!value) return '—';
+  if (!value) return "—";
   return value.length > max ? `${value.slice(0, max)}...` : value;
 }
 
-function parseReadingInputData(inputData: string | null | undefined): ParsedReadingInput | null {
+function parseReadingInputData(
+  inputData: string | null | undefined
+): ParsedReadingInput | null {
   if (!inputData) return null;
   try {
     const parsed = JSON.parse(inputData);
-    return parsed && typeof parsed === 'object' ? parsed as ParsedReadingInput : null;
+    return parsed && typeof parsed === "object"
+      ? (parsed as ParsedReadingInput)
+      : null;
   } catch {
     return null;
   }
@@ -127,111 +141,122 @@ function parseReadingInputData(inputData: string | null | undefined): ParsedRead
 
 function getReadingPreview(row: AdminReadingRow) {
   const parsed = parseReadingInputData(row.inputData);
-  if (row.type === 'dream' && parsed?.dreamContent) {
+  if (row.type === "dream" && parsed?.dreamContent) {
     return parsed.dreamContent;
   }
   return row.question || row.inputData;
 }
 
-function isVisitor(row: Pick<AdminReadingRow, 'userId'>) {
+function isVisitor(row: Pick<AdminReadingRow, "userId">) {
   return row.userId == null;
 }
 
-function readerLabel(row: Pick<AdminReadingRow, 'userId' | 'email' | 'name' | 'anonId' | 'ipHash'>) {
+function readerLabel(
+  row: Pick<AdminReadingRow, "userId" | "email" | "name" | "anonId" | "ipHash">
+) {
   if (row.userId != null) return row.email ?? row.name ?? `會員 #${row.userId}`;
   if (row.anonId) return `訪客 ${row.anonId.slice(0, 8)}`;
   if (row.ipHash) return `訪客 IP ${row.ipHash.slice(0, 8)}`;
-  return '訪客';
+  return "訪客";
 }
 
-function feedbackReaderLabel(row: Pick<AdminFeedbackRow, 'userId' | 'email' | 'name'>) {
+function feedbackReaderLabel(
+  row: Pick<AdminFeedbackRow, "userId" | "email" | "name">
+) {
   if (row.userId != null) return row.email ?? row.name ?? `會員 #${row.userId}`;
-  return '未登入使用者';
+  return "未登入使用者";
 }
 
 function reasonLabel(reason: string) {
-  if (reason === 'signup_bonus') return '註冊贈點';
-  if (reason === 'admin_topup') return '管理員加值';
-  if (reason === 'admin_adjustment') return '管理員調整';
-  if (reason.startsWith('gumroad:')) return '金流訂單';
-  if (reason === 'tarot') return '塔羅扣點';
-  if (reason === 'ziwei') return '紫微扣點';
-  if (reason === 'fortune') return '每日運勢扣點';
-  if (reason === 'dream') return 'Mochi 解夢扣點';
+  if (reason === "signup_bonus") return "註冊贈點";
+  if (reason === "admin_topup") return "管理員加值";
+  if (reason === "admin_adjustment") return "管理員調整";
+  if (reason.startsWith("gumroad:")) return "金流訂單";
+  if (reason === "tarot") return "塔羅扣點";
+  if (reason === "ziwei") return "紫微扣點";
+  if (reason === "fortune") return "每日運勢扣點";
+  if (reason === "dream") return "Mochi 解夢扣點";
   return reason;
 }
 
 export default function AdminPage() {
   const { user, loading } = useAuth({ redirectOnUnauthenticated: true });
   const utils = trpc.useUtils();
-  const [activeTab, setActiveTab] = useState<TabId>('users');
-  const [query, setQuery] = useState('');
-  const [dailyFreeQuotaInput, setDailyFreeQuotaInput] = useState('');
-  const [settingsMessage, setSettingsMessage] = useState('');
-  const [userActionMessage, setUserActionMessage] = useState('');
-  const [emailSubject, setEmailSubject] = useState('');
-  const [emailContent, setEmailContent] = useState('');
-  const [selectedEmailUserIds, setSelectedEmailUserIds] = useState<number[]>([]);
-  const [emailMessage, setEmailMessage] = useState('');
+  const [activeTab, setActiveTab] = useState<TabId>("users");
+  const [query, setQuery] = useState("");
+  const [dailyFreeQuotaInput, setDailyFreeQuotaInput] = useState("");
+  const [settingsMessage, setSettingsMessage] = useState("");
+  const [userActionMessage, setUserActionMessage] = useState("");
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailContent, setEmailContent] = useState("");
+  const [selectedEmailUserIds, setSelectedEmailUserIds] = useState<number[]>(
+    []
+  );
+  const [emailMessage, setEmailMessage] = useState("");
 
   const dashboardQuery = trpc.admin.dashboard.useQuery(
     { limit: 150, tab: activeTab },
-    { enabled: user?.role === 'admin', refetchOnWindowFocus: true }
+    { enabled: user?.role === "admin", refetchOnWindowFocus: true }
   );
-  const updateDailyFreeQuotaMutation = trpc.admin.updateDailyFreeQuota.useMutation({
-    onSuccess: async (result) => {
-      setDailyFreeQuotaInput(String(result.dailyFreeQuota));
-      setSettingsMessage('已更新今日免費點數');
-      await Promise.all([
-        dashboardQuery.refetch(),
-        utils.credits.state.invalidate(),
-      ]);
-    },
-    onError: () => {
-      setSettingsMessage('更新失敗，請稍後再試');
-    },
-  });
+  const updateDailyFreeQuotaMutation =
+    trpc.admin.updateDailyFreeQuota.useMutation({
+      onSuccess: async result => {
+        setDailyFreeQuotaInput(String(result.dailyFreeQuota));
+        setSettingsMessage("已更新今日免費點數");
+        await Promise.all([
+          dashboardQuery.refetch(),
+          utils.credits.state.invalidate(),
+        ]);
+      },
+      onError: () => {
+        setSettingsMessage("更新失敗，請稍後再試");
+      },
+    });
   const updateUserCreditsMutation = trpc.admin.updateUserCredits.useMutation({
-    onSuccess: async (result) => {
-      setUserActionMessage(`已更新會員 #${result.userId} 點數為 ${result.credits}`);
+    onSuccess: async result => {
+      setUserActionMessage(
+        `已更新會員 #${result.userId} 點數為 ${result.credits}`
+      );
       await Promise.all([
         dashboardQuery.refetch(),
         utils.credits.state.invalidate(),
       ]);
     },
-    onError: (error) => {
-      setUserActionMessage(error.message || '點數更新失敗，請稍後再試');
+    onError: error => {
+      setUserActionMessage(error.message || "點數更新失敗，請稍後再試");
     },
   });
   const updateUserNoteMutation = trpc.admin.updateUserNote.useMutation({
-    onSuccess: async (result) => {
+    onSuccess: async result => {
       setUserActionMessage(`已更新會員 #${result.userId} 備註`);
       await dashboardQuery.refetch();
     },
-    onError: (error) => {
-      setUserActionMessage(error.message || '備註更新失敗，請稍後再試');
+    onError: error => {
+      setUserActionMessage(error.message || "備註更新失敗，請稍後再試");
     },
   });
   const deleteUserMutation = trpc.admin.deleteUser.useMutation({
-    onSuccess: async (result) => {
+    onSuccess: async result => {
       const label = result.email ?? result.name ?? `會員 #${result.id}`;
       setUserActionMessage(`已刪除 ${label}`);
       await dashboardQuery.refetch();
     },
-    onError: (error) => {
-      setUserActionMessage(error.message || '刪除會員失敗，請稍後再試');
+    onError: error => {
+      setUserActionMessage(error.message || "刪除會員失敗，請稍後再試");
     },
   });
   const sendMemberEmailMutation = trpc.admin.sendMemberEmail.useMutation({
-    onSuccess: (result) => {
-      setEmailMessage(`已送出 ${result.sent}/${result.attempted} 封${result.failed > 0 ? `，失敗 ${result.failed} 封` : ''}`);
+    onSuccess: result => {
+      setEmailMessage(
+        `已送出 ${result.sent}/${result.attempted} 封${result.failed > 0 ? `，失敗 ${result.failed} 封` : ""}`
+      );
       if (result.failed === 0) {
-        setEmailSubject('');
-        setEmailContent('');
+        setEmailSubject("");
+        setEmailContent("");
       }
     },
-    onError: (error) => {
-      setEmailMessage(error.message || 'Email 寄送失敗，請稍後再試');
+    onError: error => {
+      setEmailMessage(error.message || "Email 寄送失敗，請稍後再試");
     },
   });
 
@@ -239,7 +264,10 @@ export default function AdminPage() {
   const data = dashboardQuery.data;
 
   useEffect(() => {
-    if (data?.settings.dailyFreeQuota != null && !updateDailyFreeQuotaMutation.isPending) {
+    if (
+      data?.settings.dailyFreeQuota != null &&
+      !updateDailyFreeQuotaMutation.isPending
+    ) {
       setDailyFreeQuotaInput(String(data.settings.dailyFreeQuota));
     }
   }, [data?.settings.dailyFreeQuota, updateDailyFreeQuotaMutation.isPending]);
@@ -255,7 +283,7 @@ export default function AdminPage() {
       setSettingsMessage(`每日免費額度請輸入 1-${DAILY_FREE_QUOTA_MAX} 次`);
       return;
     }
-    setSettingsMessage('');
+    setSettingsMessage("");
     updateDailyFreeQuotaMutation.mutate({ dailyFreeQuota: value });
   };
 
@@ -264,11 +292,11 @@ export default function AdminPage() {
     const subject = emailSubject.trim();
     const content = emailContent.trim();
     if (!subject || !content) {
-      setEmailMessage('請輸入主旨與內容');
+      setEmailMessage("請輸入主旨與內容");
       return;
     }
     if (selectedEmailUserIds.length === 0) {
-      setEmailMessage('請至少選擇一位收件會員');
+      setEmailMessage("請至少選擇一位收件會員");
       return;
     }
 
@@ -277,7 +305,7 @@ export default function AdminPage() {
     );
     if (!confirmed) return;
 
-    setEmailMessage('');
+    setEmailMessage("");
     sendMemberEmailMutation.mutate({
       subject,
       content,
@@ -287,15 +315,17 @@ export default function AdminPage() {
 
   const handleUpdateUserCredits = (row: AdminUserRow, credits: number) => {
     const label = row.email ?? row.name ?? `會員 #${row.id}`;
-    const confirmed = window.confirm(`確定要將 ${label} 的點數調整為 ${credits} 嗎？`);
+    const confirmed = window.confirm(
+      `確定要將 ${label} 的點數調整為 ${credits} 嗎？`
+    );
     if (!confirmed) return;
 
-    setUserActionMessage('');
+    setUserActionMessage("");
     updateUserCreditsMutation.mutate({ userId: row.id, credits });
   };
 
   const handleUpdateUserNote = (row: AdminUserRow, adminNote: string) => {
-    setUserActionMessage('');
+    setUserActionMessage("");
     updateUserNoteMutation.mutate({ userId: row.id, adminNote });
   };
 
@@ -306,36 +336,36 @@ export default function AdminPage() {
     );
     if (!confirmed) return;
 
-    setUserActionMessage('');
+    setUserActionMessage("");
     deleteUserMutation.mutate({ userId: row.id });
   };
 
   const filteredUsers = useMemo(() => {
     const rows = data?.users ?? [];
     if (!normalizedQuery) return rows;
-    return rows.filter((row) =>
-      [row.email, row.name, String(row.id)].some((value) =>
-        (value ?? '').toLowerCase().includes(normalizedQuery)
+    return rows.filter(row =>
+      [row.email, row.name, String(row.id)].some(value =>
+        (value ?? "").toLowerCase().includes(normalizedQuery)
       )
     );
   }, [data?.users, normalizedQuery]);
 
   const emailRecipientUsers = useMemo(
-    () => (data?.users ?? []).filter((row) => row.email && row.email.trim()),
+    () => (data?.users ?? []).filter(row => row.email && row.email.trim()),
     [data?.users]
   );
 
   useEffect(() => {
-    const validIds = new Set(emailRecipientUsers.map((row) => row.id));
-    setSelectedEmailUserIds((current) => current.filter((id) => validIds.has(id)));
+    const validIds = new Set(emailRecipientUsers.map(row => row.id));
+    setSelectedEmailUserIds(current => current.filter(id => validIds.has(id)));
   }, [emailRecipientUsers]);
 
   const filteredOrders = useMemo(() => {
     const rows = data?.orders ?? [];
     if (!normalizedQuery) return rows;
-    return rows.filter((row) =>
-      [row.email, row.name, row.reason, String(row.userId)].some((value) =>
-        (value ?? '').toLowerCase().includes(normalizedQuery)
+    return rows.filter(row =>
+      [row.email, row.name, row.reason, String(row.userId)].some(value =>
+        (value ?? "").toLowerCase().includes(normalizedQuery)
       )
     );
   }, [data?.orders, normalizedQuery]);
@@ -343,24 +373,29 @@ export default function AdminPage() {
   const filteredReadings = useMemo(() => {
     const rows = data?.readings ?? [];
     if (!normalizedQuery) return rows;
-    return rows.filter((row) =>
-      [row.email, row.name, row.type, row.question, row.inputData, row.anonId].some((value) =>
-        (value ?? '').toLowerCase().includes(normalizedQuery)
-      )
+    return rows.filter(row =>
+      [
+        row.email,
+        row.name,
+        row.type,
+        row.question,
+        row.inputData,
+        row.anonId,
+      ].some(value => (value ?? "").toLowerCase().includes(normalizedQuery))
     );
   }, [data?.readings, normalizedQuery]);
 
   const visitorReadings = useMemo(
-    () => filteredReadings.filter((row) => isVisitor(row)),
+    () => filteredReadings.filter(row => isVisitor(row)),
     [filteredReadings]
   );
 
   const filteredTransactions = useMemo(() => {
     const rows = data?.transactions ?? [];
     if (!normalizedQuery) return rows;
-    return rows.filter((row) =>
-      [row.email, row.name, row.reason, String(row.userId)].some((value) =>
-        (value ?? '').toLowerCase().includes(normalizedQuery)
+    return rows.filter(row =>
+      [row.email, row.name, row.reason, String(row.userId)].some(value =>
+        (value ?? "").toLowerCase().includes(normalizedQuery)
       )
     );
   }, [data?.transactions, normalizedQuery]);
@@ -368,10 +403,16 @@ export default function AdminPage() {
   const filteredFeedbacks = useMemo(() => {
     const rows = data?.feedbacks ?? [];
     if (!normalizedQuery) return rows;
-    return rows.filter((row) =>
-      [row.email, row.name, row.source, typeLabels[row.source], row.message, row.context, String(row.userId)].some((value) =>
-        (value ?? '').toLowerCase().includes(normalizedQuery)
-      )
+    return rows.filter(row =>
+      [
+        row.email,
+        row.name,
+        row.source,
+        typeLabels[row.source],
+        row.message,
+        row.context,
+        String(row.userId),
+      ].some(value => (value ?? "").toLowerCase().includes(normalizedQuery))
     );
   }, [data?.feedbacks, normalizedQuery]);
 
@@ -385,16 +426,20 @@ export default function AdminPage() {
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== "admin") {
     return (
       <PageLayout>
         <div className="min-h-[70vh] flex flex-col items-center justify-center px-6 text-center">
-          <h1 className="text-2xl tracking-[0.2em] text-[#31353A]/80 mb-4"
-            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+          <h1
+            className="text-2xl tracking-[0.2em] text-[#31353A]/80 mb-4"
+            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+          >
             後台權限不足
           </h1>
-          <p className="text-xs leading-[2] tracking-[0.15em] text-[#31353A]/54 max-w-sm"
-            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+          <p
+            className="text-xs leading-[2] tracking-[0.15em] text-[#31353A]/54 max-w-sm"
+            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+          >
             這個頁面只開放管理員帳號查看。
           </p>
         </div>
@@ -408,27 +453,31 @@ export default function AdminPage() {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <span className="text-[11px] tracking-[0.35em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+              <span
+                className="text-[11px] tracking-[0.35em] text-[#D1BE9B] uppercase"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              >
                 Admin
               </span>
-              <h1 className="mt-3 text-3xl tracking-[0.18em] text-[#31353A]"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+              <h1
+                className="mt-3 text-3xl tracking-[0.18em] text-[#31353A]"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              >
                 管理後台
               </h1>
             </div>
             <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
               <input
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={event => setQuery(event.target.value)}
                 placeholder="搜尋 email、姓名、訂單、輸入內容"
                 className="min-w-0 rounded-lg border border-[#D1BE9B]/25 bg-white/65 px-4 py-2.5 text-xs tracking-[0.12em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60 sm:w-80"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               />
               <button
                 onClick={() => dashboardQuery.refetch()}
                 className="rounded-lg border border-[#D1BE9B]/30 px-4 py-2.5 text-xs tracking-[0.16em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/15"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 重新整理
               </button>
@@ -450,12 +499,18 @@ export default function AdminPage() {
           >
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                <p
+                  className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
+                >
                   免費點數設定
                 </p>
                 <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
-                  每位顧客每天共可免費使用 {data?.settings.dailyFreeQuota ?? 2} 次；訪客可匿名使用第 1 次，第 2 次起需登入。
+                  每位顧客每天共可免費使用 {data?.settings.dailyFreeQuota ?? 2}{" "}
+                  次；訪客可匿名使用第 1 次，第 2 次起需登入。
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -465,43 +520,53 @@ export default function AdminPage() {
                   max={DAILY_FREE_QUOTA_MAX}
                   step={1}
                   value={dailyFreeQuotaInput}
-                  onChange={(event) => {
+                  onChange={event => {
                     setDailyFreeQuotaInput(event.target.value);
-                    setSettingsMessage('');
+                    setSettingsMessage("");
                   }}
                   className="w-full rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-2.5 text-xs tracking-[0.12em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60 sm:w-32"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
                 />
                 <button
                   type="submit"
                   disabled={updateDailyFreeQuotaMutation.isPending}
                   className="rounded-lg border border-[#D1BE9B]/30 bg-[#31353A] px-4 py-2.5 text-xs tracking-[0.16em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-55"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
                 >
-                  {updateDailyFreeQuotaMutation.isPending ? '儲存中' : '儲存'}
+                  {updateDailyFreeQuotaMutation.isPending ? "儲存中" : "儲存"}
                 </button>
               </div>
             </div>
             {settingsMessage && (
-              <p className={`mt-3 text-[11px] tracking-[0.12em] ${
-                updateDailyFreeQuotaMutation.isError ? 'text-[#C9837A]' : 'text-[#A38D6B]'
-              }`}>
+              <p
+                className={`mt-3 text-[11px] tracking-[0.12em] ${
+                  updateDailyFreeQuotaMutation.isError
+                    ? "text-[#C9837A]"
+                    : "text-[#A38D6B]"
+                }`}
+              >
                 {settingsMessage}
               </p>
             )}
           </form>
 
-          <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
-            {tabs.map((tab) => (
+          <div className="mb-5 flex flex-wrap gap-2 pb-1">
+            {tabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`shrink-0 rounded-lg border px-4 py-2 text-xs tracking-[0.16em] transition ${
                   activeTab === tab.id
-                    ? 'border-[#D1BE9B]/60 bg-[#31353A] text-[#FAF7F4]'
-                    : 'border-[#D1BE9B]/25 bg-white/45 text-[#31353A]/62 hover:text-[#A38D6B]'
+                    ? "border-[#D1BE9B]/60 bg-[#31353A] text-[#FAF7F4]"
+                    : "border-[#D1BE9B]/25 bg-white/45 text-[#31353A]/62 hover:text-[#A38D6B]"
                 }`}
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 {tab.label}
               </button>
@@ -518,14 +583,22 @@ export default function AdminPage() {
             </div>
           ) : (
             <div className="rounded-lg border border-[#D1BE9B]/20 bg-white/55 shadow-[0_12px_40px_rgba(49,53,58,0.06)] overflow-hidden">
-              {activeTab === 'users' && (
+              {activeTab === "users" && (
                 <div>
-                  <form onSubmit={handleMemberEmailSubmit} className="border-b border-[#D1BE9B]/16 p-4">
+                  <form
+                    onSubmit={handleMemberEmailSubmit}
+                    className="border-b border-[#D1BE9B]/16 p-4"
+                  >
                     <div className="flex flex-col gap-4">
                       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                         <div>
-                          <p className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                          <p
+                            className="text-[11px] tracking-[0.2em] text-[#A38D6B]"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 300,
+                            }}
+                          >
                             會員 Email
                           </p>
                           <p className="mt-2 text-xs leading-[1.8] tracking-[0.08em] text-[#31353A]/58">
@@ -534,40 +607,64 @@ export default function AdminPage() {
                         </div>
                         <button
                           type="submit"
-                          disabled={sendMemberEmailMutation.isPending || selectedEmailUserIds.length === 0}
+                          disabled={
+                            sendMemberEmailMutation.isPending ||
+                            selectedEmailUserIds.length === 0
+                          }
                           className="rounded-lg border border-[#D1BE9B]/30 bg-[#31353A] px-4 py-2.5 text-xs tracking-[0.16em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-55"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 300,
+                          }}
                         >
-                          {sendMemberEmailMutation.isPending ? '寄送中' : `寄給 ${selectedEmailUserIds.length} 位會員`}
+                          {sendMemberEmailMutation.isPending
+                            ? "寄送中"
+                            : `寄給 ${selectedEmailUserIds.length} 位會員`}
                         </button>
                       </div>
                       <input
                         value={emailSubject}
-                        onChange={(event) => {
+                        onChange={event => {
                           setEmailSubject(event.target.value);
-                          setEmailMessage('');
+                          setEmailMessage("");
                         }}
                         maxLength={160}
                         placeholder="Email 主旨"
                         className="rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-2.5 text-xs tracking-[0.08em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 300,
+                        }}
                       />
                       <textarea
                         value={emailContent}
-                        onChange={(event) => {
+                        onChange={event => {
                           setEmailContent(event.target.value);
-                          setEmailMessage('');
+                          setEmailMessage("");
                         }}
                         maxLength={12000}
                         rows={6}
                         placeholder="Email 內容。空一行會變成下一段。"
                         className="min-h-36 resize-y rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-xs leading-[1.8] tracking-[0.06em] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 300,
+                        }}
                       />
                       <div className="flex flex-col gap-2 text-[11px] tracking-[0.1em] text-[#31353A]/42 sm:flex-row sm:items-center sm:justify-between">
-                        <span>已選 {selectedEmailUserIds.length} / {emailRecipientUsers.length} 位可寄送會員 · {emailContent.length}/12000</span>
+                        <span>
+                          已選 {selectedEmailUserIds.length} /{" "}
+                          {emailRecipientUsers.length} 位可寄送會員 ·{" "}
+                          {emailContent.length}/12000
+                        </span>
                         {emailMessage && (
-                          <span className={sendMemberEmailMutation.isError ? 'text-[#C9837A]' : 'text-[#A38D6B]'}>
+                          <span
+                            className={
+                              sendMemberEmailMutation.isError
+                                ? "text-[#C9837A]"
+                                : "text-[#A38D6B]"
+                            }
+                          >
                             {emailMessage}
                           </span>
                         )}
@@ -576,15 +673,23 @@ export default function AdminPage() {
                   </form>
                   <UsersTable
                     rows={filteredUsers}
-                    emailRecipientUserIds={emailRecipientUsers.map((row) => row.id)}
+                    emailRecipientUserIds={emailRecipientUsers.map(
+                      row => row.id
+                    )}
                     selectedEmailUserIds={selectedEmailUserIds}
                     onSelectedEmailUserIdsChange={setSelectedEmailUserIds}
                     dailyFreeQuota={data?.settings.dailyFreeQuota ?? 2}
-                    adjustingUserId={updateUserCreditsMutation.variables?.userId ?? null}
+                    adjustingUserId={
+                      updateUserCreditsMutation.variables?.userId ?? null
+                    }
                     isAdjusting={updateUserCreditsMutation.isPending}
-                    deletingUserId={deleteUserMutation.variables?.userId ?? null}
+                    deletingUserId={
+                      deleteUserMutation.variables?.userId ?? null
+                    }
                     isDeleting={deleteUserMutation.isPending}
-                    savingNoteUserId={updateUserNoteMutation.variables?.userId ?? null}
+                    savingNoteUserId={
+                      updateUserNoteMutation.variables?.userId ?? null
+                    }
                     isSavingNote={updateUserNoteMutation.isPending}
                     message={userActionMessage}
                     currentUserId={user.id}
@@ -594,10 +699,16 @@ export default function AdminPage() {
                   />
                 </div>
               )}
-              {activeTab === 'orders' && <OrdersTable rows={filteredOrders} />}
-              {activeTab === 'visitors' && <ReadingsTable rows={visitorReadings} />}
-              {activeTab === 'feedbacks' && <FeedbacksTable rows={filteredFeedbacks} />}
-              {activeTab === 'transactions' && <TransactionsTable rows={filteredTransactions} />}
+              {activeTab === "orders" && <OrdersTable rows={filteredOrders} />}
+              {activeTab === "visitors" && (
+                <ReadingsTable rows={visitorReadings} />
+              )}
+              {activeTab === "feedbacks" && (
+                <FeedbacksTable rows={filteredFeedbacks} />
+              )}
+              {activeTab === "transactions" && (
+                <TransactionsTable rows={filteredTransactions} />
+              )}
             </div>
           )}
         </div>
@@ -609,13 +720,17 @@ export default function AdminPage() {
 function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-[#D1BE9B]/20 bg-white/55 px-4 py-4">
-      <p className="text-[11px] tracking-[0.18em] text-[#31353A]/45"
-        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+      <p
+        className="text-[11px] tracking-[0.18em] text-[#31353A]/45"
+        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+      >
         {label}
       </p>
-      <p className="mt-2 text-2xl text-[#31353A]/85"
-        style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-        {value.toLocaleString('zh-TW')}
+      <p
+        className="mt-2 text-2xl text-[#31353A]/85"
+        style={{ fontFamily: "Cormorant Garamond, serif" }}
+      >
+        {value.toLocaleString("zh-TW")}
       </p>
     </div>
   );
@@ -624,10 +739,36 @@ function Metric({ label, value }: { label: string; value: number }) {
 function EmptyRow({ colSpan }: { colSpan: number }) {
   return (
     <tr>
-      <td colSpan={colSpan} className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">
+      <td
+        colSpan={colSpan}
+        className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42"
+      >
         沒有資料
       </td>
     </tr>
+  );
+}
+
+function EmptyCard() {
+  return (
+    <div className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">
+      沒有資料
+    </div>
+  );
+}
+
+function MobileInfoRow({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-3 text-[12px] leading-[1.7]">
+      <div className="text-[#A38D6B]">{label}</div>
+      <div className="min-w-0 break-words text-[#31353A]/72">{children}</div>
+    </div>
   );
 }
 
@@ -669,19 +810,23 @@ function UsersTable({
   const [creditInputs, setCreditInputs] = useState<Record<number, string>>({});
   const [noteInputs, setNoteInputs] = useState<Record<number, string>>({});
   const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
-  const selectedUser = rows.find((row) => row.id === expandedUserId) ?? null;
+  const selectedUser = rows.find(row => row.id === expandedUserId) ?? null;
   const selectableRowIds = rows
-    .filter((row) => row.email && emailRecipientUserIds.includes(row.id))
-    .map((row) => row.id);
-  const selectedVisibleCount = selectableRowIds.filter((id) => selectedEmailUserIds.includes(id)).length;
-  const allVisibleSelected = selectableRowIds.length > 0 && selectedVisibleCount === selectableRowIds.length;
+    .filter(row => row.email && emailRecipientUserIds.includes(row.id))
+    .map(row => row.id);
+  const selectedVisibleCount = selectableRowIds.filter(id =>
+    selectedEmailUserIds.includes(id)
+  ).length;
+  const allVisibleSelected =
+    selectableRowIds.length > 0 &&
+    selectedVisibleCount === selectableRowIds.length;
   const userReadingsQuery = trpc.admin.userReadings.useQuery(
     { userId: expandedUserId ?? 0, limit: 100 },
     { enabled: expandedUserId != null }
   );
 
   useEffect(() => {
-    setCreditInputs((current) => {
+    setCreditInputs(current => {
       const next: Record<number, string> = {};
       for (const row of rows) {
         next[row.id] = current[row.id] ?? String(row.credits);
@@ -691,211 +836,472 @@ function UsersTable({
   }, [rows]);
 
   useEffect(() => {
-    setNoteInputs((current) => {
+    setNoteInputs(current => {
       const next: Record<number, string> = {};
       for (const row of rows) {
-        next[row.id] = current[row.id] ?? row.adminNote ?? '';
+        next[row.id] = current[row.id] ?? row.adminNote ?? "";
       }
       return next;
     });
   }, [rows]);
 
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[1380px] text-left">
-        <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
-          <tr>
-            <th className="px-4 py-3 font-normal">
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={allVisibleSelected}
-                  disabled={selectableRowIds.length === 0}
-                  onChange={(event) => {
-                    onSelectedEmailUserIdsChange((current) => {
-                      const visible = new Set(selectableRowIds);
-                      if (event.target.checked) {
-                        return Array.from(new Set([...current, ...selectableRowIds]));
-                      }
-                      return current.filter((id) => !visible.has(id));
-                    });
+  const renderMobileUser = (row: AdminUserRow) => {
+    const inputValue = creditInputs[row.id] ?? String(row.credits);
+    const noteValue = noteInputs[row.id] ?? row.adminNote ?? "";
+    const parsedCredits = Number(inputValue.trim());
+    const canSaveCredits =
+      inputValue.trim() !== "" &&
+      Number.isInteger(parsedCredits) &&
+      parsedCredits >= 0 &&
+      parsedCredits <= 100000 &&
+      parsedCredits !== row.credits &&
+      !isAdjusting;
+    const canSaveNote =
+      noteValue.trim() !== (row.adminNote ?? "") &&
+      noteValue.length <= 2000 &&
+      !isSavingNote;
+    const isRowAdjusting = isAdjusting && adjustingUserId === row.id;
+    const isRowSavingNote = isSavingNote && savingNoteUserId === row.id;
+    const isCurrentUser = row.id === currentUserId;
+    const isRowDeleting = isDeleting && deletingUserId === row.id;
+    const isExpanded = expandedUserId === row.id;
+    const freeRemaining = Math.max(0, dailyFreeQuota - row.freeUsedToday);
+    const canReceiveEmail = Boolean(
+      row.email && emailRecipientUserIds.includes(row.id)
+    );
+    const isSelectedForEmail = selectedEmailUserIds.includes(row.id);
+
+    return (
+      <div
+        key={row.id}
+        className={`border-b border-[#D1BE9B]/12 p-4 ${isExpanded ? "bg-[#D1BE9B]/5" : ""}`}
+      >
+        <div className="mb-4 flex min-w-0 items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="break-words text-xs tracking-[0.1em] text-[#31353A]/82">
+              {row.email ?? row.name ?? `會員 #${row.id}`}
+            </div>
+            <div className="mt-1 break-words text-[11px] tracking-[0.08em] text-[#31353A]/42">
+              ID {row.id} · {row.role}
+            </div>
+          </div>
+          <input
+            type="checkbox"
+            checked={isSelectedForEmail}
+            disabled={!canReceiveEmail}
+            onChange={event => {
+              onSelectedEmailUserIdsChange(current =>
+                event.target.checked
+                  ? Array.from(new Set([...current, row.id]))
+                  : current.filter(id => id !== row.id)
+              );
+            }}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-[#A38D6B] disabled:opacity-30"
+            title={canReceiveEmail ? "選為 Email 收件人" : "此會員沒有 email"}
+          />
+        </div>
+        <div className="space-y-3">
+          <MobileInfoRow label="姓名 / 登入">
+            {row.name ?? row.loginMethod ?? "—"}
+          </MobileInfoRow>
+          <MobileInfoRow label="免費剩餘">
+            {freeRemaining}/{dailyFreeQuota}
+          </MobileInfoRow>
+          <MobileInfoRow label="註冊時間">
+            {formatDate(row.createdAt)}
+          </MobileInfoRow>
+          <MobileInfoRow label="最後占卜">
+            {formatLastReading(row.lastReadingAt)}
+          </MobileInfoRow>
+          <MobileInfoRow label="點數">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <input
+                type="number"
+                min={0}
+                max={100000}
+                step={1}
+                value={inputValue}
+                onChange={event => {
+                  setCreditInputs(current => ({
+                    ...current,
+                    [row.id]: event.target.value,
+                  }));
+                }}
+                className="w-full rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60 sm:w-28"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              />
+              <button
+                type="button"
+                disabled={!canSaveCredits}
+                onClick={() => onUpdateCredits(row, parsedCredits)}
+                className="rounded-md border border-[#D1BE9B]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                {isRowAdjusting ? "儲存中" : "儲存"}
+              </button>
+            </div>
+          </MobileInfoRow>
+          <MobileInfoRow label="備註">
+            <div className="flex flex-col gap-2">
+              <textarea
+                value={noteValue}
+                maxLength={2000}
+                rows={3}
+                onChange={event => {
+                  setNoteInputs(current => ({
+                    ...current,
+                    [row.id]: event.target.value,
+                  }));
+                }}
+                placeholder="寫給自己的會員小筆記"
+                className="min-h-20 w-full resize-y rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs leading-[1.7] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              />
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <span className="text-[10px] tracking-[0.08em] text-[#31353A]/38">
+                  {noteValue.length}/2000
+                </span>
+                <button
+                  type="button"
+                  disabled={!canSaveNote}
+                  onClick={() => onUpdateNote(row, noteValue)}
+                  className="rounded-md border border-[#D1BE9B]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
                   }}
-                  className="h-4 w-4 accent-[#A38D6B]"
-                />
-                <span>Email</span>
+                >
+                  {isRowSavingNote ? "儲存中" : "儲存備註"}
+                </button>
               </div>
-            </th>
-            <th className="px-4 py-3 font-normal">ID</th>
-            <th className="px-4 py-3 font-normal">會員</th>
-            <th className="px-4 py-3 font-normal">角色</th>
-            <th className="px-4 py-3 font-normal">點數</th>
-            <th className="px-4 py-3 font-normal">今日免費剩餘</th>
-            <th className="px-4 py-3 font-normal">註冊時間</th>
-            <th className="px-4 py-3 font-normal">最後占卜</th>
-            <th className="px-4 py-3 font-normal">備註</th>
-            <th className="px-4 py-3 font-normal">歷史</th>
-            <th className="px-4 py-3 font-normal">操作</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
-          {message && (
+            </div>
+          </MobileInfoRow>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setExpandedUserId(isExpanded ? null : row.id)}
+            className="rounded-md border border-[#D1BE9B]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12"
+            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+          >
+            {isExpanded ? "收合" : "歷史問答"}
+          </button>
+          <button
+            type="button"
+            disabled={isCurrentUser || isDeleting}
+            onClick={() => onDeleteUser(row)}
+            className="rounded-md border border-[#C9837A]/30 px-3 py-2 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
+            title={
+              isCurrentUser ? "不能刪除目前登入中的管理員帳號" : "刪除會員"
+            }
+            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+          >
+            {isRowDeleting ? "刪除中" : "刪除"}
+          </button>
+        </div>
+        {isExpanded && (
+          <div className="mt-4">
+            <UserReadingHistory
+              user={selectedUser}
+              rows={userReadingsQuery.data ?? []}
+              isLoading={
+                userReadingsQuery.isLoading || userReadingsQuery.isFetching
+              }
+              isError={userReadingsQuery.isError}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <div className="md:hidden">
+        {message && (
+          <div className="border-b border-[#D1BE9B]/12 px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
+            {message}
+          </div>
+        )}
+        <div className="border-b border-[#D1BE9B]/12 p-4">
+          <label className="flex items-center gap-2 text-[11px] tracking-[0.12em] text-[#A38D6B]">
+            <input
+              type="checkbox"
+              checked={allVisibleSelected}
+              disabled={selectableRowIds.length === 0}
+              onChange={event => {
+                onSelectedEmailUserIdsChange(current => {
+                  const visible = new Set(selectableRowIds);
+                  if (event.target.checked) {
+                    return Array.from(
+                      new Set([...current, ...selectableRowIds])
+                    );
+                  }
+                  return current.filter(id => !visible.has(id));
+                });
+              }}
+              className="h-4 w-4 accent-[#A38D6B]"
+            />
+            選取本頁可寄送會員
+          </label>
+        </div>
+        {rows.length === 0 ? <EmptyCard /> : rows.map(renderMobileUser)}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[1380px] text-left">
+          <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
             <tr>
-              <td colSpan={11} className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]">
-                {message}
-              </td>
-            </tr>
-          )}
-          {rows.length === 0 ? <EmptyRow colSpan={11} /> : rows.map((row) => {
-            const inputValue = creditInputs[row.id] ?? String(row.credits);
-            const noteValue = noteInputs[row.id] ?? row.adminNote ?? '';
-            const parsedCredits = Number(inputValue.trim());
-            const canSaveCredits =
-              inputValue.trim() !== '' &&
-              Number.isInteger(parsedCredits) &&
-              parsedCredits >= 0 &&
-              parsedCredits <= 100000 &&
-              parsedCredits !== row.credits &&
-              !isAdjusting;
-            const canSaveNote =
-              noteValue.trim() !== (row.adminNote ?? '') &&
-              noteValue.length <= 2000 &&
-              !isSavingNote;
-            const isRowAdjusting = isAdjusting && adjustingUserId === row.id;
-            const isRowSavingNote = isSavingNote && savingNoteUserId === row.id;
-            const isCurrentUser = row.id === currentUserId;
-            const isRowDeleting = isDeleting && deletingUserId === row.id;
-            const isExpanded = expandedUserId === row.id;
-            const freeRemaining = Math.max(0, dailyFreeQuota - row.freeUsedToday);
-            const canReceiveEmail = Boolean(row.email && emailRecipientUserIds.includes(row.id));
-            const isSelectedForEmail = selectedEmailUserIds.includes(row.id);
-            return (
-            <Fragment key={row.id}>
-              <tr key={row.id} className={isExpanded ? 'bg-[#D1BE9B]/5' : undefined}>
-                <td className="px-4 py-3">
+              <th className="px-4 py-3 font-normal">
+                <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    checked={isSelectedForEmail}
-                    disabled={!canReceiveEmail}
-                    onChange={(event) => {
-                      onSelectedEmailUserIdsChange((current) =>
-                        event.target.checked
-                          ? Array.from(new Set([...current, row.id]))
-                          : current.filter((id) => id !== row.id)
-                      );
+                    checked={allVisibleSelected}
+                    disabled={selectableRowIds.length === 0}
+                    onChange={event => {
+                      onSelectedEmailUserIdsChange(current => {
+                        const visible = new Set(selectableRowIds);
+                        if (event.target.checked) {
+                          return Array.from(
+                            new Set([...current, ...selectableRowIds])
+                          );
+                        }
+                        return current.filter(id => !visible.has(id));
+                      });
                     }}
-                    className="h-4 w-4 accent-[#A38D6B] disabled:opacity-30"
-                    title={canReceiveEmail ? '選為 Email 收件人' : '此會員沒有 email'}
+                    className="h-4 w-4 accent-[#A38D6B]"
                   />
-                </td>
-                <td className="px-4 py-3">{row.id}</td>
-                <td className="px-4 py-3">
-                  <div>{row.email ?? '—'}</div>
-                  <div className="mt-1 text-[11px] text-[#31353A]/42">{row.name ?? row.loginMethod ?? '—'}</div>
-                </td>
-                <td className="px-4 py-3">{row.role}</td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      min={0}
-                      max={100000}
-                      step={1}
-                      value={inputValue}
-                      onChange={(event) => {
-                        setCreditInputs((current) => ({
-                          ...current,
-                          [row.id]: event.target.value,
-                        }));
-                      }}
-                      className="w-24 rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-1.5 text-xs text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    />
-                    <button
-                      type="button"
-                      disabled={!canSaveCredits}
-                      onClick={() => onUpdateCredits(row, parsedCredits)}
-                      className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {isRowAdjusting ? '儲存中' : '儲存'}
-                    </button>
-                  </div>
-                </td>
-                <td className="px-4 py-3">{freeRemaining}/{dailyFreeQuota}</td>
-                <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
-                <td className="px-4 py-3">{formatLastReading(row.lastReadingAt)}</td>
-                <td className="px-4 py-3">
-                  <div className="flex min-w-64 flex-col gap-2">
-                    <textarea
-                      value={noteValue}
-                      maxLength={2000}
-                      rows={3}
-                      onChange={(event) => {
-                        setNoteInputs((current) => ({
-                          ...current,
-                          [row.id]: event.target.value,
-                        }));
-                      }}
-                      placeholder="寫給自己的會員小筆記"
-                      className="min-h-20 resize-y rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs leading-[1.7] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    />
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] tracking-[0.08em] text-[#31353A]/38">
-                        {noteValue.length}/2000
-                      </span>
-                      <button
-                        type="button"
-                        disabled={!canSaveNote}
-                        onClick={() => onUpdateNote(row, noteValue)}
-                        className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                      >
-                        {isRowSavingNote ? '儲存中' : '儲存備註'}
-                      </button>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <button
-                    type="button"
-                    onClick={() => setExpandedUserId(isExpanded ? null : row.id)}
-                    className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  >
-                    {isExpanded ? '收合' : '歷史問答'}
-                  </button>
-                </td>
-                <td className="px-4 py-3">
-                  <button
-                    type="button"
-                    disabled={isCurrentUser || isDeleting}
-                    onClick={() => onDeleteUser(row)}
-                    className="rounded-md border border-[#C9837A]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
-                    title={isCurrentUser ? '不能刪除目前登入中的管理員帳號' : '刪除會員'}
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  >
-                    {isRowDeleting ? '刪除中' : '刪除'}
-                  </button>
+                  <span>Email</span>
+                </div>
+              </th>
+              <th className="px-4 py-3 font-normal">ID</th>
+              <th className="px-4 py-3 font-normal">會員</th>
+              <th className="px-4 py-3 font-normal">角色</th>
+              <th className="px-4 py-3 font-normal">點數</th>
+              <th className="px-4 py-3 font-normal">今日免費剩餘</th>
+              <th className="px-4 py-3 font-normal">註冊時間</th>
+              <th className="px-4 py-3 font-normal">最後占卜</th>
+              <th className="px-4 py-3 font-normal">備註</th>
+              <th className="px-4 py-3 font-normal">歷史</th>
+              <th className="px-4 py-3 font-normal">操作</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
+            {message && (
+              <tr>
+                <td
+                  colSpan={11}
+                  className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]"
+                >
+                  {message}
                 </td>
               </tr>
-              {isExpanded && (
-                <tr key={`${row.id}-readings`}>
-                  <td colSpan={11} className="bg-[#FAF7F4]/70 px-4 py-4">
-                    <UserReadingHistory
-                      user={selectedUser}
-                      rows={userReadingsQuery.data ?? []}
-                      isLoading={userReadingsQuery.isLoading || userReadingsQuery.isFetching}
-                      isError={userReadingsQuery.isError}
-                    />
-                  </td>
-                </tr>
-              )}
-            </Fragment>
-          )})}
-        </tbody>
-      </table>
-    </div>
+            )}
+            {rows.length === 0 ? (
+              <EmptyRow colSpan={11} />
+            ) : (
+              rows.map(row => {
+                const inputValue = creditInputs[row.id] ?? String(row.credits);
+                const noteValue = noteInputs[row.id] ?? row.adminNote ?? "";
+                const parsedCredits = Number(inputValue.trim());
+                const canSaveCredits =
+                  inputValue.trim() !== "" &&
+                  Number.isInteger(parsedCredits) &&
+                  parsedCredits >= 0 &&
+                  parsedCredits <= 100000 &&
+                  parsedCredits !== row.credits &&
+                  !isAdjusting;
+                const canSaveNote =
+                  noteValue.trim() !== (row.adminNote ?? "") &&
+                  noteValue.length <= 2000 &&
+                  !isSavingNote;
+                const isRowAdjusting =
+                  isAdjusting && adjustingUserId === row.id;
+                const isRowSavingNote =
+                  isSavingNote && savingNoteUserId === row.id;
+                const isCurrentUser = row.id === currentUserId;
+                const isRowDeleting = isDeleting && deletingUserId === row.id;
+                const isExpanded = expandedUserId === row.id;
+                const freeRemaining = Math.max(
+                  0,
+                  dailyFreeQuota - row.freeUsedToday
+                );
+                const canReceiveEmail = Boolean(
+                  row.email && emailRecipientUserIds.includes(row.id)
+                );
+                const isSelectedForEmail = selectedEmailUserIds.includes(
+                  row.id
+                );
+                return (
+                  <Fragment key={row.id}>
+                    <tr
+                      key={row.id}
+                      className={isExpanded ? "bg-[#D1BE9B]/5" : undefined}
+                    >
+                      <td className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          checked={isSelectedForEmail}
+                          disabled={!canReceiveEmail}
+                          onChange={event => {
+                            onSelectedEmailUserIdsChange(current =>
+                              event.target.checked
+                                ? Array.from(new Set([...current, row.id]))
+                                : current.filter(id => id !== row.id)
+                            );
+                          }}
+                          className="h-4 w-4 accent-[#A38D6B] disabled:opacity-30"
+                          title={
+                            canReceiveEmail
+                              ? "選為 Email 收件人"
+                              : "此會員沒有 email"
+                          }
+                        />
+                      </td>
+                      <td className="px-4 py-3">{row.id}</td>
+                      <td className="px-4 py-3">
+                        <div>{row.email ?? "—"}</div>
+                        <div className="mt-1 text-[11px] text-[#31353A]/42">
+                          {row.name ?? row.loginMethod ?? "—"}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">{row.role}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            min={0}
+                            max={100000}
+                            step={1}
+                            value={inputValue}
+                            onChange={event => {
+                              setCreditInputs(current => ({
+                                ...current,
+                                [row.id]: event.target.value,
+                              }));
+                            }}
+                            className="w-24 rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-1.5 text-xs text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 300,
+                            }}
+                          />
+                          <button
+                            type="button"
+                            disabled={!canSaveCredits}
+                            onClick={() => onUpdateCredits(row, parsedCredits)}
+                            className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 300,
+                            }}
+                          >
+                            {isRowAdjusting ? "儲存中" : "儲存"}
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {freeRemaining}/{dailyFreeQuota}
+                      </td>
+                      <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
+                      <td className="px-4 py-3">
+                        {formatLastReading(row.lastReadingAt)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex min-w-64 flex-col gap-2">
+                          <textarea
+                            value={noteValue}
+                            maxLength={2000}
+                            rows={3}
+                            onChange={event => {
+                              setNoteInputs(current => ({
+                                ...current,
+                                [row.id]: event.target.value,
+                              }));
+                            }}
+                            placeholder="寫給自己的會員小筆記"
+                            className="min-h-20 resize-y rounded-md border border-[#D1BE9B]/25 bg-white/70 px-3 py-2 text-xs leading-[1.7] text-[#31353A]/75 outline-none focus:border-[#D1BE9B]/60"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 300,
+                            }}
+                          />
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[10px] tracking-[0.08em] text-[#31353A]/38">
+                              {noteValue.length}/2000
+                            </span>
+                            <button
+                              type="button"
+                              disabled={!canSaveNote}
+                              onClick={() => onUpdateNote(row, noteValue)}
+                              className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12 disabled:cursor-not-allowed disabled:opacity-40"
+                              style={{
+                                fontFamily: "Noto Serif TC, serif",
+                                fontWeight: 300,
+                              }}
+                            >
+                              {isRowSavingNote ? "儲存中" : "儲存備註"}
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedUserId(isExpanded ? null : row.id)
+                          }
+                          className="rounded-md border border-[#D1BE9B]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] transition hover:bg-[#D1BE9B]/12"
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 300,
+                          }}
+                        >
+                          {isExpanded ? "收合" : "歷史問答"}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          type="button"
+                          disabled={isCurrentUser || isDeleting}
+                          onClick={() => onDeleteUser(row)}
+                          className="rounded-md border border-[#C9837A]/30 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#C9837A] transition hover:bg-[#C9837A]/10 disabled:cursor-not-allowed disabled:opacity-40"
+                          title={
+                            isCurrentUser
+                              ? "不能刪除目前登入中的管理員帳號"
+                              : "刪除會員"
+                          }
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 300,
+                          }}
+                        >
+                          {isRowDeleting ? "刪除中" : "刪除"}
+                        </button>
+                      </td>
+                    </tr>
+                    {isExpanded && (
+                      <tr key={`${row.id}-readings`}>
+                        <td colSpan={11} className="bg-[#FAF7F4]/70 px-4 py-4">
+                          <UserReadingHistory
+                            user={selectedUser}
+                            rows={userReadingsQuery.data ?? []}
+                            isLoading={
+                              userReadingsQuery.isLoading ||
+                              userReadingsQuery.isFetching
+                            }
+                            isError={userReadingsQuery.isError}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
@@ -910,23 +1316,32 @@ function UserReadingHistory({
   isLoading: boolean;
   isError: boolean;
 }) {
-  const label = user?.email ?? user?.name ?? (user ? `會員 #${user.id}` : '會員');
+  const label =
+    user?.email ?? user?.name ?? (user ? `會員 #${user.id}` : "會員");
 
   return (
     <div className="rounded-lg border border-[#D1BE9B]/18 bg-white/60">
       <div className="flex flex-col gap-1 border-b border-[#D1BE9B]/12 px-4 py-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-[11px] tracking-[0.16em] text-[#A38D6B]">歷史問答</p>
-          <p className="mt-1 text-xs tracking-[0.08em] text-[#31353A]/55">{label}</p>
+          <p className="text-[11px] tracking-[0.16em] text-[#A38D6B]">
+            歷史問答
+          </p>
+          <p className="mt-1 text-xs tracking-[0.08em] text-[#31353A]/55">
+            {label}
+          </p>
         </div>
         <p className="text-[11px] tracking-[0.1em] text-[#31353A]/42">
-          最新 {rows.length.toLocaleString('zh-TW')} 筆
+          最新 {rows.length.toLocaleString("zh-TW")} 筆
         </p>
       </div>
       {isLoading ? (
-        <div className="px-4 py-8 text-center text-xs tracking-[0.16em] text-[#31353A]/42">載入中</div>
+        <div className="px-4 py-8 text-center text-xs tracking-[0.16em] text-[#31353A]/42">
+          載入中
+        </div>
       ) : isError ? (
-        <div className="px-4 py-8 text-center text-xs tracking-[0.16em] text-[#C9837A]">歷史問答載入失敗</div>
+        <div className="px-4 py-8 text-center text-xs tracking-[0.16em] text-[#C9837A]">
+          歷史問答載入失敗
+        </div>
       ) : (
         <ReadingsTable rows={rows} />
       )}
@@ -936,33 +1351,74 @@ function UserReadingHistory({
 
 function OrdersTable({ rows }: { rows: AdminTransactionRow[] }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[780px] text-left">
-        <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
-          <tr>
-            <th className="px-4 py-3 font-normal">訂單</th>
-            <th className="px-4 py-3 font-normal">會員</th>
-            <th className="px-4 py-3 font-normal">加值點數</th>
-            <th className="px-4 py-3 font-normal">加值後餘額</th>
-            <th className="px-4 py-3 font-normal">時間</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
-          {rows.length === 0 ? <EmptyRow colSpan={5} /> : rows.map((row) => (
-            <tr key={row.id}>
-              <td className="px-4 py-3">{row.reason.replace('gumroad:', '')}</td>
-              <td className="px-4 py-3">
-                <div>{row.email ?? '—'}</div>
-                <div className="mt-1 text-[11px] text-[#31353A]/42">User #{row.userId}</div>
-              </td>
-              <td className="px-4 py-3 text-[#A38D6B]">+{row.amount}</td>
-              <td className="px-4 py-3">{row.balanceAfter}</td>
-              <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
+    <>
+      <div className="md:hidden">
+        {rows.length === 0 ? (
+          <EmptyCard />
+        ) : (
+          rows.map(row => (
+            <div
+              key={row.id}
+              className="space-y-3 border-b border-[#D1BE9B]/12 p-4"
+            >
+              <div className="min-w-0 break-words text-xs tracking-[0.1em] text-[#31353A]/82">
+                {row.reason.replace("gumroad:", "")}
+              </div>
+              <MobileInfoRow label="會員">
+                <div>{row.email ?? "—"}</div>
+                <div className="mt-1 text-[11px] text-[#31353A]/42">
+                  User #{row.userId}
+                </div>
+              </MobileInfoRow>
+              <MobileInfoRow label="加值點數">
+                <span className="text-[#A38D6B]">+{row.amount}</span>
+              </MobileInfoRow>
+              <MobileInfoRow label="加值後餘額">
+                {row.balanceAfter}
+              </MobileInfoRow>
+              <MobileInfoRow label="時間">
+                {formatDate(row.createdAt)}
+              </MobileInfoRow>
+            </div>
+          ))
+        )}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[780px] text-left">
+          <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
+            <tr>
+              <th className="px-4 py-3 font-normal">訂單</th>
+              <th className="px-4 py-3 font-normal">會員</th>
+              <th className="px-4 py-3 font-normal">加值點數</th>
+              <th className="px-4 py-3 font-normal">加值後餘額</th>
+              <th className="px-4 py-3 font-normal">時間</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
+            {rows.length === 0 ? (
+              <EmptyRow colSpan={5} />
+            ) : (
+              rows.map(row => (
+                <tr key={row.id}>
+                  <td className="px-4 py-3">
+                    {row.reason.replace("gumroad:", "")}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div>{row.email ?? "—"}</div>
+                    <div className="mt-1 text-[11px] text-[#31353A]/42">
+                      User #{row.userId}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-[#A38D6B]">+{row.amount}</td>
+                  <td className="px-4 py-3">{row.balanceAfter}</td>
+                  <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
@@ -970,49 +1426,65 @@ function ReadingsTable({ rows }: { rows: AdminReadingRow[] }) {
   return (
     <div className="divide-y divide-[#D1BE9B]/12">
       {rows.length === 0 ? (
-        <div className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">沒有資料</div>
-      ) : rows.map((row) => {
-        const parsedInput = parseReadingInputData(row.inputData);
-        const isDreamRecord = row.type === 'dream' || parsedInput?.recordKind === 'dream';
-        return (
-          <details key={row.id} className="group px-4 py-4">
-            <summary className="cursor-pointer list-none">
-              <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                <div>
-                  <div className="flex items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] tracking-[0.1em] ${isVisitor(row) ? 'bg-[#C9837A]/12 text-[#C9837A]' : 'bg-[#A38D6B]/14 text-[#A38D6B]'}`}>
-                      {isVisitor(row) ? '訪客' : '會員'}
-                    </span>
-                    <span>{getReadingKind(row)} · {readerLabel(row)}</span>
+        <div className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">
+          沒有資料
+        </div>
+      ) : (
+        rows.map(row => {
+          const parsedInput = parseReadingInputData(row.inputData);
+          const isDreamRecord =
+            row.type === "dream" || parsedInput?.recordKind === "dream";
+          return (
+            <details key={row.id} className="group px-4 py-4">
+              <summary className="cursor-pointer list-none">
+                <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] tracking-[0.1em] ${isVisitor(row) ? "bg-[#C9837A]/12 text-[#C9837A]" : "bg-[#A38D6B]/14 text-[#A38D6B]"}`}
+                      >
+                        {isVisitor(row) ? "訪客" : "會員"}
+                      </span>
+                      <span className="min-w-0 break-words">
+                        {getReadingKind(row)} · {readerLabel(row)}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
+                      {shortText(getReadingPreview(row), 120)}
+                    </div>
                   </div>
-                  <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
-                    {shortText(getReadingPreview(row), 120)}
+                  <div className="shrink-0 text-[11px] tracking-[0.1em] text-[#A38D6B]">
+                    {formatDate(row.createdAt)}
                   </div>
                 </div>
-                <div className="shrink-0 text-[11px] tracking-[0.1em] text-[#A38D6B]">
-                  {formatDate(row.createdAt)}
+              </summary>
+              <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
+                <RecordBlock title="顧客身分" value={readerLabel(row)} />
+                {isDreamRecord ? (
+                  <>
+                    <RecordBlock
+                      title="夢境紀錄"
+                      value={parsedInput?.dreamContent ?? row.question}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <RecordBlock title="顧客問題" value={row.question} />
+                    <RecordBlock title="輸入資料" value={row.inputData} />
+                  </>
+                )}
+                <div className="md:col-span-2">
+                  <RecordBlock
+                    title="mochi解讀"
+                    value={row.interpretation}
+                    maxHeight
+                  />
                 </div>
               </div>
-            </summary>
-            <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
-              <RecordBlock title="顧客身分" value={readerLabel(row)} />
-              {isDreamRecord ? (
-                <>
-                  <RecordBlock title="夢境紀錄" value={parsedInput?.dreamContent ?? row.question} />
-                </>
-              ) : (
-                <>
-                  <RecordBlock title="顧客問題" value={row.question} />
-                  <RecordBlock title="輸入資料" value={row.inputData} />
-                </>
-              )}
-              <div className="md:col-span-2">
-                <RecordBlock title="mochi解讀" value={row.interpretation} maxHeight />
-              </div>
-            </div>
-          </details>
-        );
-      })}
+            </details>
+          );
+        })
+      )}
     </div>
   );
 }
@@ -1021,81 +1493,151 @@ function FeedbacksTable({ rows }: { rows: AdminFeedbackRow[] }) {
   return (
     <div className="divide-y divide-[#D1BE9B]/12">
       {rows.length === 0 ? (
-        <div className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">沒有資料</div>
-      ) : rows.map((row) => (
-        <details key={row.id} className="group px-4 py-4">
-          <summary className="cursor-pointer list-none">
-            <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
-                  <span className="rounded-full bg-[#A38D6B]/14 px-2 py-0.5 text-[10px] tracking-[0.1em] text-[#A38D6B]">
-                    {typeLabels[row.source] ?? row.source}
-                  </span>
-                  <span>{feedbackReaderLabel(row)}</span>
+        <div className="px-4 py-10 text-center text-xs tracking-[0.16em] text-[#31353A]/42">
+          沒有資料
+        </div>
+      ) : (
+        rows.map(row => (
+          <details key={row.id} className="group px-4 py-4">
+            <summary className="cursor-pointer list-none">
+              <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                <div className="min-w-0">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs tracking-[0.14em] text-[#31353A]/78">
+                    <span className="rounded-full bg-[#A38D6B]/14 px-2 py-0.5 text-[10px] tracking-[0.1em] text-[#A38D6B]">
+                      {typeLabels[row.source] ?? row.source}
+                    </span>
+                    <span className="min-w-0 break-words">
+                      {feedbackReaderLabel(row)}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
+                    {shortText(row.message, 120)}
+                  </div>
                 </div>
-                <div className="mt-1 text-[12px] leading-[1.7] text-[#31353A]/52">
-                  {shortText(row.message, 120)}
+                <div className="shrink-0 text-[11px] tracking-[0.1em] text-[#A38D6B]">
+                  {formatDate(row.createdAt)}
                 </div>
               </div>
-              <div className="shrink-0 text-[11px] tracking-[0.1em] text-[#A38D6B]">
-                {formatDate(row.createdAt)}
+            </summary>
+            <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
+              <RecordBlock title="顧客身分" value={feedbackReaderLabel(row)} />
+              <RecordBlock
+                title="來源"
+                value={typeLabels[row.source] ?? row.source}
+              />
+              <RecordBlock title="情境" value={row.context} />
+              <div className="md:col-span-2">
+                <RecordBlock title="回饋內容" value={row.message} maxHeight />
               </div>
             </div>
-          </summary>
-          <div className="mt-4 grid gap-3 text-[12px] leading-[1.8] text-[#31353A]/68 md:grid-cols-2">
-            <RecordBlock title="顧客身分" value={feedbackReaderLabel(row)} />
-            <RecordBlock title="來源" value={typeLabels[row.source] ?? row.source} />
-            <RecordBlock title="情境" value={row.context} />
-            <div className="md:col-span-2">
-              <RecordBlock title="回饋內容" value={row.message} maxHeight />
-            </div>
-          </div>
-        </details>
-      ))}
+          </details>
+        ))
+      )}
     </div>
   );
 }
 
 function TransactionsTable({ rows }: { rows: AdminTransactionRow[] }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[800px] text-left">
-        <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
-          <tr>
-            <th className="px-4 py-3 font-normal">類型</th>
-            <th className="px-4 py-3 font-normal">會員</th>
-            <th className="px-4 py-3 font-normal">異動</th>
-            <th className="px-4 py-3 font-normal">異動後餘額</th>
-            <th className="px-4 py-3 font-normal">時間</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
-          {rows.length === 0 ? <EmptyRow colSpan={5} /> : rows.map((row) => (
-            <tr key={row.id}>
-              <td className="px-4 py-3">{reasonLabel(row.reason)}</td>
-              <td className="px-4 py-3">
-                <div>{row.email ?? '—'}</div>
-                <div className="mt-1 text-[11px] text-[#31353A]/42">User #{row.userId}</div>
-              </td>
-              <td className={`px-4 py-3 ${row.amount >= 0 ? 'text-[#A38D6B]' : 'text-[#C9837A]'}`}>
-                {row.amount >= 0 ? '+' : ''}{row.amount}
-              </td>
-              <td className="px-4 py-3">{row.balanceAfter}</td>
-              <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
+    <>
+      <div className="md:hidden">
+        {rows.length === 0 ? (
+          <EmptyCard />
+        ) : (
+          rows.map(row => (
+            <div
+              key={row.id}
+              className="space-y-3 border-b border-[#D1BE9B]/12 p-4"
+            >
+              <div className="min-w-0 break-words text-xs tracking-[0.1em] text-[#31353A]/82">
+                {reasonLabel(row.reason)}
+              </div>
+              <MobileInfoRow label="會員">
+                <div>{row.email ?? "—"}</div>
+                <div className="mt-1 text-[11px] text-[#31353A]/42">
+                  User #{row.userId}
+                </div>
+              </MobileInfoRow>
+              <MobileInfoRow label="異動">
+                <span
+                  className={
+                    row.amount >= 0 ? "text-[#A38D6B]" : "text-[#C9837A]"
+                  }
+                >
+                  {row.amount >= 0 ? "+" : ""}
+                  {row.amount}
+                </span>
+              </MobileInfoRow>
+              <MobileInfoRow label="異動後餘額">
+                {row.balanceAfter}
+              </MobileInfoRow>
+              <MobileInfoRow label="時間">
+                {formatDate(row.createdAt)}
+              </MobileInfoRow>
+            </div>
+          ))
+        )}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[800px] text-left">
+          <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
+            <tr>
+              <th className="px-4 py-3 font-normal">類型</th>
+              <th className="px-4 py-3 font-normal">會員</th>
+              <th className="px-4 py-3 font-normal">異動</th>
+              <th className="px-4 py-3 font-normal">異動後餘額</th>
+              <th className="px-4 py-3 font-normal">時間</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
+            {rows.length === 0 ? (
+              <EmptyRow colSpan={5} />
+            ) : (
+              rows.map(row => (
+                <tr key={row.id}>
+                  <td className="px-4 py-3">{reasonLabel(row.reason)}</td>
+                  <td className="px-4 py-3">
+                    <div>{row.email ?? "—"}</div>
+                    <div className="mt-1 text-[11px] text-[#31353A]/42">
+                      User #{row.userId}
+                    </div>
+                  </td>
+                  <td
+                    className={`px-4 py-3 ${row.amount >= 0 ? "text-[#A38D6B]" : "text-[#C9837A]"}`}
+                  >
+                    {row.amount >= 0 ? "+" : ""}
+                    {row.amount}
+                  </td>
+                  <td className="px-4 py-3">{row.balanceAfter}</td>
+                  <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
-function RecordBlock({ title, value, maxHeight = false }: { title: string; value: string | null | undefined; maxHeight?: boolean }) {
+function RecordBlock({
+  title,
+  value,
+  maxHeight = false,
+}: {
+  title: string;
+  value: string | null | undefined;
+  maxHeight?: boolean;
+}) {
   return (
     <div className="rounded-lg border border-[#D1BE9B]/15 bg-white/45 p-3">
-      <div className="mb-2 text-[11px] tracking-[0.16em] text-[#A38D6B]">{title}</div>
-      <pre className={`whitespace-pre-wrap break-words font-sans text-[12px] leading-[1.8] text-[#31353A]/68 ${maxHeight ? 'max-h-64 overflow-auto' : ''}`}>
-        {value || '—'}
+      <div className="mb-2 text-[11px] tracking-[0.16em] text-[#A38D6B]">
+        {title}
+      </div>
+      <pre
+        className={`whitespace-pre-wrap break-words font-sans text-[12px] leading-[1.8] text-[#31353A]/68 ${maxHeight ? "max-h-64 overflow-auto" : ""}`}
+      >
+        {value || "—"}
       </pre>
     </div>
   );
