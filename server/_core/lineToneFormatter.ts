@@ -3,7 +3,7 @@ const SENTENCE_ENDING = /[。！？!?～~…]$/u;
 const NUMBERED_LINE = /^\d+[.、]/u;
 
 const ASSERTIVE_PATTERN = /(是|有機會|適合|不適合|偏|會|不會|可以|不可以|值得|不值得|能|不能|要|不要|先|記得|注意|停|放掉|選|等|看清楚)/u;
-const SOFT_PATTERN = /(但|只是|其實|比較像|有點|慢慢|暫時|目前|現在|不是|如果|可能|容易|心裡|卡|怕|拉扯|觀察|還在)/u;
+const SOFT_PATTERN = /(但|只是|其實|比較像|有點|慢慢|暫時|短期|目前|現在|不是|如果|可能|容易|心裡|卡|怕|拉扯|觀察|還在)/u;
 
 function stripTrailingSentenceEnding(line: string) {
   return line.replace(/[。！？!?～~]+$/u, "");
@@ -28,8 +28,8 @@ export function formatLineToneForMochi(content: string) {
   let dryLineStreak = 0;
   let addedBang = 0;
   let addedWave = 0;
-  const maxBang = 7;
-  const maxWave = 7;
+  const maxBang = 2;
+  const maxWave = 3;
 
   const formatted = lines.map((line) => {
     const trimmed = line.trim();
@@ -48,11 +48,9 @@ export function formatLineToneForMochi(content: string) {
     dryLineStreak += 1;
     const isFirstContentLine = contentLineIndex === 1;
     const shouldAdd =
-      isFirstContentLine ||
-      dryLineStreak >= 2 ||
-      (contentLineIndex <= 5 && ASSERTIVE_PATTERN.test(trimmed)) ||
-      (contentLineIndex <= 5 && SOFT_PATTERN.test(trimmed)) ||
-      NUMBERED_LINE.test(trimmed);
+      (isFirstContentLine && ASSERTIVE_PATTERN.test(trimmed)) ||
+      dryLineStreak >= 4 ||
+      (contentLineIndex <= 4 && NUMBERED_LINE.test(trimmed));
 
     if (!shouldAdd) return line;
 
