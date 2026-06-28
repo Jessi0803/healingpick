@@ -930,7 +930,7 @@ export async function getEligibleReadingFollowups(limit = 25): Promise<EligibleR
     WHERE latest_readings."readingCreatedAt" <= now() - interval '3 days'
       AND (
         latest_followups."lastFollowupAt" IS NULL
-        OR latest_followups."lastFollowupAt" <= now() - interval '7 days'
+        OR latest_followups."lastFollowupAt" <= now() - interval '10 days'
       )
       AND ${users.role} = 'user'
     ORDER BY latest_readings."readingCreatedAt" ASC
