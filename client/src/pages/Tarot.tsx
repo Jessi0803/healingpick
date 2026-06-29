@@ -637,7 +637,6 @@ export default function TarotPage() {
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const [followUpExchanges, setFollowUpExchanges] = useState<FollowUpExchange[]>([]);
-  const [isFollowUpOpen, setIsFollowUpOpen] = useState(false);
   const [pendingStartAfterLogin, setPendingStartAfterLogin] = useState(false);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] = useState(false);
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -897,7 +896,6 @@ export default function TarotPage() {
     setReadingRecommendation(null);
     setFollowUpQuestion('');
     setFollowUpExchanges([]);
-    setIsFollowUpOpen(false);
     setPendingFollowUpAfterLogin(false);
     interpretMutation.mutate({
       question,
@@ -2617,47 +2615,34 @@ export default function TarotPage() {
                         根據剛剛的牌面，免費補充回答一個追問。
                       </p>
 
-                      {!isFollowUpOpen && (
-                        <button
-                          type="button"
-                          onClick={() => setIsFollowUpOpen(true)}
-                          className="mt-4 w-full rounded-full bg-[#3D4144] px-5 py-3 text-[11px] tracking-[0.18em] text-[#FAF7F4] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                        >
-                          免費追問 Mochi
-                        </button>
-                      )}
-
-                      {isFollowUpOpen && (
-                        <div className="mt-4">
-                          <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
-                            <textarea
-                              value={followUpQuestion}
-                              onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
-                              maxLength={300}
-                              placeholder="例如：他現在還喜歡我嗎？我接下來該主動嗎？"
-                              className="min-h-[82px] resize-none rounded-xl border border-[#D1BE9B]/20 bg-white/55 px-3.5 py-2.5 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
-                              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                            />
-                            <div className="flex flex-col items-stretch gap-3">
-                              <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
-                                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                                {followUpQuestion.length}/300
-                              </span>
-                              <button
-                                type="submit"
-                                disabled={!followUpQuestion.trim() || followUpMutation.isPending}
-                                className="w-full rounded-full bg-[#3D4144] px-6 py-3 text-[11px] tracking-[0.18em] text-[#FAF7F4] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
-                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                              >
-                                {followUpMutation.isPending
-                                  ? tarotFollowUpWaitingMessage
-                                  : '請 Mochi 回應'}
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-                      )}
+                      <div className="mt-4">
+                        <form onSubmit={handleFollowUpSubmit} className="flex flex-col gap-3">
+                          <textarea
+                            value={followUpQuestion}
+                            onChange={(event) => setFollowUpQuestion(event.target.value.slice(0, 300))}
+                            maxLength={300}
+                            placeholder="例如：他現在還喜歡我嗎？我接下來該主動嗎？"
+                            className="min-h-[82px] resize-none rounded-xl border border-[#D1BE9B]/20 bg-white/55 px-3.5 py-2.5 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/80 outline-none transition-all duration-300 placeholder:text-[#31353A]/35 focus:border-[#D1BE9B]/55 focus:bg-white/75"
+                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                          />
+                          <div className="flex flex-col items-stretch gap-3">
+                            <span className="text-[11px] tracking-[0.1em] text-[#31353A]/45"
+                              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                              {followUpQuestion.length}/300
+                            </span>
+                            <button
+                              type="submit"
+                              disabled={!followUpQuestion.trim() || followUpMutation.isPending}
+                              className="w-full rounded-full bg-[#3D4144] px-6 py-3 text-[11px] tracking-[0.18em] text-[#FAF7F4] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                            >
+                              {followUpMutation.isPending
+                                ? tarotFollowUpWaitingMessage
+                                : '請 Mochi 回應'}
+                            </button>
+                          </div>
+                        </form>
+                      </div>
 
                       {followUpMutation.isError && (
                         <p className="mt-3 text-[12px] tracking-[0.08em] text-[#EAA8AC]"
@@ -2756,7 +2741,6 @@ export default function TarotPage() {
                       setQuestion('');
                       setFollowUpQuestion('');
                       setFollowUpExchanges([]);
-                      setIsFollowUpOpen(false);
                     }}
                     className="w-full sm:w-44 px-8 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
