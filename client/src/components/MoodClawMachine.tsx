@@ -2,8 +2,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Gift,
   Sparkles,
   X,
@@ -681,25 +679,6 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
     [onPrizeCaught]
   );
 
-  const moveClaw = useCallback(
-    (direction: -1 | 1) => {
-      if (phase === "dropping" || phase === "lifting") return;
-      setCaught(null);
-      setShowPrize(false);
-      setPhase("ready");
-      setClawX((current) => Math.min(88, Math.max(12, current + direction * 8)));
-      if (!reduceMotion) {
-        // 繩子帶動爪子的鐘擺殘留
-        void animateClaw(
-          clawScope.current,
-          { rotate: [0, direction * 6, 0] },
-          { duration: 0.55, ease: "easeOut" }
-        );
-      }
-    },
-    [animateClaw, clawScope, phase, reduceMotion]
-  );
-
   const grab = useCallback(async () => {
     if (phase === "dropping" || phase === "lifting") return;
 
@@ -979,10 +958,10 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
               ) : (
                 <>
                   <p className="text-[14px] font-medium tracking-[0.08em] text-[#6F5A3A]">
-                    目前瞄準：{nearestPlushie.name}
+                    拖曳爪子找位置
                   </p>
                   <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
-                    直接拖曳或用左右鍵對準娃娃，再按下降抓取。
+                    移到想抓的位置後，再按下降抓取。
                   </p>
                 </>
               )}
@@ -991,25 +970,7 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
         </div>
 
 
-        <div className="rounded-[22px] border border-[#D1BE9B]/18 bg-[#F8F4EC]/58 p-2 shadow-[inset_0_1px_8px_rgba(255,255,255,0.54)]">
-          <div className="mb-2 flex items-center justify-center gap-2 text-[10px] tracking-[0.18em] text-[#A38D6B]/80">
-            <ChevronLeft className="size-3" />
-            <span>移動爪子</span>
-            <ChevronRight className="size-3" />
-          </div>
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={isMoving}
-            onClick={() => moveClaw(-1)}
-            aria-label="向左移動爪子"
-            className="h-11 rounded-full border-[#D1BE9B]/45 bg-white/86 text-[#6F5A3A] shadow-[0_8px_16px_rgba(111,90,58,0.08)] hover:bg-[#F3EBDD]"
-          >
-            <ChevronLeft className="size-5" />
-            <span className="text-[11px] tracking-[0.12em]">向左</span>
-          </Button>
+        <div className="flex justify-center rounded-[22px] border border-[#D1BE9B]/18 bg-[#F8F4EC]/58 p-2 shadow-[inset_0_1px_8px_rgba(255,255,255,0.54)]">
           <Button
             type="button"
             size="sm"
@@ -1020,19 +981,6 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
             <ChevronDown className="size-4" />
             下降抓取
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={isMoving}
-            onClick={() => moveClaw(1)}
-            aria-label="向右移動爪子"
-            className="h-11 rounded-full border-[#D1BE9B]/45 bg-white/86 text-[#6F5A3A] shadow-[0_8px_16px_rgba(111,90,58,0.08)] hover:bg-[#F3EBDD]"
-          >
-            <span className="text-[11px] tracking-[0.12em]">向右</span>
-            <ChevronRight className="size-5" />
-          </Button>
-          </div>
         </div>
 
         {todayCollection.length > 0 && (
@@ -1421,9 +1369,6 @@ function FeaturedMiniPlushie({ plushie, className, style }: MiniPlushieProps) {
           </>
         )}
       </div>
-      <span className="mt-1 max-w-full truncate rounded-full border border-[#D1BE9B]/20 bg-[#FFFDF8]/86 px-2 py-0.5 text-[10px] leading-none tracking-[0.04em] text-[#6F5A3A] shadow-sm">
-        {plushie.name}
-      </span>
     </div>
   );
 }
@@ -1455,9 +1400,6 @@ const MiniPlushie = memo(function MiniPlushie({ plushie, className, style }: Min
             className="absolute inset-0 h-full w-full select-none object-contain will-change-transform"
           />
         </div>
-        <span className="mt-1 max-w-full truncate rounded-full border border-[#D1BE9B]/20 bg-[#FFFDF8]/86 px-2 py-0.5 text-[10px] leading-none tracking-[0.04em] text-[#6F5A3A] shadow-sm">
-          {plushie.name}
-        </span>
       </div>
     );
   }
@@ -1622,9 +1564,6 @@ const MiniPlushie = memo(function MiniPlushie({ plushie, className, style }: Min
           </div>
         )}
       </div>
-      <span className="mt-1 max-w-full truncate rounded-full border border-[#D1BE9B]/20 bg-[#FFFDF8]/86 px-2 py-0.5 text-[10px] leading-none tracking-[0.04em] text-[#6F5A3A] shadow-sm">
-        {plushie.name}
-      </span>
     </div>
   );
 });
