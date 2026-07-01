@@ -892,6 +892,7 @@ export default function TarotPage() {
 
   const startReading = (cards = drawnCards) => {
     setStep('reading');
+    setSelectedCard(cards.length > 0 ? 0 : null);
     setLlmInterpretation('');
     setReadingRecommendation(null);
     setFollowUpQuestion('');
@@ -971,6 +972,7 @@ export default function TarotPage() {
       setQuestion(pending.question ?? '');
       setQuestionType(pending.questionType ?? 'love');
       setDrawnCards(pending.drawnCards ?? []);
+      setSelectedCard(pending.drawnCards?.length ? 0 : null);
       setLlmInterpretation(pending.interpretation);
       setReadingRecommendation(pending.readingRecommendation ?? null);
       setFollowUpQuestion(trimmedQuestion);
@@ -2475,28 +2477,85 @@ export default function TarotPage() {
               </div>
 
               {/* Cards summary */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10">
-                {drawnCards.map((drawn, idx) => (
-                  <div key={idx} className="glass-panel rounded-xl p-3 border border-[#D1BE9B]/15 text-center">
-                    <div className="text-[9px] tracking-[0.14em] text-[#D1BE9B] mb-1"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                      {SPREAD_POSITIONS[idx].label}
+              <div className="mb-10">
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+                  {drawnCards.map((drawn, idx) => {
+                    const isActive = selectedCard === idx;
+
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setSelectedCard(idx)}
+                        aria-pressed={isActive}
+                        className={`group relative rounded-xl border p-3 text-center outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/60 ${
+                          isActive
+                            ? 'border-[#D1BE9B]/70 bg-[#FFFDF8]/82 shadow-[0_0_0_1px_rgba(209,190,155,0.30),0_0_28px_rgba(209,190,155,0.44),0_14px_34px_rgba(138,114,80,0.12)]'
+                            : 'glass-panel border-[#D1BE9B]/15 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45 hover:shadow-[0_12px_26px_rgba(209,190,155,0.18)]'
+                        }`}
+                      >
+                        <div className={`pointer-events-none absolute -inset-1 rounded-[15px] transition-opacity duration-300 ${
+                          isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
+                        } bg-[radial-gradient(circle_at_50%_18%,rgba(255,248,220,0.92),rgba(209,190,155,0.24)_42%,transparent_72%)] blur-[2px]`} />
+                        <div className="relative">
+                          <div className="text-[9px] tracking-[0.14em] text-[#D1BE9B] mb-1"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                            {SPREAD_POSITIONS[idx].label}
+                          </div>
+                          <div className={`mx-auto mb-2 w-20 sm:w-24 aspect-[2/3] rounded-lg transition-all duration-300 ${
+                            isActive
+                              ? 'scale-[1.03] drop-shadow-[0_0_18px_rgba(209,190,155,0.62)]'
+                              : 'group-hover:drop-shadow-[0_8px_18px_rgba(209,190,155,0.30)]'
+                          }`}>
+                            <CardFace card={drawn.card} reversed={drawn.reversed} />
+                          </div>
+                          <div className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                            {drawn.card.name}
+                          </div>
+                          <div className={`mt-0.5 text-[10px] tracking-[0.08em] ${
+                            drawn.reversed ? 'text-[#EAA8AC]' : 'text-[#A38D6B]'
+                          }`}
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                            {drawn.reversed ? '逆位' : '正位'}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {selectedCard !== null && drawnCards[selectedCard] && (
+                  <div className="mt-4 rounded-2xl border border-[#D1BE9B]/24 bg-[#FFFDF8]/72 px-5 py-4 shadow-[0_14px_36px_rgba(138,114,80,0.08)] animate-fade-in-up">
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <span className="rounded-full border border-[#D1BE9B]/32 bg-white/58 px-3 py-1 text-[11px] tracking-[0.18em] text-[#8A7250]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        {SPREAD_POSITIONS[selectedCard].readingLabel}
+                      </span>
+                      <span className="text-[11px] tracking-[0.14em] text-[#31353A]/54"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                        {SPREAD_POSITIONS[selectedCard].label}
+                      </span>
                     </div>
-                    <div className="mx-auto mb-2 w-20 sm:w-24 aspect-[2/3]">
-                      <CardFace card={drawn.card} reversed={drawn.reversed} />
-                    </div>
-                    <div className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
+                    <h3 className="text-[15px] tracking-[0.12em] text-[#31353A]/88"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      {drawn.card.name}
-                    </div>
-                    {drawn.reversed && (
-                      <div className="text-[10px] text-[#EAA8AC] mt-0.5"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                        逆位
-                      </div>
-                    )}
+                      {drawnCards[selectedCard].card.name}
+                      <span className="ml-2 text-[12px] text-[#A38D6B]">
+                        {drawnCards[selectedCard].reversed ? '逆位' : '正位'}
+                      </span>
+                    </h3>
+                    <p className="mt-2 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                      {SPREAD_POSITIONS[selectedCard].desc}
+                    </p>
+                    <p className="mt-3 border-t border-[#D1BE9B]/14 pt-3 text-[13px] leading-[2] tracking-[0.07em] text-[#31353A]/76"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                      {drawnCards[selectedCard].reversed
+                        ? drawnCards[selectedCard].card.reversed
+                        : drawnCards[selectedCard].card.meaning}
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
 
               {/* AI interpretation */}
