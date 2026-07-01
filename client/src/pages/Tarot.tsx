@@ -1962,6 +1962,14 @@ export default function TarotPage() {
                     />
                     <p className="tarot-choice-mochi-caption">讓 Mochi 來幫你把打結的毛球打開</p>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setStep('question')}
+                    className="tarot-choice-cta tarot-choice-layer"
+                    style={{ '--choice-z': '26px' } as CSSProperties}
+                  >
+                    開始免費 AI 塔羅
+                  </button>
                   <div className="tarot-choice-ai-proof tarot-choice-layer" style={{ '--choice-z': '18px' } as CSSProperties}>
                     <div className="tarot-choice-ai-proof-card" data-mark="✦">
                       <h3>免費即時，不用預約</h3>
@@ -1976,14 +1984,6 @@ export default function TarotPage() {
                       <p>AI 會同時分析牌義、正逆位、牌陣位置與牌面之間的連動，幫你看見容易忽略的訊號。</p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setStep('question')}
-                    className="tarot-choice-cta tarot-choice-layer mt-auto"
-                    style={{ '--choice-z': '26px' } as CSSProperties}
-                  >
-                    開始免費 AI 塔羅
-                  </button>
                 </article>
 
                 <article
@@ -2021,6 +2021,16 @@ export default function TarotPage() {
                     </p>
                   </div>
 
+                  <a
+                    href={OFFICIAL_LINE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="tarot-choice-cta tarot-choice-layer"
+                    style={{ '--choice-z': '26px' } as CSSProperties}
+                  >
+                    LINE 諮詢真人塔羅
+                  </a>
+
                   <ul className="tarot-choice-list tarot-choice-layer" style={{ '--choice-z': '18px' } as CSSProperties}>
                     <li>
                       師承白中道博士，30 年占卜經驗
@@ -2036,16 +2046,6 @@ export default function TarotPage() {
                       </Link>
                     </li>
                   </ul>
-
-                  <a
-                    href={OFFICIAL_LINE_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="tarot-choice-cta tarot-choice-layer mt-auto"
-                    style={{ '--choice-z': '26px' } as CSSProperties}
-                  >
-                    LINE 諮詢真人塔羅
-                  </a>
                 </article>
               </div>
 
