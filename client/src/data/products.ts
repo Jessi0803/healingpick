@@ -368,6 +368,144 @@ export const PRODUCTS: Product[] = [
     closing:
       '財富從來不是運氣。\n是你日復一日把自己照顧好、把該做的事做好,宇宙才能把該到你身邊的東西,慢慢送過來。\n願這塊財運礦陪你,把每一次努力都被好好看見。 💛✨',
   },
+
+  // ── 森蘊 ────────────────────────────────────────────────────────────────
+  {
+    slug: 'forest-bloom',
+    name: '森蘊',
+    subtitle: 'Forest Verdure Bracelet',
+    tagline: '綠色,是一種溫柔的力量。\n像森林的呼吸,讓人慢下來,也重新整理自己。',
+    category: 'wealth',
+    material: '葡萄石貔貅・綠髮晶・綠幽靈・白水晶',
+    price: 1880,
+    originalPrice: null,
+    tag: '手鍊',
+    fitSummary: '適合想招財、旺事業、提升貴人運的你',
+    gentleRecommendation:
+      '森蘊偏向豐盛、事業與穩定累積，如果你最近正在整理工作步伐，它可以陪你用更自然的節奏把好運慢慢收進來。',
+    pairingReason:
+      '如果你想把財運、貴人與行動力再聚焦一點，森蘊會是溫柔但有累積感的手鍊陪伴。',
+    imageZoom: 1.12,
+    imagePosition: 'center center',
+    images: imgs('forest-bloom', 5),
+    img: '/products/forest-bloom/1.jpg',
+    features: [
+      { emoji: '🌿', title: '層層綠意主調', desc: '柔和綠意交織透明層次,像晨霧未散的林間光影。' },
+      { emoji: '💚', title: '招財事業能量', desc: '對應招財、旺事業與提升貴人運的寓意。' },
+      { emoji: '✨', title: '天然水晶錯落排列', desc: '溫潤礦石在光線下透出細緻光澤,低調卻富有層次。' },
+      { emoji: '🎀', title: '日常配戴手鍊', desc: '適合工作、日常與需要穩定累積感的時刻配戴。' },
+    ],
+    meanings: [
+      { emoji: '🌿', title: '葡萄石貔貅', desc: '象徵守護與豐盛,寓意匯聚好運、守住珍惜的人事物。' },
+      { emoji: '🌱', title: '綠髮晶', desc: '寓意成長、行動力與堅定信念,鼓勵保持積極步伐。' },
+      { emoji: '🍃', title: '綠幽靈', desc: '象徵蛻變與豐盛能量,陪伴人生不同階段穩步向前。' },
+      { emoji: '☁️', title: '葡萄石', desc: '寓意希望、平靜與信任,提醒自己放慢腳步聽見內心。' },
+      { emoji: '🤍', title: '白水晶', desc: '象徵純淨與平衡,也有放大其他水晶寓意的意涵。' },
+    ],
+    suitedFor: [
+      '想提升財運與事業運',
+      '希望吸引貴人與新的機會',
+      '正在穩定累積工作成果',
+      '喜歡自然綠色系與清透層次',
+      '需要一份慢慢整理自己的溫柔提醒',
+    ],
+    story:
+      '有些成長,不是突然發生的。\n\n它比較像森林裡的光,每天一點點穿過葉子,慢慢把路照亮。\n\n森蘊把層層綠意戴在手腕上,不是催你快一點成功,而是提醒你:穩定、累積、相信自己的節奏,也是一種很珍貴的力量。',
+    closing:
+      '願森蘊陪你在工作與生活之間,慢慢整理自己的步伐。\n把該來的機會收進來,把重要的人事物守住,也把心裡那片森林照顧好。 🌿',
+  },
+
+  // ── 靈狐星願 ────────────────────────────────────────────────────────────
+  {
+    slug: 'starwish-fox-bracelet',
+    name: '靈狐星願',
+    subtitle: 'Starwish Fox Bracelet',
+    tagline: '手腕上的粉嫩小狐狸,\n像一顆藏著星光的小心願。',
+    category: 'wish',
+    material: '狐仙・粉晶・月光石・白水晶・黃水晶',
+    price: 1580,
+    originalPrice: null,
+    tag: '手鍊',
+    fitSummary: '適合想提升桃花、招財與好人緣的你',
+    gentleRecommendation:
+      '靈狐星願偏向桃花、人緣與貴人能量，如果你最近想讓自己更柔和地被看見，它會是一條帶著甜感的小提醒。',
+    pairingReason:
+      '如果你想加強魅力、善緣與日常亮點，靈狐星願會把心願感戴得更輕盈。',
+    imageZoom: 1.08,
+    imagePosition: 'center center',
+    images: imgs('starwish-fox-bracelet', 2),
+    img: '/products/starwish-fox-bracelet/1.jpg',
+    features: [
+      { emoji: '🦊', title: '粉嫩狐仙主題', desc: '柔霧粉色在光下閃著細緻光澤,甜而不膩。' },
+      { emoji: '✨', title: '星願小亮點', desc: '像在人群裡會讓人多看一眼的柔光。' },
+      { emoji: '🌸', title: '桃花人緣寓意', desc: '對應桃花、招財與好人緣的日常配戴靈感。' },
+      { emoji: '🎀', title: '甜感收藏手鍊', desc: '適合粉色系穿搭、約會、日常與溫柔收藏。' },
+    ],
+    meanings: [
+      { emoji: '🦊', title: '狐仙', desc: '象徵魅力、自信與美好緣分,寓意吸引善緣與貴人。' },
+      { emoji: '🌸', title: '粉晶', desc: '象徵柔和與浪漫氣息,呈現溫潤甜美的風格。' },
+      { emoji: '🌷', title: '馬粉晶', desc: '色澤偏暖,為整體增添親和與柔亮層次。' },
+      { emoji: '🌙', title: '奶油月光石與藍月光石', desc: '帶來細緻霧光與淡淡藍光,展現溫潤優雅。' },
+      { emoji: '🤍', title: '白水晶與黃水晶', desc: '清澈純淨中點綴明亮色調,讓整體更有活潑光感。' },
+    ],
+    suitedFor: [
+      '希望提升桃花與個人吸引力',
+      '想增加好人緣與貴人運',
+      '喜歡粉色系、甜感但不張揚的飾品',
+      '想替日常穿搭增加一點柔光',
+      '正在收藏一個心裡的小願望',
+    ],
+    story:
+      '有時候,你想要的不是很大的幸運。\n\n只是希望自己被溫柔看見,希望遇到舒服的人,也希望心裡那個小願望不要被忙碌弄丟。\n\n靈狐星願像手腕上的小狐狸,把可愛、細膩與一點點浪漫,悄悄替你收好。',
+    closing:
+      '願靈狐星願陪你把自信戴回身上。\n不用張揚,也可以很有光;不用用力追逐,美好的緣分也會慢慢靠近。 🦊✨',
+  },
+
+  // ── 霧裡星光 ────────────────────────────────────────────────────────────
+  {
+    slug: 'misty-starlight',
+    name: '霧裡星光',
+    subtitle: 'Misty Starlight Bracelet',
+    tagline: '柔軟、純淨、被溫柔守護。\n願每一次配戴,都像月光輕輕落在手腕上。',
+    category: 'wish',
+    material: '粉晶・草莓晶・白水晶・藍月光・拉長石',
+    price: 1280,
+    originalPrice: null,
+    tag: '手鍊',
+    fitSummary: '適合想照顧桃花、感情與人際關係的你',
+    gentleRecommendation:
+      '霧裡星光偏向愛自己、感情與人際連結，如果你最近想先把心放柔一點，它會像月光一樣提醒你慢慢靠近自己。',
+    pairingReason:
+      '如果你想讓關係能量更乾淨柔和，霧裡星光會是氣質、日常又有守護感的搭配。',
+    imageZoom: 1.12,
+    imagePosition: 'center center',
+    images: imgs('misty-starlight', 3),
+    img: '/products/misty-starlight/1.jpg',
+    features: [
+      { emoji: '🌙', title: '柔光氣質款', desc: '粉晶與草莓晶交織溫暖悸動,適合日常、約會與工作佩戴。' },
+      { emoji: '🤍', title: '乾淨清透層次', desc: '白水晶帶來清澈純淨,藍月光映照內心平靜。' },
+      { emoji: '✨', title: '勇氣與守護', desc: '拉長石陪伴自己勇敢前行,在關係裡保有內在力量。' },
+      { emoji: '🎀', title: '天然水晶手鍊', desc: '每一顆天然水晶都有獨一無二的紋理與色澤。' },
+    ],
+    meanings: [
+      { emoji: '🤍', title: '粉晶', desc: '象徵愛與包容,提醒自己溫柔面對生活。' },
+      { emoji: '🍓', title: '草莓晶', desc: '象徵幸福、人緣與喜悅,陪伴珍貴的人際連結。' },
+      { emoji: '🤍', title: '白水晶', desc: '象徵純淨、清澈與平衡,是百搭的晶石寓意。' },
+      { emoji: '🌙', title: '藍月光', desc: '如月色般柔和,象徵直覺、溫柔與內在平靜。' },
+      { emoji: '✨', title: '拉長石', desc: '象徵勇氣、蛻變與探索,鼓勵勇敢迎接新的旅程。' },
+    ],
+    suitedFor: [
+      '想提升桃花、感情與人際關係',
+      '正在練習先好好愛自己',
+      '喜歡柔光、乾淨、氣質款手鍊',
+      '希望在日常配戴裡保有溫柔守護',
+      '想送自己一份關係與內在平靜的提醒',
+    ],
+    story:
+      '有些緣分,不是追來的。\n\n它比較像月光,在你願意先好好愛自己的時候,安靜地落到身邊。\n\n霧裡星光把粉晶、草莓晶、白水晶、藍月光與拉長石串在一起,提醒你在期待美好關係之前,也別忘了先把自己抱好。',
+    closing:
+      '先好好愛自己,美好的緣分自然會慢慢靠近。\n願霧裡星光陪你在每一次配戴時,都記得自己值得被溫柔守護。 🌙🤍',
+  },
 ];
 
 export function getProductFeatureSummary(product: Product, limit = 2): string {
@@ -392,6 +530,12 @@ const PRODUCT_RECOMMENDATION_REASONS: Record<string, string> = {
     '這款商品對應「直覺、守護、重新整理」的能量，適合你在不確定下一步時，陪你安靜聽見心裡真正的方向。',
   'wealth-stone':
     '這款商品對應「豐盛、機會、行動力」的能量，適合你在整理金錢、工作或自我價值時，提醒自己把焦慮轉成實際行動。',
+  'forest-bloom':
+    '這款商品對應「招財、事業、貴人」的能量，適合你在工作與金錢能量需要穩定累積時，提醒自己用自然節奏迎接機會。',
+  'starwish-fox-bracelet':
+    '這款商品對應「桃花、招財、好人緣」的能量，適合你在想提升魅力、善緣與日常亮點時，把自信溫柔戴回身上。',
+  'misty-starlight':
+    '這款商品對應「桃花、感情、人際關係」的能量，適合你在練習愛自己與整理關係時，陪你保有柔軟清透的心。',
 };
 
 const CATEGORY_RECOMMENDATION_REASONS: Record<string, string> = {
