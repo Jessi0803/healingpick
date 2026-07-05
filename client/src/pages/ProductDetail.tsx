@@ -164,7 +164,7 @@ export default function ProductDetailPage() {
                   𓂃 ࣪˖ ִֶָ𐀔 商品特色快覽
                 </p>
                 <ul className="space-y-2">
-                  {product.features.map((f, idx) => {
+                  {product.meanings.map((f, idx) => {
                     const cuteIcons = ['♡', '𓇢𓆸', '☁︎', '⟡', '𓂃 ࣪˖', 'ִֶָ𐀔'];
                     const icon = cuteIcons[idx % cuteIcons.length];
                     return (
@@ -230,19 +230,6 @@ export default function ProductDetailPage() {
               </div>
             </div>
           )}
-
-          {/* Section: 能量寓意 */}
-          <Section title="能量寓意" subtitle="Meanings" icon="𓇢𓆸">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {product.meanings.map((m, idx) => {
-                const cuteIcons = ['⟡', '♡', '𓇢𓆸', '☁︎', '𓂃 ࣪˖', 'ִֶָ𐀔'];
-                const icon = cuteIcons[idx % cuteIcons.length];
-                return (
-                  <BulletCard key={m.title} emoji={icon} title={m.title} desc={m.desc} />
-                );
-              })}
-            </div>
-          </Section>
 
           {/* Section: 適合這樣的你 */}
           <Section title="適合這樣的你" subtitle="Suited For" icon="☁︎">
@@ -334,24 +321,6 @@ function Section({ title, subtitle, icon = '♡', children }: { title: string; s
         </span>
       </div>
       {children}
-    </div>
-  );
-}
-
-function BulletCard({ emoji, title, desc }: { emoji: string; title: string; desc: string }) {
-  return (
-    <div className="flex items-start gap-3 px-4 py-3 rounded-2xl bg-white/40 border border-[#D1BE9B]/15 shadow-[0_2px_8px_rgba(209,190,155,0.05)]">
-      <span className="flex-shrink-0 text-[13px] text-[#A38D6B] leading-none mt-1">{emoji}</span>
-      <div>
-        <p className="text-[12.5px] tracking-[0.08em] text-[#A38D6B] mb-1"
-          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-          {title}
-        </p>
-        <p className="text-[12px] leading-[1.95] text-[#31353A]/72 tracking-wider"
-          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-          {desc}
-        </p>
-      </div>
     </div>
   );
 }

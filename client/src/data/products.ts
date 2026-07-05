@@ -387,9 +387,8 @@ export const PRODUCTS: Product[] = [
       '森蘊偏向豐盛、事業與穩定累積，如果你最近正在整理工作步伐，它可以陪你用更自然的節奏把好運慢慢收進來。',
     pairingReason:
       '如果你想把財運、貴人與行動力再聚焦一點，森蘊會是溫柔但有累積感的手鍊陪伴。',
-    imageZoom: 1,
-    imageFit: 'contain',
-    imagePosition: 'center center',
+    imageZoom: 1.04,
+    imagePosition: 'center bottom',
     images: imgs('forest-bloom', 5),
     img: '/products/forest-bloom/1.jpg',
     features: [
@@ -434,9 +433,8 @@ export const PRODUCTS: Product[] = [
       '靈狐星願偏向桃花、人緣與貴人能量，如果你最近想讓自己更柔和地被看見，它會是一條帶著甜感的小提醒。',
     pairingReason:
       '如果你想加強魅力、善緣與日常亮點，靈狐星願會把心願感戴得更輕盈。',
-    imageZoom: 1,
-    imageFit: 'contain',
-    imagePosition: 'center center',
+    imageZoom: 1.04,
+    imagePosition: 'center bottom',
     images: imgs('starwish-fox-bracelet', 2),
     img: '/products/starwish-fox-bracelet/1.jpg',
     features: [
@@ -481,9 +479,8 @@ export const PRODUCTS: Product[] = [
       '霧裡星光偏向愛自己、感情與人際連結，如果你最近想先把心放柔一點，它會像月光一樣提醒你慢慢靠近自己。',
     pairingReason:
       '如果你想讓關係能量更乾淨柔和，霧裡星光會是氣質、日常又有守護感的搭配。',
-    imageZoom: 1,
-    imageFit: 'contain',
-    imagePosition: 'center center',
+    imageZoom: 1.04,
+    imagePosition: 'center bottom',
     images: imgs('misty-starlight', 3),
     img: '/products/misty-starlight/1.jpg',
     features: [
