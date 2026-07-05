@@ -16,6 +16,7 @@ import Fortune from "./pages/Fortune";
 import Quiz from "./pages/Quiz";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import CustomBracelet from "./pages/CustomBracelet";
 import History from "./pages/History";
 import Buy from "./pages/Buy";
 import Policy from "./pages/Policy";
@@ -41,6 +42,7 @@ function Router() {
       <Route path="/fortune/daily" component={Fortune} />
       <Route path="/quiz" component={Quiz} />
       <Route path="/shop" component={Shop} />
+      <Route path="/shop/custom-bracelet/general" component={CustomBracelet} />
       <Route path="/shop/:id" component={ProductDetail} />
       <Route path="/history" component={History} />
       <Route path="/buy" component={Buy} />

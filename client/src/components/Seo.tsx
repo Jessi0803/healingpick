@@ -39,6 +39,10 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
     title: `能量商品｜${SITE_NAME}`,
     description: '挑選水晶、療癒擺飾與能量小物，為生活放進一份安定、守護與儀式感。',
   },
+  '/shop/custom-bracelet/general': {
+    title: `一般客製化手鍊｜${SITE_NAME}`,
+    description: '依照需求、手圍、色系與喜歡的能量客製專屬水晶手鍊，提供顧客回饋實拍圖與客製化需求表單。',
+  },
   '/about': {
     title: `關於我們｜${SITE_NAME}`,
     description: '認識 HealingPick 癒見好物，一個結合塔羅、紫微、Mochi 解夢、每日運勢、心理測驗與療癒選物的平台。',
