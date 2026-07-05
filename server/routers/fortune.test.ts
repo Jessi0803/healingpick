@@ -135,25 +135,29 @@ describe("parseFortuneResult", () => {
 });
 
 describe("buildFallbackFortune", () => {
+  const fallbackInput = {
+    signName: "雙魚座",
+    moonPhase: {
+      phase: 0.5,
+      name: "滿月",
+      nameEn: "Full Moon",
+      energy: "滿月能量：適合看清情緒。",
+      symbol: "🌕",
+    },
+    traits: {
+      element: "水",
+      modality: "變動",
+      ruler: "海王星/木星",
+      traits: "夢幻、同情心、靈性",
+      strengths: "直覺、藝術才能、慈悲",
+      challenges: "逃避現實、邊界模糊",
+    },
+  };
+
   it("returns a complete fortune result when the LLM is unavailable", () => {
     const result = buildFallbackFortune({
-      signName: "雙魚座",
+      ...fallbackInput,
       date: "2026-05-30",
-      moonPhase: {
-        phase: 0.5,
-        name: "滿月",
-        nameEn: "Full Moon",
-        energy: "滿月能量：適合看清情緒。",
-        symbol: "🌕",
-      },
-      traits: {
-        element: "水",
-        modality: "變動",
-        ruler: "海王星/木星",
-        traits: "夢幻、同情心、靈性",
-        strengths: "直覺、藝術才能、慈悲",
-        challenges: "逃避現實、邊界模糊",
-      },
     });
 
     expect(result.overall).toContain("雙魚座");
@@ -162,5 +166,30 @@ describe("buildFallbackFortune", () => {
     expect(result.crystal).toBe("月光石");
     expect(result.overallScore).toBeGreaterThanOrEqual(1);
     expect(result.luckyNumber).toBeGreaterThanOrEqual(1);
+  });
+
+  it("varies fallback wording by date", () => {
+    const first = buildFallbackFortune({
+      ...fallbackInput,
+      date: "2026-05-30",
+    });
+    const second = buildFallbackFortune({
+      ...fallbackInput,
+      date: "2026-05-31",
+    });
+
+    expect([
+      first.overall,
+      first.love,
+      first.career,
+      first.health,
+      first.advice,
+    ]).not.toEqual([
+      second.overall,
+      second.love,
+      second.career,
+      second.health,
+      second.advice,
+    ]);
   });
 });

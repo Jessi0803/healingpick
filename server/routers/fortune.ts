@@ -216,6 +216,16 @@ function scoreFromSeed(seed: string, offset: number) {
   return 6 + (total % 4);
 }
 
+function hashSeed(seed: string) {
+  return Array.from(seed).reduce((sum, char, index) => {
+    return sum + char.charCodeAt(0) * (index + 17);
+  }, 0);
+}
+
+function pickFromSeed<T>(items: T[], seed: string, offset: number): T {
+  return items[(hashSeed(seed) + offset) % items.length];
+}
+
 export function buildFallbackFortune({
   signName,
   date,
@@ -240,21 +250,76 @@ export function buildFallbackFortune({
   };
   const guide = elementGuide[element] ?? elementGuide.風;
   const seed = `${date}-${signName}-${moonPhase.name}`;
+  const overallFocus = pickFromSeed(
+    [
+      "把外界的期待和你真正想做的事分開",
+      "看清楚哪件事只是習慣性硬撐",
+      "先辨認哪些訊息值得回應",
+      "把今天的力氣留給會前進的地方",
+      "不要讓一個小卡點定義整天的狀態",
+    ],
+    seed,
+    3
+  );
+  const loveFocus = pickFromSeed(
+    [
+      "把在意講小一點、講真一點",
+      "少用沉默測試對方的反應",
+      "先確認自己要的是陪伴還是答案",
+      "不要急著替對方補完整段劇情",
+      "把面子放低一點，關係會比較好靠近",
+    ],
+    seed,
+    11
+  );
+  const careerFocus = pickFromSeed(
+    [
+      "先處理最有期限感的任務，再看新的想法",
+      "檢查支出和承諾有沒有超過今天能負擔的量",
+      "把合作、報價或分工說得更清楚一點",
+      "讓半成品先落地，不要一直停在腦中修稿",
+      "把資源集中在一個最能看見成果的位置",
+    ],
+    seed,
+    19
+  );
+  const healthFocus = pickFromSeed(
+    [
+      "肩頸或眼睛可能會先替壓力發聲",
+      "腸胃和睡眠會提醒你節奏有沒有太滿",
+      "身體需要一段沒有被催促的空白",
+      "呼吸變淺時，先把注意力從螢幕上拿回來",
+      "疲憊不是退步，是身體在要你降速",
+    ],
+    seed,
+    29
+  );
+  const adviceFocus = pickFromSeed(
+    [
+      "先分清楚責任和情緒",
+      "用取捨代替硬撐",
+      "把注意力放回真正在回應你的事",
+      "讓界線比速度更重要",
+      "不要把暫時的混亂誤會成失敗",
+    ],
+    seed,
+    37
+  );
 
   return {
-    overall: `${signLabel}今天比較適合先把節奏放穩。你可能會想等一切更確定再決定，但真正需要看的不是能力夠不夠，而是哪件事已經不值得再消耗你；**把力氣放回最有回應的地方**，今天會比硬推更順。`,
+    overall: `${signLabel}今天比較適合先把節奏放穩。你可能會感覺很多事情都在拉你一下，但真正重要的是${overallFocus}；**先看清楚力氣要放在哪裡**，今天會比硬推更順。`,
     overallScore: scoreFromSeed(seed, 11),
-    love: `感情上今天比較容易卡在「我到底要不要多說一點」。如果你一直配合對方節奏，心裡反而會慢慢悶住；**把真正介意的地方講小一點、講清楚一點**，比假裝沒事更能看出關係的溫度。`,
+    love: `感情上今天比較容易卡在「我到底要不要多說一點」。如果心裡已經有小小的不舒服，重點會是${loveFocus}；**不要用猜測代替真實靠近**，關係的溫度會比較看得清楚。`,
     loveScore: scoreFromSeed(seed, 17),
-    career: `工作和財務適合用${strengths}，但也要留意${challenges}。今天別急著全部重做，**先收尾一件已經有方向的任務或帳務**，像回覆訊息、確認付款、整理報價，錢和效率都會比較穩。`,
+    career: `工作和財務適合用${strengths}，但也要留意${challenges}。今天別急著全部重做，比較適合${careerFocus}；**讓現實訊號先排出優先順序**，錢和效率都會比較穩。`,
     careerScore: scoreFromSeed(seed, 23),
-    health: `身體狀態需要少一點硬撐，尤其是肩頸、腸胃或睡眠容易被焦慮牽動。今天如果覺得累，**先讓身體有降速的訊號**，不要把疲憊誤會成自己不夠努力。`,
+    health: `身體狀態需要少一點硬撐，${healthFocus}。今天如果覺得累，**先讓身體知道你有聽見它**，不要把疲憊誤會成自己不夠努力。`,
     healthScore: scoreFromSeed(seed, 31),
     luckyColor: guide.color,
     luckyNumber: 1 + (Array.from(seed).reduce((sum, char) => sum + char.charCodeAt(0), 0) % 99),
     crystal: guide.crystal,
     crystalReason: `${guide.crystal}適合搭配${moonPhase.name}，陪你**把情緒和現實判斷分開**，不用一次承擔全部。`,
-    advice: `今天真正需要調整的不是做更多事，而是先看清楚哪裡還值得投入。**${guide.strategy}**。`,
+    advice: `今天真正需要分辨的是${adviceFocus}。**${guide.strategy}**。`,
     moonPhase: moonPhase.name,
     moonSymbol: moonPhase.symbol,
   };
@@ -456,7 +521,12 @@ ${signGuideDesc}
             },
           },
         });
-      } catch {
+      } catch (primaryError) {
+        console.warn("[fortune.daily] structured LLM response failed, retrying plain JSON", {
+          sign: input.sign,
+          date: input.date,
+          error: primaryError instanceof Error ? primaryError.message : String(primaryError),
+        });
         try {
           response = await invokeLLM({
             messages: [
@@ -467,7 +537,12 @@ ${signGuideDesc}
               },
             ],
           });
-        } catch {
+        } catch (retryError) {
+          console.warn("[fortune.daily] LLM retry failed, using fallback fortune", {
+            sign: input.sign,
+            date: input.date,
+            error: retryError instanceof Error ? retryError.message : String(retryError),
+          });
           return fallbackFortune;
         }
       }
@@ -475,12 +550,21 @@ ${signGuideDesc}
       const rawContent = response.choices?.[0]?.message?.content;
       const content = rawContent ? extractTextContent(rawContent as string | Array<{ type: string; text?: string }>) : null;
       if (!content) {
+        console.warn("[fortune.daily] LLM returned empty content, using fallback fortune", {
+          sign: input.sign,
+          date: input.date,
+        });
         return fallbackFortune;
       }
 
       try {
         return parseFortuneResult(content);
-      } catch {
+      } catch (parseError) {
+        console.warn("[fortune.daily] LLM JSON parse failed, using fallback fortune", {
+          sign: input.sign,
+          date: input.date,
+          error: parseError instanceof Error ? parseError.message : String(parseError),
+        });
         return fallbackFortune;
       }
     }),
