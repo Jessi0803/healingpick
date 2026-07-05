@@ -1189,6 +1189,10 @@ export default function TarotPage() {
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
             Popular Questions
           </p>
+          <p className="mt-2 text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/52"
+            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+            可以先點選常見問題，也可以往下自己輸入想問的內容。
+          </p>
         </div>
 
         <div className="mb-4 grid grid-cols-2 gap-1.5 rounded-2xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/42 p-1.5 sm:grid-cols-3 lg:grid-cols-5">
