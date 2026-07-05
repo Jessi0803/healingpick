@@ -525,6 +525,54 @@ const QUESTION_PROMPTS: Record<string, string[]> = {
     '我該如何停止被別人的期待影響？',
     '接下來我適合把能量放在哪裡？',
   ],
+  family: [
+    '我和家人目前最大的課題是什麼？',
+    '我該怎麼改善和家人的相處？',
+    '這個家庭問題接下來會怎麼發展？',
+    '我在家人關係裡需要守住什麼界線？',
+    '家人現在真正需要我理解的是什麼？',
+    '我該如何面對家人的期待或壓力？',
+    '這件家裡的事適合現在溝通嗎？',
+    '我和某位家人之間的卡點是什麼？',
+    '我該繼續退讓，還是清楚表達立場？',
+    '目前家庭狀態最需要被看見的是什麼？',
+  ],
+  relationships: [
+    '我和這個朋友之間現在的狀態是什麼？',
+    '這段友情值得我繼續投入嗎？',
+    '我在人際關係裡最容易卡住哪裡？',
+    '我該怎麼面對這個人的態度變化？',
+    '目前這段人際互動裡有沒有誤會？',
+    '我該主動修復這段關係嗎？',
+    '我需要注意身邊哪一種人際能量？',
+    '這個人對我是支持還是消耗？',
+    '我該如何在團體裡更自在？',
+    '這段關係接下來會變近還是變遠？',
+  ],
+  study: [
+    '我近期的學習狀態如何？',
+    '我適合準備這個考試或課程嗎？',
+    '我現在讀書卡住的原因是什麼？',
+    '這個科系或學習方向適合我嗎？',
+    '我該如何提升專注力和效率？',
+    '接下來考試或成果表現會如何？',
+    '我該繼續原本方向，還是換一個學習目標？',
+    '我近期最需要補強哪一種能力？',
+    '這個證照或進修值得投入嗎？',
+    '我該如何找回學習動力？',
+  ],
+  health: [
+    '我最近身心狀態最需要注意什麼？',
+    '我現在的疲憊主要來自哪裡？',
+    '我該如何讓自己的作息更穩定？',
+    '目前壓力對我的影響是什麼？',
+    '我近期適合用什麼方式照顧身體？',
+    '我的情緒和身體狀態有什麼關聯？',
+    '我現在最需要放慢哪一部分？',
+    '我該如何面對反覆出現的不安感？',
+    '接下來 30 天身心狀態會有什麼變化？',
+    '我最容易忽略的健康提醒是什麼？',
+  ],
   other: [
     '這件事接下來可能會怎麼發展？',
     '這個選擇對我來說比較適合嗎？',
@@ -554,6 +602,10 @@ const QUESTION_CATEGORIES = [
   { id: 'career', label: '工作', icon: '✦', questions: QUESTION_PROMPTS.career },
   { id: 'wealth', label: '財運', icon: '◇', questions: QUESTION_PROMPTS.wealth },
   { id: 'growth', label: '自我提升', icon: '☽', questions: QUESTION_PROMPTS.growth },
+  { id: 'family', label: '家庭', icon: '⌂', questions: QUESTION_PROMPTS.family },
+  { id: 'relationships', label: '人際', icon: '✧', questions: QUESTION_PROMPTS.relationships },
+  { id: 'study', label: '學業', icon: '□', questions: QUESTION_PROMPTS.study },
+  { id: 'health', label: '健康', icon: '△', questions: QUESTION_PROMPTS.health },
   { id: 'other', label: '其他', icon: '○', questions: QUESTION_PROMPTS.other },
 ];
 
@@ -562,6 +614,10 @@ const TAROT_RECOMMENDATION_MESSAGES: Record<string, string> = {
   career: '先整理方向，再決定下一步要不要衝。',
   wealth: '先穩住金錢節奏，再評估新的機會。',
   growth: '先把情緒照顧好，再要求自己前進。',
+  family: '先看清家人互動裡真正需要被照顧的地方。',
+  relationships: '先釐清人際界線，再決定要靠近或保持距離。',
+  study: '先整理學習節奏，再判斷下一步怎麼投入。',
+  health: '先照顧身心狀態，再處理外在壓力。',
   other: '先看清真正困住你的核心，再決定下一步。',
 };
 
@@ -1135,7 +1191,7 @@ export default function TarotPage() {
           </p>
         </div>
 
-        <div className="mb-4 grid grid-cols-2 gap-1.5 rounded-2xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/42 p-1.5 sm:grid-cols-5">
+        <div className="mb-4 grid grid-cols-2 gap-1.5 rounded-2xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/42 p-1.5 sm:grid-cols-3 lg:grid-cols-5">
           {QUESTION_CATEGORIES.map((category) => {
             const isActive = activeCategory.id === category.id;
 
