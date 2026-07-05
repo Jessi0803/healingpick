@@ -106,17 +106,25 @@ function fallbackMessage(seed: number) {
 
 function isClearPostcardMessage(value: string) {
   const text = value.trim();
-  if (text.length < 8 || text.length > 28) return false;
+  if (text.length < 5 || text.length > 32) return false;
   return true;
 }
 
-function normalizeMessage(value: string, seed: number) {
+function normalizeMessage(value: string, seed: number, context: { userId: number; loginCount: number }) {
   const firstLine = value
     .replace(/[「」"“”]/g, "")
     .replace(/^[-*•\d.、\s]+/, "")
     .split(/\n+/)[0]
     ?.trim();
-  return firstLine && isClearPostcardMessage(firstLine) ? firstLine : fallbackMessage(seed);
+  if (firstLine && isClearPostcardMessage(firstLine)) return firstLine;
+
+  console.warn("[Postcard] Falling back because generated message did not pass validation", {
+    userId: context.userId,
+    loginCount: context.loginCount,
+    generated: firstLine || value,
+    length: firstLine?.length ?? 0,
+  });
+  return fallbackMessage(seed);
 }
 
 function inferThemes(text: string) {
@@ -161,6 +169,10 @@ async function generatePostcardMessage(userId: number, loginCount: number) {
     getRecentReadingSummariesByUser(userId, 5),
   ]);
   if (summaries.length === 0) {
+    console.warn("[Postcard] Falling back because user has no reading summaries", {
+      userId,
+      loginCount,
+    });
     return fallbackMessage(fallbackSeed);
   }
 
@@ -215,8 +227,13 @@ ${memory}`,
     });
     const raw = response.choices?.[0]?.message?.content;
     const text = raw ? extractTextContent(raw as string | Array<{ type: string; text?: string }>) : "";
-    return normalizeMessage(text, fallbackSeed);
-  } catch {
+    return normalizeMessage(text, fallbackSeed, { userId, loginCount });
+  } catch (error) {
+    console.warn("[Postcard] Falling back because message generation failed", {
+      userId,
+      loginCount,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return fallbackMessage(fallbackSeed);
   }
 }
