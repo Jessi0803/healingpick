@@ -24,6 +24,7 @@ import {
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import ContactDialog from '@/components/ContactDialog';
+import ProductCareNotice from '@/components/ProductCareNotice';
 
 const GALLERY_IMAGES = Array.from(
   { length: 24 },
@@ -607,6 +608,8 @@ export default function CustomBraceletPage() {
               </div>
             </form>
           </Reveal>
+
+          <ProductCareNotice />
         </div>
       </div>
 

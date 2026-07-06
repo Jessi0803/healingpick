@@ -10,6 +10,7 @@ import PageLayout from '@/components/PageLayout';
 import { findProduct, getProductFitSummary, getProductImageStyle } from '@/data/products';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import ContactDialog from '@/components/ContactDialog';
+import ProductCareNotice from '@/components/ProductCareNotice';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -288,6 +289,8 @@ export default function ProductDetailPage() {
               <CatSitting className="w-10 h-14" />
             </div>
           </div>
+
+          <ProductCareNotice />
 
         </div>
       </div>
