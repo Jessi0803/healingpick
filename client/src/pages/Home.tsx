@@ -625,8 +625,8 @@ export default function Home() {
           {/* Section header */}
           <div className="text-center mb-14 animate-fade-in-up">
             <span
-              className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+              style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
             >
               Our Services
             </span>
@@ -772,8 +772,8 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <span
-              className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+              style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
             >
               Crystal Altar
             </span>
@@ -947,8 +947,8 @@ export default function Home() {
             {/* Ziwei text */}
             <div className="order-1 lg:order-2 animate-fade-in-up delay-200">
               <span
-                className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
               >
                 Zi Wei Dou Shu
               </span>
@@ -1021,8 +1021,8 @@ export default function Home() {
             {/* Tarot */}
             <div className="animate-fade-in-up">
               <span
-                className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
               >
                 Tarot Reading
               </span>
@@ -1197,8 +1197,8 @@ export default function Home() {
 
             <div className="relative z-10 max-w-lg">
               <span
-                className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
               >
                 Psychological Resonance
               </span>
@@ -1245,8 +1245,8 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
             <div>
               <span
-                className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
               >
                 Energy Crystals
               </span>
@@ -1346,8 +1346,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <span
-              className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+              style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
             >
               Gentle Echoes
             </span>
