@@ -613,7 +613,7 @@ export const PRODUCTS: Product[] = [
       '如果你想讓日常多一點甜感與安全感,狐語微甜會是很輕盈的搭配。',
     imageZoom: 1,
     imagePosition: 'center center',
-    images: imgs('hu-yu-wei-tian', 3),
+    images: ['/products/hu-yu-wei-tian/1.jpg', '/products/hu-yu-wei-tian/2.jpg'],
     img: '/products/hu-yu-wei-tian/1.jpg',
     features: [
       { emoji: '🦊', title: '狐仙小墜', desc: '以小狐意象帶出溫柔、魅力與守護感。' },
@@ -655,8 +655,14 @@ export const PRODUCTS: Product[] = [
       '如果你想讓配戴感更柔和、氣質更溫潤,焦糖瑪奇朵會是很容易靠近日常的選擇。',
     imageZoom: 1,
     imagePosition: 'center center',
-    images: imgs('jiao-tang-ma-qi-duo', 5),
-    img: '/products/jiao-tang-ma-qi-duo/1.jpg',
+    images: [
+      '/products/jiao-tang-ma-qi-duo/2.jpg',
+      '/products/jiao-tang-ma-qi-duo/1.jpg',
+      '/products/jiao-tang-ma-qi-duo/3.jpg',
+      '/products/jiao-tang-ma-qi-duo/4.jpg',
+      '/products/jiao-tang-ma-qi-duo/5.jpg',
+    ],
+    img: '/products/jiao-tang-ma-qi-duo/2.jpg',
     features: [
       { emoji: '☕', title: '焦糖奶金色調', desc: '柔和又帶一點甜,很適合日常配戴。' },
       { emoji: '🌙', title: '藍月光柔光', desc: '搭配茶晶的暖棕色調,在光影中呈現安心節奏。' },
@@ -686,7 +692,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Blue Realm Luster Bracelet',
     tagline: '靜謐如海的藍色能量。\n在光影之中,綻放柔和而沉穩的光芒。',
     category: 'calm',
-    material: '藍晶石・海藍寶・霧海藍寶・白水晶',
+    material: '貔貅・藍晶石・海藍寶・霧海藍寶・白水晶',
     price: 1780,
     originalPrice: null,
     tag: '藍調',
@@ -700,16 +706,16 @@ export const PRODUCTS: Product[] = [
     images: ['/products/lan-jing-zhi-yao/3.jpg', '/products/lan-jing-zhi-yao/4.jpg'],
     img: '/products/lan-jing-zhi-yao/3.jpg',
     features: [
+      { emoji: '🐉', title: '貔貅守護', desc: '以貔貅意象帶來招財、守護與穩定氣場。' },
       { emoji: '💙', title: '藍晶石綴珠', desc: '象徵守護與延展好運,帶著清晰安定的能量。' },
       { emoji: '🌊', title: '海藍寶層次', desc: '藍色晶體交織出如海洋般的寧靜氣息。' },
       { emoji: '🤍', title: '白水晶映照', desc: '純淨光感讓整體更透明、協調。' },
-      { emoji: '✨', title: '沉靜設計', desc: '不過度張揚,卻有清爽的存在感。' },
     ],
     meanings: [
+      { emoji: '🐉', title: '貔貅', desc: '象徵招財、守護與穩定能量。' },
       { emoji: '💙', title: '藍晶石', desc: '象徵清晰、守護與平衡。' },
       { emoji: '🌊', title: '海藍寶', desc: '對應平靜、溝通與舒緩。' },
       { emoji: '☁️', title: '霧海藍寶', desc: '帶來柔霧般的溫和色澤。' },
-      { emoji: '🤍', title: '白水晶', desc: '協調能量,讓整體更透亮。' },
     ],
     suitedFor: [
       '容易想太多,想讓心靜下來',
@@ -718,7 +724,7 @@ export const PRODUCTS: Product[] = [
       '想要一條安靜但有質感的手鍊',
     ],
     story:
-      '當你覺得心裡很吵,也許不是需要更多答案,而是需要一片安靜的藍。\n\n藍境之曜像把海戴在手腕上,讓每一次呼吸都慢慢回到自己的節奏。',
+      '當你覺得心裡很吵,也許不是需要更多答案,而是需要一片安靜的藍。\n\n藍境之曜把貔貅守護與海藍色晶石串在一起,像把海戴在手腕上,讓每一次呼吸都慢慢回到自己的節奏。',
     closing:
       '願藍境之曜陪你把情緒放慢,把話說清楚。\n在平靜與力量之間,找到屬於自己的光。 💙',
   },
@@ -1036,7 +1042,7 @@ export const PRODUCTS: Product[] = [
     images: imgs('xing-yao-zhi-xing', 2),
     img: '/products/xing-yao-zhi-xing/1.jpg',
     features: [
-      { emoji: '🖤', title: '黑金超七主石', desc: '屬於碧璽髮晶的一種,呈現深邃與金銅髮共生質地。' },
+      { emoji: '🖤', title: '黑金超七主石', desc: '黑金超七是帶有深色礦絲、金銅髮與多種共生礦物感的水晶,視覺上沉穩又有細緻光澤。' },
       { emoji: '🛡️', title: '防護意象', desc: '象徵能量保護與正向流動。' },
       { emoji: '✨', title: '層層礦絲', desc: '展現沉穩與光澤並存的質感。' },
       { emoji: '🌙', title: '低調設計', desc: '適合喜歡內斂力量感的日常配戴。' },
@@ -1054,7 +1060,7 @@ export const PRODUCTS: Product[] = [
       '想要一條低調但有力量的手鍊',
     ],
     story:
-      '有些力量不是往外擴張,而是把自己穩穩守住。\n\n星曜之星像夜空裡的深色星光,不需要很亮,卻能提醒你:在風景之中,你仍然有自己的節奏。',
+      '黑金超七不是超十呦。它常見深色礦絲與金銅色髮絲感交織,看起來低調,細看卻有層層光澤。\n\n有些力量不是往外擴張,而是把自己穩穩守住。星曜之星像夜空裡的深色星光,不需要很亮,卻能提醒你:在風景之中,你仍然有自己的節奏。',
     closing:
       '願星曜之星陪你把界線戴好。\n柔軟不是脆弱,沉穩也可以帶著光。 🖤',
   },
@@ -1075,7 +1081,7 @@ export const PRODUCTS: Product[] = [
       '如果你想要一條乾淨柔白、很適合日常與送禮的款式,雪境溫柔會很適合。',
     imageZoom: 1,
     imagePosition: 'center center',
-    images: imgs('xue-jing-wen-rou', 3),
+    images: ['/products/xue-jing-wen-rou/1.jpg', '/products/xue-jing-wen-rou/2.jpg'],
     img: '/products/xue-jing-wen-rou/1.jpg',
     features: [
       { emoji: '🐻', title: '白水晶小熊', desc: '為整體增添可愛與純白氛圍。' },
@@ -1107,8 +1113,7 @@ export const PRODUCTS: Product[] = [
     tagline: '每顆的光暈都很促咪。\n在月色裡,學會溫柔也堅定。',
     category: 'wish',
     material: '彩月光石・五貓守護・琉璃・果果・阿喵・餅餅',
-    price: 0,
-    priceLabel: '私訊詢價',
+    price: 980,
     originalPrice: null,
     tag: '五貓',
     fitSummary: '適合喜歡彩月光、可愛守護與溫柔堅定能量的你',
@@ -1149,9 +1154,8 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Moonshadow Woven Bloom Bracelet',
     tagline: '月影織花,在木色光影裡靜靜綻放。\n像一朵藏著星光的小花。',
     category: 'protect',
-    material: '黑色系晶石・月光石・白水晶',
-    price: 0,
-    priceLabel: '私訊詢價',
+    material: '銀曜石・月光石・白水晶',
+    price: 1380,
     originalPrice: null,
     tag: '新品',
     fitSummary: '適合喜歡黑白灰色調、星花墜飾與穩定守護感的你',
@@ -1165,12 +1169,12 @@ export const PRODUCTS: Product[] = [
     img: '/products/yue-ying-zhi-hua/1.jpg',
     features: [
       { emoji: '🌹', title: '月影織花主題', desc: '以星花墜飾與黑白灰色調打造低調光感。' },
-      { emoji: '🖤', title: '深色晶石', desc: '帶來沉穩、界線與守護的象徵。' },
+      { emoji: '🖤', title: '銀曜石', desc: '帶來沉穩、界線與守護的象徵。' },
       { emoji: '🌙', title: '月光石柔光', desc: '在深色主調中加入溫柔細節。' },
       { emoji: '🤍', title: '白水晶透亮', desc: '讓整體不沉重,保留清透平衡。' },
     ],
     meanings: [
-      { emoji: '🖤', title: '深色晶石', desc: '象徵守護、界線與穩定。' },
+      { emoji: '🖤', title: '銀曜石', desc: '象徵守護、界線與穩定。' },
       { emoji: '🌙', title: '月光石', desc: '帶來柔和直覺與微光。' },
       { emoji: '🤍', title: '白水晶', desc: '協調整體能量與視覺。' },
       { emoji: '🌹', title: '星花墜飾', desc: '讓低調設計中保有亮點。' },
