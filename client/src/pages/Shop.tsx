@@ -3,6 +3,7 @@
  * Design: Wabi-Sabi Luxe × Morandi Oat Milk — Luxury E-commerce
  */
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
@@ -28,6 +29,12 @@ const STATS = [
   { value: '5000+', label: '滿意顧客' },
   { value: '100%', label: '天然水晶' },
 ];
+
+// 顧客回饋＆實拍照（沿用客製頁那批真實顧客照）。
+const FEEDBACK_PHOTOS = Array.from(
+  { length: 24 },
+  (_, i) => `/custom-bracelet/general/IMG_${4826 + i}.PNG`,
+);
 
 const SORT_OPTIONS = [
   { id: 'sales_desc', label: '熱銷商品排序' },
@@ -410,11 +417,27 @@ function FeaturedBand({
   onModeChange: (custom: boolean) => void;
 }) {
   const [current, setCurrent] = useState(0);
+  const [fbIndex, setFbIndex] = useState<number | null>(null);
   const count = products.length;
   const paused = useRef(false);
   const touchX = useRef<number | null>(null);
 
   const go = (i: number) => count && setCurrent((i + count) % count);
+
+  const closeFb = () => setFbIndex(null);
+  const stepFb = (dir: number) =>
+    setFbIndex((c) => (c === null ? c : (c + dir + FEEDBACK_PHOTOS.length) % FEEDBACK_PHOTOS.length));
+
+  useEffect(() => {
+    if (fbIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeFb();
+      if (e.key === 'ArrowRight') stepFb(1);
+      if (e.key === 'ArrowLeft') stepFb(-1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [fbIndex]);
 
   useEffect(() => {
     if (count <= 1) return;
@@ -522,8 +545,60 @@ function FeaturedBand({
               </div>
             ))}
           </div>
+          <button
+            type="button"
+            onClick={() => setFbIndex(0)}
+            className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#3D4144] px-5 py-2.5 text-[11.5px] tracking-[0.18em] text-[#FAF7F4] shadow-sm transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-[0.98]"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+          >
+            看顧客真實回饋
+            <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+          </button>
         </div>
       </div>
+
+      {fbIndex !== null && typeof document !== 'undefined' && createPortal(
+        <div
+          className="lightbox-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-[#1c1a18]/80 p-4 backdrop-blur-sm"
+          onClick={closeFb}
+        >
+          <button
+            type="button"
+            onClick={closeFb}
+            aria-label="關閉"
+            className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-white/12 text-lg text-white/90 transition-colors hover:bg-white/25"
+          >
+            ✕
+          </button>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); stepFb(-1); }}
+            aria-label="上一張"
+            className="absolute left-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/12 text-xl text-white/90 transition-colors hover:bg-white/25 md:left-8"
+          >
+            ‹
+          </button>
+          <img
+            key={fbIndex}
+            src={FEEDBACK_PHOTOS[fbIndex]}
+            alt="顧客回饋與實拍"
+            onClick={(e) => e.stopPropagation()}
+            className="lightbox-image max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
+          />
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); stepFb(1); }}
+            aria-label="下一張"
+            className="absolute right-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/12 text-xl text-white/90 transition-colors hover:bg-white/25 md:right-8"
+          >
+            ›
+          </button>
+          <span className="absolute bottom-6 text-[11px] tracking-[0.2em] text-white/60">
+            {fbIndex + 1} / {FEEDBACK_PHOTOS.length}
+          </span>
+        </div>,
+        document.body,
+      )}
     </section>
   );
 }
