@@ -31,9 +31,14 @@ const GALLERY_IMAGES = Array.from(
   (_, i) => `/custom-bracelet/general/IMG_${4826 + i}.PNG`,
 );
 
-// 主視覺與精選好評使用不同批圖，避免同一張在同一頁重複出現。
-const HERO_IMAGES = GALLERY_IMAGES.slice(0, 3);
+// 主視覺使用商品照示範客製風格，圖片以完整顯示避免裁切到手鍊。
+const HERO_IMAGES = [
+  '/products/misty-starlight/1.jpg',
+  '/products/jiao-tang-ma-qi-duo/2.jpg',
+  '/products/wen-rou-yue-guang/1.jpg',
+];
 const FEATURED_IMAGES = GALLERY_IMAGES.slice(3, 11);
+const LIGHTBOX_IMAGES = [...HERO_IMAGES, ...GALLERY_IMAGES];
 
 // Hero 背景飄浮的微光星點位置。
 const SPARKLES = [
@@ -161,14 +166,14 @@ export default function CustomBraceletPage() {
   const shownGallery = showAllPhotos ? GALLERY_IMAGES : FEATURED_IMAGES;
 
   const openLightbox = (src: string) => {
-    const index = GALLERY_IMAGES.indexOf(src);
+    const index = LIGHTBOX_IMAGES.indexOf(src);
     setLightboxIndex(index >= 0 ? index : 0);
   };
   const closeLightbox = () => setLightboxIndex(null);
   const stepLightbox = (dir: number) =>
     setLightboxIndex((current) => {
       if (current === null) return current;
-      const total = GALLERY_IMAGES.length;
+      const total = LIGHTBOX_IMAGES.length;
       return (current + dir + total) % total;
     });
 
@@ -280,22 +285,22 @@ export default function CustomBraceletPage() {
                   src={HERO_IMAGES[0]}
                   alt="客製化手鍊實拍主視覺"
                   onClick={() => openLightbox(HERO_IMAGES[0])}
-                  className="group col-span-3 aspect-[16/11] overflow-hidden rounded-3xl border border-[#D1BE9B]/25 bg-white/40 shadow-[0_16px_40px_rgba(209,190,155,0.18)] will-change-transform"
-                  imgClassName="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  className="group col-span-3 aspect-[16/11] overflow-hidden rounded-3xl border border-[#D1BE9B]/25 bg-[#F7F1E8] shadow-[0_16px_40px_rgba(209,190,155,0.18)] will-change-transform"
+                  imgClassName="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
                 />
                 {HERO_IMAGES.slice(1).map((src, idx) => (
                   <button
                     key={src}
                     type="button"
                     onClick={() => openLightbox(src)}
-                    className={`group col-span-1 aspect-square overflow-hidden rounded-2xl border border-[#D1BE9B]/25 bg-white/40 shadow-sm ${
+                    className={`group col-span-1 aspect-square overflow-hidden rounded-2xl border border-[#D1BE9B]/25 bg-[#F7F1E8] shadow-sm ${
                       idx === 0 ? 'animate-float-soft-delay-1' : 'animate-float-soft-delay-2'
                     }`}
                   >
                     <img
                       src={src}
                       alt="客製化手鍊實拍"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                      className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
                     />
                   </button>
                 ))}
@@ -640,7 +645,7 @@ export default function CustomBraceletPage() {
           </button>
           <img
             key={lightboxIndex}
-            src={GALLERY_IMAGES[lightboxIndex]}
+            src={LIGHTBOX_IMAGES[lightboxIndex]}
             alt="客製化手鍊實拍放大"
             onClick={(e) => e.stopPropagation()}
             className="lightbox-image max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
@@ -657,7 +662,7 @@ export default function CustomBraceletPage() {
             ›
           </button>
           <span className="absolute bottom-6 text-[11px] tracking-[0.2em] text-white/60">
-            {lightboxIndex + 1} / {GALLERY_IMAGES.length}
+            {lightboxIndex + 1} / {LIGHTBOX_IMAGES.length}
           </span>
         </div>,
         document.body,
