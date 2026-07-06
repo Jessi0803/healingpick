@@ -19,7 +19,7 @@ const FEATURED_SLIDES: Array<{ slug: string; image: string }> = [
   { slug: 'nuan-yu', image: '/products/nuan-yu/2.jpg' },
 ];
 const STATS = [
-  { value: '99%', label: '滿意顧客' },
+  { value: '5000+', label: '滿意顧客' },
   { value: '100%', label: '天然水晶' },
 ];
 
