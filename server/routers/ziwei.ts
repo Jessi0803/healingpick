@@ -10,7 +10,7 @@ import { buildReadingSummary, getMemberMemoryContext } from "../_core/readingMem
 import { formatLineToneForMochi } from "../_core/lineToneFormatter";
 
 const recommendationSchema = z.object({
-  category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
+  category: z.enum(["protect", "love", "career", "wealth", "healing", "sleep", "courage"]),
   message: z.string().min(4).max(120),
   reason: z.string().min(4).max(180),
 });
@@ -320,7 +320,8 @@ ${CONTENT_VARIATION_RULES}
 
 完整解讀結束後，最後另起一行輸出商品推薦訊號，格式必須完全符合：
 RECOMMENDATION_JSON: {"category":"wealth","message":"先整理事業與金錢節奏，再談突破。","reason":"這次命盤解讀集中在工作定位與資源累積，所以適合豐盛、行動類商品。"}
-category 只能是 protect、wish、courage、calm、wealth 其中之一。
+category 只能是 protect、love、career、wealth、healing、sleep、courage 其中之一。
+對應中文：protect=平安守護、love=愛情人緣、career=事業學業、wealth=財運招福、healing=健康療癒、sleep=靜心安眠、courage=勇氣自信。
 message 是「今天的訊息是」後面的短句，不要包含「今天的訊息是」。
 reason 是依據本次命盤與解讀推薦此類商品的原因，不要提到商品名稱。`;
 

@@ -8,9 +8,16 @@
  *  - tie-break by stable order in PRODUCTS
  */
 
-import { PRODUCTS, type Product } from './products';
+import { PRODUCTS, getProductCategories, type Product } from './products';
 
-export type RecommendationCategory = 'protect' | 'wish' | 'courage' | 'calm' | 'wealth';
+export type RecommendationCategory =
+  | 'protect'
+  | 'love'
+  | 'career'
+  | 'wealth'
+  | 'healing'
+  | 'sleep'
+  | 'courage';
 
 type Signal = {
   categories?: string[];
@@ -22,6 +29,13 @@ function scoreProduct(p: Product, sig: Signal): number {
   let score = 0;
   if (sig.preferSlugs?.includes(p.slug)) score += 100;
   if (sig.categories?.includes(p.category)) score += 5;
+  if (
+    sig.categories?.some(
+      (category) => category !== p.category && getProductCategories(p).includes(category),
+    )
+  ) {
+    score += 3;
+  }
 
   const haystack = [
     p.name,
@@ -59,7 +73,7 @@ function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product
   if (picks.length < limit && fallbackCategory) {
     for (const p of PRODUCTS) {
       if (picks.find((x) => x.slug === p.slug)) continue;
-      if (p.category === fallbackCategory) {
+      if (getProductCategories(p).includes(fallbackCategory)) {
         picks.push(p);
         if (picks.length >= limit) break;
       }
@@ -74,14 +88,14 @@ function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product
 // ─── Tarot ──────────────────────────────────────────────────────────────────
 const TAROT_SIGNAL: Record<string, Signal> = {
   love: {
-    categories: ['wish', 'protect'],
+    categories: ['love', 'protect'],
     keywords: ['桃花', '愛', '感情', '人緣', '緣分', '魅力'],
     preferSlugs: ['wish-fox', 'wish-bunny'],
   },
   career: {
-    categories: ['wealth', 'courage'],
+    categories: ['career', 'courage'],
     keywords: ['工作', '事業', '錢', '財富', '機會', '行動', '升職', '創業'],
-    preferSlugs: ['wealth-stone', 'courage-cat'],
+    preferSlugs: ['forest-bloom', 'courage-cat'],
   },
   wealth: {
     categories: ['wealth', 'courage'],
@@ -89,22 +103,22 @@ const TAROT_SIGNAL: Record<string, Signal> = {
     preferSlugs: ['wealth-stone', 'courage-cat'],
   },
   growth: {
-    categories: ['calm', 'protect'],
+    categories: ['healing', 'sleep'],
     keywords: ['自我', '成長', '情緒', '照顧', '釐清', '低潮', '節奏'],
-    preferSlugs: ['calm-light', 'moonlight-wings'],
+    preferSlugs: ['xin-yu-ni-nan', 'calm-light'],
   },
   other: {
-    categories: ['protect', 'calm'],
+    categories: ['protect', 'sleep'],
     keywords: ['問題', '狀況', '選擇', '方向', '看清楚', '面對', '下一步'],
     preferSlugs: ['moonlight-wings', 'calm-light'],
   },
   clarity: {
-    categories: ['protect', 'calm'],
+    categories: ['protect', 'sleep'],
     keywords: ['迷惘', '方向', '直覺', '清晰', '困惑'],
     preferSlugs: ['moonlight-wings', 'calm-light'],
   },
   protection: {
-    categories: ['protect', 'calm'],
+    categories: ['protect', 'sleep'],
     keywords: ['守護', '保護', '安全感', '安定', '界線'],
     preferSlugs: ['glimmer-fox', 'calm-light'],
   },
@@ -131,20 +145,20 @@ export function recommendForCategory(category: string, limit = 2): Product[] {
 // ─── Ziwei ──────────────────────────────────────────────────────────────────
 // 12 宮位 → 對應商品方向
 const PALACE_SIGNAL: Record<string, Signal> = {
-  命宮: { categories: ['protect', 'calm'], preferSlugs: ['glimmer-fox', 'calm-light'] },
-  福德宮: { categories: ['calm', 'wish'], preferSlugs: ['calm-light', 'wish-bunny'] },
+  命宮: { categories: ['protect', 'sleep'], preferSlugs: ['glimmer-fox', 'calm-light'] },
+  福德宮: { categories: ['sleep', 'healing'], preferSlugs: ['calm-light', 'wish-bunny'] },
   財帛宮: { categories: ['wealth'], preferSlugs: ['wealth-stone'] },
   田宅宮: { categories: ['wealth', 'protect'], preferSlugs: ['wealth-stone', 'glimmer-fox'] },
-  官祿宮: { categories: ['wealth', 'courage'], preferSlugs: ['wealth-stone', 'courage-cat'] },
-  事業宮: { categories: ['wealth', 'courage'], preferSlugs: ['wealth-stone', 'courage-cat'] },
-  夫妻宮: { categories: ['wish'], preferSlugs: ['wish-fox', 'wish-bunny'] },
-  子女宮: { categories: ['wish', 'protect'], preferSlugs: ['wish-bunny', 'glimmer-fox'] },
-  兄弟宮: { categories: ['wish', 'protect'], preferSlugs: ['wish-fox', 'glimmer-fox'] },
+  官祿宮: { categories: ['career', 'courage'], preferSlugs: ['forest-bloom', 'courage-cat'] },
+  事業宮: { categories: ['career', 'courage'], preferSlugs: ['forest-bloom', 'courage-cat'] },
+  夫妻宮: { categories: ['love'], preferSlugs: ['wish-fox', 'misty-starlight'] },
+  子女宮: { categories: ['healing', 'protect'], preferSlugs: ['wish-bunny', 'glimmer-fox'] },
+  兄弟宮: { categories: ['love', 'protect'], preferSlugs: ['wish-fox', 'glimmer-fox'] },
   遷移宮: { categories: ['courage', 'protect'], preferSlugs: ['courage-cat', 'moonlight-wings'] },
-  疾厄宮: { categories: ['calm', 'protect'], preferSlugs: ['calm-light', 'glimmer-fox'] },
-  父母宮: { categories: ['wish', 'protect'], preferSlugs: ['wish-bunny', 'glimmer-fox'] },
-  交友宮: { categories: ['wish'], preferSlugs: ['wish-fox', 'wish-bunny'] },
-  僕役宮: { categories: ['wish'], preferSlugs: ['wish-fox', 'wish-bunny'] },
+  疾厄宮: { categories: ['healing', 'sleep'], preferSlugs: ['xin-yu-ni-nan', 'calm-light'] },
+  父母宮: { categories: ['healing', 'protect'], preferSlugs: ['wish-bunny', 'glimmer-fox'] },
+  交友宮: { categories: ['love'], preferSlugs: ['wish-fox', 'misty-starlight'] },
+  僕役宮: { categories: ['love'], preferSlugs: ['wish-fox', 'misty-starlight'] },
 };
 
 export function recommendForZiwei(palaceName: string | null, gender?: string): Product[] {
@@ -154,12 +168,12 @@ export function recommendForZiwei(palaceName: string | null, gender?: string): P
   // No palace selected — fall back to a gender-flavoured pick that feels human.
   if (gender === '女') {
     return pickTop(
-      { categories: ['wish', 'calm'], preferSlugs: ['wish-fox', 'calm-light'] },
+      { categories: ['love', 'sleep'], preferSlugs: ['wish-fox', 'calm-light'] },
       2,
     );
   }
   return pickTop(
-    { categories: ['courage', 'wealth'], preferSlugs: ['courage-cat', 'wealth-stone'] },
+    { categories: ['courage', 'career'], preferSlugs: ['courage-cat', 'forest-bloom'] },
     2,
   );
 }
@@ -168,9 +182,9 @@ export function recommendForZiwei(palaceName: string | null, gender?: string): P
 // 四象元素 → 商品方向
 const ELEMENT_SIGNAL: Record<string, Signal> = {
   火: { categories: ['courage', 'wealth'], preferSlugs: ['courage-cat', 'wealth-stone'] },
-  土: { categories: ['protect', 'calm'],   preferSlugs: ['glimmer-fox', 'calm-light'] },
-  風: { categories: ['wish', 'protect'],   preferSlugs: ['moonlight-wings', 'wish-fox'] },
-  水: { categories: ['wish', 'calm'],      preferSlugs: ['wish-bunny', 'calm-light'] },
+  土: { categories: ['protect', 'sleep'],  preferSlugs: ['glimmer-fox', 'calm-light'] },
+  風: { categories: ['love', 'protect'],   preferSlugs: ['moonlight-wings', 'wish-fox'] },
+  水: { categories: ['healing', 'sleep'],  preferSlugs: ['wish-bunny', 'calm-light'] },
 };
 
 export function recommendForFortune(element: string): Product[] {
@@ -184,7 +198,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
   {
     patterns: ['追', '逃', '躲', '跑不動', '被抓', '攻擊', '怪物', '鬼', '黑影', '害怕', '恐怖'],
     signal: {
-      categories: ['protect', 'calm'],
+      categories: ['protect', 'sleep'],
       keywords: ['安全感', '界線', '安定', '焦慮', '保護', '壓力'],
       preferSlugs: ['glimmer-fox', 'calm-light'],
     },
@@ -192,7 +206,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
   {
     patterns: ['迷路', '出口', '門', '走廊', '電梯', '樓梯', '找不到', '困住', '房子', '學校'],
     signal: {
-      categories: ['protect', 'calm'],
+      categories: ['protect', 'sleep'],
       keywords: ['方向', '直覺', '釐清', '迷惘', '選擇', '自我探索'],
       preferSlugs: ['moonlight-wings', 'calm-light'],
     },
@@ -200,7 +214,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
   {
     patterns: ['牙齒', '掉牙', '流血', '裸', '考試', '遲到', '失控', '跌倒', '墜落', '掉下去'],
     signal: {
-      categories: ['calm', 'courage'],
+      categories: ['sleep', 'courage'],
       keywords: ['焦慮', '自信', '穩定情緒', '壓力', '相信自己'],
       preferSlugs: ['calm-light', 'courage-cat'],
     },
@@ -208,7 +222,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
   {
     patterns: ['前任', '喜歡的人', '戀人', '分手', '曖昧', '結婚', '朋友', '家人', '媽媽', '爸爸', '吵架'],
     signal: {
-      categories: ['wish', 'protect'],
+      categories: ['love', 'protect'],
       keywords: ['關係', '人緣', '愛', '緣分', '陪伴', '溫柔連結'],
       preferSlugs: ['wish-fox', 'wish-bunny'],
     },
@@ -216,7 +230,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
   {
     patterns: ['工作', '公司', '老闆', '同事', '錢', '賺錢', '財', '店', '客人', '創業', '面試'],
     signal: {
-      categories: ['wealth', 'courage'],
+      categories: ['career', 'wealth'],
       keywords: ['工作', '金錢', '事業', '機會', '行動力', '自我價值'],
       preferSlugs: ['wealth-stone', 'courage-cat'],
     },
@@ -224,7 +238,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
   {
     patterns: ['水', '海', '河', '下雨', '淹水', '游泳', '浴室', '洗澡', '哭', '眼淚'],
     signal: {
-      categories: ['calm', 'wish'],
+      categories: ['sleep', 'healing'],
       keywords: ['情緒', '釋放', '平靜', '自我療癒', '照顧'],
       preferSlugs: ['calm-light', 'wish-bunny'],
     },
@@ -253,12 +267,12 @@ export function recommendForDream(dreamContent: string, interpretation = ''): Pr
   if (!merged.categories?.length && !merged.keywords?.length && !merged.preferSlugs?.length) {
     return pickTop(
       {
-        categories: ['calm', 'protect'],
+        categories: ['sleep', 'protect'],
         keywords: [...extractKeywords(dreamContent), ...extractKeywords(interpretation)],
         preferSlugs: ['calm-light', 'moonlight-wings'],
       },
       2,
-      'calm',
+      'sleep',
     );
   }
 

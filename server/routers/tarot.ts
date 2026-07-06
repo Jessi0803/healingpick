@@ -18,7 +18,7 @@ const cardSchema = z.object({
 });
 
 const recommendationSchema = z.object({
-  category: z.enum(["protect", "wish", "courage", "calm", "wealth"]),
+  category: z.enum(["protect", "love", "career", "wealth", "healing", "sleep", "courage"]),
   message: z.string().min(4).max(120),
   reason: z.string().min(4).max(260),
 });
@@ -242,7 +242,8 @@ async function generateRecommendation(input: {
         content: `請根據塔羅問題、牌面與解讀，產生商品推薦訊號。
 
 規則：
-- category 只能是 protect、wish、courage、calm、wealth 其中之一
+- category 只能是 protect、love、career、wealth、healing、sleep、courage 其中之一
+- 對應中文：protect=平安守護、love=愛情人緣、career=事業學業、wealth=財運招福、healing=健康療癒、sleep=靜心安眠、courage=勇氣自信
 - message 是畫面「因為今天的訊息是：」後面的短句，必須依本次牌面與解讀重新生成，不要使用固定模板
 - message 不要包含「今天的訊息是」
 - reason 說明為什麼這次適合該分類，不要提商品名稱
@@ -314,7 +315,7 @@ ${questionFocusRule}
 - 不可以只依問題類型寫通用感情回答；每一段都要能對應到至少一個牌位的資訊。
 
 完整解讀結束後，最後另起一行輸出：
-RECOMMENDATION_JSON: {"category":"<protect|wish|courage|calm|wealth>","message":"<依本次牌面重新生成的短句>","reason":"<依本次牌面與解讀產生的推薦原因>"}
+RECOMMENDATION_JSON: {"category":"<protect|love|career|wealth|healing|sleep|courage>","message":"<依本次牌面重新生成的短句>","reason":"<依本次牌面與解讀產生的推薦原因>"}
 message 不要包含「今天的訊息是」，reason 不要提商品名稱。`;
 
       const userPrompt = `求問者的問題類型：${input.questionType}

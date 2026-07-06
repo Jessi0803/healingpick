@@ -7,7 +7,14 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import Reveal from '@/components/Reveal';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
-import { PRODUCTS, CATEGORY_OPTIONS, getProductFitSummary, getProductImageStyle, type Product } from '@/data/products';
+import {
+  PRODUCTS,
+  CATEGORY_OPTIONS,
+  getProductCategories,
+  getProductFitSummary,
+  getProductImageStyle,
+  type Product,
+} from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
 // 精選輪播選品，使用獨立圖片避免輪播文案遮到手鍊本身。
@@ -61,7 +68,7 @@ export default function ShopPage() {
   };
 
   const filtered = PRODUCTS
-    .filter((p) => activeCategory === 'all' || p.category === activeCategory)
+    .filter((p) => activeCategory === 'all' || getProductCategories(p).includes(activeCategory))
     .sort((a, b) => {
       if (sortBy === 'price_asc') return a.price - b.price;
       if (sortBy === 'price_desc') return b.price - a.price;
@@ -79,7 +86,7 @@ export default function ShopPage() {
 
   const countFor = (id: string) => {
     if (id === CUSTOM_BRACELET_CATEGORY) return CUSTOM_BRACELETS.length;
-    return id === 'all' ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === id).length;
+    return id === 'all' ? PRODUCTS.length : PRODUCTS.filter((p) => getProductCategories(p).includes(id)).length;
   };
 
   return (

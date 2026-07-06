@@ -14,6 +14,8 @@ export interface Product {
   tagline: string;
   /** Filter key (purpose-based). */
   category: string;
+  /** Filter keys where this product should appear. First item should match category. */
+  categories?: string[];
   /** 材質中文,顯示在卡片角落 */
   material: string;
   price: number;
@@ -49,6 +51,10 @@ export interface Product {
 const imgs = (slug: string, count: number): string[] =>
   Array.from({ length: count }, (_, i) => `/products/${slug}/${i + 1}.jpg`);
 
+export function getProductCategories(product: Product): string[] {
+  return product.categories ?? [product.category];
+}
+
 export const PRODUCTS: Product[] = [
   // ── 微光守護狐 (茶晶琉璃) ─────────────────────────────────────────────────
   {
@@ -57,6 +63,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Glimmer Guardian Fox',
     tagline: '有些力量,不是讓你發光。\n而是在你疲憊的時候,依然能穩穩接住你。',
     category: 'protect',
+    categories: ['protect', 'healing', 'sleep'],
     material: '茶晶琉璃',
     price: 1280,
     originalPrice: null,
@@ -102,7 +109,8 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Wish-Keeper Nine-Tail Fox',
     tagline:
       '在光影流轉之間,收藏一份屬於自己的溫柔能量。\n九尾狐自古象徵智慧、魅力、幸運與守護。',
-    category: 'wish',
+    category: 'love',
+    categories: ['love', 'protect'],
     material: '幻彩琉璃',
     price: 980,
     originalPrice: 1280,
@@ -150,6 +158,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Courage Kitten',
     tagline: '有些時候,我們需要的不是更多答案。\n而是一點點相信自己的勇氣。',
     category: 'courage',
+    categories: ['courage', 'career'],
     material: '虎眼石',
     price: 600,
     originalPrice: null,
@@ -195,7 +204,8 @@ export const PRODUCTS: Product[] = [
     name: '願望小兔',
     subtitle: 'Wishful Bunny',
     tagline: '有些願望,不需要急著實現。\n只要一直相信,它就會慢慢朝你走來。',
-    category: 'wish',
+    category: 'healing',
+    categories: ['healing', 'courage', 'sleep'],
     material: '白水晶',
     price: 660,
     originalPrice: null,
@@ -241,7 +251,8 @@ export const PRODUCTS: Product[] = [
     name: '靜心之光・白菘石柱',
     subtitle: 'Selenite Calm Tower',
     tagline: '有些力量,不是讓你變得更快。\n而是提醒你,慢下來也沒關係。',
-    category: 'calm',
+    category: 'sleep',
+    categories: ['sleep', 'healing'],
     material: '白菘石',
     price: 430,
     originalPrice: null,
@@ -288,6 +299,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Moonlight Guardian Wings',
     tagline: '有些答案,不在別人的聲音裡。\n而是在你願意靜下來傾聽自己的那一刻。',
     category: 'protect',
+    categories: ['protect', 'courage'],
     material: '拉長石',
     price: 260,
     originalPrice: null,
@@ -334,6 +346,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Abundance Cluster',
     tagline: '財富不只是一個數字,\n是你願意相信「自己值得更多」的那份篤定。',
     category: 'wealth',
+    categories: ['wealth', 'career', 'courage'],
     material: '天然礦石',
     price: 780,
     originalPrice: null,
@@ -378,7 +391,8 @@ export const PRODUCTS: Product[] = [
     name: '森蘊',
     subtitle: 'Forest Verdure Bracelet',
     tagline: '綠色,是一種溫柔的力量。\n像森林的呼吸,讓人慢下來,也重新整理自己。',
-    category: 'wealth',
+    category: 'career',
+    categories: ['career', 'wealth'],
     material: '葡萄石貔貅・綠髮晶・綠幽靈・白水晶',
     price: 1880,
     originalPrice: null,
@@ -424,7 +438,8 @@ export const PRODUCTS: Product[] = [
     name: '靈狐星願',
     subtitle: 'Starwish Fox Bracelet',
     tagline: '手腕上的粉嫩小狐狸,\n像一顆藏著星光的小心願。',
-    category: 'wish',
+    category: 'love',
+    categories: ['love', 'wealth'],
     material: '狐仙・粉晶・月光石・白水晶・黃水晶',
     price: 1580,
     originalPrice: null,
@@ -470,7 +485,8 @@ export const PRODUCTS: Product[] = [
     name: '霧裡星光',
     subtitle: 'Misty Starlight Bracelet',
     tagline: '柔軟、純淨、被溫柔守護。\n願每一次配戴,都像月光輕輕落在手腕上。',
-    category: 'wish',
+    category: 'love',
+    categories: ['love', 'protect', 'healing'],
     material: '粉晶・草莓晶・白水晶・藍月光・拉長石',
     price: 1280,
     originalPrice: null,
@@ -517,6 +533,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Clear Titanium Glow Bracelet',
     tagline: '清澈,是一種力量。\n不是張揚,而是穩定地把光收回自己身上。',
     category: 'courage',
+    categories: ['courage', 'career'],
     material: '淨體鈦晶',
     price: 4380,
     originalPrice: null,
@@ -559,6 +576,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Feathered Light Custom Bracelet',
     tagline: '柔光流轉,如羽落晨曦。\n一抹金與白的交織,讓日常多一點閃耀的溫柔。',
     category: 'protect',
+    categories: ['protect'],
     material: '黑金超七・月光石・白水晶・茶晶',
     price: 1880,
     priceLabel: 'NT$ 1,880',
@@ -601,7 +619,8 @@ export const PRODUCTS: Product[] = [
     name: '狐語微甜',
     subtitle: 'Sweet Fox Whisper Bracelet',
     tagline: '有些溫柔,是輕輕的。\n像一隻小狐,在你耳邊說:你可以慢慢來。',
-    category: 'wish',
+    category: 'love',
+    categories: ['love', 'protect', 'sleep'],
     material: '白水晶・黃膠花・紅膠花・黃水晶・白瑪瑙',
     price: 1580,
     originalPrice: null,
@@ -643,7 +662,8 @@ export const PRODUCTS: Product[] = [
     name: '焦糖瑪奇朵',
     subtitle: 'Caramel Macchiato Bracelet',
     tagline: '像一杯剛剛好的焦糖瑪奇朵。\n柔和不膩,溫潤剛好。',
-    category: 'calm',
+    category: 'sleep',
+    categories: ['sleep'],
     material: '日月同輝・斯里蘭卡藍月光・茶晶',
     price: 1480,
     originalPrice: null,
@@ -689,7 +709,8 @@ export const PRODUCTS: Product[] = [
     name: '藍境之曜',
     subtitle: 'Blue Realm Luster Bracelet',
     tagline: '靜謐如海的藍色能量。\n在光影之中,綻放柔和而沉穩的光芒。',
-    category: 'calm',
+    category: 'sleep',
+    categories: ['sleep', 'protect', 'wealth'],
     material: '貔貅・藍晶石・海藍寶・霧海藍寶・白水晶',
     price: 1780,
     originalPrice: null,
@@ -732,6 +753,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Gilded Radiance Bracelet',
     tagline: '金色,不一定要張揚。\n它也可以溫柔、細緻、剛剛好。',
     category: 'wealth',
+    categories: ['wealth', 'courage'],
     material: '鈦晶・黃水晶・茶晶・白水晶',
     price: 1280,
     originalPrice: null,
@@ -773,7 +795,8 @@ export const PRODUCTS: Product[] = [
     name: '莓語心願',
     subtitle: 'Berry Wish Bracelet',
     tagline: '想為生活添一點甜甜的色彩嗎?\n草莓色調的溫柔光澤,是日常裡很剛好的陪伴。',
-    category: 'wish',
+    category: 'love',
+    categories: ['love', 'healing'],
     material: '草莓晶・綠幽靈・粉晶・白水晶',
     price: 1280,
     originalPrice: null,
@@ -815,7 +838,8 @@ export const PRODUCTS: Product[] = [
     name: '暖語',
     subtitle: 'Warm Whisper Bracelet',
     tagline: '有些溫柔,不需要說出口。\n它會慢慢留在你身上。',
-    category: 'calm',
+    category: 'love',
+    categories: ['love', 'healing', 'sleep'],
     material: '茶晶・粉晶・紅石榴・奶油月光・紫光晶・白水晶',
     price: 1280,
     originalPrice: null,
@@ -857,7 +881,8 @@ export const PRODUCTS: Product[] = [
     name: '蔚藍微光',
     subtitle: 'Ocean Blue Glimmer Bracelet',
     tagline: '十月還帶著夏日的氣息。\n就戴上一點海洋色調吧。',
-    category: 'calm',
+    category: 'sleep',
+    categories: ['sleep', 'healing'],
     material: '海藍寶・藍摩根石・藍晶石・蛋白石・白水晶',
     price: 1280,
     originalPrice: null,
@@ -899,7 +924,8 @@ export const PRODUCTS: Product[] = [
     name: '溫柔月光',
     subtitle: 'Tender Moonlight Bracelet',
     tagline: '讓柔柔的月光色調落在手腕上。\n像夜晚的一抹光,安靜卻不失存在感。',
-    category: 'calm',
+    category: 'sleep',
+    categories: ['sleep', 'healing'],
     material: '月光石・奶油月光石・藍月光石・白水晶',
     price: 1580,
     originalPrice: null,
@@ -942,6 +968,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Dawnlight Citrine Bracelet',
     tagline: '光,是一種溫柔的存在。\n黃塔山溫潤的金色光澤,與藍月光映照出細緻的亮。',
     category: 'wealth',
+    categories: ['wealth', 'courage'],
     material: '黃塔山・白水晶・藍月光・茶晶',
     price: 1980,
     originalPrice: null,
@@ -983,7 +1010,8 @@ export const PRODUCTS: Product[] = [
     name: '心語呢喃',
     subtitle: 'Inner Whisper Bracelet',
     tagline: '有些情緒不需要被放大。\n只是輕輕地,在心裡說給自己聽。',
-    category: 'calm',
+    category: 'healing',
+    categories: ['healing', 'sleep'],
     material: '斯里蘭卡藍月光・白幽靈',
     price: 1280,
     originalPrice: null,
@@ -1026,6 +1054,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Stellar Black Super Seven Bracelet',
     tagline: '黑金超七不是超十呦。\n柔軟不代表脆弱,沉穩也可以帶著光。',
     category: 'protect',
+    categories: ['protect', 'courage'],
     material: '黑金超七',
     price: 1480,
     originalPrice: null,
@@ -1067,7 +1096,8 @@ export const PRODUCTS: Product[] = [
     name: '雪境溫柔',
     subtitle: 'Snowy Tenderness Bracelet',
     tagline: '有一隻白水晶小熊。\n在雪落的季節裡,世界被覆上一層安靜的白。',
-    category: 'calm',
+    category: 'healing',
+    categories: ['healing', 'sleep'],
     material: '白水晶小熊・奶油月光石・白水晶切面珠',
     price: 1380,
     originalPrice: null,
@@ -1109,7 +1139,8 @@ export const PRODUCTS: Product[] = [
     name: '月映柔光',
     subtitle: 'Moonlit Soft Glow Bracelet',
     tagline: '每顆的光暈都很促咪。\n在月色裡,學會溫柔也堅定。',
-    category: 'wish',
+    category: 'protect',
+    categories: ['protect', 'love', 'courage'],
     material: '彩月光石・五貓守護・琉璃・果果・阿喵・餅餅',
     price: 980,
     originalPrice: null,
@@ -1152,6 +1183,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Moonshadow Woven Bloom Bracelet',
     tagline: '月影織花,在木色光影裡靜靜綻放。\n像一朵藏著星光的小花。',
     category: 'protect',
+    categories: ['protect', 'sleep'],
     material: '銀曜石・月光石・白水晶',
     price: 1380,
     originalPrice: null,
@@ -1194,6 +1226,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Dawn Citrine Glow Bracelet',
     tagline: '像清晨第一束光,\n把豐盛、安定與清澈慢慢帶回日常。',
     category: 'wealth',
+    categories: ['wealth', 'sleep'],
     material: '黃水晶・月光石・白阿塞・白水晶',
     price: 780,
     originalPrice: null,
@@ -1235,7 +1268,8 @@ export const PRODUCTS: Product[] = [
     name: '暖櫻',
     subtitle: 'Warm Sakura Rose Quartz Bracelet',
     tagline: '粉色不是脆弱,\n是願意溫柔表達自己的力量。',
-    category: 'wish',
+    category: 'love',
+    categories: ['love', 'sleep'],
     material: '粉水晶・月光石・白阿塞・白水晶',
     price: 780,
     originalPrice: null,
@@ -1277,7 +1311,8 @@ export const PRODUCTS: Product[] = [
     name: '靜瀾',
     subtitle: 'Still Aquamarine Ripple Bracelet',
     tagline: '像安靜的海面,\n把想說的話、想整理的心,慢慢帶回清澈。',
-    category: 'calm',
+    category: 'sleep',
+    categories: ['sleep', 'love'],
     material: '海藍寶・月光石・白阿塞・白水晶',
     price: 780,
     originalPrice: null,
@@ -1348,15 +1383,19 @@ const PRODUCT_RECOMMENDATION_REASONS: Record<string, string> = {
 
 const CATEGORY_RECOMMENDATION_REASONS: Record<string, string> = {
   protect:
-    '這款商品對應「安定、保護、界線」的能量，適合你在需要穩住自己時，提醒內心慢慢回到安全的位置。',
-  wish:
-    '這款商品對應「心願、吸引力、溫柔連結」的能量，適合你在期待新的關係、機會或祝福時，陪你守住心裡的願望。',
+    '這款商品對應「平安、保護、界線」的能量，適合你在需要穩住自己時，提醒內心慢慢回到安全的位置。',
+  love:
+    '這款商品對應「愛情、人緣、溫柔連結」的能量，適合你在期待關係、善緣或更柔和的互動時，陪你把自信戴回身上。',
+  career:
+    '這款商品對應「事業、學業、貴人」的能量，適合你在累積成果、準備考試或整理工作方向時，提醒自己穩定前進。',
   courage:
-    '這款商品對應「勇氣、突破、開始」的能量，適合你在需要採取行動時，提醒自己不用一次完美，只要先開始。',
-  calm:
-    '這款商品對應「靜心、釐清、放鬆」的能量，適合你在思緒很多時，陪你把節奏慢慢調回來。',
+    '這款商品對應「勇氣、自信、突破」的能量，適合你在需要採取行動時，提醒自己不用一次完美，只要先開始。',
   wealth:
-    '這款商品對應「豐盛、機會、行動力」的能量，適合你在面對工作、金錢與自我價值時，提醒自己值得被看見。',
+    '這款商品對應「財運、招福、豐盛」的能量，適合你在整理金錢、資源與自我價值時，提醒自己值得被看見。',
+  healing:
+    '這款商品對應「健康、療癒、復原」的能量，適合你在情緒低潮或需要重新整理自己時，陪你慢慢把狀態養回來。',
+  sleep:
+    '這款商品對應「靜心、安眠、放鬆」的能量，適合你在思緒很多或壓力偏滿時，陪你把節奏慢慢調回來。',
 };
 
 export function getProductRecommendationReason(product: Product): string {
@@ -1397,11 +1436,13 @@ export function getContextualRecommendationReason(
 export const CATEGORY_OPTIONS: { id: string; label: string }[] = [
   { id: 'all', label: '全部商品' },
   { id: 'custom-bracelet', label: '客製化水晶手鍊' },
-  { id: 'protect', label: '守護平安' },
-  { id: 'wish', label: '心願祈福' },
-  { id: 'courage', label: '勇氣行動' },
-  { id: 'calm', label: '靜心紓壓' },
-  { id: 'wealth', label: '招財豐盛' },
+  { id: 'protect', label: '平安守護' },
+  { id: 'love', label: '愛情人緣' },
+  { id: 'career', label: '事業學業' },
+  { id: 'wealth', label: '財運招福' },
+  { id: 'healing', label: '健康療癒' },
+  { id: 'sleep', label: '靜心安眠' },
+  { id: 'courage', label: '勇氣自信' },
 ];
 
 export function findProduct(slug: string): Product | undefined {
