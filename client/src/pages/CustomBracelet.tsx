@@ -95,6 +95,12 @@ const FEATURE_ITEMS = [
   },
 ];
 
+// 金/銀示意圖：以實際商品照示範金屬光澤（焦糖瑪奇朵＝金、蔚藍微光＝銀）。
+const METAL_OPTIONS = [
+  { key: '金飾', en: 'Gold', image: '/products/jiao-tang-ma-qi-duo/1.jpg' },
+  { key: '銀飾', en: 'Silver', image: '/products/wei-lan-wei-guang/1.jpg' },
+];
+
 const FORM_INITIAL = {
   name: '',
   birthDate: '',
@@ -173,6 +179,14 @@ export default function CustomBraceletPage() {
   const update = (key: keyof CustomForm, value: string) => {
     setCopied(false);
     setForm((current) => ({ ...current, [key]: value }));
+  };
+
+  // 金/銀互斥（一條通常一種金屬），保留使用者補充的其他文字。
+  const toggleMetal = (key: string) => {
+    const parts = form.metalPreference.split('、').map((s) => s.trim()).filter(Boolean);
+    const withoutMetals = parts.filter((p) => p !== '金飾' && p !== '銀飾');
+    const next = parts.includes(key) ? withoutMetals : [key, ...withoutMetals];
+    update('metalPreference', next.join('、'));
   };
 
   const galleryCount = showAllPhotos ? GALLERY_IMAGES.length : FEATURED_IMAGES.length;
@@ -570,8 +584,43 @@ export default function CustomBraceletPage() {
                   <Field label="不喜歡或想避開的水晶">
                     <textarea value={form.avoidCrystals} onChange={(e) => update('avoidCrystals', e.target.value)} className={textareaClass} placeholder="例如不要黑色、不要太大顆" />
                   </Field>
-                  <Field label="喜歡金飾還是銀飾？">
-                    <input value={form.metalPreference} onChange={(e) => update('metalPreference', e.target.value)} className={inputClass} placeholder="例如金飾、銀飾；想要彈力繩、OY扣或延長鍊" />
+                  <Field label="喜歡金飾還是銀飾？" wide>
+                    <div className="mb-2.5 grid grid-cols-2 gap-2.5">
+                      {METAL_OPTIONS.map((m) => {
+                        const active = form.metalPreference.split('、').map((s) => s.trim()).includes(m.key);
+                        return (
+                          <button
+                            key={m.key}
+                            type="button"
+                            onClick={() => toggleMetal(m.key)}
+                            className={`group overflow-hidden rounded-2xl border text-left transition-all duration-200 ${
+                              active
+                                ? 'border-[#A38D6B] ring-1 ring-[#A38D6B]/30'
+                                : 'border-[#D1BE9B]/25 hover:border-[#A38D6B]/45'
+                            }`}
+                          >
+                            <div className="aspect-[4/3] overflow-hidden bg-[#F0E8DC]">
+                              <img
+                                src={m.image}
+                                alt={`${m.key}示意`}
+                                loading="lazy"
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            </div>
+                            <span className="flex items-center justify-between px-3 py-2">
+                              <span className="text-[12px] tracking-[0.1em] text-[#31353A]/80" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                                {m.key}
+                                <span className="ml-1.5 text-[10px] italic tracking-normal text-[#A38D6B]/70" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                                  {m.en}
+                                </span>
+                              </span>
+                              {active && <span className="text-[11px] text-[#A38D6B]">✓</span>}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <input value={form.metalPreference} onChange={(e) => update('metalPreference', e.target.value)} className={inputClass} placeholder="點上方選金／銀，也可補充：彈力繩、OY扣或延長鍊" />
                   </Field>
                   <Field label="其他備註" wide>
                     <textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} className={textareaClass} placeholder="其他想補充的需求" />
