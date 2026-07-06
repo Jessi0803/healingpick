@@ -1,5 +1,15 @@
-import { FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
+import {
+  CSSProperties,
+  FormEvent,
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import { Link } from 'wouter';
 import {
   ClipboardList,
@@ -22,6 +32,16 @@ const GALLERY_IMAGES = Array.from(
 // 主視覺與精選好評使用不同批圖，避免同一張在同一頁重複出現。
 const HERO_IMAGES = GALLERY_IMAGES.slice(0, 3);
 const FEATURED_IMAGES = GALLERY_IMAGES.slice(3, 11);
+
+// Hero 背景飄浮的微光星點位置。
+const SPARKLES = [
+  { top: '12%', left: '7%', size: 7, delay: '0s' },
+  { top: '24%', left: '84%', size: 4, delay: '1.3s' },
+  { top: '58%', left: '14%', size: 5, delay: '2.2s' },
+  { top: '46%', left: '70%', size: 4, delay: '0.7s' },
+  { top: '78%', left: '40%', size: 6, delay: '1.8s' },
+  { top: '16%', left: '50%', size: 3, delay: '2.7s' },
+];
 
 const STEP_ITEMS = [
   {
@@ -188,7 +208,24 @@ export default function CustomBraceletPage() {
           </div>
 
           {/* Hero：介紹＋主 CTA 在左，主視覺大圖在右 */}
-          <section className="mb-16 grid items-center gap-8 md:mb-20 md:grid-cols-[1.05fr_0.95fr] md:gap-12">
+          <section className="relative mb-16 md:mb-20">
+            {/* 夢幻氛圍層：緩慢流動的柔光暈 + 飄浮微光星點 */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+              <div className="animate-blob-drift absolute -left-16 -top-12 h-64 w-64 rounded-full bg-[#D1BE9B]/30 blur-3xl" />
+              <div className="animate-blob-drift-slow absolute right-0 top-16 h-72 w-72 rounded-full bg-[#E9C9C9]/25 blur-3xl" />
+              <div className="animate-blob-drift absolute bottom-[-2rem] left-1/3 h-56 w-56 rounded-full bg-[#CBD6C4]/22 blur-3xl" />
+              {SPARKLES.map((s, i) => (
+                <span
+                  key={i}
+                  className="animate-twinkle absolute select-none text-[#D1BE9B]"
+                  style={{ top: s.top, left: s.left, fontSize: `${s.size}px`, animationDelay: s.delay }}
+                >
+                  ✦
+                </span>
+              ))}
+            </div>
+
+            <div className="relative z-10 grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] md:gap-12">
             <div className="animate-fade-in-up">
               <p
                 className="mb-3 text-[11px] uppercase tracking-[0.35em] text-[#A38D6B]"
@@ -229,23 +266,21 @@ export default function CustomBraceletPage() {
 
             <div className="animate-fade-in-up">
               <div className="grid grid-cols-3 gap-3">
-                <button
-                  type="button"
+                <TiltImage
+                  src={HERO_IMAGES[0]}
+                  alt="客製化手鍊實拍主視覺"
                   onClick={() => openLightbox(HERO_IMAGES[0])}
-                  className="group col-span-3 aspect-[16/11] overflow-hidden rounded-3xl border border-[#D1BE9B]/25 bg-white/40 shadow-[0_16px_40px_rgba(209,190,155,0.18)]"
-                >
-                  <img
-                    src={HERO_IMAGES[0]}
-                    alt="客製化手鍊實拍主視覺"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                  />
-                </button>
+                  className="group col-span-3 aspect-[16/11] overflow-hidden rounded-3xl border border-[#D1BE9B]/25 bg-white/40 shadow-[0_16px_40px_rgba(209,190,155,0.18)] will-change-transform"
+                  imgClassName="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                />
                 {HERO_IMAGES.slice(1).map((src, idx) => (
                   <button
                     key={src}
                     type="button"
                     onClick={() => openLightbox(src)}
-                    className="group col-span-1 aspect-square overflow-hidden rounded-2xl border border-[#D1BE9B]/25 bg-white/40 shadow-sm"
+                    className={`group col-span-1 aspect-square overflow-hidden rounded-2xl border border-[#D1BE9B]/25 bg-white/40 shadow-sm ${
+                      idx === 0 ? 'animate-float-soft-delay-1' : 'animate-float-soft-delay-2'
+                    }`}
                   >
                     <img
                       src={src}
@@ -260,7 +295,7 @@ export default function CustomBraceletPage() {
                     setShowAllPhotos(true);
                     openLightbox(GALLERY_IMAGES[3]);
                   }}
-                  className="col-span-1 flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border border-[#D1BE9B]/30 bg-[#D1BE9B]/10 text-center transition-colors hover:bg-[#D1BE9B]/18"
+                  className="animate-float-soft col-span-1 flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border border-[#D1BE9B]/30 bg-[#D1BE9B]/10 text-center transition-colors hover:bg-[#D1BE9B]/18"
                 >
                   <span className="text-lg text-[#A38D6B]">＋</span>
                   <span
@@ -272,16 +307,18 @@ export default function CustomBraceletPage() {
                 </button>
               </div>
             </div>
+            </div>
           </section>
 
           {/* 客製 3 步驟 */}
-          <section className="mb-16 animate-fade-in-up md:mb-20">
+          <Reveal className="mb-16 md:mb-20">
             <SectionHeading eyebrow="How It Works" title="客製流程只要三步" />
             <div className="grid gap-4 md:grid-cols-3">
-              {STEP_ITEMS.map(({ icon: Icon, step, title, desc }) => (
+              {STEP_ITEMS.map(({ icon: Icon, step, title, desc }, i) => (
                 <div
                   key={title}
-                  className="relative rounded-3xl border border-[#D1BE9B]/22 bg-white/55 px-6 py-7 shadow-[0_10px_30px_rgba(209,190,155,0.08)]"
+                  className="reveal-child relative rounded-3xl border border-[#D1BE9B]/22 bg-white/55 px-6 py-7 shadow-[0_10px_30px_rgba(209,190,155,0.08)]"
+                  style={{ transitionDelay: `${i * 80}ms` }}
                 >
                   <div className="mb-4 flex items-center gap-3">
                     <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#3D4144] text-[#FAF7F4]">
@@ -309,14 +346,18 @@ export default function CustomBraceletPage() {
                 </div>
               ))}
             </div>
-          </section>
+          </Reveal>
 
           {/* 服務保障：改為不落單的清單 */}
-          <section className="mb-16 animate-fade-in-up md:mb-20">
+          <Reveal className="mb-16 md:mb-20">
             <SectionHeading eyebrow="What You Get" title="每一條客製手鍊都包含" />
             <div className="grid gap-x-8 gap-y-4 rounded-3xl border border-[#D1BE9B]/22 bg-white/45 px-6 py-7 md:grid-cols-2 md:px-9 md:py-9">
-              {FEATURE_ITEMS.map((item) => (
-                <div key={item.title} className="flex items-start gap-3">
+              {FEATURE_ITEMS.map((item, i) => (
+                <div
+                  key={item.title}
+                  className="reveal-child flex items-start gap-3"
+                  style={{ transitionDelay: `${i * 70}ms` }}
+                >
                   <span className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#D1BE9B]/25 text-[10px] text-[#A38D6B]">
                     ✓
                   </span>
@@ -337,24 +378,25 @@ export default function CustomBraceletPage() {
                 </div>
               ))}
             </div>
-          </section>
+          </Reveal>
 
           {/* 顧客回饋＆實拍：精選 + 燈箱 */}
-          <section className="mb-16 animate-fade-in-up md:mb-20">
+          <Reveal className="mb-16 md:mb-20">
             <SectionHeading
               eyebrow="Real Feedback"
               title="顧客回饋＆客製化實拍"
               note="以下照片皆為顧客回饋與客製化商品實拍，點擊可放大瀏覽。"
             />
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {shownGallery.map((src) => {
+              {shownGallery.map((src, i) => {
                 const realIndex = GALLERY_IMAGES.indexOf(src);
                 return (
                   <button
                     key={src}
                     type="button"
                     onClick={() => setLightboxIndex(realIndex >= 0 ? realIndex : 0)}
-                    className="group aspect-[3/4] overflow-hidden rounded-2xl border border-[#D1BE9B]/20 bg-white/40"
+                    className="reveal-child group aspect-[3/4] overflow-hidden rounded-2xl border border-[#D1BE9B]/20 bg-white/40"
+                    style={{ transitionDelay: `${Math.min(i, 8) * 45}ms` }}
                   >
                     <img
                       src={src}
@@ -383,11 +425,11 @@ export default function CustomBraceletPage() {
                 已顯示全部 {galleryCount} 張
               </p>
             )}
-          </section>
+          </Reveal>
 
           {/* 客製需求表單 */}
-          <section id="custom-form" className="mb-16 grid scroll-mt-24 gap-8 lg:grid-cols-[0.82fr_1.18fr]">
-            <div className="animate-fade-in-up">
+          <Reveal id="custom-form" className="mb-16 grid scroll-mt-24 gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+            <div className="reveal-child">
               <SectionHeading eyebrow="Custom Form" title="客製化需求表單" compact />
               <div className="rounded-3xl border border-[#D1BE9B]/22 bg-white/50 px-6 py-6">
                 <p
@@ -410,9 +452,9 @@ export default function CustomBraceletPage() {
                         key={item}
                         type="button"
                         onClick={() => toggleEnergy(item)}
-                        className={`rounded-full border px-3.5 py-1.5 text-[11.5px] tracking-[0.06em] transition-all duration-200 ${
+                        className={`rounded-full border px-3.5 py-1.5 text-[11.5px] tracking-[0.06em] transition-all duration-200 active:scale-95 ${
                           active
-                            ? 'border-[#A38D6B] bg-[#A38D6B] text-[#FAF7F4] shadow-sm'
+                            ? 'scale-[1.04] border-[#A38D6B] bg-[#A38D6B] text-[#FAF7F4] shadow-sm'
                             : 'border-[#D1BE9B]/30 bg-[#FAF7F4]/70 text-[#A38D6B] hover:bg-[#D1BE9B]/12'
                         }`}
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
@@ -427,7 +469,8 @@ export default function CustomBraceletPage() {
 
             <form
               onSubmit={handleSubmit}
-              className="animate-fade-in-up rounded-3xl border border-[#D1BE9B]/22 bg-white/55 p-5 shadow-[0_12px_36px_rgba(209,190,155,0.10)] md:p-8"
+              className="reveal-child rounded-3xl border border-[#D1BE9B]/22 bg-white/55 p-5 shadow-[0_12px_36px_rgba(209,190,155,0.10)] md:p-8"
+              style={{ transitionDelay: '90ms' }}
             >
               <FieldGroup label="基本資料">
                 <div className="grid gap-4 md:grid-cols-2">
@@ -502,14 +545,14 @@ export default function CustomBraceletPage() {
                 </button>
               </div>
             </form>
-          </section>
+          </Reveal>
         </div>
       </div>
 
       {/* 燈箱 */}
       {lightboxIndex !== null && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1c1a18]/80 p-4 backdrop-blur-sm"
+          className="lightbox-backdrop fixed inset-0 z-[60] flex items-center justify-center bg-[#1c1a18]/80 p-4 backdrop-blur-sm"
           onClick={closeLightbox}
         >
           <button
@@ -532,10 +575,11 @@ export default function CustomBraceletPage() {
             ‹
           </button>
           <img
+            key={lightboxIndex}
             src={GALLERY_IMAGES[lightboxIndex]}
             alt="客製化手鍊實拍放大"
             onClick={(e) => e.stopPropagation()}
-            className="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
+            className="lightbox-image max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
           />
           <button
             type="button"
@@ -568,6 +612,98 @@ const inputClass =
   'w-full rounded-2xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/75 px-4 py-3 text-[12.5px] tracking-[0.04em] text-[#31353A]/80 outline-none transition-colors focus:border-[#A38D6B]/55';
 
 const textareaClass = `${inputClass} min-h-[104px] resize-y leading-[1.8]`;
+
+// 捲動進入視窗才浮現（只觸發一次），delay 供同區塊卡片交錯。
+function Reveal({
+  children,
+  className = '',
+  delay = 0,
+  id,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  id?: string;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setVisible(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -80px 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      id={id}
+      className={`reveal ${visible ? 'is-visible' : ''} ${className}`}
+      style={{ '--reveal-delay': `${delay}ms` } as CSSProperties}
+    >
+      {children}
+    </div>
+  );
+}
+
+// 主視覺大圖：滑鼠移動時以彈簧做細微 3D 傾斜（純裝飾，reduced-motion 時停用）。
+function TiltImage({
+  src,
+  alt,
+  onClick,
+  className,
+  imgClassName,
+}: {
+  src: string;
+  alt: string;
+  onClick: () => void;
+  className?: string;
+  imgClassName?: string;
+}) {
+  const reduce = useReducedMotion();
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const rotateX = useSpring(useTransform(py, [-0.5, 0.5], [7, -7]), { stiffness: 120, damping: 14 });
+  const rotateY = useSpring(useTransform(px, [-0.5, 0.5], [-7, 7]), { stiffness: 120, damping: 14 });
+
+  const handleMove = (e: ReactMouseEvent<HTMLButtonElement>) => {
+    if (reduce) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    px.set((e.clientX - rect.left) / rect.width - 0.5);
+    py.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+  const handleLeave = () => {
+    px.set(0);
+    py.set(0);
+  };
+
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={reduce ? undefined : { rotateX, rotateY, transformPerspective: 900 }}
+      className={className}
+    >
+      <img src={src} alt={alt} className={imgClassName} />
+    </motion.button>
+  );
+}
 
 function SectionHeading({
   eyebrow,
