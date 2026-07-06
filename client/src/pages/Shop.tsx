@@ -22,7 +22,7 @@ const CUSTOM_BRACELETS = [
     title: '一般客製化手鍊',
     subtitle: '依照需求搭配專屬水晶',
     description: '從功效、色系、手圍與配戴習慣開始，討論出最貼近你的水晶手鍊。',
-    image: '/custom-bracelet/general/IMG_4848.PNG',
+    image: '/products/misty-starlight/1.jpg',
     href: '/shop/custom-bracelet/general',
     cta: '填寫客製化表單',
   },
@@ -30,7 +30,7 @@ const CUSTOM_BRACELETS = [
     title: '生命靈數客製化手鍊',
     subtitle: '以生日數字整理能量方向',
     description: '結合生命靈數與近期需求，協助梳理適合加強的能量與水晶搭配。',
-    image: '/custom-bracelet/general/IMG_4836.PNG',
+    image: '/products/forest-bloom/1.jpg',
     cta: '先諮詢生命靈數款',
   },
 ];
