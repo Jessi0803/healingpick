@@ -854,6 +854,69 @@ body::after {
   .tagline-char { animation: none; opacity: 1; filter: none; transform: none; }
 }
 
+/* 仙氣層 — 呼吸柔光暈 + 飄散星塵 + 光澤掃過 */
+@keyframes taglineGlow {
+  0%, 100% { opacity: 0.32; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 0.6; transform: translate(-50%, -50%) scale(1.14); }
+}
+.tagline-glow {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: min(360px, 80%);
+  height: 190px;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse at center, rgba(209, 190, 155, 0.55), rgba(233, 201, 201, 0.22) 45%, transparent 72%);
+  filter: blur(34px);
+  pointer-events: none;
+  z-index: 0;
+  animation: taglineGlow 6.5s ease-in-out infinite;
+}
+
+@keyframes stardustRise {
+  0%   { opacity: 0; transform: translateY(8px) scale(0.6); }
+  20%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-28px) scale(1); }
+}
+.tagline-stardust {
+  position: absolute;
+  pointer-events: none;
+  color: #D1BE9B;
+  z-index: 0;
+  animation: stardustRise 5.5s ease-in-out infinite;
+}
+
+@keyframes taglineShimmer {
+  0%        { transform: translateX(-160%); opacity: 0; }
+  45%, 55%  { opacity: 0.5; }
+  100%      { transform: translateX(240%); opacity: 0; }
+}
+.tagline-shimmer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+.tagline-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 32%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: translateX(-160%);
+  animation: taglineShimmer 6s cubic-bezier(0.23, 1, 0.32, 1) 1.6s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tagline-glow,
+  .tagline-stardust,
+  .tagline-shimmer::before { animation: none; }
+  .tagline-glow { opacity: 0.4; }
+}
+
 /* Copy button success morph — icon/label crossfade with a soft blur mask. */
 @keyframes btnSwap {
   from { opacity: 0; transform: scale(0.9); filter: blur(2px); }

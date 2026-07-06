@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
+import { Camera, ChevronLeft, ChevronRight, Images, X } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import {
@@ -142,27 +143,50 @@ export default function ShopPage() {
         <div className="max-w-6xl mx-auto">
 
           {/* Animated opening tagline */}
-          <div className="mb-9 pt-1 text-center md:mb-11">
-            <p className="mb-3 animate-fade-in-up text-[15px] italic tracking-[0.14em] text-[#A38D6B]"
-              style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}>
-              Find Your Crystal
-            </p>
-            <h1 className="text-2xl leading-[1.5] tracking-[0.14em] text-[#31353A] md:text-[2.1rem]"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-              {'找到屬於你的能量水晶'.split('').map((ch, i) => (
-                <span
-                  key={i}
-                  className="tagline-char"
-                  style={{ animationDelay: `${0.15 + i * 0.06}s`, color: i >= 6 ? '#A38D6B' : undefined }}
-                >
-                  {ch}
-                </span>
-              ))}
-            </h1>
-            <p className="mx-auto mt-3 max-w-md animate-fade-in-up text-[12.5px] leading-[1.9] tracking-[0.08em] text-[#31353A]/56"
-              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300, animationDelay: '0.9s' }}>
-              每一顆水晶，都是為某個時刻的你而來。
-            </p>
+          <div className="relative mb-9 pt-1 text-center md:mb-11">
+            {/* 仙氣層：柔光暈 + 飄散星塵 + 光澤掃過 */}
+            <span aria-hidden className="tagline-glow" />
+            {[
+              { left: '20%', top: '30%', size: 8, delay: '0s' },
+              { left: '78%', top: '24%', size: 6, delay: '1.1s' },
+              { left: '32%', top: '70%', size: 7, delay: '2.2s' },
+              { left: '66%', top: '64%', size: 6, delay: '0.6s' },
+              { left: '50%', top: '16%', size: 5, delay: '1.7s' },
+              { left: '11%', top: '56%', size: 6, delay: '2.8s' },
+            ].map((s, i) => (
+              <span
+                key={i}
+                aria-hidden
+                className="tagline-stardust"
+                style={{ left: s.left, top: s.top, fontSize: `${s.size}px`, animationDelay: s.delay }}
+              >
+                ✦
+              </span>
+            ))}
+            <span aria-hidden className="tagline-shimmer" />
+
+            <div className="relative z-[1]">
+              <p className="mb-3 animate-fade-in-up text-[15px] italic tracking-[0.14em] text-[#A38D6B]"
+                style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}>
+                Find Your Crystal
+              </p>
+              <h1 className="text-2xl leading-[1.5] tracking-[0.14em] text-[#31353A] md:text-[2.1rem]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {'找到屬於你的能量水晶'.split('').map((ch, i) => (
+                  <span
+                    key={i}
+                    className="tagline-char"
+                    style={{ animationDelay: `${0.15 + i * 0.06}s`, color: i >= 6 ? '#A38D6B' : undefined }}
+                  >
+                    {ch}
+                  </span>
+                ))}
+              </h1>
+              <p className="mx-auto mt-3 max-w-md animate-fade-in-up text-[12.5px] leading-[1.9] tracking-[0.08em] text-[#31353A]/56"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300, animationDelay: '0.9s' }}>
+                每一顆水晶，都是為某個時刻的你而來。
+              </p>
+            </div>
           </div>
 
           {/* Featured carousel + social proof */}
@@ -445,6 +469,7 @@ function FeaturedBand({
   const count = products.length;
   const paused = useRef(false);
   const touchX = useRef<number | null>(null);
+  const fbTouchX = useRef<number | null>(null);
 
   const go = (i: number) => count && setCurrent((i + count) % count);
 
@@ -485,6 +510,16 @@ function FeaturedBand({
     const dx = e.changedTouches[0].clientX - touchX.current;
     if (Math.abs(dx) > 40) go(current + (dx < 0 ? 1 : -1));
     touchX.current = null;
+  };
+
+  const onFeedbackTouchStart = (e: React.TouchEvent) => {
+    fbTouchX.current = e.touches[0].clientX;
+  };
+  const onFeedbackTouchEnd = (e: React.TouchEvent) => {
+    if (fbTouchX.current === null) return;
+    const dx = e.changedTouches[0].clientX - fbTouchX.current;
+    if (Math.abs(dx) > 44) stepFb(dx < 0 ? 1 : -1);
+    fbTouchX.current = null;
   };
 
   return (
@@ -572,54 +607,115 @@ function FeaturedBand({
           <button
             type="button"
             onClick={() => setFbIndex(0)}
-            className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#3D4144] px-5 py-2.5 text-[11.5px] tracking-[0.18em] text-[#FAF7F4] shadow-sm transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-[0.98]"
-            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+            className="group grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-2xl border border-[#D1BE9B]/28 bg-[#FBF8F3]/72 p-2.5 text-left shadow-[0_12px_28px_rgba(61,65,68,0.07),inset_0_1px_0_rgba(255,255,255,0.8)] transition-[background-color,border-color,box-shadow,transform] duration-200 ease-out hover:border-[#A38D6B]/36 hover:bg-white/82 hover:shadow-[0_16px_34px_rgba(61,65,68,0.10),inset_0_1px_0_rgba(255,255,255,0.92)] active:scale-[0.985]"
           >
-            看顧客真實回饋
-            <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+            <span className="relative flex h-12 w-16 shrink-0 overflow-hidden rounded-xl border border-white/70 bg-[#F0E8DC] shadow-inner">
+              {FEEDBACK_PHOTOS.slice(0, 3).map((src, i) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="h-full w-1/3 object-cover"
+                  style={{ objectPosition: i === 0 ? '42% 50%' : 'center' }}
+                />
+              ))}
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1F2224]/10" />
+            </span>
+            <span className="min-w-0">
+              <span
+                className="flex items-center gap-1.5 text-[12px] tracking-[0.14em] text-[#31353A]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                <Camera className="h-3.5 w-3.5 text-[#A38D6B]" strokeWidth={1.6} />
+                顧客真實回饋
+              </span>
+              <span
+                className="mt-1 block truncate text-[10.5px] tracking-[0.08em] text-[#31353A]/50"
+                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+              >
+                {FEEDBACK_PHOTOS.length} 張照片，可左右滑看
+              </span>
+            </span>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#3D4144] text-[#FAF7F4] transition-colors duration-200 group-hover:bg-[#A38D6B]">
+              <Images className="h-4 w-4" strokeWidth={1.6} />
+            </span>
           </button>
         </div>
       </div>
 
       {fbIndex !== null && typeof document !== 'undefined' && createPortal(
         <div
-          className="lightbox-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-[#1c1a18]/80 p-4 backdrop-blur-sm"
+          className="lightbox-backdrop fixed inset-0 z-[70] flex flex-col items-center justify-center bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
           onClick={closeFb}
+          onTouchStart={onFeedbackTouchStart}
+          onTouchEnd={onFeedbackTouchEnd}
         >
+          <div className="absolute left-4 top-4 text-[#FAF7F4] md:left-8 md:top-6">
+            <p
+              className="text-[12px] tracking-[0.18em]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+            >
+              顧客真實回饋
+            </p>
+            <p className="mt-1 text-[10px] tracking-[0.12em] text-white/48">
+              {fbIndex + 1} / {FEEDBACK_PHOTOS.length}
+            </p>
+          </div>
           <button
             type="button"
             onClick={closeFb}
             aria-label="關閉"
-            className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-white/12 text-lg text-white/90 transition-colors hover:bg-white/25"
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 md:right-8 md:top-6"
           >
-            ✕
+            <X className="h-4.5 w-4.5" strokeWidth={1.7} />
           </button>
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); stepFb(-1); }}
             aria-label="上一張"
-            className="absolute left-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/12 text-xl text-white/90 transition-colors hover:bg-white/25 md:left-8"
+            className="absolute left-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:left-8"
           >
-            ‹
+            <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
           </button>
-          <img
-            key={fbIndex}
-            src={FEEDBACK_PHOTOS[fbIndex]}
-            alt="顧客回饋與實拍"
-            onClick={(e) => e.stopPropagation()}
-            className="lightbox-image max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
-          />
+          <div className="flex max-h-[calc(100vh-8.5rem)] w-full items-center justify-center pt-12 md:pt-8">
+            <img
+              key={fbIndex}
+              src={FEEDBACK_PHOTOS[fbIndex]}
+              alt={`顧客回饋與實拍，第 ${fbIndex + 1} 張`}
+              onClick={(e) => e.stopPropagation()}
+              className="lightbox-image max-h-[calc(100vh-13.5rem)] max-w-full rounded-2xl object-contain shadow-2xl md:max-h-[calc(100vh-11rem)]"
+            />
+          </div>
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); stepFb(1); }}
             aria-label="下一張"
-            className="absolute right-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/12 text-xl text-white/90 transition-colors hover:bg-white/25 md:right-8"
+            className="absolute right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:right-8"
           >
-            ›
+            <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
           </button>
-          <span className="absolute bottom-6 text-[11px] tracking-[0.2em] text-white/60">
-            {fbIndex + 1} / {FEEDBACK_PHOTOS.length}
-          </span>
+          <div
+            className="mt-4 flex w-full max-w-3xl gap-2 overflow-x-auto px-1 pb-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {FEEDBACK_PHOTOS.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                onClick={() => setFbIndex(i)}
+                aria-label={`查看第 ${i + 1} 張回饋照片`}
+                className={`h-14 w-11 shrink-0 overflow-hidden rounded-lg border transition-[border-color,opacity,transform] duration-200 active:scale-95 md:h-16 md:w-12 ${
+                  i === fbIndex
+                    ? 'border-[#D1BE9B] opacity-100'
+                    : 'border-white/12 opacity-48 hover:border-white/32 hover:opacity-82'
+                }`}
+              >
+                <img src={src} alt="" aria-hidden="true" loading="lazy" className="h-full w-full object-cover" />
+              </button>
+            ))}
+          </div>
         </div>,
         document.body,
       )}
