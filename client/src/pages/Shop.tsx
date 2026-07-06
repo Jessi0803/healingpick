@@ -9,8 +9,14 @@ import { CatSitting, CatPeeking } from '@/components/CatElements';
 import { PRODUCTS, CATEGORY_OPTIONS, getProductFitSummary, getProductImageStyle, type Product } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
 
-// 精選輪播選品（招財／桃花／守護各一），與社會證明數字。
-const FEATURED_SLUGS = ['wealth-stone', 'mei-yu-xin-yuan', 'glimmer-fox'];
+// 精選輪播選品，使用獨立圖片避免輪播文案遮到手鍊本身。
+type FeaturedProduct = Product & { featuredImage: string };
+
+const FEATURED_SLIDES: Array<{ slug: string; image: string }> = [
+  { slug: 'guang-yu-zhi-jing', image: '/products/guang-yu-zhi-jing/3.jpg' },
+  { slug: 'xing-yao-zhi-xing', image: '/products/xing-yao-zhi-xing/2.jpg' },
+  { slug: 'nuan-yu', image: '/products/nuan-yu/2.jpg' },
+];
 const STATS = [
   { value: '99%', label: '滿意顧客' },
   { value: '100%', label: '天然水晶' },
@@ -63,9 +69,12 @@ export default function ShopPage() {
 
   const isCustomCategory = activeCategory === CUSTOM_BRACELET_CATEGORY;
 
-  const featured = FEATURED_SLUGS
-    .map((slug) => PRODUCTS.find((p) => p.slug === slug))
-    .filter((p): p is Product => Boolean(p));
+  const featured = FEATURED_SLIDES
+    .map((slide) => {
+      const product = PRODUCTS.find((p) => p.slug === slide.slug);
+      return product ? { ...product, featuredImage: slide.image } : null;
+    })
+    .filter((p): p is FeaturedProduct => Boolean(p));
 
   const countFor = (id: string) => {
     if (id === CUSTOM_BRACELET_CATEGORY) return CUSTOM_BRACELETS.length;
@@ -100,41 +109,14 @@ export default function ShopPage() {
             </div>
           </div>
 
-          {/* 設計款 / 客製款 主切換 */}
-          <div className="mb-12 flex justify-center px-1 animate-fade-in-up">
-            <div className="grid w-full max-w-[620px] grid-cols-2 rounded-full border border-[#D1BE9B]/30 bg-[#FBF8F3]/78 p-1.5 shadow-[0_10px_26px_rgba(61,65,68,0.08),inset_0_1px_0_rgba(255,255,255,0.92)] backdrop-blur-md md:p-2">
-              {[
-                { custom: false, zh: '設計款', en: 'Ready-made' },
-                { custom: true, zh: '客製款', en: 'Custom' },
-              ].map((mode) => {
-                const active = mode.custom ? isCustomCategory : !isCustomCategory;
-                return (
-                  <button
-                    key={mode.zh}
-                    type="button"
-                    onClick={() => setActiveCategory(mode.custom ? CUSTOM_BRACELET_CATEGORY : 'all')}
-                    className={`flex min-h-[56px] items-center justify-center rounded-full px-3 py-2 transition-[background-color,color,box-shadow,transform] duration-200 ease-out active:scale-[0.98] md:min-h-[72px] md:px-8 ${
-                      active
-                        ? 'bg-[#3D4144] text-[#FAF7F4] shadow-[0_8px_18px_rgba(49,53,58,0.22),inset_0_1px_0_rgba(255,255,255,0.10)]'
-                        : 'text-[#31353A]/62 hover:bg-white/38 hover:text-[#31353A]'
-                    }`}
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  >
-                    <span className="whitespace-nowrap text-[1rem] tracking-[0.22em] md:text-[1.35rem]">
-                      {mode.zh}
-                    </span>
-                    <span className="ml-2 whitespace-nowrap text-[0.75rem] italic tracking-normal opacity-58 md:ml-4 md:text-[1rem]"
-                      style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                      {mode.en}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Featured carousel + social proof */}
-          {!isCustomCategory && <FeaturedBand products={featured} />}
+          {!isCustomCategory && (
+            <FeaturedBand
+              products={featured}
+              isCustomCategory={isCustomCategory}
+              onModeChange={(custom) => setActiveCategory(custom ? CUSTOM_BRACELET_CATEGORY : 'all')}
+            />
+          )}
 
           {/* Filters */}
           {!isCustomCategory && (
@@ -176,6 +158,13 @@ export default function ShopPage() {
 
           {isCustomCategory && (
             <section className="mb-12 animate-fade-in-up">
+              <div className="mb-8 flex justify-center px-1">
+                <ShopModeSwitch
+                  isCustomCategory={isCustomCategory}
+                  onChange={(custom) => setActiveCategory(custom ? CUSTOM_BRACELET_CATEGORY : 'all')}
+                />
+              </div>
+
               <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-[10px] tracking-[0.32em] text-[#D1BE9B] uppercase mb-2"
@@ -350,7 +339,55 @@ export default function ShopPage() {
   );
 }
 
-function FeaturedBand({ products }: { products: Product[] }) {
+function ShopModeSwitch({
+  isCustomCategory,
+  onChange,
+}: {
+  isCustomCategory: boolean;
+  onChange: (custom: boolean) => void;
+}) {
+  return (
+    <div className="grid w-full max-w-[620px] grid-cols-2 rounded-full border border-[#D1BE9B]/30 bg-[#FBF8F3]/78 p-1.5 shadow-[0_10px_26px_rgba(61,65,68,0.08),inset_0_1px_0_rgba(255,255,255,0.92)] backdrop-blur-md md:p-2">
+      {[
+        { custom: false, zh: '設計款', en: 'Ready-made' },
+        { custom: true, zh: '客製款', en: 'Custom' },
+      ].map((mode) => {
+        const active = mode.custom ? isCustomCategory : !isCustomCategory;
+        return (
+          <button
+            key={mode.zh}
+            type="button"
+            onClick={() => onChange(mode.custom)}
+            className={`flex min-h-[56px] items-center justify-center rounded-full px-3 py-2 transition-[background-color,color,box-shadow,transform] duration-200 ease-out active:scale-[0.98] md:min-h-[72px] md:px-8 ${
+              active
+                ? 'bg-[#3D4144] text-[#FAF7F4] shadow-[0_8px_18px_rgba(49,53,58,0.22),inset_0_1px_0_rgba(255,255,255,0.10)]'
+                : 'text-[#31353A]/62 hover:bg-white/38 hover:text-[#31353A]'
+            }`}
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+          >
+            <span className="whitespace-nowrap text-[1rem] tracking-[0.22em] md:text-[1.35rem]">
+              {mode.zh}
+            </span>
+            <span className="ml-2 whitespace-nowrap text-[0.75rem] italic tracking-normal opacity-58 md:ml-4 md:text-[1rem]"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              {mode.en}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function FeaturedBand({
+  products,
+  isCustomCategory,
+  onModeChange,
+}: {
+  products: FeaturedProduct[];
+  isCustomCategory: boolean;
+  onModeChange: (custom: boolean) => void;
+}) {
   const [current, setCurrent] = useState(0);
   const count = products.length;
   const paused = useRef(false);
@@ -398,25 +435,24 @@ function FeaturedBand({ products }: { products: Product[] }) {
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
             {products.map((p) => (
-              <Link key={p.slug} href={`/shop/${p.slug}`} className="relative w-full flex-shrink-0">
-                <div className="aspect-[4/3] w-full overflow-hidden md:aspect-[16/11]">
+              <Link key={p.slug} href={`/shop/${p.slug}`} className="relative flex w-full flex-shrink-0 flex-col">
+                <div className="aspect-[4/3] w-full overflow-hidden bg-[#F7F1E8] md:aspect-[16/11]">
                   <img
-                    src={p.img}
+                    src={p.featuredImage}
                     alt={p.name}
-                    className="h-full w-full object-cover"
-                    style={getProductImageStyle(p)}
+                    className="h-full w-full object-contain"
                   />
                 </div>
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#2b2622]/78 via-[#2b2622]/22 to-transparent p-5 pt-14">
-                  <p className="text-[11px] italic tracking-[0.08em] text-[#F0E8DC]/85"
+                <div className="bg-white/78 px-5 py-4">
+                  <p className="text-[11px] italic tracking-[0.08em] text-[#A38D6B]/85"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                     {p.subtitle}
                   </p>
-                  <h3 className="text-base tracking-[0.14em] text-white md:text-lg"
+                  <h3 className="text-base tracking-[0.14em] text-[#31353A] md:text-lg"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                     {p.name}
                   </h3>
-                  <span className="mt-1 inline-block text-sm text-[#E9D9B8]"
+                  <span className="mt-1 inline-block text-sm text-[#A38D6B]"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                     {p.priceLabel ?? `NT$ ${p.price.toLocaleString()}`}
                   </span>
@@ -458,7 +494,13 @@ function FeaturedBand({ products }: { products: Product[] }) {
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。
             </p>
+            <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-[#D1BE9B]/35 bg-[#FAF7F4]/65 px-4 py-2 text-[11px] tracking-[0.16em] text-[#8F7957] shadow-[0_10px_30px_rgba(163,141,107,0.08)]">
+              <span className="h-px w-5 shrink-0 bg-[#D1BE9B]/60" />
+              <span className="leading-relaxed">買一條即享免運｜每單贈天然水晶碎石</span>
+              <span className="h-px w-5 shrink-0 bg-[#D1BE9B]/60" />
+            </div>
           </div>
+          <ShopModeSwitch isCustomCategory={isCustomCategory} onChange={onModeChange} />
           <div className="grid grid-cols-2 gap-4">
             {STATS.map((s) => (
               <div key={s.label} className="rounded-2xl bg-[#FAF7F4]/70 px-4 py-6 text-center">
