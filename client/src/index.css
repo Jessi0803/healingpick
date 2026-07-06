@@ -809,6 +809,26 @@ body::after {
   animation: lightboxImageIn 0.28s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
+/* Copy button success morph — icon/label crossfade with a soft blur mask. */
+@keyframes btnSwap {
+  from { opacity: 0; transform: scale(0.9); filter: blur(2px); }
+  to   { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.animate-btn-swap {
+  animation: btnSwap 0.28s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Step connector line that draws in when its .reveal ancestor is visible.
+   pathLength=1 normalises the stroke so dashoffset 1 → hidden, 0 → drawn. */
+.step-connector {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.77, 0, 0.175, 1) 0.15s;
+}
+.reveal.is-visible .step-connector {
+  stroke-dashoffset: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* Reduced motion: keep gentle fades, drop all sustained/positional movement. */
   .reveal {
@@ -831,6 +851,13 @@ body::after {
     animation: none;
   }
   .lightbox-image { animation: lightboxBackdropIn 0.2s ease both; }
+  .step-connector {
+    transition: opacity 0.4s ease;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  .reveal.is-visible .step-connector { opacity: 1; }
 }
 
 /* ============================================================

@@ -12,6 +12,7 @@ import { createPortal } from 'react-dom';
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import { Link } from 'wouter';
 import {
+  Check,
   ClipboardList,
   Copy,
   Gem,
@@ -313,7 +314,27 @@ export default function CustomBraceletPage() {
           {/* 客製 3 步驟 */}
           <Reveal className="mb-16 md:mb-20">
             <SectionHeading eyebrow="How It Works" title="客製流程只要三步" />
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="relative">
+              {/* 連接三步驟的細線，區塊浮現時由左至右畫入（桌機） */}
+              <svg
+                aria-hidden
+                viewBox="0 0 100 2"
+                preserveAspectRatio="none"
+                className="pointer-events-none absolute left-[14%] right-[14%] top-[50px] z-0 hidden h-[2px] md:block"
+              >
+                <line
+                  x1="0"
+                  y1="1"
+                  x2="100"
+                  y2="1"
+                  pathLength={1}
+                  className="step-connector"
+                  stroke="#D1BE9B"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="relative z-10 grid gap-4 md:grid-cols-3">
               {STEP_ITEMS.map(({ icon: Icon, step, title, desc }, i) => (
                 <div
                   key={title}
@@ -345,6 +366,7 @@ export default function CustomBraceletPage() {
                   </p>
                 </div>
               ))}
+              </div>
             </div>
           </Reveal>
 
@@ -528,11 +550,17 @@ export default function CustomBraceletPage() {
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="submit"
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#3D4144] px-5 py-3.5 text-xs tracking-[0.2em] text-[#FAF7F4] shadow-sm transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                  className={`inline-flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-xs tracking-[0.2em] shadow-sm transition-all duration-300 active:scale-95 ${
+                    copied
+                      ? 'bg-[#8A9A76] text-white'
+                      : 'bg-[#3D4144] text-[#FAF7F4] hover:bg-[#D1BE9B] hover:text-[#31353A]'
+                  }`}
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
-                  <Copy className="h-4 w-4" />
-                  {copied ? '已複製表單' : '複製表單並聯繫'}
+                  <span key={copied ? 'done' : 'idle'} className="animate-btn-swap inline-flex items-center gap-2">
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copied ? '已複製表單' : '複製表單並聯繫'}
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -609,7 +637,7 @@ export default function CustomBraceletPage() {
 }
 
 const inputClass =
-  'w-full rounded-2xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/75 px-4 py-3 text-[12.5px] tracking-[0.04em] text-[#31353A]/80 outline-none transition-colors focus:border-[#A38D6B]/55';
+  'w-full rounded-2xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/75 px-4 py-3 text-[12.5px] tracking-[0.04em] text-[#31353A]/80 outline-none transition-[border-color,box-shadow,background-color] duration-200 focus:border-[#A38D6B]/60 focus:bg-white focus:shadow-[0_0_0_4px_rgba(209,190,155,0.18)]';
 
 const textareaClass = `${inputClass} min-h-[104px] resize-y leading-[1.8]`;
 
