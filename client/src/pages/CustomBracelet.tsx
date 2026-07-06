@@ -172,7 +172,7 @@ export default function CustomBraceletPage() {
         `喜歡的色系：${form.colorPreference || '未填'}`,
         `喜歡或指定的水晶：${form.favoriteCrystals || '無特別指定'}`,
         `不喜歡或想避開的水晶：${form.avoidCrystals || '無'}`,
-        `金屬/扣具偏好：${form.metalPreference || '未填'}`,
+        `喜歡金飾還是銀飾 / 彈力繩、OY扣、延長鍊：${form.metalPreference || '未填'}`,
         `Instagram / LINE：${form.contact || '未填'}`,
         `其他備註：${form.notes || '無'}`,
       ].join('\n'),
@@ -643,8 +643,8 @@ export default function CustomBraceletPage() {
                   <Field label="不喜歡或想避開的水晶">
                     <textarea value={form.avoidCrystals} onChange={(e) => update('avoidCrystals', e.target.value)} className={textareaClass} placeholder="例如不要黑色、不要太大顆" />
                   </Field>
-                  <Field label="金屬或扣具偏好">
-                    <input value={form.metalPreference} onChange={(e) => update('metalPreference', e.target.value)} className={inputClass} placeholder="例如金色、銀色、彈力繩、扣頭" />
+                  <Field label="喜歡金飾還是銀飾？">
+                    <input value={form.metalPreference} onChange={(e) => update('metalPreference', e.target.value)} className={inputClass} placeholder="例如金飾、銀飾；想要彈力繩、OY扣或延長鍊" />
                   </Field>
                   <Field label="其他備註" wide>
                     <textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} className={textareaClass} placeholder="其他想補充的需求" />
