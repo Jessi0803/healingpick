@@ -667,7 +667,7 @@ export default function FortunePage() {
                               </div>
                             )}
                             {/* Scores */}
-                            <div className="space-y-3 mb-6">
+                            <div className="space-y-3 mb-6 animate-fade-in-up" style={{ animationDelay: '0.05s' }}>
                               <ScoreBar label="整體" score={aiData.overallScore}  color={selectedSignData.color} />
                               <ScoreBar label="感情" score={aiData.loveScore}     color="#EAA8AC" />
                               <ScoreBar label="事業" score={aiData.careerScore}   color="#A0B898" />
@@ -675,7 +675,7 @@ export default function FortunePage() {
                             </div>
 
                             {/* Lucky info */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 animate-fade-in-up" style={{ animationDelay: '0.16s' }}>
                               {[
                                 { label: '幸運顏色', value: aiData.luckyColor },
                                 { label: '幸運數字', value: aiData.luckyNumber.toString() },
@@ -702,8 +702,8 @@ export default function FortunePage() {
                                 { icon: '◈', label: '事業財運', text: aiData.career },
                                 { icon: '◉', label: '健康提醒', text: aiData.health },
                                 { icon: '◎', label: '策略提醒', text: aiData.advice },
-                              ].map(item => (
-                                <div key={item.label} className="flex gap-3">
+                              ].map((item, idx) => (
+                                <div key={item.label} className="flex gap-3 animate-fade-in-up" style={{ animationDelay: `${0.28 + idx * 0.1}s` }}>
                                   <span className="text-[#D1BE9B] flex-shrink-0 mt-0.5 text-sm">{item.icon}</span>
                                   <div>
                                     <p className="text-[12px] tracking-[0.2em] text-[#6F5A3A] mb-1"
@@ -721,7 +721,7 @@ export default function FortunePage() {
 
                             {/* Product recommendation */}
                             {selectedSignData && (
-                              <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15">
+                              <div className="mt-6 pt-6 border-t border-[#D1BE9B]/15 animate-fade-in-up" style={{ animationDelay: '0.85s' }}>
                                 <p className="text-[14px] tracking-[0.24em] text-[#6F5A3A] mb-3"
                                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}>
                                   ◎ Mochi 為你挑的今日商品
