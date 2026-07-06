@@ -259,7 +259,6 @@ export default function CustomBraceletPage() {
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
 老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。
-                {'\n'}我們會依照你的需求與偏好，為你搭配專屬水晶，讓它不只是飾品，更是一份陪你日常前進的能量提醒。
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <a
