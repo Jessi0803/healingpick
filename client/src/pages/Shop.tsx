@@ -5,7 +5,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
-import Reveal from '@/components/Reveal';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import {
   PRODUCTS,
@@ -31,8 +30,8 @@ const STATS = [
 ];
 
 const SORT_OPTIONS = [
-  { id: 'default', label: '預設排序' },
-  { id: 'sales_desc', label: '銷售量由高到低' },
+  { id: 'sales_desc', label: '熱銷商品排序' },
+  { id: 'default', label: '商品上架順序' },
   { id: 'price_asc', label: '價格由低到高' },
   { id: 'price_desc', label: '價格由高到低' },
 ] as const;
@@ -94,7 +93,7 @@ const CUSTOM_BRACELETS = [
 
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [sortBy, setSortBy] = useState<SortBy>('default');
+  const [sortBy, setSortBy] = useState<SortBy>('sales_desc');
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
@@ -263,12 +262,11 @@ export default function ShopPage() {
 
           {/* Product grid */}
           {!isCustomCategory && (
-            <Reveal className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8 mb-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8 mb-12">
               {filtered.map((product, i) => (
                 <div
                   key={product.slug}
-                  className="reveal-child group flex flex-col justify-between h-full"
-                  style={{ transitionDelay: `${Math.min(i, 8) * 45}ms` }}
+                  className="group flex flex-col justify-between h-full"
                 >
                   <Link href={`/shop/${product.slug}`}>
                     <div className="cursor-pointer">
@@ -276,7 +274,7 @@ export default function ShopPage() {
                         <img
                           src={product.img}
                           alt={product.name}
-                          loading="lazy"
+                          loading={i < 8 ? 'eager' : 'lazy'}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           style={getProductImageStyle(product)}
                         />
@@ -340,7 +338,7 @@ export default function ShopPage() {
                   </button>
                 </div>
               ))}
-            </Reveal>
+            </div>
           )}
 
           <div className="flex justify-center mb-8">
