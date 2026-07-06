@@ -310,8 +310,8 @@ function Section({ title, subtitle, icon = '♡', children }: { title: string; s
     <div className="mb-10 animate-fade-in-up">
       <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
         <div className="flex items-center gap-3">
-          <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase"
-            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+          <span className="text-[13px] tracking-[0.06em] text-[#A38D6B] italic"
+            style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}>
             {icon} {subtitle}
           </span>
           <h2 className="text-base md:text-lg tracking-[0.2em] text-[#31353A]/85"
