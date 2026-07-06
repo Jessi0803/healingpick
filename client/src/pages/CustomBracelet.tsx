@@ -203,8 +203,8 @@ export default function CustomBraceletPage() {
                 className="mb-7 max-w-xl whitespace-pre-line text-[14.5px] leading-[2] tracking-[0.04em] text-[#31353A]/78"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                想要一條真正貼近自己的水晶手鍊，可以從你的需求、近期狀態、喜歡的顏色與配戴習慣開始。
-                {'\n'}我們會依照你的方向挑選專屬水晶，讓它不只是飾品，也是一份陪你日常前進的能量提醒。
+老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。
+                {'\n'}我們會依照你的需求與偏好，為你搭配專屬水晶，讓它不只是飾品，更是一份陪你日常前進的能量提醒。
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <a
