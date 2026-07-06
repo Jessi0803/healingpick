@@ -87,6 +87,7 @@ const CUSTOM_BRACELETS = [
     subtitle: '以生日數字整理能量方向',
     description: '結合生命靈數與近期需求，協助梳理適合加強的能量與水晶搭配。',
     image: '/products/forest-bloom/1.jpg',
+    href: '/shop/custom-bracelet/numerology',
     cta: '先諮詢生命靈數款',
   },
 ];

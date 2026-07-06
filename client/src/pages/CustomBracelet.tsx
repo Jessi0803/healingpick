@@ -10,8 +10,9 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import {
+  CalendarDays,
   Check,
   ClipboardList,
   Copy,
@@ -105,6 +106,7 @@ const ENERGY_OPTIONS = [
 ];
 const FORM_INITIAL = {
   name: '',
+  birthDate: '',
   wristSize: '',
   fitPreference: '',
   budget: '',
@@ -118,8 +120,39 @@ const FORM_INITIAL = {
 };
 
 type CustomForm = typeof FORM_INITIAL;
+type BraceletMode = 'general' | 'numerology';
+
+const PAGE_COPY: Record<
+  BraceletMode,
+  {
+    title: string;
+    formTitle: string;
+    contactProductName: string;
+    heroIntro: string;
+    heroLead: string;
+  }
+> = {
+  general: {
+    title: '一般客製化手鍊',
+    formTitle: '一般客製化手鍊諮詢表單',
+    contactProductName: '一般客製化手鍊',
+    heroIntro: '',
+    heroLead: '老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。',
+  },
+  numerology: {
+    title: '生命靈數客製化手鍊',
+    formTitle: '生命靈數客製化手鍊諮詢表單',
+    contactProductName: '生命靈數客製化手鍊',
+    heroIntro:
+      '生命靈數會從你的出生年月日整理出天生特質、行動節奏與現階段適合補強的能量方向。客製時會把生日數字與你近期的需求一起參考，讓水晶搭配更貼近你的個人狀態。',
+    heroLead: '老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。',
+  },
+};
 
 export default function CustomBraceletPage() {
+  const [location] = useLocation();
+  const mode: BraceletMode = location.includes('/numerology') ? 'numerology' : 'general';
+  const copy = PAGE_COPY[mode];
   const [form, setForm] = useState<CustomForm>(FORM_INITIAL);
   const [copied, setCopied] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -129,8 +162,9 @@ export default function CustomBraceletPage() {
   const formSummary = useMemo(
     () =>
       [
-        '【一般客製化手鍊諮詢表單】',
+        `【${copy.formTitle}】`,
         `姓名：${form.name || '未填'}`,
+        ...(mode === 'numerology' ? [`出生年月日：${form.birthDate || '未填'}`] : []),
         `手圍尺寸：${form.wristSize || '未填'}`,
         `配戴鬆緊：${form.fitPreference || '未填'}`,
         `預算：${form.budget || '未填'}`,
@@ -142,7 +176,7 @@ export default function CustomBraceletPage() {
         `Instagram / LINE：${form.contact || '未填'}`,
         `其他備註：${form.notes || '無'}`,
       ].join('\n'),
-    [form],
+    [copy.formTitle, form, mode],
   );
 
   const update = (key: keyof CustomForm, value: string) => {
@@ -192,6 +226,10 @@ export default function CustomBraceletPage() {
     event.preventDefault();
     if (!form.name.trim() || !form.contact.trim() || !form.wristSize.trim() || !form.energyNeeds.trim()) {
       toast.error('請先填寫姓名、聯絡方式、手圍與主要需求');
+      return;
+    }
+    if (mode === 'numerology' && !form.birthDate.trim()) {
+      toast.error('請先填寫出生年月日');
       return;
     }
 
@@ -252,13 +290,32 @@ export default function CustomBraceletPage() {
                 className="mb-5 text-3xl leading-[1.35] tracking-[0.12em] text-[#31353A] md:text-[2.6rem]"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                一般客製化手鍊
+                {copy.title}
               </h1>
+              {copy.heroIntro && (
+                <div className="mb-5 rounded-3xl border border-[#D1BE9B]/22 bg-white/45 px-5 py-4 shadow-[0_10px_28px_rgba(209,190,155,0.08)]">
+                  <div className="mb-2 flex items-center gap-2 text-[#A38D6B]">
+                    <CalendarDays className="h-4 w-4" strokeWidth={1.5} />
+                    <span
+                      className="text-[11px] tracking-[0.18em]"
+                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+                    >
+                      LIFE PATH NUMBER
+                    </span>
+                  </div>
+                  <p
+                    className="text-[13px] leading-[1.9] tracking-[0.04em] text-[#31353A]/72"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                  >
+                    {copy.heroIntro}
+                  </p>
+                </div>
+              )}
               <p
                 className="mb-7 max-w-xl whitespace-pre-line text-[14.5px] leading-[2] tracking-[0.04em] text-[#31353A]/78"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。
+                {copy.heroLead}
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <a
@@ -537,6 +594,16 @@ export default function CustomBraceletPage() {
                   <Field label="姓名" required>
                     <input value={form.name} onChange={(e) => update('name', e.target.value)} className={inputClass} placeholder="請填寫姓名" />
                   </Field>
+                  {mode === 'numerology' && (
+                    <Field label="出生年月日" required hint="請填寫陽曆生日，作為生命靈數客製搭配參考。">
+                      <input
+                        type="date"
+                        value={form.birthDate}
+                        onChange={(e) => update('birthDate', e.target.value)}
+                        className={inputClass}
+                      />
+                    </Field>
+                  )}
                   <Field label="手圍尺寸" required hint="拿軟尺平貼手腕繞一圈量測。沒有軟尺時，可以用棉線或紙條繞手圍，用筆做記號後，再用一般直尺量那段長度。">
                     <input value={form.wristSize} onChange={(e) => update('wristSize', e.target.value)} className={inputClass} placeholder="例如 15 cm" />
                   </Field>
@@ -670,7 +737,7 @@ export default function CustomBraceletPage() {
       <ContactDialog
         isOpen={showContactModal}
         onClose={() => setShowContactModal(false)}
-        productName="一般客製化手鍊"
+        productName={copy.contactProductName}
       />
     </PageLayout>
   );
