@@ -216,15 +216,6 @@ export default function ShopPage() {
                           style={getProductImageStyle(product)}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        {product.tag && (
-                          <div className="absolute top-3 left-3">
-                            <span
-                              className="text-[10px] tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#D1BE9B]/90 text-[#31353A]"
-                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                              {product.tag}
-                            </span>
-                          </div>
-                        )}
                         <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <span className="text-[11px] tracking-[0.2em] text-white/95 bg-[#3D4144]/55 backdrop-blur-sm px-3 py-1.5 rounded-full"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
@@ -234,10 +225,19 @@ export default function ShopPage() {
                       </div>
 
                       <div>
-                        <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B] mb-0.5"
-                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                          {product.material}
-                        </p>
+                        <div className="mb-0.5 flex min-h-5 flex-wrap items-center gap-1.5">
+                          <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
+                            {product.material}
+                          </p>
+                          {product.tag && (
+                            <span
+                              className="rounded-full bg-[#D1BE9B]/28 px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-[#A38D6B]"
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                              {product.tag}
+                            </span>
+                          )}
+                        </div>
                         <h3 className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                           {product.name}

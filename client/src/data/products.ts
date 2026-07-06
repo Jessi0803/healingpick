@@ -1161,7 +1161,7 @@ export const PRODUCTS: Product[] = [
       '如果你想讓守護感更精緻、穿搭更有個性,月影織花會是很有辨識度的選擇。',
     imageZoom: 1,
     imagePosition: 'center center',
-    images: imgs('yue-ying-zhi-hua', 2),
+    images: imgs('yue-ying-zhi-hua', 1),
     img: '/products/yue-ying-zhi-hua/1.jpg',
     features: [
       { emoji: '🌹', title: '月影織花主題', desc: '以星花墜飾與黑白灰色調打造低調光感。' },
