@@ -421,7 +421,7 @@ function FeaturedBand({ products }: { products: Product[] }) {
             </p>
             <p className="mt-1.5 text-[13px] leading-[1.95] tracking-[0.05em] text-[#31353A]/70"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-              每顆水晶都經 Mochi 親自挑選，只留下乾淨透亮、少雜質的天然水晶，讓能量與質感都值得信任。
+              老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
