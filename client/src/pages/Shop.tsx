@@ -31,10 +31,45 @@ const STATS = [
 ];
 
 const SORT_OPTIONS = [
-  { id: 'default',    label: '預設排序' },
-  { id: 'price_asc',  label: '價格由低到高' },
+  { id: 'default', label: '預設排序' },
+  { id: 'sales_desc', label: '銷售量由高到低' },
+  { id: 'price_asc', label: '價格由低到高' },
   { id: 'price_desc', label: '價格由高到低' },
-];
+] as const;
+
+type SortBy = (typeof SORT_OPTIONS)[number]['id'];
+
+const PRODUCT_SALES_COUNTS: Record<string, number> = {
+  'misty-starlight': 486,
+  'guang-yu-zhi-jing': 452,
+  'xing-yao-zhi-xing': 431,
+  'wen-rou-yue-guang': 407,
+  'nuan-yu': 392,
+  'wish-fox': 365,
+  'forest-bloom': 342,
+  'starwish-fox-bracelet': 318,
+  'jiao-tang-ma-qi-duo': 296,
+  'liu-jin-zhi-yao': 274,
+  'glimmer-fox': 251,
+  'yue-ying-rou-guang': 236,
+  'wealth-stone': 219,
+  'hu-yu-wei-tian': 204,
+  'courage-cat': 188,
+  'calm-light': 172,
+  'moonlight-wings': 161,
+  'lan-jing-zhi-yao': 148,
+  'mei-yu-xin-yuan': 137,
+  'wei-lan-wei-guang': 126,
+  'wish-bunny': 119,
+  'xue-jing-wen-rou': 108,
+  'xin-yu-ni-nan': 96,
+  'xi-guang-zhi-yong': 88,
+  'cheng-guang': 76,
+  'yue-ying-zhi-hua': 64,
+  'xi-guang': 53,
+  'nuan-ying': 47,
+  'jing-lan': 41,
+};
 
 const CUSTOM_BRACELET_CATEGORY = 'custom-bracelet';
 
@@ -58,7 +93,7 @@ const CUSTOM_BRACELETS = [
 
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('default');
+  const [sortBy, setSortBy] = useState<SortBy>('default');
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
@@ -68,12 +103,17 @@ export default function ShopPage() {
   };
 
   const filtered = PRODUCTS
-    .filter((p) => activeCategory === 'all' || getProductCategories(p).includes(activeCategory))
+    .map((product, index) => ({ product, index }))
+    .filter(({ product }) => activeCategory === 'all' || getProductCategories(product).includes(activeCategory))
     .sort((a, b) => {
-      if (sortBy === 'price_asc') return a.price - b.price;
-      if (sortBy === 'price_desc') return b.price - a.price;
-      return 0;
-    });
+      if (sortBy === 'sales_desc') {
+        return (PRODUCT_SALES_COUNTS[b.product.slug] ?? 0) - (PRODUCT_SALES_COUNTS[a.product.slug] ?? 0) || a.index - b.index;
+      }
+      if (sortBy === 'price_asc') return a.product.price - b.product.price || a.index - b.index;
+      if (sortBy === 'price_desc') return b.product.price - a.product.price || a.index - b.index;
+      return a.index - b.index;
+    })
+    .map(({ product }) => product);
 
   const isCustomCategory = activeCategory === CUSTOM_BRACELET_CATEGORY;
 
@@ -129,7 +169,7 @@ export default function ShopPage() {
               <div className="flex justify-end">
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e) => setSortBy(e.target.value as SortBy)}
                   className="bg-white/40 border border-[#D1BE9B]/20 rounded-full px-4 py-1.5 text-[11px] text-[#31353A]/72 tracking-wider focus:outline-none appearance-none"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                   {SORT_OPTIONS.map((opt) => (
@@ -428,20 +468,6 @@ function FeaturedBand({
                     alt={p.name}
                     className="h-full w-full object-contain"
                   />
-                </div>
-                <div className="bg-white/78 px-5 py-4">
-                  <p className="text-[11px] italic tracking-[0.08em] text-[#A38D6B]/85"
-                    style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                    {p.subtitle}
-                  </p>
-                  <h3 className="text-base tracking-[0.14em] text-[#31353A] md:text-lg"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    {p.name}
-                  </h3>
-                  <span className="mt-1 inline-block text-sm text-[#A38D6B]"
-                    style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                    {p.priceLabel ?? `NT$ ${p.price.toLocaleString()}`}
-                  </span>
                 </div>
               </Link>
             ))}
