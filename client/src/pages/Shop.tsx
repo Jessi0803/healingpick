@@ -349,7 +349,7 @@ function ShopModeSwitch({
   onChange: (custom: boolean) => void;
 }) {
   return (
-    <div className="grid w-full max-w-[620px] grid-cols-2 rounded-full border border-[#D1BE9B]/30 bg-[#FBF8F3]/78 p-1.5 shadow-[0_10px_26px_rgba(61,65,68,0.08),inset_0_1px_0_rgba(255,255,255,0.92)] backdrop-blur-md md:p-2">
+    <div className="grid w-full max-w-[560px] grid-cols-2 rounded-full border border-[#D1BE9B]/30 bg-[#FBF8F3]/78 p-1.5 shadow-[0_10px_26px_rgba(61,65,68,0.08),inset_0_1px_0_rgba(255,255,255,0.92)] backdrop-blur-md">
       {[
         { custom: false, zh: '設計款', en: 'Ready-made' },
         { custom: true, zh: '客製款', en: 'Custom' },
@@ -360,17 +360,17 @@ function ShopModeSwitch({
             key={mode.zh}
             type="button"
             onClick={() => onChange(mode.custom)}
-            className={`flex min-h-[56px] items-center justify-center rounded-full px-3 py-2 transition-[background-color,color,box-shadow,transform] duration-200 ease-out active:scale-[0.98] md:min-h-[72px] md:px-8 ${
+            className={`flex min-h-[48px] items-center justify-center rounded-full px-3 py-2 transition-[background-color,color,box-shadow,transform] duration-200 ease-out active:scale-[0.98] md:min-h-[58px] md:px-6 ${
               active
                 ? 'bg-[#3D4144] text-[#FAF7F4] shadow-[0_8px_18px_rgba(49,53,58,0.22),inset_0_1px_0_rgba(255,255,255,0.10)]'
                 : 'text-[#31353A]/62 hover:bg-white/38 hover:text-[#31353A]'
             }`}
             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
           >
-            <span className="whitespace-nowrap text-[1rem] tracking-[0.22em] md:text-[1.35rem]">
+            <span className="whitespace-nowrap text-[0.88rem] tracking-[0.18em] md:text-[1.05rem]">
               {mode.zh}
             </span>
-            <span className="ml-2 whitespace-nowrap text-[0.75rem] italic tracking-normal opacity-58 md:ml-4 md:text-[1rem]"
+            <span className="ml-1.5 whitespace-nowrap text-[0.66rem] italic tracking-normal opacity-58 md:ml-3 md:text-[0.82rem]"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               {mode.en}
             </span>
