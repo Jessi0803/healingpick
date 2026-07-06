@@ -590,6 +590,7 @@ export function getContextualRecommendationReason(
 
 export const CATEGORY_OPTIONS: { id: string; label: string }[] = [
   { id: 'all', label: '全部商品' },
+  { id: 'custom-bracelet', label: '客製化水晶手鍊' },
   { id: 'protect', label: '守護平安' },
   { id: 'wish', label: '心願祈福' },
   { id: 'courage', label: '勇氣行動' },
