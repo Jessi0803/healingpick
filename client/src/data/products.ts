@@ -1188,6 +1188,132 @@ export const PRODUCTS: Product[] = [
     closing:
       '願月影織花陪你把安定與個性戴在手腕上。\n在陰影裡,也能開出自己的光。 🌹',
   },
+  {
+    slug: 'xi-guang',
+    name: '曦光',
+    subtitle: 'Dawn Citrine Glow Bracelet',
+    tagline: '像清晨第一束光,\n把豐盛、安定與清澈慢慢帶回日常。',
+    category: 'wealth',
+    material: '黃水晶・月光石・白阿塞・白水晶',
+    price: 780,
+    originalPrice: null,
+    tag: null,
+    fitSummary: '適合想招財聚富、穩定情緒與整理能量的你',
+    gentleRecommendation:
+      '曦光偏向招財、安定與能量淨化,適合想把金錢與生活節奏慢慢整理清楚的你。',
+    pairingReason:
+      '如果你想讓日常多一點明亮與豐盛感,曦光會是輕盈、好配戴的選擇。',
+    imageZoom: 1,
+    imagePosition: 'center center',
+    images: imgs('xi-guang', 2),
+    img: '/products/xi-guang/1.jpg',
+    features: [
+      { emoji: '☀️', title: '黃水晶主調', desc: '明亮清透的黃色光感,象徵招財聚富與自信行動。' },
+      { emoji: '🌙', title: '月光石柔光', desc: '在豐盛能量中加入溫柔安定的平衡。' },
+      { emoji: '🤍', title: '白阿塞與白水晶', desc: '協助淨化能量、平衡磁場,讓整體更清爽。' },
+      { emoji: '🎀', title: '天然水晶手鍊', desc: '精心挑選與搭配,成為陪伴自己前進的日常能量。' },
+    ],
+    meanings: [
+      { emoji: '☀️', title: '黃水晶', desc: '招財聚富,提醒自己相信豐盛值得靠近。' },
+      { emoji: '🌙', title: '月光石', desc: '安定情緒,讓心在變動裡慢慢穩下來。' },
+      { emoji: '🤍', title: '白阿塞', desc: '淨化能量,把雜訊與疲憊輕輕放下。' },
+      { emoji: '✨', title: '白水晶', desc: '平衡磁場,協調整體能量與日常節奏。' },
+    ],
+    suitedFor: [
+      '想提升財運與豐盛感',
+      '希望穩定情緒與生活節奏',
+      '喜歡明亮清透的手鍊',
+      '想要一條日常好配戴的能量款',
+    ],
+    story:
+      '清晨的光不會突然把世界照亮。\n\n它是一點一點進來的,先照到窗邊,再慢慢落到你手上。\n\n曦光把黃水晶、月光石、白阿塞與白水晶串在一起,像提醒你:豐盛不是用力追來的,是當你慢慢穩住自己,也開始相信自己值得。',
+    closing:
+      '願曦光陪你把明亮戴回日常。\n在金錢、工作與生活之間,慢慢迎接屬於你的豐盛。 ☀️',
+  },
+  {
+    slug: 'nuan-ying',
+    name: '暖櫻',
+    subtitle: 'Warm Sakura Rose Quartz Bracelet',
+    tagline: '粉色不是脆弱,\n是願意溫柔表達自己的力量。',
+    category: 'wish',
+    material: '粉水晶・月光石・白阿塞・白水晶',
+    price: 780,
+    originalPrice: null,
+    tag: null,
+    fitSummary: '適合想練習溝通表達、安定情緒與溫柔連結的你',
+    gentleRecommendation:
+      '暖櫻偏向溝通、柔軟與人際連結,適合想讓心情放鬆、把話說得更溫柔清楚的你。',
+    pairingReason:
+      '如果你想讓關係裡多一點柔和與安心感,暖櫻會是甜而不膩的日常陪伴。',
+    imageZoom: 1,
+    imagePosition: 'center center',
+    images: imgs('nuan-ying', 2),
+    img: '/products/nuan-ying/1.jpg',
+    features: [
+      { emoji: '🌸', title: '粉水晶主調', desc: '柔和粉色帶來親和氣息,象徵溝通表達與溫柔連結。' },
+      { emoji: '🌙', title: '月光石安定感', desc: '協助情緒慢慢回到平衡,讓表達更穩。' },
+      { emoji: '🤍', title: '白阿塞淨化', desc: '讓心裡的雜訊被整理,保留更清澈的感受。' },
+      { emoji: '✨', title: '白水晶平衡', desc: '協調整體能量,讓日常配戴更輕盈。' },
+    ],
+    meanings: [
+      { emoji: '🌸', title: '粉水晶', desc: '溝通表達,讓溫柔也能被好好說出口。' },
+      { emoji: '🌙', title: '月光石', desc: '安定情緒,陪你在關係裡保持柔軟與清醒。' },
+      { emoji: '🤍', title: '白阿塞', desc: '淨化能量,把不必要的緊繃慢慢放下。' },
+      { emoji: '✨', title: '白水晶', desc: '平衡磁場,讓內在狀態更協調。' },
+    ],
+    suitedFor: [
+      '想練習把感受說清楚',
+      '希望人際與關係更柔和',
+      '喜歡粉色系與溫柔氣質',
+      '需要安定情緒與淨化能量的陪伴',
+    ],
+    story:
+      '有時候,最難的不是說話。\n\n是把真正的感受說出口,又不弄疼自己。\n\n暖櫻像手腕上的一點粉色光,提醒你:溫柔不是退讓,而是能更清楚地照顧自己的心。',
+    closing:
+      '願暖櫻陪你在每一次表達裡,都保有溫柔與清楚。\n你可以柔軟,也可以很有力量。 🌸',
+  },
+  {
+    slug: 'jing-lan',
+    name: '靜瀾',
+    subtitle: 'Still Aquamarine Ripple Bracelet',
+    tagline: '像安靜的海面,\n把想說的話、想整理的心,慢慢帶回清澈。',
+    category: 'calm',
+    material: '海藍寶・月光石・白阿塞・白水晶',
+    price: 780,
+    originalPrice: null,
+    tag: null,
+    fitSummary: '適合想加強溝通表達、安定情緒與清理雜訊的你',
+    gentleRecommendation:
+      '靜瀾偏向溝通、安定與清澈感,適合想把情緒整理好,再好好說出心裡話的你。',
+    pairingReason:
+      '如果你想讓心更安靜、表達更順,靜瀾會是清爽又穩定的日常搭配。',
+    imageZoom: 1,
+    imagePosition: 'center center',
+    images: imgs('jing-lan', 2),
+    img: '/products/jing-lan/1.jpg',
+    features: [
+      { emoji: '🌊', title: '海藍寶主調', desc: '清透藍色帶來安靜感,象徵溝通表達與心緒整理。' },
+      { emoji: '🌙', title: '月光石柔和光暈', desc: '為清爽藍色中加入溫柔安定的節奏。' },
+      { emoji: '🤍', title: '白阿塞淨化', desc: '協助把雜訊慢慢沉澱,讓能量更乾淨。' },
+      { emoji: '✨', title: '白水晶平衡', desc: '調和整體能量,讓配戴感更清澈輕盈。' },
+    ],
+    meanings: [
+      { emoji: '🌊', title: '海藍寶', desc: '溝通表達,陪你把心裡的話說得更清楚。' },
+      { emoji: '🌙', title: '月光石', desc: '安定情緒,在起伏裡保留溫柔的空間。' },
+      { emoji: '🤍', title: '白阿塞', desc: '淨化能量,協助放下多餘的疲憊與干擾。' },
+      { emoji: '✨', title: '白水晶', desc: '平衡磁場,讓內外狀態慢慢回到一致。' },
+    ],
+    suitedFor: [
+      '想讓溝通表達更順暢',
+      '容易把情緒悶在心裡',
+      '喜歡清爽藍白色系',
+      '希望有一條安靜、乾淨、日常的水晶手鍊',
+    ],
+    story:
+      '海面真正安靜的時候,不是沒有波浪。\n\n是波浪來了,也知道自己會慢慢回到平穩。\n\n靜瀾把海藍寶、月光石、白阿塞與白水晶串在一起,像陪你練習:先讓心安靜下來,再把真正想說的話說出口。',
+    closing:
+      '願靜瀾陪你把心裡的波浪慢慢安放。\n清楚地表達,溫柔地前進。 🌊',
+  },
 ];
 
 export function getProductFeatureSummary(product: Product, limit = 2): string {
