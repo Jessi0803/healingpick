@@ -95,9 +95,9 @@ const FEATURE_ITEMS = [
   },
 ];
 
-// 金/銀示意圖：以實際商品照示範金屬光澤（焦糖瑪奇朵＝金、蔚藍微光＝銀）。
+// 金/銀示意圖：以實際商品照示範金屬光澤，選用完整手鍊照避免裁切。
 const METAL_OPTIONS = [
-  { key: '金飾', en: 'Gold', image: '/products/jiao-tang-ma-qi-duo/1.jpg' },
+  { key: '金飾', en: 'Gold', image: '/products/jiao-tang-ma-qi-duo/2.jpg' },
   { key: '銀飾', en: 'Silver', image: '/products/wei-lan-wei-guang/1.jpg' },
 ];
 
@@ -604,7 +604,7 @@ export default function CustomBraceletPage() {
                                 src={m.image}
                                 alt={`${m.key}示意`}
                                 loading="lazy"
-                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
                               />
                             </div>
                             <span className="flex items-center justify-between px-3 py-2">
