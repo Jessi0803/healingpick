@@ -47,19 +47,19 @@ const SPARKLES = [
 const STEP_ITEMS = [
   {
     icon: ClipboardList,
-    step: 'Step 1',
+    no: '01',
     title: '填寫需求表單',
     desc: '告訴我們你的近期狀態、想加強的能量，以及色系與配戴偏好。',
   },
   {
     icon: Gem,
-    step: 'Step 2',
+    no: '02',
     title: '討論專屬設計圖',
     desc: '依你的方向挑選專屬水晶並繪製設計圖，提供 3 次免費修改。',
   },
   {
     icon: Package,
-    step: 'Step 3',
+    no: '03',
     title: '手工串製與出貨',
     desc: '確認後細心手工串製，單條即享免運，把專屬能量送到你身邊。',
   },
@@ -88,7 +88,15 @@ const FEATURE_ITEMS = [
   },
 ];
 
-const ENERGY_OPTIONS = ['招財事業', '桃花感情', '人緣貴人', '守護避邪', '穩定情緒', '自信行動'];
+// 每個意圖對應常用水晶的色相 —— 讓能量選擇本身成為一組有意義的色盤，而非通用金色藥丸。
+const ENERGY_OPTIONS = [
+  { label: '招財事業', crystal: '鈦晶・黃水晶', color: '#B9922F' },
+  { label: '桃花感情', crystal: '草莓晶・粉晶', color: '#CE8090' },
+  { label: '人緣貴人', crystal: '橘月光・蜜蠟', color: '#C1834B' },
+  { label: '守護避邪', crystal: '黑曜石・黑碧璽', color: '#45454E' },
+  { label: '穩定情緒', crystal: '紫水晶・紫鋰輝', color: '#8A759A' },
+  { label: '自信行動', crystal: '紅玉髓・石榴石', color: '#B05A38' },
+];
 const FORM_INITIAL = {
   name: '',
   wristSize: '',
@@ -229,8 +237,8 @@ export default function CustomBraceletPage() {
             <div className="relative z-10 grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] md:gap-12">
             <div className="animate-fade-in-up">
               <p
-                className="mb-3 text-[11px] uppercase tracking-[0.35em] text-[#A38D6B]"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+                className="mb-3 text-[19px] italic tracking-[0.02em] text-[#A38D6B]"
+                style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
               >
                 Custom Crystal Bracelet
               </p>
@@ -335,21 +343,28 @@ export default function CustomBraceletPage() {
                 />
               </svg>
               <div className="relative z-10 grid gap-4 md:grid-cols-3">
-              {STEP_ITEMS.map(({ icon: Icon, step, title, desc }, i) => (
+              {STEP_ITEMS.map(({ icon: Icon, no, title, desc }, i) => (
                 <div
                   key={title}
-                  className="reveal-child relative rounded-3xl border border-[#D1BE9B]/22 bg-white/55 px-6 py-7 shadow-[0_10px_30px_rgba(209,190,155,0.08)]"
+                  className="reveal-child relative overflow-hidden rounded-3xl border border-[#D1BE9B]/22 bg-white/55 px-6 py-7 shadow-[0_10px_30px_rgba(209,190,155,0.08)]"
                   style={{ transitionDelay: `${i * 80}ms` }}
                 >
-                  <div className="mb-4 flex items-center gap-3">
+                  {/* 大編號當作結構水印 */}
+                  <span
+                    className="pointer-events-none absolute -right-1 -top-3 select-none text-[76px] leading-none text-[#D1BE9B]/15"
+                    style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400, fontStyle: 'italic' }}
+                  >
+                    {no}
+                  </span>
+                  <div className="relative mb-4 flex items-center gap-3">
                     <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#3D4144] text-[#FAF7F4]">
                       <Icon className="h-5 w-5" strokeWidth={1.4} />
                     </span>
                     <span
-                      className="text-[11px] uppercase tracking-[0.28em] text-[#A38D6B]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+                      className="text-[22px] leading-none text-[#A38D6B]"
+                      style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400, fontStyle: 'italic' }}
                     >
-                      {step}
+                      {no}
                     </span>
                   </div>
                   <h3
@@ -468,24 +483,42 @@ export default function CustomBraceletPage() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {ENERGY_OPTIONS.map((item) => {
-                    const active = energyTokens.includes(item);
+                    const active = energyTokens.includes(item.label);
                     return (
                       <button
-                        key={item}
+                        key={item.label}
                         type="button"
-                        onClick={() => toggleEnergy(item)}
-                        className={`rounded-full border px-3.5 py-1.5 text-[11.5px] tracking-[0.06em] transition-all duration-200 active:scale-95 ${
+                        onClick={() => toggleEnergy(item.label)}
+                        title={`常用水晶：${item.crystal}`}
+                        className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11.5px] tracking-[0.06em] transition-all duration-200 active:scale-95 ${
                           active
-                            ? 'scale-[1.04] border-[#A38D6B] bg-[#A38D6B] text-[#FAF7F4] shadow-sm'
-                            : 'border-[#D1BE9B]/30 bg-[#FAF7F4]/70 text-[#A38D6B] hover:bg-[#D1BE9B]/12'
+                            ? 'scale-[1.04] text-white shadow-sm'
+                            : 'border-[#D1BE9B]/30 bg-[#FAF7F4]/70 text-[#31353A]/70 hover:bg-[#D1BE9B]/10'
                         }`}
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        style={{
+                          fontFamily: 'Noto Serif TC, serif',
+                          fontWeight: 300,
+                          ...(active ? { backgroundColor: item.color, borderColor: item.color } : {}),
+                        }}
                       >
-                        {item}
+                        <span
+                          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                          style={{
+                            backgroundColor: item.color,
+                            boxShadow: active ? '0 0 0 2px rgba(255,255,255,0.7)' : '0 0 0 1px rgba(0,0,0,0.04)',
+                          }}
+                        />
+                        {item.label}
                       </button>
                     );
                   })}
                 </div>
+                <p
+                  className="mt-2.5 text-[10.5px] leading-[1.7] tracking-[0.02em] text-[#31353A]/45"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                >
+                  每個色點對應該能量常搭配的水晶色相，滑過可看水晶名。
+                </p>
               </div>
             </div>
 
@@ -747,8 +780,8 @@ function SectionHeading({
   return (
     <div className={compact ? 'mb-4' : 'mb-6'}>
       <p
-        className="mb-2 text-[10px] uppercase tracking-[0.32em] text-[#A38D6B]"
-        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+        className="mb-1.5 text-[16px] italic tracking-[0.04em] text-[#A38D6B]"
+        style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
       >
         {eyebrow}
       </p>
