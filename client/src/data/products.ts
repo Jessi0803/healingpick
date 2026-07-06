@@ -659,8 +659,6 @@ export const PRODUCTS: Product[] = [
       '/products/jiao-tang-ma-qi-duo/2.jpg',
       '/products/jiao-tang-ma-qi-duo/1.jpg',
       '/products/jiao-tang-ma-qi-duo/3.jpg',
-      '/products/jiao-tang-ma-qi-duo/4.jpg',
-      '/products/jiao-tang-ma-qi-duo/5.jpg',
     ],
     img: '/products/jiao-tang-ma-qi-duo/2.jpg',
     features: [
@@ -1123,7 +1121,7 @@ export const PRODUCTS: Product[] = [
       '如果你喜歡可愛守護元素,月映柔光會是一條很有角色感的手鍊。',
     imageZoom: 1,
     imagePosition: 'center center',
-    images: imgs('yue-ying-rou-guang', 3),
+    images: ['/products/yue-ying-rou-guang/1.jpg', '/products/yue-ying-rou-guang/3.jpg'],
     img: '/products/yue-ying-rou-guang/1.jpg',
     features: [
       { emoji: '🌙', title: '彩月光主調', desc: '象徵平衡與安定,每顆光暈都很有個性。' },
