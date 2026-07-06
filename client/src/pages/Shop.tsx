@@ -49,11 +49,116 @@ const CUSTOM_BRACELETS = [
   },
 ];
 
+const DAILY_ENERGY_QUOTES = [
+  '每一天都是嶄新的開始，讓水晶的能量陪伴你前行。',
+  '今天先把心安放好，答案會在安靜裡慢慢靠近。',
+  '你不需要一次變得很勇敢，只要願意往前一點點。',
+  '把焦慮交給呼吸，把光留給自己。',
+  '願你今天遇見溫柔，也願你成為自己的溫柔。',
+  '所有慢慢來的事，都有它正在成形的節奏。',
+  '你的能量正在回到身上，請給自己一點時間。',
+  '先照顧好心，再去照顧那些重要的選擇。',
+  '今天適合清理雜念，讓真正想要的事浮上來。',
+  '你已經走過很多路，現在可以更相信自己一點。',
+  '把心裡的重量放輕，新的可能才有空間進來。',
+  '溫柔不是退讓，是知道自己值得被好好對待。',
+  '今天的你，不必完美，也依然值得被愛。',
+  '願水晶的光提醒你，你本來就擁有內在力量。',
+  '不急著證明什麼，先把自己的頻率調回舒服的位置。',
+  '當你開始善待自己，世界也會慢慢變得柔軟。',
+  '今天適合做一件讓自己安心的小事。',
+  '你的直覺比想像中更清楚，請聽聽心裡的聲音。',
+  '那些暫時看不懂的安排，也許正在替你轉向更好的路。',
+  '把愛放回自己身上，能量就會重新流動。',
+  '願你今天有清澈的心，也有堅定的步伐。',
+  '不必追趕別人的速度，你有自己的月相與潮汐。',
+  '今天的光很適合重新開始，也適合原諒昨天的自己。',
+  '你正在長出新的力量，只是它安靜得像晨光。',
+  '願你在混亂裡，仍能找到一小塊屬於自己的平靜。',
+  '把過度用力的手鬆開，幸運才會輕輕落下。',
+  '今天的任務不是撐住全部，而是照亮下一步。',
+  '你值得一段不需要委屈自己的關係。',
+  '心若累了，就讓水晶替你守住一點光。',
+  '慢慢整理，慢慢靠近，生活會回到你喜歡的樣子。',
+  '今天把自己放在優先順位，這不是自私，是回家。',
+  '願你的心像白水晶一樣，清明、柔韌、閃閃發亮。',
+  '你可以暫停，但不用懷疑自己正在前進。',
+  '適合你的東西，不會讓你一直失去自己。',
+  '讓粉晶提醒你，愛可以很溫柔，也可以很有界線。',
+  '今天請少一點責備，多一點擁抱自己的耐心。',
+  '當你願意放下舊故事，新故事就會開始發光。',
+  '你的願望不是太大，只是需要被穩穩承接。',
+  '今天適合相信，好的轉變已經在路上。',
+  '讓黃水晶點亮行動力，先完成一件小事就好。',
+  '你不需要討好所有人，真正在乎你的人會懂你的光。',
+  '願你今天做選擇時，站在愛自己的那一邊。',
+  '那些讓你反覆不安的事，正在教你看見真正的需要。',
+  '給自己一點空白，靈感會在空白裡降落。',
+  '今天的你可以柔軟，也可以很有力量。',
+  '把心交還給自己，別讓別人的情緒決定你的天氣。',
+  '願你遇見剛剛好的提醒，和剛剛好的好運。',
+  '你的存在本身就有光，不必再把自己縮小。',
+  '今天適合把願望說出口，宇宙喜歡清楚的心。',
+  '當你開始相信值得，豐盛就會找到入口。',
+  '讓紫水晶陪你沉澱，真正的答案不怕晚一點出現。',
+  '你不用把所有事都想明白，先好好過今天。',
+  '願你有勇氣離開消耗，也有信心靠近滋養。',
+  '把心裡的灰塵掃一掃，你會看見原本明亮的自己。',
+  '今天請記得，你不是問題，你正在經歷一段調整。',
+  '你的溫柔很珍貴，請留一些給自己。',
+  '願黑曜石替你擋下不必要的紛擾，留下清楚與安定。',
+  '生活正在回應你的改變，請繼續往光的方向走。',
+  '今天適合重新整理願望，也重新整理自己的界線。',
+  '不被看見的努力，也正在累積成你的底氣。',
+  '讓海藍寶帶來清晰表達，該說的話可以溫柔說出。',
+  '你的心知道哪裡是出口，只是需要一點安靜聽見。',
+  '今天把步伐放慢，幸運會比較容易跟上你。',
+  '每一次選擇自己，都是能量回流的開始。',
+  '願你在平凡的一天裡，也接住一點閃閃發亮的訊息。',
+  '你已經足夠好了，成長不是因為你不夠好。',
+  '讓月光石提醒你，變化也是一種被保護的流動。',
+  '今天適合相信直覺，尤其是那個讓你感到平靜的答案。',
+  '把不屬於你的期待放下，你會走得更輕。',
+  '你的能量很珍貴，請交給值得的人與事。',
+  '願綠幽靈帶來豐盛，也帶來穩穩接住豐盛的心。',
+  '不需要急著抵達，正在路上的你也很美。',
+  '今天請對自己說：我允許好的事情發生。',
+  '當心變得安定，你會更容易看見下一個機會。',
+  '讓拉長石守護你的敏感，也喚醒你的靈感。',
+  '你可以重新選擇，任何一天都可以是新的入口。',
+  '今天的光會照到你，只要你願意抬頭接住它。',
+  '把害怕抱一下，再帶著它慢慢往前。',
+  '你的願望值得被認真對待，你的感受也是。',
+  '讓太陽石提醒你，快樂也是一種重要的能量。',
+  '今天不要急著否定自己，先看看你已經做到多少。',
+  '真正適合你的路，會讓你越走越像自己。',
+  '願你在今天找回一點秩序，也找回一點期待。',
+  '水晶不替你決定人生，只陪你聽見更清楚的自己。',
+  '你正在被新的能量支持，請把心門開一點點。',
+  '今天適合把感謝說出來，也把願望放進心裡。',
+  '讓煙水晶帶走沉重，留下腳踏實地的安穩。',
+  '願你把生活過成自己喜歡的頻率，柔軟但不失光芒。',
+  '新的能量已經抵達，請用一個深呼吸迎接今天。',
+  '你所尋找的力量，其實一直在你心裡發亮。',
+];
+
+function getDailyEnergyQuote(date = new Date()) {
+  const start = new Date(2026, 0, 1);
+  const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const dayIndex = Math.floor((today.getTime() - start.getTime()) / 86400000);
+  const quoteIndex =
+    ((dayIndex % DAILY_ENERGY_QUOTES.length) + DAILY_ENERGY_QUOTES.length) %
+    DAILY_ENERGY_QUOTES.length;
+
+  return DAILY_ENERGY_QUOTES[quoteIndex];
+}
+
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const dailyEnergyQuote = getDailyEnergyQuote();
 
   const handleBuyProduct = (productName: string) => {
     setSelectedProduct(productName);
@@ -101,6 +206,16 @@ export default function ShopPage() {
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               "Each crystal carries a story, a frequency, a healing."
             </p>
+            <div className="mx-auto mt-5 max-w-2xl rounded-3xl border border-[#D1BE9B]/24 bg-white/42 px-5 py-4 shadow-[0_12px_34px_rgba(209,190,155,0.12)] backdrop-blur-sm">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-[#A38D6B]"
+                style={{ fontFamily: 'Cormorant Garamond, Noto Serif TC, serif', fontWeight: 400 }}>
+                TODAY'S ENERGY · 今日能量語錄
+              </p>
+              <p className="mt-2 text-[13px] leading-[1.9] tracking-[0.08em] text-[#31353A]/72 md:text-sm"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                “{dailyEnergyQuote}”
+              </p>
+            </div>
             <div className="flex justify-center mt-4 gap-6">
               <div className="flex flex-col items-center gap-1">
                 <CatSitting className="w-10 h-14" />
@@ -442,7 +557,7 @@ function FeaturedBand({
                   <img
                     src={p.featuredImage}
                     alt={p.name}
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="bg-white/78 px-5 py-4">
