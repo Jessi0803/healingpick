@@ -141,6 +141,30 @@ export default function ShopPage() {
       <div className="min-h-screen py-12 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">
 
+          {/* Animated opening tagline */}
+          <div className="mb-9 pt-1 text-center md:mb-11">
+            <p className="mb-3 animate-fade-in-up text-[15px] italic tracking-[0.14em] text-[#A38D6B]"
+              style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}>
+              Find Your Crystal
+            </p>
+            <h1 className="text-2xl leading-[1.5] tracking-[0.14em] text-[#31353A] md:text-[2.1rem]"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              {'找到屬於你的能量水晶'.split('').map((ch, i) => (
+                <span
+                  key={i}
+                  className="tagline-char"
+                  style={{ animationDelay: `${0.15 + i * 0.06}s`, color: i >= 6 ? '#A38D6B' : undefined }}
+                >
+                  {ch}
+                </span>
+              ))}
+            </h1>
+            <p className="mx-auto mt-3 max-w-md animate-fade-in-up text-[12.5px] leading-[1.9] tracking-[0.08em] text-[#31353A]/56"
+              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300, animationDelay: '0.9s' }}>
+              每一顆水晶，都是為某個時刻的你而來。
+            </p>
+          </div>
+
           {/* Featured carousel + social proof */}
           {!isCustomCategory && (
             <FeaturedBand

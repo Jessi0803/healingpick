@@ -839,6 +839,21 @@ body::after {
   .result-sweep::before { animation: none; }
 }
 
+/* Tagline — characters rise + de-blur in sequence (set delay inline per char). */
+@keyframes taglineChar {
+  from { opacity: 0; transform: translateY(16px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.tagline-char {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+  animation: taglineChar 0.72s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tagline-char { animation: none; opacity: 1; filter: none; transform: none; }
+}
+
 /* Copy button success morph — icon/label crossfade with a soft blur mask. */
 @keyframes btnSwap {
   from { opacity: 0; transform: scale(0.9); filter: blur(2px); }
