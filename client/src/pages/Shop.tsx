@@ -78,7 +78,7 @@ export default function ShopPage() {
         <div className="max-w-6xl mx-auto">
 
           {/* Header */}
-          <div className="text-center mb-12 animate-fade-in-up">
+          <div className="text-center mb-9 animate-fade-in-up">
             <span className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
               Energy Crystals
@@ -101,8 +101,8 @@ export default function ShopPage() {
           </div>
 
           {/* 設計款 / 客製款 主切換 */}
-          <div className="mb-10 flex justify-center animate-fade-in-up">
-            <div className="inline-flex rounded-full border border-[#D1BE9B]/30 bg-white/45 p-1 shadow-sm">
+          <div className="mb-12 flex justify-center px-1 animate-fade-in-up">
+            <div className="grid w-full max-w-[620px] grid-cols-2 rounded-full border border-[#D1BE9B]/30 bg-[#FBF8F3]/78 p-1.5 shadow-[0_10px_26px_rgba(61,65,68,0.08),inset_0_1px_0_rgba(255,255,255,0.92)] backdrop-blur-md md:p-2">
               {[
                 { custom: false, zh: '設計款', en: 'Ready-made' },
                 { custom: true, zh: '客製款', en: 'Custom' },
@@ -113,13 +113,17 @@ export default function ShopPage() {
                     key={mode.zh}
                     type="button"
                     onClick={() => setActiveCategory(mode.custom ? CUSTOM_BRACELET_CATEGORY : 'all')}
-                    className={`rounded-full px-6 py-2.5 text-xs tracking-[0.2em] transition-all duration-300 ${
-                      active ? 'bg-[#3D4144] text-[#FAF7F4] shadow' : 'text-[#31353A]/58 hover:text-[#31353A]'
+                    className={`flex min-h-[56px] items-center justify-center rounded-full px-3 py-2 transition-[background-color,color,box-shadow,transform] duration-200 ease-out active:scale-[0.98] md:min-h-[72px] md:px-8 ${
+                      active
+                        ? 'bg-[#3D4144] text-[#FAF7F4] shadow-[0_8px_18px_rgba(49,53,58,0.22),inset_0_1px_0_rgba(255,255,255,0.10)]'
+                        : 'text-[#31353A]/62 hover:bg-white/38 hover:text-[#31353A]'
                     }`}
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
-                    {mode.zh}
-                    <span className="ml-1.5 text-[9px] italic tracking-normal opacity-60"
+                    <span className="whitespace-nowrap text-[1rem] tracking-[0.22em] md:text-[1.35rem]">
+                      {mode.zh}
+                    </span>
+                    <span className="ml-2 whitespace-nowrap text-[0.75rem] italic tracking-normal opacity-58 md:ml-4 md:text-[1rem]"
                       style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                       {mode.en}
                     </span>
