@@ -697,8 +697,8 @@ export const PRODUCTS: Product[] = [
       '如果你想讓情緒與溝通更順,藍境之曜會是清爽又沉穩的搭配。',
     imageZoom: 1,
     imagePosition: 'center center',
-    images: imgs('lan-jing-zhi-yao', 4),
-    img: '/products/lan-jing-zhi-yao/1.jpg',
+    images: ['/products/lan-jing-zhi-yao/3.jpg', '/products/lan-jing-zhi-yao/4.jpg'],
+    img: '/products/lan-jing-zhi-yao/3.jpg',
     features: [
       { emoji: '💙', title: '藍晶石綴珠', desc: '象徵守護與延展好運,帶著清晰安定的能量。' },
       { emoji: '🌊', title: '海藍寶層次', desc: '藍色晶體交織出如海洋般的寧靜氣息。' },
