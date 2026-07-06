@@ -253,7 +253,7 @@ export default function ShopPage() {
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-sm text-[#A38D6B]"
                             style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                            NT$ {product.price.toLocaleString()}
+                            {product.priceLabel ?? `NT$ ${product.price.toLocaleString()}`}
                           </span>
                           {product.originalPrice && (
                             <span className="text-[11px] text-[#31353A]/46 line-through"

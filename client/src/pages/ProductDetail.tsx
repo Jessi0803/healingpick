@@ -125,7 +125,7 @@ export default function ProductDetailPage() {
               <div className="flex items-baseline gap-4 mb-3">
                 <span className="text-3xl text-[#A38D6B]"
                   style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                  NT$ {product.price.toLocaleString()}
+                  {product.priceLabel ?? `NT$ ${product.price.toLocaleString()}`}
                 </span>
                 {product.originalPrice && (
                   <span className="text-base text-[#31353A]/38 line-through"
