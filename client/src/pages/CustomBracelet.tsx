@@ -95,15 +95,6 @@ const FEATURE_ITEMS = [
   },
 ];
 
-// 每個意圖對應常用水晶的色相 —— 讓能量選擇本身成為一組有意義的色盤，而非通用金色藥丸。
-const ENERGY_OPTIONS = [
-  { label: '招財事業', crystal: '鈦晶・黃水晶', color: '#B9922F' },
-  { label: '桃花感情', crystal: '草莓晶・粉晶', color: '#CE8090' },
-  { label: '人緣貴人', crystal: '橘月光・蜜蠟', color: '#C1834B' },
-  { label: '守護避邪', crystal: '黑曜石・黑碧璽', color: '#45454E' },
-  { label: '穩定情緒', crystal: '紫水晶・紫鋰輝', color: '#8A759A' },
-  { label: '自信行動', crystal: '紅玉髓・石榴石', color: '#B05A38' },
-];
 const FORM_INITIAL = {
   name: '',
   birthDate: '',
@@ -182,18 +173,6 @@ export default function CustomBraceletPage() {
   const update = (key: keyof CustomForm, value: string) => {
     setCopied(false);
     setForm((current) => ({ ...current, [key]: value }));
-  };
-
-  // 能量快選：以 energyNeeds 文字為單一資料來源，點選即切換加入/移除。
-  const energyTokens = useMemo(
-    () => form.energyNeeds.split('、').map((s) => s.trim()).filter(Boolean),
-    [form.energyNeeds],
-  );
-  const toggleEnergy = (item: string) => {
-    const next = energyTokens.includes(item)
-      ? energyTokens.filter((token) => token !== item)
-      : [...energyTokens, item];
-    update('energyNeeds', next.join('、'));
   };
 
   const galleryCount = showAllPhotos ? GALLERY_IMAGES.length : FEATURED_IMAGES.length;
@@ -530,58 +509,6 @@ export default function CustomBraceletPage() {
           <Reveal id="custom-form" className="mb-16 grid scroll-mt-24 gap-8 lg:grid-cols-[0.82fr_1.18fr]">
             <div className="reveal-child">
               <SectionHeading eyebrow="Custom Form" title="客製化需求表單" compact />
-              <div className="rounded-3xl border border-[#D1BE9B]/22 bg-white/50 px-6 py-6">
-                <p
-                  className="mb-4 text-[12.5px] leading-[2] tracking-[0.04em] text-[#31353A]/70"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                >
-                  填寫後會整理成諮詢文字，方便直接傳到 LINE 或 IG。可先點選想加強的能量，再補充細節。
-                </p>
-                <p
-                  className="mb-2.5 text-[11px] tracking-[0.14em] text-[#A38D6B]"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
-                >
-                  想加強的能量（可複選）
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {ENERGY_OPTIONS.map((item) => {
-                    const active = energyTokens.includes(item.label);
-                    return (
-                      <button
-                        key={item.label}
-                        type="button"
-                        onClick={() => toggleEnergy(item.label)}
-                        title={`常用水晶：${item.crystal}`}
-                        className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11.5px] tracking-[0.06em] transition-all duration-200 active:scale-95 ${
-                          active
-                            ? 'scale-[1.04] text-white shadow-sm'
-                            : 'border-[#D1BE9B]/30 bg-[#FAF7F4]/70 text-[#31353A]/70 hover:bg-[#D1BE9B]/10'
-                        }`}
-                        style={{
-                          fontFamily: 'Noto Serif TC, serif',
-                          fontWeight: 300,
-                          ...(active ? { backgroundColor: item.color, borderColor: item.color } : {}),
-                        }}
-                      >
-                        <span
-                          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                          style={{
-                            backgroundColor: item.color,
-                            boxShadow: active ? '0 0 0 2px rgba(255,255,255,0.7)' : '0 0 0 1px rgba(0,0,0,0.04)',
-                          }}
-                        />
-                        {item.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p
-                  className="mt-2.5 text-[10.5px] leading-[1.7] tracking-[0.02em] text-[#31353A]/45"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                >
-                  每個色點對應該能量常搭配的水晶色相，滑過可看水晶名。
-                </p>
-              </div>
             </div>
 
             <form
