@@ -544,10 +544,6 @@ export default function QuizPage() {
                           style={{ fontFamily: 'Noto Serif TC, serif' }}>
                           {recommendedProduct.name}
                         </h4>
-                        <p className="text-[11px] italic text-[#31353A]/50 font-serif mb-3"
-                          style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                          {recommendedProduct.subtitle}
-                        </p>
                         <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/60 mb-3 line-clamp-2"
                           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                           {getContextualRecommendationReason(recommendedProduct, quizResult.title)}

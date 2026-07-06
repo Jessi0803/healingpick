@@ -104,19 +104,15 @@ export default function ProductDetailPage() {
               <div className="flex items-center gap-1.5 mb-2.5 select-none">
                 <span className="text-[10px] text-[#D1BE9B]/80 font-light select-none tracking-wider">✦ ⋆ ˚｡𖦹 ⋆｡°✩</span>
               </div>
-              <p className="text-[10px] tracking-[0.25em] text-[#D1BE9B] mb-2 uppercase"
+              <p className="text-[10px] tracking-[0.25em] text-[#8F7957] mb-3 uppercase"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {product.material}
               </p>
 
-              <h1 className="text-2xl md:text-3xl tracking-[0.18em] text-[#31353A] font-extralight mb-1"
+              <h1 className="text-2xl md:text-3xl tracking-[0.18em] text-[#31353A] font-extralight mb-5"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                 {product.name}
               </h1>
-              <p className="text-xs md:text-sm italic text-[#A38D6B] mb-5"
-                style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                {product.subtitle}
-              </p>
 
               <p className="text-[13px] leading-[2] text-[#31353A]/72 tracking-wider whitespace-pre-line mb-6"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>

@@ -289,7 +289,7 @@ export default function ShopPage() {
 
                       <div>
                         <div className="mb-0.5 flex min-h-5 flex-wrap items-center gap-1.5">
-                          <p className="text-[10px] tracking-[0.2em] text-[#D1BE9B]"
+                          <p className="text-[10px] tracking-[0.2em] text-[#8F7957]"
                             style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
                             {product.material}
                           </p>
@@ -305,10 +305,6 @@ export default function ShopPage() {
                           style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                           {product.name}
                         </h3>
-                        <p className="text-[11px] italic text-[#31353A]/54 mb-2"
-                          style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                          {product.subtitle}
-                        </p>
                         <p className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62 mb-2 min-h-[2.75em]"
                           style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                           {getProductFitSummary(product)}

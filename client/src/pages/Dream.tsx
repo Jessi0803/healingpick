@@ -83,10 +83,6 @@ function ProductCard({
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 {product.name}
               </p>
-              <p className="truncate text-[11px] tracking-wider text-[#31353A]/50 italic"
-                style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                {product.subtitle}
-              </p>
             </div>
             <p className="flex-shrink-0 text-sm font-light text-[#D1BE9B]"
               style={{ fontFamily: 'Cormorant Garamond, serif' }}>
