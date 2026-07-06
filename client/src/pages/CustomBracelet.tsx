@@ -1,4 +1,5 @@
 import { FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
 import {
   ClipboardList,
@@ -69,7 +70,6 @@ const FEATURE_ITEMS = [
 const ENERGY_OPTIONS = ['招財事業', '桃花感情', '人緣貴人', '守護避邪', '穩定情緒', '自信行動'];
 const FORM_INITIAL = {
   name: '',
-  birthday: '',
   wristSize: '',
   fitPreference: '',
   budget: '',
@@ -96,7 +96,6 @@ export default function CustomBraceletPage() {
       [
         '【一般客製化手鍊諮詢表單】',
         `姓名：${form.name || '未填'}`,
-        `生日：${form.birthday || '未填'}`,
         `手圍尺寸：${form.wristSize || '未填'}`,
         `配戴鬆緊：${form.fitPreference || '未填'}`,
         `預算：${form.budget || '未填'}`,
@@ -131,6 +130,10 @@ export default function CustomBraceletPage() {
   const galleryCount = showAllPhotos ? GALLERY_IMAGES.length : FEATURED_IMAGES.length;
   const shownGallery = showAllPhotos ? GALLERY_IMAGES : FEATURED_IMAGES;
 
+  const openLightbox = (src: string) => {
+    const index = GALLERY_IMAGES.indexOf(src);
+    setLightboxIndex(index >= 0 ? index : 0);
+  };
   const closeLightbox = () => setLightboxIndex(null);
   const stepLightbox = (dir: number) =>
     setLightboxIndex((current) => {
@@ -228,7 +231,7 @@ export default function CustomBraceletPage() {
               <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
-                  onClick={() => setLightboxIndex(0)}
+                  onClick={() => openLightbox(HERO_IMAGES[0])}
                   className="group col-span-3 aspect-[16/11] overflow-hidden rounded-3xl border border-[#D1BE9B]/25 bg-white/40 shadow-[0_16px_40px_rgba(209,190,155,0.18)]"
                 >
                   <img
@@ -241,7 +244,7 @@ export default function CustomBraceletPage() {
                   <button
                     key={src}
                     type="button"
-                    onClick={() => setLightboxIndex(idx + 1)}
+                    onClick={() => openLightbox(src)}
                     className="group col-span-1 aspect-square overflow-hidden rounded-2xl border border-[#D1BE9B]/25 bg-white/40 shadow-sm"
                   >
                     <img
@@ -255,7 +258,7 @@ export default function CustomBraceletPage() {
                   type="button"
                   onClick={() => {
                     setShowAllPhotos(true);
-                    setLightboxIndex(3);
+                    openLightbox(GALLERY_IMAGES[3]);
                   }}
                   className="col-span-1 flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border border-[#D1BE9B]/30 bg-[#D1BE9B]/10 text-center transition-colors hover:bg-[#D1BE9B]/18"
                 >
@@ -350,7 +353,7 @@ export default function CustomBraceletPage() {
                   <button
                     key={src}
                     type="button"
-                    onClick={() => setLightboxIndex(realIndex)}
+                    onClick={() => setLightboxIndex(realIndex >= 0 ? realIndex : 0)}
                     className="group aspect-[3/4] overflow-hidden rounded-2xl border border-[#D1BE9B]/20 bg-white/40"
                   >
                     <img
@@ -431,10 +434,7 @@ export default function CustomBraceletPage() {
                   <Field label="姓名" required>
                     <input value={form.name} onChange={(e) => update('name', e.target.value)} className={inputClass} placeholder="請填寫姓名" />
                   </Field>
-                  <Field label="生日">
-                    <input value={form.birthday} onChange={(e) => update('birthday', e.target.value)} className={inputClass} placeholder="例如 1995/08/22" />
-                  </Field>
-                  <Field label="手圍尺寸" required>
+                  <Field label="手圍尺寸" required hint="拿軟尺平貼手腕繞一圈量測。沒有軟尺時，可以用棉線或紙條繞手圍，用筆做記號後，再用一般直尺量那段長度。">
                     <input value={form.wristSize} onChange={(e) => update('wristSize', e.target.value)} className={inputClass} placeholder="例如 15 cm" />
                   </Field>
                   <Field label="配戴鬆緊">
@@ -507,7 +507,7 @@ export default function CustomBraceletPage() {
       </div>
 
       {/* 燈箱 */}
-      {lightboxIndex !== null && (
+      {lightboxIndex !== null && typeof document !== 'undefined' && createPortal(
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1c1a18]/80 p-4 backdrop-blur-sm"
           onClick={closeLightbox}
@@ -551,7 +551,8 @@ export default function CustomBraceletPage() {
           <span className="absolute bottom-6 text-[11px] tracking-[0.2em] text-white/60">
             {lightboxIndex + 1} / {GALLERY_IMAGES.length}
           </span>
-        </div>
+        </div>,
+        document.body,
       )}
 
       <ContactDialog
@@ -623,11 +624,13 @@ function Field({
   label,
   required,
   wide,
+  hint,
   children,
 }: {
   label: string;
   required?: boolean;
   wide?: boolean;
+  hint?: string;
   children: ReactNode;
 }) {
   return (
@@ -640,6 +643,14 @@ function Field({
         {required && <span className="text-[#B88080]">*</span>}
       </span>
       {children}
+      {hint && (
+        <span
+          className="mt-2 block text-[11px] leading-[1.75] tracking-[0.03em] text-[#31353A]/52"
+          style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+        >
+          {hint}
+        </span>
+      )}
     </label>
   );
 }
