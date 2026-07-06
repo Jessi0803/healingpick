@@ -45,6 +45,48 @@ export default function ProductDetailPage() {
     setShowContactModal(true);
   };
 
+  const mochiStorySection = product.story ? (
+    <div className="mb-12 animate-fade-in-up">
+      <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            𐙚 A Little Story
+          </span>
+          <h2 className="text-base md:text-lg tracking-[0.2em] text-[#31353A]/85"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            Mochi 想跟你說的小故事
+          </h2>
+        </div>
+        <span className="text-[9px] text-[#D1BE9B]/60 select-none tracking-widest hidden sm:inline">
+          ✧･ﾟ: *✧･ﾟ:* *:･ﾟ✧*:･ﾟ✧
+        </span>
+      </div>
+      <div className="relative max-w-3xl rounded-3xl border border-[#D1BE9B]/25 bg-gradient-to-br from-white/60 to-[#FAF0EC]/40 px-6 py-8 md:px-10 md:py-10 shadow-[0_6px_24px_rgba(209,190,155,0.10)] overflow-hidden">
+        {/* Cute decorative floating symbols in corners */}
+        <span className="absolute top-3 left-4 text-[12px] text-[#D1BE9B]/40 select-none">𓆩♡𓆪</span>
+        <span className="absolute bottom-3 right-5 text-[12px] text-[#D1BE9B]/40 select-none">𓂃𓈒𓏸</span>
+        
+        <div className="flex flex-col items-center gap-4 text-center">
+          <span className="text-[10px] text-[#D1BE9B]/70 select-none tracking-wider">⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆</span>
+          
+          <p className="text-[13.5px] md:text-[14px] leading-[2.3] text-[#31353A]/80 tracking-wider whitespace-pre-line text-left w-full px-2"
+            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+            {product.story}
+          </p>
+          
+          <div className="text-center text-[10px] text-[#D1BE9B]/60 tracking-[0.25em] mt-3 select-none w-full">
+            ♡ ───────── ♡
+          </div>
+          <div className="flex items-center gap-1.5 text-[11px] text-[#A38D6B] select-none">
+            <span>𐙚</span>
+            <span className="font-light italic" style={{ fontFamily: 'Noto Serif TC, serif' }}>Mochi's whispering... ⊹ ࣪ ˖</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <PageLayout>
       <div className="min-h-screen py-12 px-4 md:px-8 bg-[#FAF7F4]">
@@ -185,49 +227,6 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Section: Mochi 的小故事 */}
-          {product.story && (
-            <div className="mb-12 animate-fade-in-up">
-              <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
-                <div className="flex items-center gap-3">
-                  <span className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    𐙚 A Little Story
-                  </span>
-                  <h2 className="text-base md:text-lg tracking-[0.2em] text-[#31353A]/85"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    Mochi 想跟你說的小故事
-                  </h2>
-                </div>
-                <span className="text-[9px] text-[#D1BE9B]/60 select-none tracking-widest hidden sm:inline">
-                  ✧･ﾟ: *✧･ﾟ:* *:･ﾟ✧*:･ﾟ✧
-                </span>
-              </div>
-              <div className="relative max-w-3xl rounded-3xl border border-[#D1BE9B]/25 bg-gradient-to-br from-white/60 to-[#FAF0EC]/40 px-6 py-8 md:px-10 md:py-10 shadow-[0_6px_24px_rgba(209,190,155,0.10)] overflow-hidden">
-                {/* Cute decorative floating symbols in corners */}
-                <span className="absolute top-3 left-4 text-[12px] text-[#D1BE9B]/40 select-none">𓆩♡𓆪</span>
-                <span className="absolute bottom-3 right-5 text-[12px] text-[#D1BE9B]/40 select-none">𓂃𓈒𓏸</span>
-                
-                <div className="flex flex-col items-center gap-4 text-center">
-                  <span className="text-[10px] text-[#D1BE9B]/70 select-none tracking-wider">⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆</span>
-                  
-                  <p className="text-[13.5px] md:text-[14px] leading-[2.3] text-[#31353A]/80 tracking-wider whitespace-pre-line text-left w-full px-2"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                    {product.story}
-                  </p>
-                  
-                  <div className="text-center text-[10px] text-[#D1BE9B]/60 tracking-[0.25em] mt-3 select-none w-full">
-                    ♡ ───────── ♡
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#A38D6B] select-none">
-                    <span>𐙚</span>
-                    <span className="font-light italic" style={{ fontFamily: 'Noto Serif TC, serif' }}>Mochi's whispering... ⊹ ࣪ ˖</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Section: 適合這樣的你 */}
           <Section title="適合這樣的你" subtitle="Suited For" icon="☁︎">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
@@ -276,6 +275,11 @@ export default function ProductDetailPage() {
             </div>
           </Section>
 
+          <ProductCareNotice />
+
+          {/* Section: Mochi 的小故事 */}
+          {mochiStorySection}
+
           {/* HealingPick 想對你說 */}
           <div className="w-full max-w-3xl mx-auto mt-8 mb-16 animate-fade-in-up">
             <div className="glass-panel bg-white/45 backdrop-blur-sm border border-[#D1BE9B]/20 p-8 md:p-12 rounded-3xl shadow-[0_12px_40px_rgba(209,190,155,0.08)] relative overflow-hidden">
@@ -312,8 +316,6 @@ export default function ProductDetailPage() {
               <CatSitting className="w-10 h-14" />
             </div>
           </div>
-
-          <ProductCareNotice />
 
         </div>
       </div>
