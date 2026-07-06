@@ -100,13 +100,43 @@ export default function ShopPage() {
             </div>
           </div>
 
+          {/* 設計款 / 客製款 主切換 */}
+          <div className="mb-10 flex justify-center animate-fade-in-up">
+            <div className="inline-flex rounded-full border border-[#D1BE9B]/30 bg-white/45 p-1 shadow-sm">
+              {[
+                { custom: false, zh: '設計款', en: 'Ready-made' },
+                { custom: true, zh: '客製款', en: 'Custom' },
+              ].map((mode) => {
+                const active = mode.custom ? isCustomCategory : !isCustomCategory;
+                return (
+                  <button
+                    key={mode.zh}
+                    type="button"
+                    onClick={() => setActiveCategory(mode.custom ? CUSTOM_BRACELET_CATEGORY : 'all')}
+                    className={`rounded-full px-6 py-2.5 text-xs tracking-[0.2em] transition-all duration-300 ${
+                      active ? 'bg-[#3D4144] text-[#FAF7F4] shadow' : 'text-[#31353A]/58 hover:text-[#31353A]'
+                    }`}
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    {mode.zh}
+                    <span className="ml-1.5 text-[9px] italic tracking-normal opacity-60"
+                      style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                      {mode.en}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Featured carousel + social proof */}
-          <FeaturedBand products={featured} />
+          {!isCustomCategory && <FeaturedBand products={featured} />}
 
           {/* Filters */}
+          {!isCustomCategory && (
           <div className="mb-8 animate-fade-in-up">
             <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
-              {CATEGORY_OPTIONS.map((cat) => (
+              {CATEGORY_OPTIONS.filter((cat) => cat.id !== CUSTOM_BRACELET_CATEGORY).map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
@@ -138,6 +168,7 @@ export default function ShopPage() {
               </div>
             )}
           </div>
+          )}
 
           {isCustomCategory && (
             <section className="mb-12 animate-fade-in-up">
