@@ -1145,9 +1145,10 @@ export default function ZiweiPage() {
           </p>
         )}
         {llmInterpretation && (
-          <div ref={readingResultRef}>
-            <div className="ziwei-interpretation text-[12.5px] leading-[2.2] text-[#31353A]/75 tracking-wider [&_p]:my-3"
+          <div ref={readingResultRef} className="animate-fade-in-up">
+            <div className="ziwei-interpretation relative overflow-hidden text-[12.5px] leading-[2.2] text-[#31353A]/75 tracking-wider [&_p]:my-3"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+              <span className="result-sweep" aria-hidden />
               {caughtMoodPlushie && (
                 <p className="rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/75 px-4 py-3 text-[#6F5A3A]/82">
                   {getMoodPlushieOpening(caughtMoodPlushie, 'ziwei')}

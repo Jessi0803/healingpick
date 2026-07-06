@@ -504,7 +504,8 @@ export default function DreamPage() {
             </form>
 
             {(interpretMutation.isPending || interpretation) && (
-              <section className="mt-6 rounded-2xl border border-[#D1BE9B]/22 bg-white/58 p-5 shadow-[0_18px_50px_rgba(163,141,107,0.1)] backdrop-blur-xl md:p-7">
+              <section className="relative overflow-hidden mt-6 rounded-2xl border border-[#D1BE9B]/22 bg-white/58 p-5 shadow-[0_18px_50px_rgba(163,141,107,0.1)] backdrop-blur-xl md:p-7">
+                {!interpretMutation.isPending && interpretation && <span className="result-sweep" aria-hidden />}
                 <div className="mb-4 flex items-center gap-2 text-[#8A7250]">
                   <Moon className="h-4 w-4" />
                   <h2 className="text-[13px] tracking-[0.22em]"
@@ -521,7 +522,7 @@ export default function DreamPage() {
                     <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
                   </div>
                 ) : (
-                  <div ref={readingResultRef} className="text-[14px] leading-[2.15] tracking-[0.08em] text-[#31353A]/76"
+                  <div ref={readingResultRef} className="animate-fade-in-up text-[14px] leading-[2.15] tracking-[0.08em] text-[#31353A]/76"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
                     {caughtMoodPlushie && (
                       <p className="rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/75 px-4 py-3 text-[#6F5A3A]/82">

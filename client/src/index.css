@@ -809,6 +809,36 @@ body::after {
   animation: lightboxImageIn 0.28s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
+/* One-time light sweep across a freshly revealed result panel.
+   Parent needs position:relative + overflow:hidden. */
+@keyframes resultSweep {
+  0%   { transform: translateX(-140%); opacity: 0; }
+  25%  { opacity: 0.55; }
+  100% { transform: translateX(160%); opacity: 0; }
+}
+.result-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: 1;
+}
+.result-sweep::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-140%);
+  animation: resultSweep 1.15s cubic-bezier(0.23, 1, 0.32, 1) 0.12s 1 both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .result-sweep::before { animation: none; }
+}
+
 /* Copy button success morph — icon/label crossfade with a soft blur mask. */
 @keyframes btnSwap {
   from { opacity: 0; transform: scale(0.9); filter: blur(2px); }
