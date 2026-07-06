@@ -60,7 +60,7 @@ export const PRODUCTS: Product[] = [
     material: '茶晶琉璃',
     price: 1280,
     originalPrice: null,
-    tag: '療癒',
+    tag: null,
     fitSummary: '適合最近很累、想找回安全感的你',
     gentleRecommendation:
       '微光守護狐偏向安定與界線感，如果你最近也想先把自己穩住，它可以是一個安靜陪在身邊的小提醒。',
@@ -106,7 +106,7 @@ export const PRODUCTS: Product[] = [
     material: '幻彩琉璃',
     price: 980,
     originalPrice: 1280,
-    tag: '熱銷',
+    tag: null,
     fitSummary: '適合想提升魅力、人緣與好運的你',
     gentleRecommendation:
       '心願九尾狐偏向魅力、人緣與心願感，如果你最近也在期待新的連結或機會，它可以陪你把注意力放回自己的光。',
@@ -153,7 +153,7 @@ export const PRODUCTS: Product[] = [
     material: '虎眼石',
     price: 600,
     originalPrice: null,
-    tag: '推薦',
+    tag: null,
     fitSummary: '適合需要開始行動、給自己一點信心的你',
     gentleRecommendation:
       '勇氣小貓偏向信心與行動力，如果你最近也想給自己一點開始的力量，它可以是一個放在身邊的小陪伴。',
@@ -199,7 +199,7 @@ export const PRODUCTS: Product[] = [
     material: '白水晶',
     price: 660,
     originalPrice: null,
-    tag: '新品',
+    tag: null,
     fitSummary: '適合心裡有願望、想溫柔守住期待的你',
     gentleRecommendation:
       '願望小兔偏向新的開始與柔軟信念，如果你最近也有想好好照顧的期待，它可以陪你把願望慢慢放穩。',
@@ -245,7 +245,7 @@ export const PRODUCTS: Product[] = [
     material: '白菘石',
     price: 430,
     originalPrice: null,
-    tag: '精選',
+    tag: null,
     fitSummary: '適合想太多、需要放鬆與釐清的你',
     gentleRecommendation:
       '靜心之光偏向放鬆、釐清與慢下來，如果你最近也覺得思緒太滿，它可以提醒你先回到自己的呼吸。',
@@ -291,7 +291,7 @@ export const PRODUCTS: Product[] = [
     material: '拉長石',
     price: 260,
     originalPrice: null,
-    tag: '靈感',
+    tag: null,
     fitSummary: '適合正在找方向、想重新相信直覺的你',
     gentleRecommendation:
       '月光守護之翼偏向直覺、守護與方向感，如果你最近也在確認下一步，它可以陪你安靜聽見心裡的聲音。',
@@ -337,7 +337,7 @@ export const PRODUCTS: Product[] = [
     material: '天然礦石',
     price: 780,
     originalPrice: null,
-    tag: '招財',
+    tag: null,
     fitSummary: '適合工作、金錢、事業正在重新累積的你',
     gentleRecommendation:
       '財運礦偏向豐盛、機會與行動力，如果你最近也在整理金錢或工作節奏，它可以提醒你相信自己值得更多。',
@@ -382,7 +382,7 @@ export const PRODUCTS: Product[] = [
     material: '葡萄石貔貅・綠髮晶・綠幽靈・白水晶',
     price: 1880,
     originalPrice: null,
-    tag: '手鍊',
+    tag: null,
     fitSummary: '適合想招財、旺事業、提升貴人運的你',
     gentleRecommendation:
       '森蘊偏向豐盛、事業與穩定累積，如果你最近正在整理工作步伐，它可以陪你用更自然的節奏把好運慢慢收進來。',
@@ -428,7 +428,7 @@ export const PRODUCTS: Product[] = [
     material: '狐仙・粉晶・月光石・白水晶・黃水晶',
     price: 1580,
     originalPrice: null,
-    tag: '手鍊',
+    tag: null,
     fitSummary: '適合想提升桃花、招財與好人緣的你',
     gentleRecommendation:
       '靈狐星願偏向桃花、人緣與貴人能量，如果你最近想讓自己更柔和地被看見，它會是一條帶著甜感的小提醒。',
@@ -474,7 +474,7 @@ export const PRODUCTS: Product[] = [
     material: '粉晶・草莓晶・白水晶・藍月光・拉長石',
     price: 1280,
     originalPrice: null,
-    tag: '手鍊',
+    tag: null,
     fitSummary: '適合想照顧桃花、感情與人際關係的你',
     gentleRecommendation:
       '霧裡星光偏向愛自己、感情與人際連結，如果你最近想先把心放柔一點，它會像月光一樣提醒你慢慢靠近自己。',
@@ -520,7 +520,7 @@ export const PRODUCTS: Product[] = [
     material: '淨體鈦晶',
     price: 4380,
     originalPrice: null,
-    tag: '限量',
+    tag: null,
     fitSummary: '適合想清晰思緒、穩定行動與提升自信的你',
     gentleRecommendation:
       '澄光偏向清晰、行動與穩定氣場，如果你最近想把想法整理清楚，它會提醒你把光放回自己身上。',
@@ -563,7 +563,7 @@ export const PRODUCTS: Product[] = [
     price: 0,
     priceLabel: '私訊詢價',
     originalPrice: null,
-    tag: '客製',
+    tag: null,
     fitSummary: '適合想要溫柔守護、沉穩能量與客製設計的你',
     gentleRecommendation:
       '光羽之境是客製感很強的守護款,偏向溫柔自信、沉穩與內在保護。',
@@ -605,7 +605,7 @@ export const PRODUCTS: Product[] = [
     material: '白水晶・黃膠花・紅膠花・黃水晶・白瑪瑙',
     price: 1580,
     originalPrice: null,
-    tag: '設計款',
+    tag: null,
     fitSummary: '適合想要柔軟陪伴、安心感與微甜日常的你',
     gentleRecommendation:
       '狐語微甜偏向安心、微甜與柔軟陪伴,適合把緊繃的心慢慢放鬆。',
@@ -647,7 +647,7 @@ export const PRODUCTS: Product[] = [
     material: '日月同輝・斯里蘭卡藍月光・茶晶',
     price: 1480,
     originalPrice: null,
-    tag: '溫柔',
+    tag: null,
     fitSummary: '適合日常百搭、喜歡奶金色調與溫柔光感的你',
     gentleRecommendation:
       '焦糖瑪奇朵偏向溫柔、安心與日常百搭,適合把情緒慢慢調回舒服的狀態。',
@@ -695,7 +695,7 @@ export const PRODUCTS: Product[] = [
     material: '貔貅・藍晶石・海藍寶・霧海藍寶・白水晶',
     price: 1780,
     originalPrice: null,
-    tag: '藍調',
+    tag: null,
     fitSummary: '適合想穩定情緒、安定表達與回到內在平靜的你',
     gentleRecommendation:
       '藍境之曜偏向平靜、表達與沉穩清晰,適合需要讓心慢慢安靜下來的時候。',
@@ -737,7 +737,7 @@ export const PRODUCTS: Product[] = [
     material: '鈦晶・黃水晶・茶晶・白水晶',
     price: 1280,
     originalPrice: null,
-    tag: '招財',
+    tag: null,
     fitSummary: '適合想提升財運、自信與日常亮點的你',
     gentleRecommendation:
       '鎏金之耀偏向金色能量、財運與自信,適合想把光芒穩穩戴在身上的你。',
@@ -779,7 +779,7 @@ export const PRODUCTS: Product[] = [
     material: '草莓晶・綠幽靈・粉晶・白水晶',
     price: 1280,
     originalPrice: null,
-    tag: '甜感',
+    tag: null,
     fitSummary: '適合喜歡甜而不膩、柔和桃花與清透層次的你',
     gentleRecommendation:
       '莓語心願偏向甜美、人緣與溫柔心願,適合想讓日常多一點柔光的你。',
@@ -821,7 +821,7 @@ export const PRODUCTS: Product[] = [
     material: '茶晶・粉晶・紅石榴・奶油月光・紫光晶・白水晶',
     price: 1280,
     originalPrice: null,
-    tag: '暖心',
+    tag: null,
     fitSummary: '適合想要溫柔陪伴、人際連結與內在安放的你',
     gentleRecommendation:
       '暖語偏向安靜陪伴、粉晶能量與內在力量,適合在日常中慢慢安放自己。',
@@ -863,7 +863,7 @@ export const PRODUCTS: Product[] = [
     material: '海藍寶・藍摩根石・藍晶石・蛋白石・白水晶',
     price: 1280,
     originalPrice: null,
-    tag: '海洋',
+    tag: null,
     fitSummary: '適合喜歡海洋色調、清爽不單調與溫柔氣場的你',
     gentleRecommendation:
       '蔚藍微光偏向海洋般的平靜、清爽與氣質感,適合想放慢情緒的人。',
@@ -905,7 +905,7 @@ export const PRODUCTS: Product[] = [
     material: '月光石・奶油月光石・藍月光石・白水晶',
     price: 1580,
     originalPrice: null,
-    tag: '月光',
+    tag: null,
     fitSummary: '適合喜歡月光色系、溫柔氣質與百搭設計的你',
     gentleRecommendation:
       '溫柔月光偏向情緒平衡、氣質與柔和陪伴,適合想把節奏放慢一點的你。',
@@ -947,7 +947,7 @@ export const PRODUCTS: Product[] = [
     material: '黃塔山・白水晶・藍月光・茶晶',
     price: 1980,
     originalPrice: null,
-    tag: '財氣',
+    tag: null,
     fitSummary: '適合想提升財運、自信光芒與溫柔氣質的你',
     gentleRecommendation:
       '曦光之詠偏向金色豐盛、自信與柔和穩定,適合想讓自己慢慢亮起來的你。',
@@ -989,7 +989,7 @@ export const PRODUCTS: Product[] = [
     material: '斯里蘭卡藍月光・白幽靈',
     price: 1280,
     originalPrice: null,
-    tag: '療癒',
+    tag: null,
     fitSummary: '適合想安撫情緒、整理內在與重新開始的你',
     gentleRecommendation:
       '心語呢喃偏向溫柔安撫、內在整理與重新開始,適合低潮時陪自己慢慢復原。',
@@ -1031,7 +1031,7 @@ export const PRODUCTS: Product[] = [
     material: '黑金超七',
     price: 1480,
     originalPrice: null,
-    tag: '守護',
+    tag: null,
     fitSummary: '適合想要防護能量、穩定氣場與低調深色質感的你',
     gentleRecommendation:
       '星曜之星偏向防護、穩定與自我力量,適合想在混亂裡保有自己節奏的人。',
@@ -1073,7 +1073,7 @@ export const PRODUCTS: Product[] = [
     material: '白水晶小熊・奶油月光石・白水晶切面珠',
     price: 1380,
     originalPrice: null,
-    tag: '純白',
+    tag: null,
     fitSummary: '適合喜歡白色調、純淨氣質與送禮日常搭配的你',
     gentleRecommendation:
       '雪境溫柔偏向純淨、柔和與安靜陪伴,適合想讓生活變得清爽一點的你。',
@@ -1115,7 +1115,7 @@ export const PRODUCTS: Product[] = [
     material: '彩月光石・五貓守護・琉璃・果果・阿喵・餅餅',
     price: 980,
     originalPrice: null,
-    tag: '五貓',
+    tag: null,
     fitSummary: '適合喜歡彩月光、可愛守護與溫柔堅定能量的你',
     gentleRecommendation:
       '月映柔光偏向彩月光的平衡、可愛守護與自信提醒,適合想被溫柔陪伴的人。',
@@ -1157,7 +1157,7 @@ export const PRODUCTS: Product[] = [
     material: '銀曜石・月光石・白水晶',
     price: 1380,
     originalPrice: null,
-    tag: '新品',
+    tag: null,
     fitSummary: '適合喜歡黑白灰色調、星花墜飾與穩定守護感的你',
     gentleRecommendation:
       '月影織花偏向安定、守護與深色質感,適合想要低調但有亮點的手鍊。',
