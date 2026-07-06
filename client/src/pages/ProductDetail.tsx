@@ -253,6 +253,33 @@ export default function ProductDetailPage() {
             </div>
           </Section>
 
+          {/* Section: 商品詳情 / 材質說明 */}
+          <Section title="商品詳情 / 材質說明" subtitle="Material" icon="✦">
+            <div className="grid gap-3 md:grid-cols-3">
+              <div className="rounded-2xl border border-[#D1BE9B]/20 bg-white/45 px-4 py-4 md:col-span-1">
+                <p className="mb-1 text-[10px] tracking-[0.22em] text-[#A38D6B]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  主要材質
+                </p>
+                <p className="text-[13px] leading-[1.8] tracking-[0.08em] text-[#31353A]/78"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  {product.material}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-[#D1BE9B]/20 bg-white/45 px-4 py-4 md:col-span-2">
+                <p className="mb-1 text-[10px] tracking-[0.22em] text-[#A38D6B]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  銀飾與配戴提醒
+                </p>
+                <p className="text-[12.5px] leading-[1.9] tracking-[0.06em] text-[#31353A]/70"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                  銀飾款式依設計不同，可能使用 14K 包金、純銀或鍍銀材質。若日常配戴會頻繁碰水，建議優先選擇金飾款，保養上會更安心。
+                </p>
+              </div>
+            </div>
+          </Section>
+
           {/* HealingPick 想對你說 */}
           <div className="w-full max-w-3xl mx-auto mt-8 mb-16 animate-fade-in-up">
             <div className="glass-panel bg-white/45 backdrop-blur-sm border border-[#D1BE9B]/20 p-8 md:p-12 rounded-3xl shadow-[0_12px_40px_rgba(209,190,155,0.08)] relative overflow-hidden">
