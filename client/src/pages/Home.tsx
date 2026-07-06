@@ -13,6 +13,7 @@
 import { useState, useRef } from "react";
 import { Link } from "wouter";
 import PageLayout from "@/components/PageLayout";
+import Reveal from "@/components/Reveal";
 import { CatPeeking } from "@/components/CatElements";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { PRODUCTS, getProductImageStyle } from "@/data/products";
@@ -623,7 +624,7 @@ export default function Home() {
       <section className="py-20 px-6 md:px-10">
         <div className="max-w-6xl mx-auto">
           {/* Section header */}
-          <div className="text-center mb-14 animate-fade-in-up">
+          <Reveal className="text-center mb-14">
             <span
               className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
               style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
@@ -644,16 +645,15 @@ export default function Home() {
                 />
               </svg>
             </div>
-          </div>
+          </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+          <Reveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
             {features.map((f, i) => (
-              <Link key={f.href} href={f.href}>
+              <Link key={f.href} href={f.href} className="reveal-child block" style={{ transitionDelay: `${i * 70}ms` }}>
                 <div
-                  className="group relative p-6 rounded-xl border border-[#D1BE9B]/20 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)] animate-fade-in-up"
+                  className="group relative h-full p-6 rounded-xl border border-[#D1BE9B]/20 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)]"
                   style={{
                     background: `linear-gradient(145deg, ${f.color}, #FAF7F4)`,
-                    animationDelay: `${i * 0.1}s`,
                   }}
                 >
                   <div className="text-3xl mb-4 opacity-80">{f.icon}</div>
@@ -704,7 +704,7 @@ export default function Home() {
                 </div>
               </Link>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 

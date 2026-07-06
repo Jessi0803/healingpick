@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
+import Reveal from '@/components/Reveal';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import { PRODUCTS, CATEGORY_OPTIONS, getProductFitSummary, getProductImageStyle, type Product } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
@@ -237,12 +238,12 @@ export default function ShopPage() {
 
           {/* Product grid */}
           {!isCustomCategory && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8 mb-12">
+            <Reveal className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8 mb-12">
               {filtered.map((product, i) => (
                 <div
                   key={product.slug}
-                  className="group flex flex-col justify-between h-full animate-fade-in-up"
-                  style={{ animationDelay: `${i * 0.08}s` }}
+                  className="reveal-child group flex flex-col justify-between h-full"
+                  style={{ transitionDelay: `${Math.min(i, 8) * 45}ms` }}
                 >
                   <Link href={`/shop/${product.slug}`}>
                     <div className="cursor-pointer">
@@ -250,7 +251,8 @@ export default function ShopPage() {
                         <img
                           src={product.img}
                           alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-700"
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           style={getProductImageStyle(product)}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -313,7 +315,7 @@ export default function ShopPage() {
                   </button>
                 </div>
               ))}
-            </div>
+            </Reveal>
           )}
 
           <div className="flex justify-center mb-8">
