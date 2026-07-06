@@ -620,6 +620,12 @@ export default function CustomBraceletPage() {
                         );
                       })}
                     </div>
+                    <p
+                      className="mb-3 rounded-2xl border border-[#D1BE9B]/20 bg-white/45 px-3.5 py-2.5 text-[11px] leading-[1.8] tracking-[0.06em] text-[#31353A]/68"
+                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                    >
+                      銀飾款式依設計不同，可能使用 14K 包金、純銀或鍍銀材質。若日常配戴會頻繁碰水，建議優先選擇金飾款，保養上會更安心。
+                    </p>
                     <input value={form.metalPreference} onChange={(e) => update('metalPreference', e.target.value)} className={inputClass} placeholder="點上方選金／銀，也可補充：彈力繩、OY扣或延長鍊" />
                   </Field>
                   <Field label="其他備註" wide>
