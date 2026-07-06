@@ -428,7 +428,7 @@ function FeaturedBand({
     if (reduce) return;
     const id = setInterval(() => {
       if (!paused.current) setCurrent((c) => (c + 1) % count);
-    }, 4500);
+    }, 3000);
     return () => clearInterval(id);
   }, [count]);
 
