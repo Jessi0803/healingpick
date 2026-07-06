@@ -415,11 +415,11 @@ function FeaturedBand({
           >
             {products.map((p) => (
               <Link key={p.slug} href={`/shop/${p.slug}`} className="relative flex w-full flex-shrink-0 flex-col">
-                <div className="aspect-[4/3] w-full overflow-hidden bg-[#F7F1E8] md:aspect-[16/11]">
+                <div className="aspect-[4/3] w-full overflow-hidden bg-[#F7F1E8] p-3 md:aspect-[16/11] md:p-4">
                   <img
                     src={p.featuredImage}
                     alt={p.name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 </div>
                 <div className="bg-white/78 px-5 py-4">
