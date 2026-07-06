@@ -64,8 +64,10 @@ export default function Navbar() {
       ? `text-xs tracking-[0.25em] py-3 border-b border-[#D1BE9B]/15 transition-colors whitespace-nowrap ${
           isActive(link.href) ? 'text-[#D1BE9B]' : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
         }`
-      : `text-xs tracking-[0.2em] transition-colors duration-300 whitespace-nowrap ${
-          isActive(link.href) ? 'text-[#D1BE9B]' : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
+      : `relative text-xs tracking-[0.2em] transition-colors duration-300 whitespace-nowrap after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:bg-[#D1BE9B] after:transition-transform after:duration-300 after:ease-out ${
+          isActive(link.href)
+            ? 'text-[#D1BE9B] after:scale-x-100'
+            : 'text-[#31353A]/82 hover:text-[#D1BE9B] after:scale-x-0 hover:after:scale-x-100'
         }`;
 
     const style = { fontFamily: 'Noto Serif TC, serif', fontWeight: 300 };
