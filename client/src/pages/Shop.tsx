@@ -2,12 +2,19 @@
  * SOUL EASE | Mochi．crystal — Shop Page
  * Design: Wabi-Sabi Luxe × Morandi Oat Milk — Luxury E-commerce
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
-import { PRODUCTS, CATEGORY_OPTIONS, getProductFitSummary, getProductImageStyle } from '@/data/products';
+import { PRODUCTS, CATEGORY_OPTIONS, getProductFitSummary, getProductImageStyle, type Product } from '@/data/products';
 import ContactDialog from '@/components/ContactDialog';
+
+// 精選輪播選品（招財／桃花／守護各一），與社會證明數字。
+const FEATURED_SLUGS = ['wealth-stone', 'mei-yu-xin-yuan', 'glimmer-fox'];
+const STATS = [
+  { value: '99%', label: '滿意顧客' },
+  { value: '100%', label: '天然水晶' },
+];
 
 const SORT_OPTIONS = [
   { id: 'default',    label: '預設排序' },
@@ -56,6 +63,10 @@ export default function ShopPage() {
 
   const isCustomCategory = activeCategory === CUSTOM_BRACELET_CATEGORY;
 
+  const featured = FEATURED_SLUGS
+    .map((slug) => PRODUCTS.find((p) => p.slug === slug))
+    .filter((p): p is Product => Boolean(p));
+
   const countFor = (id: string) => {
     if (id === CUSTOM_BRACELET_CATEGORY) return CUSTOM_BRACELETS.length;
     return id === 'all' ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === id).length;
@@ -88,6 +99,9 @@ export default function ShopPage() {
               </div>
             </div>
           </div>
+
+          {/* Featured carousel + social proof */}
+          <FeaturedBand products={featured} />
 
           {/* Filters */}
           <div className="mb-8 animate-fade-in-up">
@@ -298,5 +312,134 @@ export default function ShopPage() {
         productName={selectedProduct}
       />
     </PageLayout>
+  );
+}
+
+function FeaturedBand({ products }: { products: Product[] }) {
+  const [current, setCurrent] = useState(0);
+  const count = products.length;
+  const paused = useRef(false);
+  const touchX = useRef<number | null>(null);
+
+  const go = (i: number) => count && setCurrent((i + count) % count);
+
+  useEffect(() => {
+    if (count <= 1) return;
+    const reduce =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    const id = setInterval(() => {
+      if (!paused.current) setCurrent((c) => (c + 1) % count);
+    }, 4500);
+    return () => clearInterval(id);
+  }, [count]);
+
+  if (!count) return null;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 40) go(current + (dx < 0 ? 1 : -1));
+    touchX.current = null;
+  };
+
+  return (
+    <section className="mb-12 animate-fade-in-up">
+      <div className="grid items-stretch gap-6 md:grid-cols-[1.15fr_0.85fr] md:gap-8">
+        {/* Carousel */}
+        <div
+          className="relative overflow-hidden rounded-3xl border border-[#D1BE9B]/20 bg-[#F0E8DC] shadow-[0_16px_40px_rgba(209,190,155,0.16)]"
+          onMouseEnter={() => (paused.current = true)}
+          onMouseLeave={() => (paused.current = false)}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
+          <div
+            className="flex transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
+            style={{ transform: `translateX(-${current * 100}%)` }}
+          >
+            {products.map((p) => (
+              <Link key={p.slug} href={`/shop/${p.slug}`} className="relative w-full flex-shrink-0">
+                <div className="aspect-[4/3] w-full overflow-hidden md:aspect-[16/11]">
+                  <img
+                    src={p.img}
+                    alt={p.name}
+                    className="h-full w-full object-cover"
+                    style={getProductImageStyle(p)}
+                  />
+                </div>
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#2b2622]/78 via-[#2b2622]/22 to-transparent p-5 pt-14">
+                  <p className="text-[11px] italic tracking-[0.08em] text-[#F0E8DC]/85"
+                    style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                    {p.subtitle}
+                  </p>
+                  <h3 className="text-base tracking-[0.14em] text-white md:text-lg"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                    {p.name}
+                  </h3>
+                  <span className="mt-1 inline-block text-sm text-[#E9D9B8]"
+                    style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                    {p.priceLabel ?? `NT$ ${p.price.toLocaleString()}`}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-[11px] italic tracking-[0.12em] text-[#A38D6B]"
+            style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+            Featured
+          </span>
+
+          {count > 1 && (
+            <div className="absolute bottom-4 right-5 flex gap-1.5">
+              {products.map((p, i) => (
+                <button
+                  key={p.slug}
+                  type="button"
+                  aria-label={`切換至第 ${i + 1} 張`}
+                  onClick={() => go(i)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === current ? 'w-5 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Social proof panel */}
+        <div className="flex flex-col justify-center gap-6 rounded-3xl border border-[#D1BE9B]/20 bg-white/45 px-7 py-8">
+          <div>
+            <p className="text-[14px] italic tracking-[0.04em] text-[#A38D6B]"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              Why Mochi
+            </p>
+            <p className="mt-1.5 text-[13px] leading-[1.95] tracking-[0.05em] text-[#31353A]/70"
+              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+              每顆水晶都經 Mochi 親自挑選，只留下乾淨透亮、少雜質的天然水晶，讓能量與質感都值得信任。
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {STATS.map((s) => (
+              <div key={s.label} className="rounded-2xl bg-[#FAF7F4]/70 px-4 py-6 text-center">
+                <p className="text-[2.6rem] leading-none text-[#A38D6B]"
+                  style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}>
+                  {s.value}
+                </p>
+                <p className="mt-2.5 text-[11px] tracking-[0.16em] text-[#31353A]/64"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
