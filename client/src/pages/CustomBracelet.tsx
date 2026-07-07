@@ -26,11 +26,9 @@ import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import ContactDialog from '@/components/ContactDialog';
 import ProductCareNotice from '@/components/ProductCareNotice';
+import { CUSTOMER_FEEDBACK_PHOTOS } from '@/data/customerFeedbackPhotos';
 
-const GALLERY_IMAGES = Array.from(
-  { length: 24 },
-  (_, i) => `/custom-bracelet/general/IMG_${4826 + i}.PNG`,
-);
+const GALLERY_IMAGES = CUSTOMER_FEEDBACK_PHOTOS;
 
 // 主視覺使用商品照示範客製風格，圖片以完整顯示避免裁切到手鍊。
 const HERO_IMAGES = [

@@ -16,6 +16,7 @@ import {
   getProductFitSummary,
   type Product,
 } from "@/data/products";
+import { CUSTOMER_FEEDBACK_PHOTOS } from "@/data/customerFeedbackPhotos";
 import { useCart } from "@/contexts/CartContext";
 
 // 精選輪播選品，使用獨立圖片避免輪播文案遮到手鍊本身。
@@ -32,10 +33,7 @@ const STATS = [
 ];
 
 // 顧客回饋＆實拍照（沿用客製頁那批真實顧客照）。
-const FEEDBACK_PHOTOS = Array.from(
-  { length: 24 },
-  (_, i) => `/custom-bracelet/general/IMG_${4826 + i}.PNG`
-);
+const FEEDBACK_PHOTOS = CUSTOMER_FEEDBACK_PHOTOS;
 
 const SORT_OPTIONS = [
   { id: "sales_desc", label: "熱銷商品排序" },

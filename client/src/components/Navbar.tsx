@@ -140,7 +140,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between gap-4 relative">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5 group">
             <CatSitting className="w-7 h-9 opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex-shrink-0" />
             <div className="flex flex-col items-start">
               <span
@@ -159,13 +159,13 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav – centred, flat */}
-          <div className="hidden xl:flex items-center justify-center gap-5 absolute left-1/2 -translate-x-1/2">
+          <div className="hidden 2xl:flex items-center justify-center gap-4 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => renderNavLink(link))}
           </div>
 
 
           {/* Right slot – auth + hamburger */}
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex shrink-0 items-center justify-end gap-3">
             <button
               type="button"
               onClick={openCart}
@@ -181,7 +181,7 @@ export default function Navbar() {
             </button>
             {/* Desktop auth */}
             {isAuthenticated ? (
-              <div className="hidden xl:flex items-center gap-3">
+              <div className="hidden 2xl:flex items-center gap-3">
                 {credits?.enabled && (
                   <Link
                     href="/buy"
@@ -226,7 +226,7 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <div className="hidden xl:flex items-center gap-3">
+              <div className="hidden 2xl:flex items-center gap-3">
                 {freeQuotaLabel && (
                   <span className="text-xs tracking-[0.15em] text-[#A38D6B]"
                     title={creditsHint}
@@ -246,7 +246,7 @@ export default function Navbar() {
 
             {/* Hamburger */}
             <button
-              className="xl:hidden p-2 text-[#31353A]/80 hover:text-[#D1BE9B] transition-colors"
+              className="2xl:hidden p-2 text-[#31353A]/80 hover:text-[#D1BE9B] transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
@@ -258,7 +258,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-36 bottom-0 z-40 xl:hidden">
+        <div className="fixed inset-x-0 top-36 bottom-0 z-40 2xl:hidden">
           <div
             className="absolute inset-0 bg-[#3D4144]/20 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
