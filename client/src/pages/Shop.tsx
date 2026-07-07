@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ShoppingBag,
   SlidersHorizontal,
   X,
 } from "lucide-react";
@@ -454,7 +455,7 @@ export default function ShopPage() {
                 {filtered.map((product, i) => (
                   <div
                     key={product.slug}
-                    className="group flex flex-col justify-between h-full"
+                    className="group relative flex h-full flex-col justify-between"
                   >
                     <Link href={`/shop/${product.slug}`}>
                       <div className="cursor-pointer">
@@ -520,37 +521,44 @@ export default function ShopPage() {
                           >
                             {getProductFitSummary(product)}
                           </p>
-                          <div className="flex items-center gap-2 mb-3">
-                            <span
-                              className="text-sm text-[#A38D6B]"
-                              style={{
-                                fontFamily: "Cormorant Garamond, serif",
-                              }}
-                            >
-                              {product.priceLabel ??
-                                `NT$ ${product.price.toLocaleString()}`}
-                            </span>
-                            {product.originalPrice && (
+                          <div className="mb-3 flex min-h-8 items-center gap-2 pr-20">
+                            <div className="flex min-w-0 flex-wrap items-center gap-2">
                               <span
-                                className="text-[11px] text-[#31353A]/46 line-through"
+                                className="text-sm text-[#A38D6B]"
                                 style={{
                                   fontFamily: "Cormorant Garamond, serif",
                                 }}
                               >
-                                {product.originalPrice.toLocaleString()}
+                                {product.priceLabel ??
+                                  `NT$ ${product.price.toLocaleString()}`}
                               </span>
-                            )}
+                              {product.originalPrice && (
+                                <span
+                                  className="text-[11px] text-[#31353A]/46 line-through"
+                                  style={{
+                                    fontFamily: "Cormorant Garamond, serif",
+                                  }}
+                                >
+                                  {product.originalPrice.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </Link>
-
                     <button
+                      type="button"
                       onClick={() => handleAddProduct(product)}
-                      className="w-full py-2 text-[10px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light mt-auto"
-                      style={{ fontFamily: "Noto Serif TC, serif" }}
+                      aria-label={`加入購物車：${product.name}`}
+                      className="pointer-events-none absolute bottom-3 right-0 hidden translate-y-1 items-center gap-1.5 rounded-full border border-[#D1BE9B]/35 bg-white/78 px-2.5 py-1.5 text-[10px] tracking-[0.12em] text-[#3D4144]/78 opacity-0 shadow-[0_8px_20px_rgba(61,65,68,0.08)] backdrop-blur-md transition-all duration-300 hover:border-[#D1BE9B]/65 hover:bg-[#3D4144] hover:text-[#FAF7F4] focus-visible:pointer-events-auto focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/45 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 md:inline-flex"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
                     >
-                      加入購物車
+                      <ShoppingBag size={13} strokeWidth={1.6} />
+                      <span>加入</span>
                     </button>
                   </div>
                 ))}
@@ -684,7 +692,7 @@ function CustomBraceletProductCard() {
             >
               {CUSTOM_BRACELET_ENTRY.note}
             </p>
-            <div className="mb-3 flex items-center gap-2">
+            <div className="mb-3 flex min-h-8 items-center justify-between gap-2">
               <span
                 className="text-sm text-[#A38D6B]"
                 style={{
@@ -693,18 +701,15 @@ function CustomBraceletProductCard() {
               >
                 {CUSTOM_BRACELET_ENTRY.priceLabel}
               </span>
+              <span
+                className="pointer-events-none hidden shrink-0 translate-y-1 items-center rounded-full border border-[#D1BE9B]/35 bg-white/78 px-2.5 py-1.5 text-[10px] tracking-[0.12em] text-[#3D4144]/78 opacity-0 shadow-[0_8px_20px_rgba(61,65,68,0.08)] backdrop-blur-md transition-all duration-300 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100 md:inline-flex"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                客製
+              </span>
             </div>
           </div>
         </div>
-      </Link>
-
-      <Link href={CUSTOM_BRACELET_ENTRY.href}>
-        <button
-          className="mt-auto w-full rounded-full bg-[#3D4144] py-2 text-[10px] font-light tracking-[0.2em] text-[#FAF7F4] shadow-sm transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
-          style={{ fontFamily: "Noto Serif TC, serif" }}
-        >
-          前往客製化
-        </button>
       </Link>
     </div>
   );
