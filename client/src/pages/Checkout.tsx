@@ -1,0 +1,292 @@
+import { FormEvent, useState } from "react";
+import { Link, useLocation } from "wouter";
+import { ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
+import PageLayout from "@/components/PageLayout";
+import { useCart } from "@/contexts/CartContext";
+import { trpc } from "@/lib/trpc";
+
+type CustomerForm = {
+  customerName: string;
+  email: string;
+  phone: string;
+  wristSize: string;
+  fit: "貼手" | "剛好" | "微鬆";
+  address: string;
+};
+
+const LINE_URL = "https://lin.ee/zqRShGd";
+
+const initialForm: CustomerForm = {
+  customerName: "",
+  email: "",
+  phone: "",
+  wristSize: "",
+  fit: "剛好",
+  address: "",
+};
+
+export default function CheckoutPage() {
+  const { items, subtotal, clearCart, openCart } = useCart();
+  const [, setLocation] = useLocation();
+  const [form, setForm] = useState<CustomerForm>(initialForm);
+  const createOrderMutation = trpc.shop.createOrder.useMutation({
+    onSuccess: ({ orderId }) => {
+      clearCart();
+      setForm(initialForm);
+      toast.success(`已收到訂單 #${orderId}，我們會盡快確認。`);
+      setLocation("/shop");
+    },
+    onError: (error) => {
+      toast.error(error.message || "訂單送出失敗，請稍後再試。");
+    },
+  });
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    if (items.length === 0) {
+      toast.error("購物車目前沒有商品。");
+      return;
+    }
+    createOrderMutation.mutate({
+      ...form,
+      items: items.map(({ slug, name, price, quantity }) => ({
+        slug,
+        name,
+        price,
+        quantity,
+      })),
+    });
+  };
+
+  return (
+    <PageLayout>
+      <div className="min-h-screen bg-[#FAF7F4] px-4 py-12 md:px-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-8">
+            <p
+              className="mb-2 text-[10px] uppercase tracking-[0.32em] text-[#D1BE9B]"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              Checkout
+            </p>
+            <h1
+              className="text-2xl tracking-[0.2em] text-[#31353A] md:text-3xl"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              結帳資料
+            </h1>
+          </div>
+
+          {items.length === 0 ? (
+            <section className="rounded-2xl border border-dashed border-[#D1BE9B]/35 bg-white/45 px-6 py-14 text-center">
+              <ShoppingBag className="mx-auto mb-4 text-[#A38D6B]/70" size={28} />
+              <p className="mb-6 text-sm tracking-[0.16em] text-[#31353A]/58">
+                購物車目前沒有商品
+              </p>
+              <Link href="/shop">
+                <button
+                  type="button"
+                  className="rounded-full bg-[#31353A] px-6 py-3 text-xs tracking-[0.2em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A]"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  返回商店
+                </button>
+              </Link>
+            </section>
+          ) : (
+            <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1fr_360px]">
+              <section className="rounded-2xl border border-[#D1BE9B]/20 bg-white/48 p-5 md:p-6">
+                <div className="mb-5">
+                  <p
+                    className="text-[12px] tracking-[0.18em] text-[#31353A]/72"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    收件與手圍資料
+                  </p>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <OrderInput
+                    label="姓名"
+                    value={form.customerName}
+                    onChange={(customerName) => setForm((current) => ({ ...current, customerName }))}
+                    required
+                  />
+                  <OrderInput
+                    label="Email"
+                    type="email"
+                    value={form.email}
+                    onChange={(email) => setForm((current) => ({ ...current, email }))}
+                    required
+                  />
+                  <OrderInput
+                    label="手機號碼"
+                    type="tel"
+                    value={form.phone}
+                    onChange={(phone) => setForm((current) => ({ ...current, phone }))}
+                    required
+                  />
+                  <OrderInput
+                    label="手圍大小"
+                    placeholder="例如 15.5 cm"
+                    value={form.wristSize}
+                    onChange={(wristSize) => setForm((current) => ({ ...current, wristSize }))}
+                    hint="手圍量法：拿軟尺平貼手腕繞一圈量測。沒有軟尺時，可以用棉線或紙條繞手圍，用筆做記號後，再用一般直尺量那段長度。"
+                    required
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
+                    配戴鬆緊
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(["貼手", "剛好", "微鬆"] as const).map((fit) => (
+                      <button
+                        key={fit}
+                        type="button"
+                        onClick={() => setForm((current) => ({ ...current, fit }))}
+                        className={`rounded-full border px-3 py-2.5 text-xs tracking-[0.14em] transition ${
+                          form.fit === fit
+                            ? "border-[#31353A] bg-[#31353A] text-[#FAF7F4]"
+                            : "border-[#D1BE9B]/28 bg-white/40 text-[#31353A]/68 hover:border-[#D1BE9B]/60"
+                        }`}
+                      >
+                        {fit}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <label className="mt-4 block">
+                  <span className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
+                    收件地址
+                  </span>
+                  <textarea
+                    value={form.address}
+                    onChange={(event) =>
+                      setForm((current) => ({ ...current, address: event.target.value }))
+                    }
+                    required
+                    rows={4}
+                    className="w-full resize-y rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-sm leading-[1.7] text-[#31353A]/78 outline-none transition focus:border-[#A38D6B]/70"
+                  />
+                </label>
+              </section>
+
+              <aside className="h-fit rounded-2xl border border-[#D1BE9B]/20 bg-white/55 p-5">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <p
+                    className="text-[12px] tracking-[0.18em] text-[#31353A]/72"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    訂單明細
+                  </p>
+                  <button
+                    type="button"
+                    onClick={openCart}
+                    className="text-[11px] tracking-[0.14em] text-[#A38D6B] underline-offset-4 transition hover:underline"
+                  >
+                    修改
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {items.map((item) => (
+                    <div key={item.slug} className="grid grid-cols-[52px_1fr] gap-3">
+                      <img
+                        src={item.img}
+                        alt={item.name}
+                        className="h-[52px] w-[52px] rounded-md object-cover"
+                      />
+                      <div className="min-w-0">
+                        <p className="break-words text-[12px] tracking-[0.1em] text-[#31353A]/82">
+                          {item.name}
+                        </p>
+                        <p className="mt-1 text-[12px] text-[#A38D6B]">
+                          NT$ {item.price.toLocaleString("zh-TW")} x {item.quantity}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 border-t border-[#D1BE9B]/16 pt-4">
+                  <div className="flex items-center justify-between text-sm tracking-[0.08em] text-[#31353A]/78">
+                    <span>商品小計</span>
+                    <span className="text-lg text-[#A38D6B]">
+                      NT$ {subtotal.toLocaleString("zh-TW")}
+                    </span>
+                  </div>
+                  <p className="mt-3 rounded-lg border border-[#D1BE9B]/25 bg-[#FAF7F4]/70 px-4 py-3 text-[12px] leading-[1.8] tracking-[0.06em] text-[#8F7957]">
+                    下單一條免運，即贈送白水晶碎石一包。
+                  </p>
+                </div>
+
+                <div className="mt-5 grid gap-3">
+                  <button
+                    type="submit"
+                    disabled={createOrderMutation.isPending}
+                    className="w-full rounded-full bg-[#31353A] px-5 py-3.5 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#31353A]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-50"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    {createOrderMutation.isPending ? "送出中" : "送出訂單"}
+                  </button>
+                  <a
+                    href={LINE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full rounded-full border border-[#D1BE9B]/35 px-5 py-3 text-center text-xs tracking-[0.18em] text-[#8F7957] transition hover:bg-white/65"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    有問題可私訊官方 LINE
+                  </a>
+                </div>
+              </aside>
+            </form>
+          )}
+        </div>
+      </div>
+    </PageLayout>
+  );
+}
+
+function OrderInput({
+  label,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+  hint,
+  required,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+  hint?: string;
+  required?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
+        {label}
+      </span>
+      <input
+        type={type}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        required={required}
+        className="w-full rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-sm text-[#31353A]/78 outline-none transition focus:border-[#A38D6B]/70"
+      />
+      {hint && (
+        <p className="mt-2 rounded-lg bg-[#FAF7F4]/80 px-3 py-2 text-[12px] leading-[1.8] tracking-[0.04em] text-[#31353A]/58">
+          {hint}
+        </p>
+      )}
+    </label>
+  );
+}

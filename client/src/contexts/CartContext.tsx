@@ -1,6 +1,5 @@
 import {
   createContext,
-  FormEvent,
   ReactNode,
   useContext,
   useEffect,
@@ -9,7 +8,7 @@ import {
 } from "react";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
+import { useLocation } from "wouter";
 
 export type CartProduct = {
   slug: string;
@@ -22,37 +21,19 @@ type CartItem = CartProduct & {
   quantity: number;
 };
 
-type CustomerForm = {
-  customerName: string;
-  email: string;
-  phone: string;
-  wristSize: string;
-  fit: "貼手" | "剛好" | "微鬆";
-  address: string;
-};
-
 type CartContextValue = {
   items: CartItem[];
   itemCount: number;
   subtotal: number;
   addItem: (product: CartProduct, options?: { open?: boolean }) => void;
+  clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
 };
 
 const STORAGE_KEY = "soul-ease-cart";
-const LINE_URL = "https://lin.ee/zqRShGd";
 
 const CartContext = createContext<CartContextValue | null>(null);
-
-const initialForm: CustomerForm = {
-  customerName: "",
-  email: "",
-  phone: "",
-  wristSize: "",
-  fit: "剛好",
-  address: "",
-};
 
 function readStoredCart(): CartItem[] {
   if (typeof window === "undefined") return [];
@@ -77,17 +58,7 @@ function readStoredCart(): CartItem[] {
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => readStoredCart());
   const [isOpen, setIsOpen] = useState(false);
-  const [form, setForm] = useState<CustomerForm>(initialForm);
-  const createOrderMutation = trpc.shop.createOrder.useMutation({
-    onSuccess: ({ orderId }) => {
-      setItems([]);
-      setForm(initialForm);
-      toast.success(`已收到訂單 #${orderId}，我們會盡快確認。`);
-    },
-    onError: (error) => {
-      toast.error(error.message || "訂單送出失敗，請稍後再試。");
-    },
-  });
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
@@ -126,21 +97,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((current) => current.filter((item) => item.slug !== slug));
   };
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
+  const goToCheckout = () => {
     if (items.length === 0) {
       toast.error("購物車目前沒有商品。");
       return;
     }
-    createOrderMutation.mutate({
-      ...form,
-      items: items.map(({ slug, name, price, quantity }) => ({
-        slug,
-        name,
-        price,
-        quantity,
-      })),
-    });
+    setIsOpen(false);
+    setLocation("/checkout");
   };
 
   const value = useMemo<CartContextValue>(
@@ -149,6 +112,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       itemCount,
       subtotal,
       addItem,
+      clearCart: () => setItems([]),
       openCart: () => setIsOpen(true),
       closeCart: () => setIsOpen(false),
     }),
@@ -180,7 +144,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                     className="mt-1 text-lg tracking-[0.18em] text-[#31353A]"
                     style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                   >
-                    購物車與下單
+                    購物車
                   </h2>
                 </div>
                 <button
@@ -197,7 +161,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-6 px-5 py-5">
+            <div className="flex flex-1 flex-col gap-6 px-5 py-5">
               <section>
                 <div className="mb-3 flex items-center gap-2 text-[12px] tracking-[0.16em] text-[#31353A]/72">
                   <ShoppingBag size={15} />
@@ -275,143 +239,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 </div>
               </section>
 
-              <section className="space-y-4">
-                <div>
-                  <p
-                    className="text-[12px] tracking-[0.18em] text-[#31353A]/72"
-                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                  >
-                    收件與手圍資料
-                  </p>
-                  <p className="mt-2 rounded-lg bg-white/50 px-4 py-3 text-[12px] leading-[1.9] tracking-[0.05em] text-[#31353A]/58">
-                    手圍量法：拿軟尺平貼手腕繞一圈量測。沒有軟尺時，可以用棉線或紙條繞手圍，用筆做記號後，再用一般直尺量那段長度。
-                  </p>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <OrderInput
-                    label="姓名"
-                    value={form.customerName}
-                    onChange={(customerName) => setForm((current) => ({ ...current, customerName }))}
-                    required
-                  />
-                  <OrderInput
-                    label="Email"
-                    type="email"
-                    value={form.email}
-                    onChange={(email) => setForm((current) => ({ ...current, email }))}
-                    required
-                  />
-                  <OrderInput
-                    label="手機號碼"
-                    type="tel"
-                    value={form.phone}
-                    onChange={(phone) => setForm((current) => ({ ...current, phone }))}
-                    required
-                  />
-                  <OrderInput
-                    label="手圍大小"
-                    placeholder="例如 15.5 cm"
-                    value={form.wristSize}
-                    onChange={(wristSize) => setForm((current) => ({ ...current, wristSize }))}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
-                    配戴鬆緊
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(["貼手", "剛好", "微鬆"] as const).map((fit) => (
-                      <button
-                        key={fit}
-                        type="button"
-                        onClick={() => setForm((current) => ({ ...current, fit }))}
-                        className={`rounded-full border px-3 py-2.5 text-xs tracking-[0.14em] transition ${
-                          form.fit === fit
-                            ? "border-[#31353A] bg-[#31353A] text-[#FAF7F4]"
-                            : "border-[#D1BE9B]/28 bg-white/40 text-[#31353A]/68 hover:border-[#D1BE9B]/60"
-                        }`}
-                      >
-                        {fit}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <label className="block">
-                  <span className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
-                    收件地址
-                  </span>
-                  <textarea
-                    value={form.address}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, address: event.target.value }))
-                    }
-                    required
-                    rows={3}
-                    className="w-full resize-y rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-sm leading-[1.7] text-[#31353A]/78 outline-none transition focus:border-[#A38D6B]/70"
-                  />
-                </label>
-              </section>
-
               <div className="mt-auto grid gap-3 border-t border-[#D1BE9B]/16 pt-5">
                 <button
-                  type="submit"
-                  disabled={items.length === 0 || createOrderMutation.isPending}
+                  type="button"
+                  onClick={goToCheckout}
+                  disabled={items.length === 0}
                   className="w-full rounded-full bg-[#31353A] px-5 py-3.5 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#31353A]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-50"
                   style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                 >
-                  {createOrderMutation.isPending ? "送出中" : "送出訂單"}
+                  前往結帳
                 </button>
-                <a
-                  href={LINE_URL}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
                   className="w-full rounded-full border border-[#D1BE9B]/35 px-5 py-3 text-center text-xs tracking-[0.18em] text-[#8F7957] transition hover:bg-white/65"
                   style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                 >
-                  有問題可私訊官方 LINE
-                </a>
+                  繼續逛逛
+                </button>
               </div>
-            </form>
+            </div>
           </aside>
         </div>
       )}
     </CartContext.Provider>
-  );
-}
-
-function OrderInput({
-  label,
-  value,
-  onChange,
-  type = "text",
-  placeholder,
-  required,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  type?: string;
-  placeholder?: string;
-  required?: boolean;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
-        {label}
-      </span>
-      <input
-        type={type}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        required={required}
-        className="w-full rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-sm text-[#31353A]/78 outline-none transition focus:border-[#A38D6B]/70"
-      />
-    </label>
   );
 }
 

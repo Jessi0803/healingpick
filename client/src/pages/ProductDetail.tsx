@@ -40,18 +40,6 @@ export default function ProductDetailPage() {
     );
   }
 
-  const handleBuy = () => {
-    addItem(
-      {
-        slug: product.slug,
-        name: product.name,
-        price: product.price,
-        img: product.img,
-      },
-      { open: true }
-    );
-  };
-
   const mochiStorySection = product.story ? (
     <div className="mb-12 animate-fade-in-up">
       <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
@@ -200,12 +188,6 @@ export default function ProductDetailPage() {
               </div>
 
               <button
-                onClick={handleBuy}
-                className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95 shadow-md shadow-[#3D4144]/10 hover:shadow-[#D1BE9B]/20"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                下單 ♡
-              </button>
-              <button
                 type="button"
                 onClick={() =>
                   addItem({
@@ -215,7 +197,7 @@ export default function ProductDetailPage() {
                     img: product.img,
                   })
                 }
-                className="mt-3 w-full rounded-full border border-[#D1BE9B]/35 px-5 py-3 text-xs tracking-[0.2em] text-[#8F7957] transition hover:bg-white/60"
+                className="w-full rounded-full bg-[#3D4144] px-5 py-3.5 text-xs tracking-[0.2em] text-[#FAF7F4] shadow-md shadow-[#3D4144]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] hover:shadow-[#D1BE9B]/20 active:scale-95"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
                 加入購物車
               </button>

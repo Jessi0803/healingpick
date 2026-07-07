@@ -17,6 +17,7 @@ import Fortune from "./pages/Fortune";
 import Quiz from "./pages/Quiz";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import Checkout from "./pages/Checkout";
 import CustomBracelet from "./pages/CustomBracelet";
 import History from "./pages/History";
 import Buy from "./pages/Buy";
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/fortune/daily" component={Fortune} />
       <Route path="/quiz" component={Quiz} />
       <Route path="/shop" component={Shop} />
+      <Route path="/checkout" component={Checkout} />
       <Route path="/shop/custom-bracelet/general" component={CustomBracelet} />
       <Route path="/shop/custom-bracelet/numerology" component={CustomBracelet} />
       <Route path="/shop/:id" component={ProductDetail} />

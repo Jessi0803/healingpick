@@ -104,16 +104,13 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState<SortBy>('sales_desc');
   const { addItem } = useCart();
 
-  const handleOrderProduct = (product: Product) => {
-    addItem(
-      {
-        slug: product.slug,
-        name: product.name,
-        price: product.price,
-        img: product.img,
-      },
-      { open: true }
-    );
+  const handleAddProduct = (product: Product) => {
+    addItem({
+      slug: product.slug,
+      name: product.name,
+      price: product.price,
+      img: product.img,
+    });
   };
 
   const filtered = PRODUCTS
@@ -382,11 +379,11 @@ export default function ShopPage() {
                   </Link>
 
                   <button
-                    onClick={() => handleOrderProduct(product)}
+                    onClick={() => handleAddProduct(product)}
                     className="w-full py-2 text-[10px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light mt-auto"
                     style={{ fontFamily: 'Noto Serif TC, serif' }}
                   >
-                    下單 ♡
+                    加入購物車
                   </button>
                   </div>
                 ))}
