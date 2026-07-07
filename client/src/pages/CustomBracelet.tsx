@@ -29,9 +29,10 @@ import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import ContactDialog from '@/components/ContactDialog';
 import ProductCareNotice from '@/components/ProductCareNotice';
-import { CUSTOMER_FEEDBACK_PHOTOS } from '@/data/customerFeedbackPhotos';
+import { CUSTOMER_FEEDBACK_PHOTO_ITEMS } from '@/data/customerFeedbackPhotos';
 
-const GALLERY_IMAGES = CUSTOMER_FEEDBACK_PHOTOS;
+const GALLERY_PHOTOS = CUSTOMER_FEEDBACK_PHOTO_ITEMS;
+const GALLERY_IMAGES = GALLERY_PHOTOS.map(photo => photo.full);
 
 // 主視覺使用商品照示範客製風格，圖片以完整顯示避免裁切到手鍊。
 const HERO_IMAGES = [
@@ -42,8 +43,8 @@ const HERO_IMAGES = [
 const CHARM_REFERENCE_IMAGE = '/custom-bracelet/charms-reference.png';
 const FEATURED_IMAGES = GALLERY_IMAGES.slice(3, 11);
 // 顧客回饋跑馬牆：兩排照片反向捲動。
-const MARQUEE_ROW_1 = GALLERY_IMAGES.slice(0, 12);
-const MARQUEE_ROW_2 = GALLERY_IMAGES.slice(12);
+const MARQUEE_ROW_1 = GALLERY_PHOTOS.slice(0, 12);
+const MARQUEE_ROW_2 = GALLERY_PHOTOS.slice(12);
 const LIGHTBOX_IMAGES = [...HERO_IMAGES, ...GALLERY_IMAGES, CHARM_REFERENCE_IMAGE];
 
 // Hero 背景飄浮的微光星點位置。
@@ -596,23 +597,27 @@ export default function CustomBraceletPage() {
             />
             <div className="space-y-3">
               {[
-                { imgs: MARQUEE_ROW_1, dir: 'left' as const },
-                { imgs: MARQUEE_ROW_2, dir: 'right' as const },
+                { photos: MARQUEE_ROW_1, dir: 'left' as const },
+                { photos: MARQUEE_ROW_2, dir: 'right' as const },
               ].map((row) => (
                 <div key={row.dir} className="gallery-marquee overflow-hidden">
                   <div className={`gallery-row ${row.dir === 'left' ? 'gallery-row-left' : 'gallery-row-right'}`}>
-                    {[...row.imgs, ...row.imgs].map((src, i) => (
+                    {[...row.photos, ...row.photos].map((photo, i) => (
                       <button
-                        key={`${src}-${i}`}
+                        key={`${photo.full}-${i}`}
                         type="button"
                         aria-label="放大顧客實拍"
-                        onClick={() => openLightbox(src)}
+                        onClick={() => openLightbox(photo.full)}
                         className="group relative mr-3 aspect-[3/4] w-40 flex-shrink-0 overflow-hidden rounded-2xl border border-[#D1BE9B]/20 bg-white/40 md:w-48"
                       >
                         <img
-                          src={src}
+                          src={photo.thumb}
                           alt="顧客回饋與客製化商品實拍圖"
                           loading="lazy"
+                          decoding="async"
+                          width={360}
+                          height={480}
+                          sizes="(min-width: 768px) 12rem, 10rem"
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                         <span

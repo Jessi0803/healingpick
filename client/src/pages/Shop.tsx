@@ -16,7 +16,7 @@ import {
   getProductFitSummary,
   type Product,
 } from "@/data/products";
-import { CUSTOMER_FEEDBACK_PHOTOS } from "@/data/customerFeedbackPhotos";
+import { CUSTOMER_FEEDBACK_PHOTO_ITEMS } from "@/data/customerFeedbackPhotos";
 import { useCart } from "@/contexts/CartContext";
 
 // 精選輪播選品，使用獨立圖片避免輪播文案遮到手鍊本身。
@@ -33,7 +33,7 @@ const STATS = [
 ];
 
 // 顧客回饋＆實拍照（沿用客製頁那批真實顧客照）。
-const FEEDBACK_PHOTOS = CUSTOMER_FEEDBACK_PHOTOS;
+const FEEDBACK_PHOTOS = CUSTOMER_FEEDBACK_PHOTO_ITEMS;
 
 const SORT_OPTIONS = [
   { id: "sales_desc", label: "熱銷商品排序" },
@@ -951,18 +951,22 @@ function FeaturedBand({
                 onClick={e => e.stopPropagation()}
               >
                 <div className="mx-auto grid max-w-5xl grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                  {FEEDBACK_PHOTOS.map((src, i) => (
+                  {FEEDBACK_PHOTOS.map((photo, i) => (
                     <button
-                      key={src}
+                      key={photo.full}
                       type="button"
                       onClick={() => setFbIndex(i)}
                       aria-label={`放大第 ${i + 1} 張顧客回饋照片`}
                       className="group aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 bg-white/8 shadow-[0_12px_26px_rgba(0,0,0,0.18)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#D1BE9B]/70 active:scale-[0.98]"
                     >
                       <img
-                        src={src}
+                        src={photo.thumb}
                         alt={`顧客回饋與實拍，第 ${i + 1} 張`}
                         loading="lazy"
+                        decoding="async"
+                        width={360}
+                        height={480}
+                        sizes="(min-width: 1024px) 10rem, (min-width: 640px) 33vw, 50vw"
                         className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
                       />
                     </button>
@@ -985,9 +989,10 @@ function FeaturedBand({
                 <div className="flex min-h-0 flex-1 items-center justify-center">
                   <img
                     key={fbIndex}
-                    src={FEEDBACK_PHOTOS[fbIndex]}
+                    src={FEEDBACK_PHOTOS[fbIndex].full}
                     alt={`顧客回饋與實拍，第 ${fbIndex + 1} 張`}
                     onClick={e => e.stopPropagation()}
+                    decoding="async"
                     className="lightbox-image max-h-[calc(100vh-13.5rem)] max-w-full rounded-2xl object-contain shadow-2xl md:max-h-[calc(100vh-11rem)]"
                   />
                 </div>
