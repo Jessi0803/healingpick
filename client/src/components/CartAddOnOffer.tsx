@@ -48,7 +48,7 @@ export default function CartAddOnOffer({ compact = false }: CartAddOnOfferProps)
               type="button"
               onClick={() => addItem(AMETHYST_CHIPS_ADD_ON)}
               disabled={isAdded}
-              className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-[#31353A] px-4 text-[11px] tracking-[0.16em] text-[#FAF7F4] transition hover:bg-[#8C6FA8] disabled:cursor-default disabled:bg-[#D1BE9B]/55 disabled:text-[#31353A]/62"
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#8C6FA8]/35 bg-white/72 px-4 text-[11px] tracking-[0.16em] text-[#7A5F95] shadow-[0_8px_22px_rgba(140,111,168,0.12)] transition-[background-color,border-color,color,box-shadow,transform] hover:border-[#8C6FA8]/70 hover:bg-[#8C6FA8] hover:text-white hover:shadow-[0_10px_26px_rgba(140,111,168,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8C6FA8]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F8F3FB] active:scale-[0.98] disabled:cursor-default disabled:border-[#D1BE9B]/35 disabled:bg-[#FAF7F4]/70 disabled:text-[#8A7250]/70 disabled:shadow-none"
               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
             >
               {isAdded ? <Check size={14} /> : <Plus size={14} />}
