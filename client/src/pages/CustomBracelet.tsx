@@ -38,8 +38,9 @@ const HERO_IMAGES = [
   '/products/jiao-tang-ma-qi-duo/2.jpg',
   '/products/wen-rou-yue-guang/1.jpg',
 ];
+const CHARM_REFERENCE_IMAGE = '/custom-bracelet/charms-reference.png';
 const FEATURED_IMAGES = GALLERY_IMAGES.slice(3, 11);
-const LIGHTBOX_IMAGES = [...HERO_IMAGES, ...GALLERY_IMAGES];
+const LIGHTBOX_IMAGES = [...HERO_IMAGES, ...GALLERY_IMAGES, CHARM_REFERENCE_IMAGE];
 
 // Hero 背景飄浮的微光星點位置。
 const SPARKLES = [
@@ -107,6 +108,8 @@ const CLASP_OPTIONS = [
   { key: '延長鏈', en: 'Extension Chain', image: '/custom-bracelet/clasps/extension-chain.png' },
 ];
 
+const CHARM_OPTIONS = ['不需要加吊飾', '需要加吊飾', '想先看款式再決定'];
+
 const FORM_INITIAL = {
   name: '',
   birthDate: '',
@@ -119,6 +122,7 @@ const FORM_INITIAL = {
   avoidCrystals: '',
   metalPreference: '',
   claspPreference: '',
+  charmPreference: '',
   contact: '',
   notes: '',
 };
@@ -184,6 +188,7 @@ export default function CustomBraceletPage() {
         `不喜歡或想避開的水晶：${form.avoidCrystals || '無'}`,
         `金屬偏好：${form.metalPreference || '未填'}`,
         `扣件類型：${form.claspPreference || '未填'}`,
+        `是否加吊飾：${form.charmPreference || '未填'}`,
         `Instagram / LINE：${form.contact || '未填'}`,
         `其他備註：${form.notes || '無'}`,
       ].join('\n'),
@@ -237,6 +242,10 @@ export default function CustomBraceletPage() {
     event.preventDefault();
     if (!form.name.trim() || !form.contact.trim() || !form.wristSize.trim() || !form.energyNeeds.trim()) {
       toast.error('請先填寫姓名、聯絡方式、手圍與主要需求');
+      return;
+    }
+    if (!form.charmPreference.trim()) {
+      toast.error('請先選擇是否需要加吊飾');
       return;
     }
     if (mode === 'numerology' && !form.birthDate.trim()) {
@@ -694,6 +703,48 @@ export default function CustomBraceletPage() {
                           </button>
                         );
                       })}
+                    </div>
+                  </Field>
+                  <Field
+                    label="需要加吊飾嗎？"
+                    required
+                    wide
+                    hint="可先參考示意圖挑選方向，實際款式與庫存會再由客服協助確認。"
+                  >
+                    <div className="overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/55">
+                      <button
+                        type="button"
+                        onClick={() => openLightbox(CHARM_REFERENCE_IMAGE)}
+                        className="group block w-full overflow-hidden bg-[#F0E8DC]"
+                      >
+                        <img
+                          src={CHARM_REFERENCE_IMAGE}
+                          alt="吊飾款式示意圖"
+                          loading="lazy"
+                          className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                        />
+                      </button>
+                      <div className="grid gap-2 p-3 sm:grid-cols-3">
+                        {CHARM_OPTIONS.map((option) => {
+                          const active = form.charmPreference === option;
+                          return (
+                            <button
+                              key={option}
+                              type="button"
+                              onClick={() => update('charmPreference', option)}
+                              className={`rounded-full border px-3 py-2.5 text-center text-[11px] tracking-[0.1em] transition-all duration-200 ${
+                                active
+                                  ? 'border-[#A38D6B] bg-[#3D4144] text-[#FAF7F4]'
+                                  : 'border-[#D1BE9B]/28 bg-[#FAF7F4]/70 text-[#31353A]/68 hover:border-[#A38D6B]/50'
+                              }`}
+                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                              aria-pressed={active}
+                            >
+                              {option}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </Field>
                   <Field label="其他備註" wide>
