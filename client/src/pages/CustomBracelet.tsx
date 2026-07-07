@@ -714,7 +714,7 @@ export default function CustomBraceletPage() {
                       <option value="微鬆">微鬆</option>
                     </select>
                   </Field>
-                  <Field label="Instagram / LINE（提供 Instagram / LINE 以便私訊客製設計完成的手鍊圖）" required>
+                  <Field label="Instagram / LINE（以便私訊客製設計完成的手鍊圖）" required>
                     <input value={form.contact} onChange={(e) => update('contact', e.target.value)} className={inputClass} placeholder="@account 或 LINE ID" />
                   </Field>
                 </div>
