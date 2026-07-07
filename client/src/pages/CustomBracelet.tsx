@@ -135,9 +135,6 @@ const CLASP_OPTIONS = [
   },
 ];
 
-const CUSTOM_PRICE_LABEL = '客製款 NT$ 1,580';
-const CUSTOM_ADD_ON_PRICE_NOTE = '加狐仙或貔貅 +400；加貓貓頭 +300。';
-const CUSTOM_PRICE_HINT = `${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}`;
 const CUSTOM_BASE_PRICE = 1580;
 const CUSTOM_BRACELET_IMAGE = '/custom-bracelet/charms-reference.png';
 
@@ -924,7 +921,6 @@ export default function CustomBraceletPage() {
                     group
                     required={form.charmNeed === '需要加吊飾'}
                     wide
-                    hint={CUSTOM_PRICE_HINT}
                   >
                     <div className="overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/55">
                       <div className="grid gap-2.5 p-2.5 sm:grid-cols-2">
