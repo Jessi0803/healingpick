@@ -268,14 +268,12 @@ export default function CustomBraceletPage() {
     setForm((current) => ({
       ...current,
       charmNeed: value,
-      charmPreference: value === '需要加吊飾' ? current.charmPreference : '',
     }));
   };
 
   const selectCharmPreference = (value: string) => {
     setForm((current) => ({
       ...current,
-      charmNeed: '需要加吊飾',
       charmPreference: value,
     }));
   };
@@ -347,10 +345,6 @@ export default function CustomBraceletPage() {
     }
     if (!form.charmNeed.trim()) {
       toast.error('請先選擇是否需要加吊飾');
-      return;
-    }
-    if (form.charmNeed === '需要加吊飾' && !form.charmPreference.trim()) {
-      toast.error('請先選擇想加強的能量吊飾');
       return;
     }
     if (mode === 'numerology' && !form.birthDate.trim()) {
@@ -956,7 +950,6 @@ export default function CustomBraceletPage() {
                   <Field
                     label="想加強能量嗎？"
                     group
-                    required={form.charmNeed === '需要加吊飾'}
                     wide
                   >
                     <div className="overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/55">
