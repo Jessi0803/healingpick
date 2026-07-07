@@ -44,16 +44,19 @@ const CHARM_REFERENCE_IMAGES = [
     src: '/custom-bracelet/fox-pixiu-reference.png',
     title: '狐仙／貔貅示意',
     note: '狐仙或貔貅加購款式 +400',
+    preference: '狐仙 +400',
   },
   {
     src: '/custom-bracelet/pixiu-reference.png',
     title: '貔貅示意',
     note: '貔貅加購款式 +400',
+    preference: '貔貅 +400',
   },
   {
     src: '/custom-bracelet/cat-head-reference.png',
     title: '貓貓頭示意',
     note: '貓貓頭加購款式 +300',
+    preference: '貓貓頭 +300',
   },
 ];
 const CUSTOM_BRACELET_IMAGE = '/custom-bracelet/charms-reference.png';
@@ -153,13 +156,6 @@ const CHARM_NEED_OPTIONS = [
   '不需要加吊飾',
 ];
 
-const CHARM_STYLE_OPTIONS = [
-  '狐仙 +400',
-  '貔貅 +400',
-  '貓貓頭 +300',
-  '都可以，依款式造型設計',
-];
-
 const CHARM_PRICE_MAP: Record<string, number> = {
   '狐仙 +400': 400,
   '貔貅 +400': 400,
@@ -208,6 +204,7 @@ const PAGE_COPY: Record<
     contactProductName: string;
     heroIntro: string;
     heroLead: string;
+    priceLabel: string;
   }
 > = {
   general: {
@@ -218,6 +215,7 @@ const PAGE_COPY: Record<
     contactProductName: '一般客製化手鍊',
     heroIntro: '',
     heroLead: '老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。',
+    priceLabel: 'NT$ 1,580',
   },
   numerology: {
     title: '生命靈數客製化手鍊',
@@ -228,6 +226,7 @@ const PAGE_COPY: Record<
     heroIntro:
       '生命靈數會從你的出生年月日整理出天生特質、行動節奏與現階段適合補強的能量方向。客製時會把生日數字與你近期的需求一起參考，讓水晶搭配更貼近你的個人狀態。',
     heroLead: '老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。',
+    priceLabel: 'NT$ 1,580',
   },
 };
 
@@ -268,12 +267,14 @@ export default function CustomBraceletPage() {
     setForm((current) => ({
       ...current,
       charmNeed: value,
+      charmPreference: value === '需要加吊飾' ? current.charmPreference : '',
     }));
   };
 
   const selectCharmPreference = (value: string) => {
     setForm((current) => ({
       ...current,
+      charmNeed: '需要加吊飾',
       charmPreference: value,
     }));
   };
@@ -347,6 +348,10 @@ export default function CustomBraceletPage() {
       toast.error('請先選擇是否需要加吊飾');
       return;
     }
+    if (form.charmNeed === '需要加吊飾' && !form.charmPreference.trim()) {
+      toast.error('請先點選想加購的吊飾圖片');
+      return;
+    }
     if (mode === 'numerology' && !form.birthDate.trim()) {
       toast.error('請先填寫出生年月日');
       return;
@@ -406,7 +411,7 @@ export default function CustomBraceletPage() {
                 {copy.heroEyebrow}
               </p>
               <h1
-                className="mb-5 text-3xl leading-[1.35] tracking-[0.12em] text-[#31353A] md:text-[2.6rem]"
+                className="mb-4 text-3xl leading-[1.35] tracking-[0.12em] text-[#31353A] md:text-[2.6rem]"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 {copy.title.split('').map((ch, i) => (
@@ -419,6 +424,17 @@ export default function CustomBraceletPage() {
                   </span>
                 ))}
               </h1>
+              <div
+                className="animate-fade-in-up mb-5 inline-flex items-baseline gap-3 rounded-full border border-[#D1BE9B]/35 bg-white/58 px-5 py-2.5 text-[#8F7957] shadow-[0_10px_24px_rgba(163,141,107,0.07)]"
+                style={{ fontFamily: 'Noto Serif TC, serif', animationDelay: '0.42s' }}
+              >
+                <span className="text-[11px] tracking-[0.18em]" style={{ fontWeight: 300 }}>
+                  客製價格
+                </span>
+                <span className="text-[18px] tracking-[0.08em]" style={{ fontWeight: 400 }}>
+                  {copy.priceLabel}
+                </span>
+              </div>
               {copy.heroIntro && (
                 <div
                   className="animate-fade-in-up mb-5 overflow-hidden rounded-3xl border border-[#C9B7E0]/35 bg-gradient-to-br from-white/62 to-[#F1EAFA]/48 px-5 py-4 shadow-[0_12px_30px_rgba(150,130,190,0.10)]"
@@ -954,47 +970,45 @@ export default function CustomBraceletPage() {
                   >
                     <div className="overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/55">
                       <div className="grid gap-2.5 p-2.5 sm:grid-cols-3">
-                        {CHARM_REFERENCE_IMAGES.map((image) => (
-                          <button
-                            key={image.src}
-                            type="button"
-                            onClick={() => openLightbox(image.src)}
-                            className="group overflow-hidden rounded-xl border border-[#D1BE9B]/18 bg-[#F0E8DC] text-left transition-all duration-200 hover:border-[#A38D6B]/45"
-                          >
-                            <img
-                              src={image.src}
-                              alt={image.title}
-                              loading="lazy"
-                              className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                            />
-                            <span className="block bg-white/72 px-3 py-2">
-                              <span className="block text-[12px] tracking-[0.1em] text-[#31353A]/80" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
-                                {image.title}
-                              </span>
-                              <span className="mt-0.5 block text-[10px] tracking-[0.08em] text-[#A38D6B]/75" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
-                                {image.note}
-                              </span>
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                      <div className="grid gap-2 p-3 sm:grid-cols-2 lg:grid-cols-4">
-                        {CHARM_STYLE_OPTIONS.map((option) => {
-                          const active = form.charmPreference === option;
+                        {CHARM_REFERENCE_IMAGES.map((image) => {
+                          const active = form.charmNeed === '需要加吊飾' && form.charmPreference === image.preference;
                           return (
                             <button
-                              key={option}
+                              key={image.src}
                               type="button"
-                              onClick={() => selectCharmPreference(option)}
-                              className={`rounded-full border px-3 py-2.5 text-center text-[11px] tracking-[0.1em] transition-all duration-200 ${
+                              onClick={() => selectCharmPreference(image.preference)}
+                              className={`group relative overflow-hidden rounded-xl border bg-[#F0E8DC] text-left transition-all duration-200 ${
                                 active
-                                  ? 'border-[#A38D6B] bg-[#3D4144] text-[#FAF7F4]'
-                                  : 'border-[#D1BE9B]/28 bg-[#FAF7F4]/70 text-[#31353A]/68 hover:border-[#A38D6B]/50'
+                                  ? 'border-[#A38D6B] ring-1 ring-[#A38D6B]/35'
+                                  : 'border-[#D1BE9B]/18 hover:border-[#A38D6B]/45'
                               }`}
-                              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                               aria-pressed={active}
                             >
-                              {option}
+                              {active && (
+                                <span className="absolute right-3 top-3 z-10 rounded-full bg-[#3D4144] px-2 py-1 text-[10px] tracking-[0.1em] text-[#FAF7F4] shadow-sm">
+                                  已選
+                                </span>
+                              )}
+                              <img
+                                src={image.src}
+                                alt={image.title}
+                                loading="lazy"
+                                className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                              />
+                              <span className={`block px-3 py-2 transition-colors duration-200 ${active ? 'bg-[#3D4144] text-[#FAF7F4]' : 'bg-white/72'}`}>
+                                <span
+                                  className={`block text-[12px] tracking-[0.1em] ${active ? 'text-[#FAF7F4]' : 'text-[#31353A]/80'}`}
+                                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+                                >
+                                  {image.title}
+                                </span>
+                                <span
+                                  className={`mt-0.5 block text-[10px] tracking-[0.08em] ${active ? 'text-[#FAF7F4]/74' : 'text-[#A38D6B]/75'}`}
+                                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                                >
+                                  {image.note}
+                                </span>
+                              </span>
                             </button>
                           );
                         })}
