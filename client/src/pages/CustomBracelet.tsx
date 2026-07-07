@@ -51,11 +51,17 @@ const CHARM_REFERENCE_IMAGES = [
     note: '貓貓頭加購款式 +300',
   },
 ];
+const CUSTOM_BRACELET_IMAGE = '/custom-bracelet/charms-reference.png';
 const FEATURED_IMAGES = GALLERY_IMAGES.slice(3, 11);
 // 顧客回饋跑馬牆：兩排照片反向捲動。
 const MARQUEE_ROW_1 = GALLERY_PHOTOS.slice(0, 12);
 const MARQUEE_ROW_2 = GALLERY_PHOTOS.slice(12);
-const LIGHTBOX_IMAGES = [...HERO_IMAGES, ...GALLERY_IMAGES, ...CHARM_REFERENCE_IMAGES.map(image => image.src)];
+const LIGHTBOX_IMAGES = [
+  ...HERO_IMAGES,
+  ...GALLERY_IMAGES,
+  CUSTOM_BRACELET_IMAGE,
+  ...CHARM_REFERENCE_IMAGES.map(image => image.src),
+];
 
 // Hero 背景飄浮的微光星點位置。
 const SPARKLES = [
@@ -136,7 +142,6 @@ const CLASP_OPTIONS = [
 ];
 
 const CUSTOM_BASE_PRICE = 1580;
-const CUSTOM_BRACELET_IMAGE = '/custom-bracelet/charms-reference.png';
 
 const CHARM_NEED_OPTIONS = [
   '需要加吊飾',
@@ -262,6 +267,14 @@ export default function CustomBraceletPage() {
     }));
   };
 
+  const selectCharmPreference = (value: string) => {
+    setForm((current) => ({
+      ...current,
+      charmNeed: '需要加吊飾',
+      charmPreference: value,
+    }));
+  };
+
   const handleReferenceImageChange = (file?: File) => {
     if (!file) {
       setReferenceImage(null);
@@ -332,7 +345,7 @@ export default function CustomBraceletPage() {
       return;
     }
     if (form.charmNeed === '需要加吊飾' && !form.charmPreference.trim()) {
-      toast.error('請先選擇想加哪一種吊飾');
+      toast.error('請先選擇想加強的能量吊飾');
       return;
     }
     if (mode === 'numerology' && !form.birthDate.trim()) {
@@ -894,6 +907,26 @@ export default function CustomBraceletPage() {
                     wide
                     hint="這題只確認是否加吊飾，款式會在下一題選擇。"
                   >
+                    <button
+                      type="button"
+                      onClick={() => openLightbox(CUSTOM_BRACELET_IMAGE)}
+                      className="group mb-3 block w-full overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-[#F0E8DC] text-left transition-all duration-200 hover:border-[#A38D6B]/45"
+                    >
+                      <img
+                        src={CUSTOM_BRACELET_IMAGE}
+                        alt="吊飾總覽參考"
+                        loading="lazy"
+                        className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                      />
+                      <span className="block bg-white/72 px-3 py-2">
+                        <span className="block text-[12px] tracking-[0.1em] text-[#31353A]/80" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                          吊飾款式總覽
+                        </span>
+                        <span className="mt-0.5 block text-[10px] tracking-[0.08em] text-[#A38D6B]/75" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                          可先看整體款式，再選擇是否加強能量。
+                        </span>
+                      </span>
+                    </button>
                     <div className="grid gap-2 sm:grid-cols-2">
                       {CHARM_NEED_OPTIONS.map((option) => {
                         const active = form.charmNeed === option;
@@ -917,7 +950,7 @@ export default function CustomBraceletPage() {
                     </div>
                   </Field>
                   <Field
-                    label="想加哪一種吊飾？"
+                    label="想加強能量嗎？"
                     group
                     required={form.charmNeed === '需要加吊飾'}
                     wide
@@ -951,21 +984,15 @@ export default function CustomBraceletPage() {
                       <div className="grid gap-2 p-3 sm:grid-cols-2 lg:grid-cols-4">
                         {CHARM_STYLE_OPTIONS.map((option) => {
                           const active = form.charmPreference === option;
-                          const disabled = form.charmNeed !== '需要加吊飾';
                           return (
                             <button
                               key={option}
                               type="button"
-                              onClick={() => {
-                                if (!disabled) update('charmPreference', option);
-                              }}
-                              disabled={disabled}
+                              onClick={() => selectCharmPreference(option)}
                               className={`rounded-full border px-3 py-2.5 text-center text-[11px] tracking-[0.1em] transition-all duration-200 ${
                                 active
                                   ? 'border-[#A38D6B] bg-[#3D4144] text-[#FAF7F4]'
-                                  : disabled
-                                    ? 'border-[#D1BE9B]/18 bg-[#FAF7F4]/45 text-[#31353A]/35'
-                                    : 'border-[#D1BE9B]/28 bg-[#FAF7F4]/70 text-[#31353A]/68 hover:border-[#A38D6B]/50'
+                                  : 'border-[#D1BE9B]/28 bg-[#FAF7F4]/70 text-[#31353A]/68 hover:border-[#A38D6B]/50'
                               }`}
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                               aria-pressed={active}
