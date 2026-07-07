@@ -20,6 +20,7 @@ export interface Product {
   material: string;
   price: number;
   priceLabel?: string;
+  href?: string;
   originalPrice: number | null;
   tag: string | null;
   /** Short, customer-facing fit cue for shop cards. */
@@ -50,6 +51,50 @@ export interface Product {
 
 const imgs = (slug: string, count: number): string[] =>
   Array.from({ length: count }, (_, i) => `/products/${slug}/${i + 1}.jpg`);
+
+export const CUSTOM_BRACELET_RECOMMENDATION_PRODUCT: Product = {
+  slug: 'custom-bracelet-general',
+  name: '一般客製化手鍊',
+  subtitle: 'Personalized Crystal Bracelet',
+  tagline: '如果現有商品都只像靠近一點點,\n也可以把你的近期狀態做成一條專屬手鍊。',
+  category: 'healing',
+  categories: ['custom-bracelet', 'healing', 'protect', 'love', 'career', 'wealth', 'sleep', 'courage'],
+  material: '依照需求客製搭配',
+  price: 1580,
+  priceLabel: 'NT$ 1,580 起',
+  href: '/shop/custom-bracelet/general',
+  originalPrice: null,
+  tag: '客製款',
+  fitSummary: '適合想依照個人狀態、手圍與喜好客製搭配的你',
+  gentleRecommendation:
+    '如果你想讓水晶搭配更貼近這次解讀裡的狀態,客製化手鍊可以依照你的需求、手圍、色系與能量方向一起設計。',
+  pairingReason:
+    '如果現有款式都只靠近一部分,客製化手鍊可以把你的近期狀態與偏好整理成更專屬的搭配。',
+  imageZoom: 1,
+  imageFit: 'cover',
+  imagePosition: 'center center',
+  images: ['/custom-bracelet/general/IMG_4832.PNG'],
+  img: '/custom-bracelet/general/IMG_4832.PNG',
+  features: [
+    { emoji: '✨', title: '依需求客製', desc: '依照想加強的能量、色系、手圍與配戴偏好搭配。' },
+    { emoji: '💎', title: '專屬水晶組合', desc: '把近期狀態整理成更貼近自己的水晶手鍊。' },
+    { emoji: '🪄', title: '設計可討論', desc: '提供設計圖與修改空間,讓成品更接近你的想像。' },
+  ],
+  meanings: [
+    { emoji: '✨', title: '專屬搭配', desc: '依照個人狀態整理水晶方向。' },
+    { emoji: '💎', title: '能量整合', desc: '把不同需求放進同一條日常手鍊。' },
+    { emoji: '🌙', title: '貼近日常', desc: '讓配戴習慣、色系與尺寸都更合適。' },
+  ],
+  suitedFor: [
+    '想要一條更貼近個人狀態的手鍊',
+    '希望依照手圍、色系與能量需求搭配',
+    '看完占卜後想把提醒落成專屬配戴物',
+  ],
+  story:
+    '有時候,你需要的不是剛好某一款現成商品。\n\n而是一條把現在的狀態、喜歡的顏色、配戴習慣和想加強的能量都放進去的手鍊。\n\n客製化手鍊就是為這樣的時候準備的。',
+  closing:
+    '願這條客製手鍊,把這次解讀裡最重要的提醒,變成每天都能戴在身上的陪伴。 ✨',
+};
 
 export function getProductCategories(product: Product): string[] {
   return product.categories ?? [product.category];

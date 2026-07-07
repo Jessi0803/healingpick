@@ -78,10 +78,11 @@ function ProductCard({
     role
   );
   const roleLabel = role === "primary" ? "最貼近這個夢" : "也可以一起看";
+  const productHref = product.href ?? `/shop/${product.slug}`;
 
   if (role === "secondary") {
     return (
-      <Link href={`/shop/${product.slug}`}>
+      <Link href={productHref}>
         <div className="group flex items-center gap-3 rounded-2xl border border-[#D1BE9B]/22 bg-white/45 p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45">
           <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-[#F0EBE3]/40">
             <ProductImageWatermark
@@ -125,7 +126,7 @@ function ProductCard({
   }
 
   return (
-    <Link href={`/shop/${product.slug}`}>
+    <Link href={productHref}>
       <div className="flex cursor-pointer flex-col gap-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/42 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/50 sm:flex-row">
         <div className="h-52 w-full flex-shrink-0 overflow-hidden rounded-xl bg-[#F0EBE3]/40 sm:h-32 sm:w-32">
           <ProductImageWatermark

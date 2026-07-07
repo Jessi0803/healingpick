@@ -8,7 +8,12 @@
  *  - tie-break by stable order in PRODUCTS
  */
 
-import { PRODUCTS, getProductCategories, type Product } from './products';
+import {
+  CUSTOM_BRACELET_RECOMMENDATION_PRODUCT,
+  PRODUCTS,
+  getProductCategories,
+  type Product,
+} from './products';
 
 export type RecommendationCategory =
   | 'protect'
@@ -24,6 +29,8 @@ type Signal = {
   keywords?: string[];
   preferSlugs?: string[];
 };
+
+const RECOMMENDATION_PRODUCTS = [...PRODUCTS, CUSTOM_BRACELET_RECOMMENDATION_PRODUCT];
 
 function scoreProduct(p: Product, sig: Signal): number {
   let score = 0;
@@ -74,7 +81,7 @@ function isBracelet(p: Product): boolean {
 const BRACELET_BONUS = 100;
 
 function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product[] {
-  const ranked = PRODUCTS
+  const ranked = RECOMMENDATION_PRODUCTS
     .map((p) => {
       const base = scoreProduct(p, sig);
       const score = base > 0 && isBracelet(p) ? base + BRACELET_BONUS : base;
@@ -90,7 +97,7 @@ function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product
   }
 
   if (picks.length < limit && fallbackCategory) {
-    const rest = PRODUCTS
+    const rest = RECOMMENDATION_PRODUCTS
       .filter(
         (p) => !picks.some((x) => x.slug === p.slug) && getProductCategories(p).includes(fallbackCategory),
       )
@@ -102,7 +109,19 @@ function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product
   }
 
   if (picks.length === 0) picks.push(PRODUCTS.find(isBracelet) ?? PRODUCTS[0]);
-  return picks;
+  return includeCustomBraceletOption(picks, limit);
+}
+
+function includeCustomBraceletOption(picks: Product[], limit: number): Product[] {
+  if (limit <= 0 || picks.some((p) => p.slug === CUSTOM_BRACELET_RECOMMENDATION_PRODUCT.slug)) {
+    return picks;
+  }
+
+  if (picks.length < limit) {
+    return [...picks, CUSTOM_BRACELET_RECOMMENDATION_PRODUCT];
+  }
+
+  return [...picks.slice(0, Math.max(1, limit - 1)), CUSTOM_BRACELET_RECOMMENDATION_PRODUCT];
 }
 
 

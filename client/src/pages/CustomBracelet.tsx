@@ -46,6 +46,11 @@ const CHARM_REFERENCE_IMAGES = [
     note: '狐仙或貔貅加購款式 +400',
   },
   {
+    src: '/custom-bracelet/pixiu-reference.png',
+    title: '貔貅示意',
+    note: '貔貅加購款式 +400',
+  },
+  {
     src: '/custom-bracelet/cat-head-reference.png',
     title: '貓貓頭示意',
     note: '貓貓頭加購款式 +300',
@@ -955,7 +960,7 @@ export default function CustomBraceletPage() {
                     wide
                   >
                     <div className="overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/55">
-                      <div className="grid gap-2.5 p-2.5 sm:grid-cols-2">
+                      <div className="grid gap-2.5 p-2.5 sm:grid-cols-3">
                         {CHARM_REFERENCE_IMAGES.map((image) => (
                           <button
                             key={image.src}
