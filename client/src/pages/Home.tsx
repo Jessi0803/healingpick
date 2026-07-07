@@ -16,7 +16,8 @@ import PageLayout from "@/components/PageLayout";
 import Reveal from "@/components/Reveal";
 import { CatPeeking } from "@/components/CatElements";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { PRODUCTS, getProductImageStyle } from "@/data/products";
+import ProductImageWatermark from "@/components/ProductImageWatermark";
+import { PRODUCTS } from "@/data/products";
 import ContactDialog from "@/components/ContactDialog";
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
@@ -627,7 +628,10 @@ export default function Home() {
           <Reveal className="text-center mb-14">
             <span
               className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-              style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
+              style={{
+                fontFamily: "Cormorant Garamond, serif",
+                fontWeight: 400,
+              }}
             >
               Our Services
             </span>
@@ -649,7 +653,12 @@ export default function Home() {
 
           <Reveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
             {features.map((f, i) => (
-              <Link key={f.href} href={f.href} className="reveal-child block" style={{ transitionDelay: `${i * 70}ms` }}>
+              <Link
+                key={f.href}
+                href={f.href}
+                className="reveal-child block"
+                style={{ transitionDelay: `${i * 70}ms` }}
+              >
                 <div
                   className="group relative h-full p-6 rounded-xl border border-[#D1BE9B]/20 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)]"
                   style={{
@@ -773,7 +782,10 @@ export default function Home() {
           <div className="text-center mb-14">
             <span
               className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-              style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
+              style={{
+                fontFamily: "Cormorant Garamond, serif",
+                fontWeight: 400,
+              }}
             >
               Crystal Altar
             </span>
@@ -948,7 +960,10 @@ export default function Home() {
             <div className="order-1 lg:order-2 animate-fade-in-up delay-200">
               <span
                 className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-                style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
               >
                 Zi Wei Dou Shu
               </span>
@@ -1022,7 +1037,10 @@ export default function Home() {
             <div className="animate-fade-in-up">
               <span
                 className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-                style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
               >
                 Tarot Reading
               </span>
@@ -1198,7 +1216,10 @@ export default function Home() {
             <div className="relative z-10 max-w-lg">
               <span
                 className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-                style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
               >
                 Psychological Resonance
               </span>
@@ -1246,7 +1267,10 @@ export default function Home() {
             <div>
               <span
                 className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-                style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
               >
                 Energy Crystals
               </span>
@@ -1277,11 +1301,10 @@ export default function Home() {
                 <Link href={`/shop/${p.slug}`}>
                   <div className="cursor-pointer">
                     <div className="relative overflow-hidden rounded-xl mb-3 aspect-square bg-[#F0E8DC]">
-                      <img
-                        src={p.img}
+                      <ProductImageWatermark
+                        product={p}
                         alt={p.name}
-                        className="w-full h-full object-cover transition-transform duration-700"
-                        style={getProductImageStyle(p)}
+                        imageClassName="w-full h-full object-cover transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       {p.tag && (
@@ -1347,7 +1370,10 @@ export default function Home() {
           <div className="text-center">
             <span
               className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-              style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}
+              style={{
+                fontFamily: "Cormorant Garamond, serif",
+                fontWeight: 400,
+              }}
             >
               Gentle Echoes
             </span>

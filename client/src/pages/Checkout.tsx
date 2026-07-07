@@ -3,7 +3,9 @@ import { Link } from "wouter";
 import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import PageLayout from "@/components/PageLayout";
+import ProductImageWatermark from "@/components/ProductImageWatermark";
 import { useCart } from "@/contexts/CartContext";
+import { findProduct } from "@/data/products";
 import { trpc } from "@/lib/trpc";
 
 type CustomerForm = {
@@ -69,7 +71,7 @@ export default function CheckoutPage() {
       document.body.appendChild(payuniForm);
       payuniForm.submit();
     },
-    onError: (error) => {
+    onError: error => {
       if (error.message === "PAYUNI_NOT_CONFIGURED") {
         toast.error("金流尚未完成設定，請稍後再試。");
         return;
@@ -84,7 +86,12 @@ export default function CheckoutPage() {
       toast.error("購物車目前沒有商品。");
       return;
     }
-    const address = [form.postalCode, form.city, form.district, form.streetAddress].join("");
+    const address = [
+      form.postalCode,
+      form.city,
+      form.district,
+      form.streetAddress,
+    ].join("");
     createOrderMutation.mutate({
       customerName: form.customerName,
       email: form.email,
@@ -122,7 +129,10 @@ export default function CheckoutPage() {
 
           {items.length === 0 ? (
             <section className="rounded-2xl border border-dashed border-[#D1BE9B]/35 bg-white/45 px-6 py-14 text-center">
-              <ShoppingBag className="mx-auto mb-4 text-[#A38D6B]/70" size={28} />
+              <ShoppingBag
+                className="mx-auto mb-4 text-[#A38D6B]/70"
+                size={28}
+              />
               <p className="mb-6 text-sm tracking-[0.16em] text-[#31353A]/58">
                 購物車目前沒有商品
               </p>
@@ -130,19 +140,28 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   className="rounded-full bg-[#31353A] px-6 py-3 text-xs tracking-[0.2em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A]"
-                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
                 >
                   返回商店
                 </button>
               </Link>
             </section>
           ) : (
-            <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1fr_360px]">
+            <form
+              onSubmit={handleSubmit}
+              className="grid gap-6 lg:grid-cols-[1fr_360px]"
+            >
               <section className="rounded-2xl border border-[#D1BE9B]/20 bg-white/48 p-5 md:p-6">
                 <div className="mb-5">
                   <p
                     className="text-[12px] tracking-[0.18em] text-[#31353A]/72"
-                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
                   >
                     收件與手圍資料
                   </p>
@@ -152,28 +171,36 @@ export default function CheckoutPage() {
                   <OrderInput
                     label="姓名"
                     value={form.customerName}
-                    onChange={(customerName) => setForm((current) => ({ ...current, customerName }))}
+                    onChange={customerName =>
+                      setForm(current => ({ ...current, customerName }))
+                    }
                     required
                   />
                   <OrderInput
                     label="Email"
                     type="email"
                     value={form.email}
-                    onChange={(email) => setForm((current) => ({ ...current, email }))}
+                    onChange={email =>
+                      setForm(current => ({ ...current, email }))
+                    }
                     required
                   />
                   <OrderInput
                     label="手機號碼"
                     type="tel"
                     value={form.phone}
-                    onChange={(phone) => setForm((current) => ({ ...current, phone }))}
+                    onChange={phone =>
+                      setForm(current => ({ ...current, phone }))
+                    }
                     required
                   />
                   <OrderInput
                     label="手圍大小"
                     placeholder="例如 15.5 cm"
                     value={form.wristSize}
-                    onChange={(wristSize) => setForm((current) => ({ ...current, wristSize }))}
+                    onChange={wristSize =>
+                      setForm(current => ({ ...current, wristSize }))
+                    }
                     hint="手圍量法：拿軟尺平貼手腕繞一圈量測。沒有軟尺時，可以用棉線或紙條繞手圍，用筆做記號後，再用一般直尺量那段長度。"
                     required
                   />
@@ -184,11 +211,13 @@ export default function CheckoutPage() {
                     配戴鬆緊
                   </label>
                   <div className="grid grid-cols-3 gap-2">
-                    {(["貼手", "剛好", "微鬆"] as const).map((fit) => (
+                    {(["貼手", "剛好", "微鬆"] as const).map(fit => (
                       <button
                         key={fit}
                         type="button"
-                        onClick={() => setForm((current) => ({ ...current, fit }))}
+                        onClick={() =>
+                          setForm(current => ({ ...current, fit }))
+                        }
                         className={`rounded-full border px-3 py-2.5 text-xs tracking-[0.14em] transition ${
                           form.fit === fit
                             ? "border-[#31353A] bg-[#31353A] text-[#FAF7F4]"
@@ -208,28 +237,34 @@ export default function CheckoutPage() {
                   <div className="grid gap-3 sm:grid-cols-2">
                     <AddressInput
                       value={form.postalCode}
-                      onChange={(postalCode) => setForm((current) => ({ ...current, postalCode }))}
+                      onChange={postalCode =>
+                        setForm(current => ({ ...current, postalCode }))
+                      }
                       placeholder="郵遞區號（如 100）"
                       inputMode="numeric"
                       autoComplete="postal-code"
                     />
                     <AddressInput
                       value={form.city}
-                      onChange={(city) => setForm((current) => ({ ...current, city }))}
+                      onChange={city =>
+                        setForm(current => ({ ...current, city }))
+                      }
                       placeholder="縣市（如 台北市）"
                       autoComplete="address-level1"
                     />
                     <AddressInput
                       value={form.district}
-                      onChange={(district) => setForm((current) => ({ ...current, district }))}
+                      onChange={district =>
+                        setForm(current => ({ ...current, district }))
+                      }
                       placeholder="鄉鎮市區（如 信義區）"
                       autoComplete="address-level2"
                       className="sm:col-span-2"
                     />
                     <AddressInput
                       value={form.streetAddress}
-                      onChange={(streetAddress) =>
-                        setForm((current) => ({ ...current, streetAddress }))
+                      onChange={streetAddress =>
+                        setForm(current => ({ ...current, streetAddress }))
                       }
                       placeholder="路名、巷號、門牌（如 信義路五段7號）"
                       autoComplete="street-address"
@@ -243,7 +278,10 @@ export default function CheckoutPage() {
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <p
                     className="text-[12px] tracking-[0.18em] text-[#31353A]/72"
-                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
                   >
                     訂單明細
                   </p>
@@ -257,23 +295,42 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="space-y-3">
-                  {items.map((item) => (
-                    <div key={item.slug} className="grid grid-cols-[52px_1fr] gap-3">
-                      <img
-                        src={item.img}
-                        alt={item.name}
-                        className="h-[52px] w-[52px] rounded-md object-cover"
-                      />
-                      <div className="min-w-0">
-                        <p className="break-words text-[12px] tracking-[0.1em] text-[#31353A]/82">
-                          {item.name}
-                        </p>
-                        <p className="mt-1 text-[12px] text-[#A38D6B]">
-                          NT$ {item.price.toLocaleString("zh-TW")} x {item.quantity}
-                        </p>
+                  {items.map(item => {
+                    const product = findProduct(item.slug);
+
+                    return (
+                      <div
+                        key={item.slug}
+                        className="grid grid-cols-[52px_1fr] gap-3"
+                      >
+                        <div className="h-[52px] w-[52px] overflow-hidden rounded-md">
+                          {product ? (
+                            <ProductImageWatermark
+                              product={product}
+                              alt={item.name}
+                              imageClassName="h-full w-full object-cover"
+                              watermarkClassName="bottom-0.5 right-0.5 max-w-[calc(100%-0.25rem)] px-1 py-0.5 text-[6px] [&_svg]:h-2 [&_svg]:w-2"
+                            />
+                          ) : (
+                            <img
+                              src={item.img}
+                              alt={item.name}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="break-words text-[12px] tracking-[0.1em] text-[#31353A]/82">
+                            {item.name}
+                          </p>
+                          <p className="mt-1 text-[12px] text-[#A38D6B]">
+                            NT$ {item.price.toLocaleString("zh-TW")} x{" "}
+                            {item.quantity}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="mt-5 border-t border-[#D1BE9B]/16 pt-4">
@@ -299,7 +356,10 @@ export default function CheckoutPage() {
                     type="submit"
                     disabled={createOrderMutation.isPending}
                     className="w-full rounded-full bg-[#31353A] px-5 py-3.5 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#31353A]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-50"
-                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
                   >
                     {createOrderMutation.isPending ? "前往中" : "前往付款"}
                   </button>
@@ -308,7 +368,10 @@ export default function CheckoutPage() {
                     target="_blank"
                     rel="noreferrer"
                     className="w-full rounded-full border border-[#D1BE9B]/35 px-5 py-3 text-center text-xs tracking-[0.18em] text-[#8F7957] transition hover:bg-white/65"
-                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
                   >
                     有問題可私訊官方 LINE
                   </a>
@@ -341,7 +404,7 @@ function AddressInput({
     <input
       type="text"
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={event => onChange(event.target.value)}
       placeholder={placeholder}
       required
       inputMode={inputMode}
@@ -376,7 +439,7 @@ function OrderInput({
       <input
         type={type}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={event => onChange(event.target.value)}
         placeholder={placeholder}
         required={required}
         className="w-full rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-sm text-[#31353A]/78 outline-none transition focus:border-[#A38D6B]/70"

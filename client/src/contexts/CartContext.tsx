@@ -9,6 +9,8 @@ import {
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import ProductImageWatermark from "@/components/ProductImageWatermark";
+import { findProduct } from "@/data/products";
 
 export type CartProduct = {
   slug: string;
@@ -65,13 +67,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   const addItem: CartContextValue["addItem"] = (product, options) => {
-    setItems((current) => {
-      const existing = current.find((item) => item.slug === product.slug);
+    setItems(current => {
+      const existing = current.find(item => item.slug === product.slug);
       if (existing) {
-        return current.map((item) =>
+        return current.map(item =>
           item.slug === product.slug
             ? { ...item, quantity: Math.min(20, item.quantity + 1) }
             : item
@@ -84,17 +89,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const updateQuantity = (slug: string, quantity: number) => {
-    setItems((current) =>
+    setItems(current =>
       current
-        .map((item) =>
-          item.slug === slug ? { ...item, quantity: Math.max(1, Math.min(20, quantity)) } : item
+        .map(item =>
+          item.slug === slug
+            ? { ...item, quantity: Math.max(1, Math.min(20, quantity)) }
+            : item
         )
-        .filter((item) => item.quantity > 0)
+        .filter(item => item.quantity > 0)
     );
   };
 
   const removeItem = (slug: string) => {
-    setItems((current) => current.filter((item) => item.slug !== slug));
+    setItems(current => current.filter(item => item.slug !== slug));
   };
 
   const goToCheckout = () => {
@@ -136,13 +143,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 <div>
                   <p
                     className="text-[10px] tracking-[0.28em] text-[#A38D6B]"
-                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
                   >
                     Checkout
                   </p>
                   <h2
                     className="mt-1 text-lg tracking-[0.18em] text-[#31353A]"
-                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
                   >
                     購物車
                   </h2>
@@ -162,7 +175,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
               <section>
                 <div className="mb-3 flex items-center gap-2 text-[12px] tracking-[0.16em] text-[#31353A]/72">
                   <ShoppingBag size={15} />
-                  <span style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}>
+                  <span
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
                     已選商品
                   </span>
                 </div>
@@ -172,60 +190,79 @@ export function CartProvider({ children }: { children: ReactNode }) {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {items.map((item) => (
-                      <div
-                        key={item.slug}
-                        className="grid grid-cols-[64px_minmax(0,1fr)] gap-3 rounded-lg border border-[#D1BE9B]/18 bg-white/55 p-3"
-                      >
-                        <img
-                          src={item.img}
-                          alt={item.name}
-                          className="h-16 w-16 rounded-md object-cover"
-                        />
-                        <div className="min-w-0">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <p className="break-words text-[13px] tracking-[0.12em] text-[#31353A]">
-                                {item.name}
-                              </p>
-                              <p className="mt-1 text-[12px] text-[#A38D6B]">
-                                NT$ {item.price.toLocaleString("zh-TW")}
-                              </p>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => removeItem(item.slug)}
-                              className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-[#31353A]/42 transition hover:bg-[#C9837A]/10 hover:text-[#C9837A]"
-                              aria-label={`移除 ${item.name}`}
-                            >
-                              <Trash2 size={15} />
-                            </button>
+                    {items.map(item => {
+                      const product = findProduct(item.slug);
+
+                      return (
+                        <div
+                          key={item.slug}
+                          className="grid grid-cols-[64px_minmax(0,1fr)] gap-3 rounded-lg border border-[#D1BE9B]/18 bg-white/55 p-3"
+                        >
+                          <div className="h-16 w-16 overflow-hidden rounded-md">
+                            {product ? (
+                              <ProductImageWatermark
+                                product={product}
+                                alt={item.name}
+                                imageClassName="h-full w-full object-cover"
+                                watermarkClassName="bottom-1 right-1 max-w-[calc(100%-0.5rem)] px-1 py-0.5 text-[6px] [&_svg]:h-2 [&_svg]:w-2"
+                              />
+                            ) : (
+                              <img
+                                src={item.img}
+                                alt={item.name}
+                                className="h-full w-full object-cover"
+                              />
+                            )}
                           </div>
-                          <div className="mt-3 inline-flex items-center rounded-full border border-[#D1BE9B]/25 bg-[#FAF7F4]">
-                            <button
-                              type="button"
-                              onClick={() => updateQuantity(item.slug, item.quantity - 1)}
-                              className="grid h-8 w-8 place-items-center text-[#31353A]/62 disabled:opacity-35"
-                              disabled={item.quantity <= 1}
-                              aria-label="減少數量"
-                            >
-                              <Minus size={14} />
-                            </button>
-                            <span className="min-w-8 text-center text-xs text-[#31353A]/72">
-                              {item.quantity}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => updateQuantity(item.slug, item.quantity + 1)}
-                              className="grid h-8 w-8 place-items-center text-[#31353A]/62"
-                              aria-label="增加數量"
-                            >
-                              <Plus size={14} />
-                            </button>
+                          <div className="min-w-0">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <p className="break-words text-[13px] tracking-[0.12em] text-[#31353A]">
+                                  {item.name}
+                                </p>
+                                <p className="mt-1 text-[12px] text-[#A38D6B]">
+                                  NT$ {item.price.toLocaleString("zh-TW")}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeItem(item.slug)}
+                                className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-[#31353A]/42 transition hover:bg-[#C9837A]/10 hover:text-[#C9837A]"
+                                aria-label={`移除 ${item.name}`}
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                            <div className="mt-3 inline-flex items-center rounded-full border border-[#D1BE9B]/25 bg-[#FAF7F4]">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  updateQuantity(item.slug, item.quantity - 1)
+                                }
+                                className="grid h-8 w-8 place-items-center text-[#31353A]/62 disabled:opacity-35"
+                                disabled={item.quantity <= 1}
+                                aria-label="減少數量"
+                              >
+                                <Minus size={14} />
+                              </button>
+                              <span className="min-w-8 text-center text-xs text-[#31353A]/72">
+                                {item.quantity}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  updateQuantity(item.slug, item.quantity + 1)
+                                }
+                                className="grid h-8 w-8 place-items-center text-[#31353A]/62"
+                                aria-label="增加數量"
+                              >
+                                <Plus size={14} />
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
                 <div className="mt-4 flex items-center justify-between border-t border-[#D1BE9B]/16 pt-4 text-sm tracking-[0.08em] text-[#31353A]/78">
@@ -242,7 +279,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
                   onClick={goToCheckout}
                   disabled={items.length === 0}
                   className="w-full rounded-full bg-[#31353A] px-5 py-3.5 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#31353A]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-50"
-                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
                 >
                   前往結帳
                 </button>
@@ -250,7 +290,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
                   type="button"
                   onClick={() => setIsOpen(false)}
                   className="w-full rounded-full border border-[#D1BE9B]/35 px-5 py-3 text-center text-xs tracking-[0.18em] text-[#8F7957] transition hover:bg-white/65"
-                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
                 >
                   繼續逛逛
                 </button>
