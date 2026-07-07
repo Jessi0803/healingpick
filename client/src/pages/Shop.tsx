@@ -78,6 +78,15 @@ const PRODUCT_SALES_COUNTS: Record<string, number> = {
 
 const CUSTOM_BRACELET_CATEGORY = "custom-bracelet";
 
+const CUSTOM_BRACELET_ENTRY = {
+  title: "客製化手鍊",
+  material: "CUSTOM CRYSTAL",
+  note: "選不出來嗎？客製化一條專屬自己的手鍊",
+  priceLabel: "NT$ 1,580 起",
+  image: "/custom-bracelet/general/IMG_4832.PNG",
+  href: "/shop/custom-bracelet/general",
+};
+
 const CUSTOM_BRACELETS = [
   {
     title: "一般客製化手鍊",
@@ -146,8 +155,8 @@ export default function ShopPage() {
   const countFor = (id: string) => {
     if (id === CUSTOM_BRACELET_CATEGORY) return CUSTOM_BRACELETS.length;
     return id === "all"
-      ? PRODUCTS.length
-      : PRODUCTS.filter(p => getProductCategories(p).includes(id)).length;
+      ? PRODUCTS.length + 1
+      : PRODUCTS.filter(p => getProductCategories(p).includes(id)).length + 1;
   };
 
   return (
@@ -519,6 +528,7 @@ export default function ShopPage() {
                     </button>
                   </div>
                 ))}
+                <CustomBraceletProductCard />
               </div>
             </>
           )}
@@ -579,6 +589,97 @@ function ShopModeSwitch({
           </button>
         );
       })}
+    </div>
+  );
+}
+
+function CustomBraceletProductCard() {
+  return (
+    <div className="group flex h-full flex-col justify-between">
+      <Link href={CUSTOM_BRACELET_ENTRY.href}>
+        <div className="cursor-pointer">
+          <div className="relative mb-3 aspect-square overflow-hidden rounded-2xl bg-[#F0E8DC]">
+            <img
+              src={CUSTOM_BRACELET_ENTRY.image}
+              alt={CUSTOM_BRACELET_ENTRY.title}
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/35 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span
+                className="rounded-full bg-[#3D4144]/55 px-3 py-1.5 text-[11px] tracking-[0.2em] text-white/95 backdrop-blur-sm"
+                style={{
+                  fontFamily: "Noto Serif TC, serif",
+                  fontWeight: 300,
+                }}
+              >
+                查看客製化
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-0.5 flex min-h-5 flex-wrap items-center gap-1.5">
+              <p
+                className="text-[10px] tracking-[0.2em] text-[#8F7957]"
+                style={{
+                  fontFamily: "Noto Serif TC, serif",
+                  fontWeight: 200,
+                }}
+              >
+                {CUSTOM_BRACELET_ENTRY.material}
+              </p>
+              <span
+                className="rounded-full bg-[#D1BE9B]/28 px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-[#A38D6B]"
+                style={{
+                  fontFamily: "Noto Serif TC, serif",
+                  fontWeight: 300,
+                }}
+              >
+                客製款
+              </span>
+            </div>
+            <h3
+              className="mb-0.5 text-xs tracking-[0.12em] text-[#31353A]/86"
+              style={{
+                fontFamily: "Noto Serif TC, serif",
+                fontWeight: 300,
+              }}
+            >
+              {CUSTOM_BRACELET_ENTRY.title}
+            </h3>
+            <p
+              className="mb-2 min-h-[2.75em] text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62"
+              style={{
+                fontFamily: "Noto Sans TC, sans-serif",
+                fontWeight: 300,
+              }}
+            >
+              {CUSTOM_BRACELET_ENTRY.note}
+            </p>
+            <div className="mb-3 flex items-center gap-2">
+              <span
+                className="text-sm text-[#A38D6B]"
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                }}
+              >
+                {CUSTOM_BRACELET_ENTRY.priceLabel}
+              </span>
+            </div>
+          </div>
+        </div>
+      </Link>
+
+      <Link href={CUSTOM_BRACELET_ENTRY.href}>
+        <button
+          className="mt-auto w-full rounded-full bg-[#3D4144] py-2 text-[10px] font-light tracking-[0.2em] text-[#FAF7F4] shadow-sm transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+          style={{ fontFamily: "Noto Serif TC, serif" }}
+        >
+          前往客製化
+        </button>
+      </Link>
     </div>
   );
 }
