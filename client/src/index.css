@@ -839,6 +839,28 @@ body::after {
   .result-sweep::before { animation: none; }
 }
 
+/* Feedback photo marquee — two rows scrolling opposite ways, pause on hover.
+   Rows render their images twice; translateX(-50%) loops seamlessly. */
+@keyframes galleryScrollLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes galleryScrollRight {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.gallery-row {
+  display: flex;
+  width: max-content;
+}
+.gallery-row-left  { animation: galleryScrollLeft 64s linear infinite; }
+.gallery-row-right { animation: galleryScrollRight 74s linear infinite; }
+.gallery-marquee:hover .gallery-row { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .gallery-row-left,
+  .gallery-row-right { animation: none; }
+}
+
 /* Tagline — characters rise + de-blur in sequence (set delay inline per char). */
 @keyframes taglineChar {
   from { opacity: 0; transform: translateY(16px); filter: blur(6px); }

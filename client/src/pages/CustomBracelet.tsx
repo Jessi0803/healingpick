@@ -41,6 +41,9 @@ const HERO_IMAGES = [
 ];
 const CHARM_REFERENCE_IMAGE = '/custom-bracelet/charms-reference.png';
 const FEATURED_IMAGES = GALLERY_IMAGES.slice(3, 11);
+// 顧客回饋跑馬牆：兩排照片反向捲動。
+const MARQUEE_ROW_1 = GALLERY_IMAGES.slice(0, 12);
+const MARQUEE_ROW_2 = GALLERY_IMAGES.slice(12);
 const LIGHTBOX_IMAGES = [...HERO_IMAGES, ...GALLERY_IMAGES, CHARM_REFERENCE_IMAGE];
 
 // Hero 背景飄浮的微光星點位置。
@@ -121,7 +124,7 @@ const CLASP_OPTIONS = [
   },
 ];
 
-const CHARM_OPTIONS = ['不需要加吊飾', '需要加吊飾'];
+const CHARM_OPTIONS = ['不需要加吊飾', '需要加吊飾', '都可以，依款式造型設計'];
 
 const FORM_INITIAL = {
   name: '',
@@ -328,7 +331,7 @@ export default function CustomBraceletPage() {
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 <span>←</span>
-                返回能量商品
+                返回療癒水晶
               </button>
             </Link>
           </div>
@@ -461,10 +464,7 @@ export default function CustomBraceletPage() {
                 ))}
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowAllPhotos(true);
-                    openLightbox(GALLERY_IMAGES[3]);
-                  }}
+                  onClick={() => openLightbox(GALLERY_IMAGES[3])}
                   className="animate-float-soft col-span-1 flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border border-[#D1BE9B]/30 bg-[#D1BE9B]/10 text-center transition-colors hover:bg-[#D1BE9B]/18"
                 >
                   <span className="text-lg text-[#A38D6B]">＋</span>
@@ -585,44 +585,43 @@ export default function CustomBraceletPage() {
               title="顧客回饋＆客製化實拍"
               note="以下照片皆為顧客回饋與客製化商品實拍，點擊可放大瀏覽。"
             />
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {shownGallery.map((src, i) => {
-                const realIndex = GALLERY_IMAGES.indexOf(src);
-                return (
-                  <button
-                    key={src}
-                    type="button"
-                    onClick={() => setLightboxIndex(realIndex >= 0 ? realIndex : 0)}
-                    className="reveal-child group aspect-[3/4] overflow-hidden rounded-2xl border border-[#D1BE9B]/20 bg-white/40"
-                    style={{ transitionDelay: `${Math.min(i, 8) * 45}ms` }}
-                  >
-                    <img
-                      src={src}
-                      alt="顧客回饋與客製化商品實拍圖"
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-                    />
-                  </button>
-                );
-              })}
+            <div className="space-y-3">
+              {[
+                { imgs: MARQUEE_ROW_1, dir: 'left' as const },
+                { imgs: MARQUEE_ROW_2, dir: 'right' as const },
+              ].map((row) => (
+                <div key={row.dir} className="gallery-marquee overflow-hidden">
+                  <div className={`gallery-row ${row.dir === 'left' ? 'gallery-row-left' : 'gallery-row-right'}`}>
+                    {[...row.imgs, ...row.imgs].map((src, i) => (
+                      <button
+                        key={`${src}-${i}`}
+                        type="button"
+                        aria-label="放大顧客實拍"
+                        onClick={() => openLightbox(src)}
+                        className="group relative mr-3 aspect-[3/4] w-40 flex-shrink-0 overflow-hidden rounded-2xl border border-[#D1BE9B]/20 bg-white/40 md:w-48"
+                      >
+                        <img
+                          src={src}
+                          alt="顧客回饋與客製化商品實拍圖"
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <span
+                          className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-[#2b2622]/72 to-transparent px-3 pb-2 pt-9 text-[10px] tracking-[0.14em] text-white/90 transition-transform duration-300 group-hover:translate-y-0"
+                          style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                        >
+                          顧客實拍 ✦
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-            {!showAllPhotos && GALLERY_IMAGES.length > FEATURED_IMAGES.length && (
-              <div className="mt-6 text-center">
-                <button
-                  type="button"
-                  onClick={() => setShowAllPhotos(true)}
-                  className="inline-flex items-center gap-2 rounded-full border border-[#D1BE9B]/30 bg-white/60 px-6 py-2.5 text-[11px] tracking-[0.18em] text-[#A38D6B] transition-colors hover:bg-[#D1BE9B]/12"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  查看全部 {GALLERY_IMAGES.length} 張實拍
-                </button>
-              </div>
-            )}
-            {showAllPhotos && (
-              <p className="mt-4 text-center text-[10px] tracking-[0.14em] text-[#31353A]/40">
-                已顯示全部 {galleryCount} 張
-              </p>
-            )}
+            <p className="mt-4 text-center text-[10px] tracking-[0.18em] text-[#31353A]/42"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              滑過暫停 · 點擊任一張放大瀏覽
+            </p>
           </Reveal>
 
           {/* 客製需求表單 */}
@@ -686,7 +685,7 @@ export default function CustomBraceletPage() {
                   </Field>
                   <Field
                     label="理想手鍊款式參考圖"
-                    hint="非必填。可以上傳喜歡的手鍊款式、配色或排列照片，私訊時請一併傳送圖片給我們參考。"
+                    hint="選填。可以上傳喜歡的手鍊款式、配色或排列照片供我們參考。"
                     wide
                   >
                     <div className="rounded-2xl border border-dashed border-[#D1BE9B]/38 bg-[#FAF7F4]/62 p-3">
