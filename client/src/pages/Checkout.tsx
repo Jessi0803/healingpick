@@ -2,12 +2,16 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
+import CartAddOnOffer from "@/components/CartAddOnOffer";
 import CartBenefitNotice from "@/components/CartBenefitNotice";
+import CartGiftNotice from "@/components/CartGiftNotice";
 import PageLayout from "@/components/PageLayout";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import { useCart } from "@/contexts/CartContext";
+import { CLEAR_QUARTZ_CHIPS_GIFT } from "@/data/cartAddOns";
 import { findProduct } from "@/data/products";
 import { trpc } from "@/lib/trpc";
+import { canShowAmethystChipsAddOn, validateCartRules } from "@shared/cartRules";
 
 type CustomerForm = {
   customerName: string;
@@ -87,6 +91,11 @@ export default function CheckoutPage() {
       toast.error("購物車目前沒有商品。");
       return;
     }
+    const ruleError = validateCartRules(items);
+    if (ruleError) {
+      toast.error(ruleError);
+      return;
+    }
     const address = [
       form.postalCode,
       form.city,
@@ -100,12 +109,20 @@ export default function CheckoutPage() {
       wristSize: form.wristSize,
       fit: form.fit,
       address,
-      items: items.map(({ slug, name, price, quantity }) => ({
-        slug,
-        name,
-        price,
-        quantity,
-      })),
+      items: [
+        ...items.map(({ slug, name, price, quantity }) => ({
+          slug,
+          name,
+          price,
+          quantity,
+        })),
+        {
+          slug: CLEAR_QUARTZ_CHIPS_GIFT.slug,
+          name: CLEAR_QUARTZ_CHIPS_GIFT.name,
+          price: CLEAR_QUARTZ_CHIPS_GIFT.price,
+          quantity: 1,
+        },
+      ],
     });
   };
 
@@ -333,6 +350,16 @@ export default function CheckoutPage() {
                     );
                   })}
                 </div>
+
+                <div className="mt-4">
+                  <CartGiftNotice compact />
+                </div>
+
+                {canShowAmethystChipsAddOn(items) && (
+                  <div className="mt-3">
+                    <CartAddOnOffer compact />
+                  </div>
+                )}
 
                 <div className="mt-5 border-t border-[#D1BE9B]/16 pt-4">
                   <div className="flex items-center justify-between text-sm tracking-[0.08em] text-[#31353A]/78">

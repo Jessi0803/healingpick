@@ -9,10 +9,17 @@ import {
 import { Minus, Plus, ShoppingBag, Trash2, UserRound, X } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import CartAddOnOffer from "@/components/CartAddOnOffer";
 import CartBenefitNotice from "@/components/CartBenefitNotice";
+import CartGiftNotice from "@/components/CartGiftNotice";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { findProduct } from "@/data/products";
+import {
+  canShowAmethystChipsAddOn,
+  getAddItemRuleError,
+  validateCartRules,
+} from "@shared/cartRules";
 
 export type CartProduct = {
   slug: string;
@@ -76,6 +83,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const addItem: CartContextValue["addItem"] = (product, options) => {
+    const ruleError = getAddItemRuleError(items, product);
+    if (ruleError) {
+      toast.error(ruleError);
+      if (options?.open) setIsOpen(true);
+      return;
+    }
+
     setItems(current => {
       const existing = current.find(item => item.slug === product.slug);
       if (existing) {
@@ -110,6 +124,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const goToCheckout = () => {
     if (items.length === 0) {
       toast.error("購物車目前沒有商品。");
+      return;
+    }
+    const ruleError = validateCartRules(items);
+    if (ruleError) {
+      toast.error(ruleError);
       return;
     }
     setIsOpen(false);
@@ -343,6 +362,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
                         </div>
                       );
                     })}
+                  </div>
+                )}
+                {canShowAmethystChipsAddOn(items) && (
+                  <div className="mt-4">
+                    <CartAddOnOffer />
+                  </div>
+                )}
+                {items.length > 0 && (
+                  <div className="mt-4">
+                    <CartGiftNotice />
                   </div>
                 )}
                 <div className="mt-4 flex items-center justify-between border-t border-[#D1BE9B]/16 pt-4 text-sm tracking-[0.08em] text-[#31353A]/78">

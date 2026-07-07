@@ -4,6 +4,7 @@ import { productOrders } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { assertPayuniConfigured, createPayuniProductCheckout } from "../_core/payuni";
 import { publicProcedure, router } from "../_core/trpc";
+import { validateCartRules } from "../../shared/cartRules";
 
 const orderItemInput = z.object({
   slug: z.string().trim().min(1).max(120),
@@ -22,7 +23,7 @@ export const shopRouter = router({
         wristSize: z.string().trim().min(1, "請輸入手圍大小").max(32),
         fit: z.enum(["貼手", "剛好", "微鬆"]),
         address: z.string().trim().min(6, "請輸入完整收件地址").max(500),
-        items: z.array(orderItemInput).min(1, "購物車目前沒有商品").max(30),
+        items: z.array(orderItemInput).min(1, "購物車目前沒有商品").max(31),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -42,6 +43,14 @@ export const shopRouter = router({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "訂單金額需大於 0",
+        });
+      }
+
+      const ruleError = validateCartRules(input.items);
+      if (ruleError) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: ruleError,
         });
       }
 
