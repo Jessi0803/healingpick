@@ -13,13 +13,16 @@ import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } fro
 import { Link, useLocation } from 'wouter';
 import {
   CalendarDays,
+  Camera,
   Check,
   ClipboardList,
   Copy,
   Gem,
+  ImageUp,
   MessageCircle,
   Package,
   Sparkles,
+  Trash2,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -98,6 +101,7 @@ const FEATURE_ITEMS = [
 const METAL_OPTIONS = [
   { key: '金飾', en: 'Gold', image: '/products/jiao-tang-ma-qi-duo/2.jpg' },
   { key: '銀飾', en: 'Silver', image: '/products/wei-lan-wei-guang/1.jpg' },
+  { key: '都可以，依款式造型設計', en: 'Designer’s Choice', image: '/products/misty-starlight/1.jpg' },
 ];
 
 const CLASP_OPTIONS = [
@@ -108,6 +112,12 @@ const CLASP_OPTIONS = [
     en: 'Extension Chain',
     image: '/custom-bracelet/clasps/extension-chain.png',
     imageClassName: 'object-cover object-[62%_58%] scale-[1.12] group-hover:scale-[1.15]',
+  },
+  {
+    key: '都可以，依款式造型設計',
+    en: 'Designer’s Choice',
+    image: '/products/misty-starlight/1.jpg',
+    imageClassName: 'object-contain',
   },
 ];
 
@@ -175,6 +185,9 @@ export default function CustomBraceletPage() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [referenceImage, setReferenceImage] = useState<File | null>(null);
+  const [referenceImagePreview, setReferenceImagePreview] = useState('');
+  const referenceImageInputRef = useRef<HTMLInputElement | null>(null);
 
   const formSummary = useMemo(
     () =>
@@ -187,6 +200,7 @@ export default function CustomBraceletPage() {
         `預算：${form.budget || '未填'}`,
         `想加強的功效/需求：${form.energyNeeds || '未填'}`,
         `喜歡的色系：${form.colorPreference || '未填'}`,
+        `理想款式參考圖：${referenceImage ? `${referenceImage.name}（請於私訊時一併傳送圖片）` : '未提供'}`,
         `喜歡或指定的水晶：${form.favoriteCrystals || '無特別指定'}`,
         `不喜歡或想避開的水晶：${form.avoidCrystals || '無'}`,
         `金屬偏好：${form.metalPreference || '未填'}`,
@@ -195,7 +209,7 @@ export default function CustomBraceletPage() {
         `Instagram / LINE：${form.contact || '未填'}`,
         `其他備註：${form.notes || '無'}`,
       ].join('\n'),
-    [copy.formTitle, form, mode],
+    [copy.formTitle, form, mode, referenceImage],
   );
 
   const update = (key: keyof CustomForm, value: string) => {
@@ -206,13 +220,39 @@ export default function CustomBraceletPage() {
   // 金/銀互斥（一條通常一種金屬），保留使用者補充的其他文字。
   const toggleMetal = (key: string) => {
     const parts = form.metalPreference.split('、').map((s) => s.trim()).filter(Boolean);
-    const withoutMetals = parts.filter((p) => p !== '金飾' && p !== '銀飾');
+    const metalKeys = METAL_OPTIONS.map((option) => option.key);
+    const withoutMetals = parts.filter((p) => !metalKeys.includes(p));
     const next = parts.includes(key) ? withoutMetals : [key, ...withoutMetals];
     update('metalPreference', next.join('、'));
   };
 
   const toggleClasp = (key: string) => {
     update('claspPreference', form.claspPreference === key ? '' : key);
+  };
+
+  const handleReferenceImageChange = (file?: File) => {
+    setCopied(false);
+    if (!file) {
+      setReferenceImage(null);
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      toast.error('請上傳圖片檔案');
+      if (referenceImageInputRef.current) referenceImageInputRef.current.value = '';
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error('圖片檔案請小於 8MB');
+      if (referenceImageInputRef.current) referenceImageInputRef.current.value = '';
+      return;
+    }
+    setReferenceImage(file);
+  };
+
+  const clearReferenceImage = () => {
+    setCopied(false);
+    setReferenceImage(null);
+    if (referenceImageInputRef.current) referenceImageInputRef.current.value = '';
   };
 
   const galleryCount = showAllPhotos ? GALLERY_IMAGES.length : FEATURED_IMAGES.length;
@@ -240,6 +280,16 @@ export default function CustomBraceletPage() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [lightboxIndex]);
+
+  useEffect(() => {
+    if (!referenceImage) {
+      setReferenceImagePreview('');
+      return;
+    }
+    const nextPreview = URL.createObjectURL(referenceImage);
+    setReferenceImagePreview(nextPreview);
+    return () => URL.revokeObjectURL(nextPreview);
+  }, [referenceImage]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -360,6 +410,20 @@ export default function CustomBraceletPage() {
                 >
                   <Sparkles className="h-4 w-4 transition-transform duration-500 group-hover:rotate-[18deg]" />
                   開始客製我的手鍊
+                </a>
+                <a
+                  href="#real-feedback"
+                  className="group inline-flex items-center gap-2 rounded-full border border-[#D1BE9B]/30 bg-white/54 px-5 py-3 text-xs tracking-[0.18em] text-[#8F7957] shadow-[0_10px_24px_rgba(163,141,107,0.07)] transition-all duration-300 hover:border-[#A38D6B]/42 hover:bg-white/78 active:scale-95"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  <Camera className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" strokeWidth={1.55} />
+                  <span>
+                    <span style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 500 }}>
+                      Real Feedback
+                    </span>
+                    <span className="mx-2 text-[#D1BE9B]">｜</span>
+                    顧客回饋
+                  </span>
                 </a>
                 <span
                   className="text-[11px] tracking-[0.14em] text-[#31353A]/50"
@@ -515,7 +579,7 @@ export default function CustomBraceletPage() {
           </Reveal>
 
           {/* 顧客回饋＆實拍：精選 + 燈箱 */}
-          <Reveal className="mb-16 md:mb-20">
+          <Reveal id="real-feedback" className="mb-16 scroll-mt-24 md:mb-20">
             <SectionHeading
               eyebrow="Real Feedback"
               title="顧客回饋＆客製化實拍"
@@ -620,6 +684,90 @@ export default function CustomBraceletPage() {
                   <Field label="喜歡的色系" wide>
                     <input value={form.colorPreference} onChange={(e) => update('colorPreference', e.target.value)} className={inputClass} placeholder="例如粉色、綠色、清透、低調金色" />
                   </Field>
+                  <Field
+                    label="理想手鍊款式參考圖"
+                    hint="非必填。可以上傳喜歡的手鍊款式、配色或排列照片，私訊時請一併傳送圖片給我們參考。"
+                    wide
+                  >
+                    <div className="rounded-2xl border border-dashed border-[#D1BE9B]/38 bg-[#FAF7F4]/62 p-3">
+                      <input
+                        ref={referenceImageInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="sr-only"
+                        onChange={(e) => handleReferenceImageChange(e.target.files?.[0])}
+                      />
+                      {referenceImage && referenceImagePreview ? (
+                        <div className="grid gap-3 sm:grid-cols-[140px_1fr]">
+                          <div className="aspect-square overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/70">
+                            <img
+                              src={referenceImagePreview}
+                              alt="理想手鍊款式參考圖預覽"
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <div className="flex min-w-0 flex-col justify-center gap-3">
+                            <div>
+                              <p
+                                className="truncate text-[12px] tracking-[0.06em] text-[#31353A]/82"
+                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+                              >
+                                {referenceImage.name}
+                              </p>
+                              <p
+                                className="mt-1 text-[11px] tracking-[0.04em] text-[#31353A]/54"
+                                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                              >
+                                已加入參考圖，送出表單時會提醒你私訊一併附上。
+                              </p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <button
+                                type="button"
+                                onClick={() => referenceImageInputRef.current?.click()}
+                                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#D1BE9B]/30 bg-white/65 px-4 py-2 text-[11px] tracking-[0.12em] text-[#8F7957] transition-colors hover:bg-white"
+                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                              >
+                                <ImageUp className="h-3.5 w-3.5" />
+                                更換圖片
+                              </button>
+                              <button
+                                type="button"
+                                onClick={clearReferenceImage}
+                                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#B58D8D]/25 bg-white/45 px-4 py-2 text-[11px] tracking-[0.12em] text-[#9B6767] transition-colors hover:bg-[#F8EEEE]"
+                                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                移除
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => referenceImageInputRef.current?.click()}
+                          className="flex min-h-[132px] w-full flex-col items-center justify-center gap-3 rounded-2xl bg-white/45 px-4 py-5 text-center transition-colors hover:bg-white/70"
+                        >
+                          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D1BE9B]/18 text-[#A38D6B]">
+                            <ImageUp className="h-5 w-5" strokeWidth={1.6} />
+                          </span>
+                          <span
+                            className="text-[12px] tracking-[0.14em] text-[#31353A]/72"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          >
+                            上傳理想款式圖片
+                          </span>
+                          <span
+                            className="text-[11px] leading-[1.7] tracking-[0.04em] text-[#31353A]/48"
+                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                          >
+                            支援手機相簿圖片，檔案請小於 8MB。
+                          </span>
+                        </button>
+                      )}
+                    </div>
+                  </Field>
                   <Field label="喜歡或指定的水晶">
                     <textarea value={form.favoriteCrystals} onChange={(e) => update('favoriteCrystals', e.target.value)} className={textareaClass} placeholder="沒有也可以留空" />
                   </Field>
@@ -627,7 +775,7 @@ export default function CustomBraceletPage() {
                     <textarea value={form.avoidCrystals} onChange={(e) => update('avoidCrystals', e.target.value)} className={textareaClass} placeholder="例如不要黑色、不要太大顆" />
                   </Field>
                   <Field label="喜歡金飾還是銀飾？" wide>
-                    <div className="mb-2.5 grid grid-cols-2 gap-2.5">
+                    <div className="mb-2.5 grid gap-2.5 sm:grid-cols-3">
                       {METAL_OPTIONS.map((m) => {
                         const active = form.metalPreference.split('、').map((s) => s.trim()).includes(m.key);
                         return (
@@ -670,7 +818,7 @@ export default function CustomBraceletPage() {
                     </p>
                   </Field>
                   <Field label="扣件類型選擇" wide>
-                    <div className="grid gap-2.5 sm:grid-cols-3">
+                    <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
                       {CLASP_OPTIONS.map((option) => {
                         const active = form.claspPreference === option.key;
                         return (
