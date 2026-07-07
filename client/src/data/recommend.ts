@@ -58,9 +58,28 @@ function scoreProduct(p: Product, sig: Signal): number {
   return score;
 }
 
+// 手鍊優先：擺飾/擺件/礦柱等展示品排在手鍊之後。
+function isBracelet(p: Product): boolean {
+  if (/柱|礦$/.test(p.name)) return false;
+  const text = [
+    p.name,
+    ...p.suitedFor,
+    ...p.features.flatMap((f) => [f.title, f.desc]),
+    ...p.meanings.flatMap((m) => [m.title, m.desc]),
+  ].join(' ');
+  return !['擺飾', '擺件', '擺設'].some((hint) => text.includes(hint));
+}
+
+// 有相關性的手鍊額外加權，讓主推優先落在手鍊上。
+const BRACELET_BONUS = 100;
+
 function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product[] {
   const ranked = PRODUCTS
-    .map((p) => ({ p, score: scoreProduct(p, sig) }))
+    .map((p) => {
+      const base = scoreProduct(p, sig);
+      const score = base > 0 && isBracelet(p) ? base + BRACELET_BONUS : base;
+      return { p, score };
+    })
     .sort((a, b) => b.score - a.score);
 
   const picks: Product[] = [];
@@ -71,16 +90,18 @@ function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product
   }
 
   if (picks.length < limit && fallbackCategory) {
-    for (const p of PRODUCTS) {
-      if (picks.find((x) => x.slug === p.slug)) continue;
-      if (getProductCategories(p).includes(fallbackCategory)) {
-        picks.push(p);
-        if (picks.length >= limit) break;
-      }
+    const rest = PRODUCTS
+      .filter(
+        (p) => !picks.some((x) => x.slug === p.slug) && getProductCategories(p).includes(fallbackCategory),
+      )
+      .sort((a, b) => (isBracelet(b) ? 1 : 0) - (isBracelet(a) ? 1 : 0));
+    for (const p of rest) {
+      picks.push(p);
+      if (picks.length >= limit) break;
     }
   }
 
-  if (picks.length === 0) picks.push(PRODUCTS[0]);
+  if (picks.length === 0) picks.push(PRODUCTS.find(isBracelet) ?? PRODUCTS[0]);
   return picks;
 }
 
@@ -133,12 +154,12 @@ export function recommendForTarot(questionType: string, question: string): Produ
   const base = TAROT_SIGNAL[questionType] || TAROT_SIGNAL.clarity;
   return pickTop(
     { ...base, keywords: [...(base.keywords ?? []), ...extractKeywords(question)] },
-    2,
+    5,
     base.categories?.[0],
   );
 }
 
-export function recommendForCategory(category: string, limit = 2): Product[] {
+export function recommendForCategory(category: string, limit = 5): Product[] {
   return pickTop({ categories: [category] }, limit, category);
 }
 
@@ -163,18 +184,18 @@ const PALACE_SIGNAL: Record<string, Signal> = {
 
 export function recommendForZiwei(palaceName: string | null, gender?: string): Product[] {
   if (palaceName && PALACE_SIGNAL[palaceName]) {
-    return pickTop(PALACE_SIGNAL[palaceName], 2);
+    return pickTop(PALACE_SIGNAL[palaceName], 5);
   }
   // No palace selected — fall back to a gender-flavoured pick that feels human.
   if (gender === '女') {
     return pickTop(
       { categories: ['love', 'sleep'], preferSlugs: ['wish-fox', 'calm-light'] },
-      2,
+      5,
     );
   }
   return pickTop(
     { categories: ['courage', 'career'], preferSlugs: ['courage-cat', 'forest-bloom'] },
-    2,
+    5,
   );
 }
 
@@ -189,7 +210,7 @@ const ELEMENT_SIGNAL: Record<string, Signal> = {
 
 export function recommendForFortune(element: string): Product[] {
   const sig = ELEMENT_SIGNAL[element] ?? ELEMENT_SIGNAL['土'];
-  return pickTop(sig, 2);
+  return pickTop(sig, 5);
 }
 
 // ─── Dream ──────────────────────────────────────────────────────────────────
@@ -271,7 +292,7 @@ export function recommendForDream(dreamContent: string, interpretation = ''): Pr
         keywords: [...extractKeywords(dreamContent), ...extractKeywords(interpretation)],
         preferSlugs: ['calm-light', 'moonlight-wings'],
       },
-      2,
+      5,
       'sleep',
     );
   }
@@ -282,7 +303,7 @@ export function recommendForDream(dreamContent: string, interpretation = ''): Pr
       keywords: [...new Set([...(merged.keywords ?? []), ...extractKeywords(dreamContent), ...extractKeywords(interpretation)])],
       preferSlugs: [...new Set(merged.preferSlugs)],
     },
-    2,
+    5,
     merged.categories?.[0],
   );
 }
