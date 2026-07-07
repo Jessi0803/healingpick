@@ -101,12 +101,17 @@ const METAL_OPTIONS = [
 ];
 
 const CLASP_OPTIONS = [
-  { key: '彈力繩', en: 'Elastic Cord', image: '/products/cheng-guang/1.jpg' },
-  { key: 'OT扣', en: 'Toggle Clasp', image: '/custom-bracelet/clasps/ot-toggle.png' },
-  { key: '延長鏈', en: 'Extension Chain', image: '/custom-bracelet/clasps/extension-chain.png' },
+  { key: '彈力繩', en: 'Elastic Cord', image: '/products/cheng-guang/1.jpg', imageClassName: 'object-cover' },
+  { key: 'OT扣', en: 'Toggle Clasp', image: '/custom-bracelet/clasps/ot-toggle.png', imageClassName: 'object-contain p-1 group-hover:scale-[1.02]' },
+  {
+    key: '延長鏈',
+    en: 'Extension Chain',
+    image: '/custom-bracelet/clasps/extension-chain.png',
+    imageClassName: 'object-cover object-[62%_58%] scale-[1.12] group-hover:scale-[1.15]',
+  },
 ];
 
-const CHARM_OPTIONS = ['不需要加吊飾', '需要加吊飾', '想先看款式再決定'];
+const CHARM_OPTIONS = ['不需要加吊飾', '需要加吊飾'];
 
 const FORM_INITIAL = {
   name: '',
@@ -685,7 +690,7 @@ export default function CustomBraceletPage() {
                                 src={option.image}
                                 alt={`${option.key}示意圖`}
                                 loading="lazy"
-                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                className={`h-full w-full transition-transform duration-500 group-hover:scale-105 ${option.imageClassName}`}
                               />
                             </div>
                             <span className="flex min-h-[44px] items-center justify-between px-3 py-2">

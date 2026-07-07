@@ -6,11 +6,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, UserRound, X } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import CartBenefitNotice from "@/components/CartBenefitNotice";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { findProduct } from "@/data/products";
 
 export type CartProduct = {
@@ -61,6 +62,7 @@ function readStoredCart(): CartItem[] {
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => readStoredCart());
   const [isOpen, setIsOpen] = useState(false);
+  const [checkoutPromptOpen, setCheckoutPromptOpen] = useState(false);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
@@ -111,7 +113,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
     setIsOpen(false);
+    setCheckoutPromptOpen(true);
+  };
+
+  const continueAsGuest = () => {
+    setCheckoutPromptOpen(false);
     setLocation("/checkout");
+  };
+
+  const continueAsMember = () => {
+    setCheckoutPromptOpen(false);
+    window.dispatchEvent(
+      new CustomEvent("open-login", {
+        detail: {
+          title: "會員登入",
+          subtitle: "加入會員可不定時享有專屬優惠。\n登入後會直接前往結帳。",
+          redirectTo: "/checkout",
+        },
+      })
+    );
   };
 
   const value = useMemo<CartContextValue>(
@@ -130,6 +150,65 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return (
     <CartContext.Provider value={value}>
       {children}
+      <Dialog open={checkoutPromptOpen} onOpenChange={setCheckoutPromptOpen}>
+        <DialogContent className="max-w-[calc(100%-2rem)] rounded-3xl border border-[#D1BE9B]/28 bg-[#FAF7F4] p-6 shadow-[0_24px_70px_rgba(49,53,58,0.18)] sm:max-w-md">
+          <DialogTitle
+            className="text-center text-[16px] tracking-[0.22em] text-[#31353A]"
+            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+          >
+            選擇結帳方式
+          </DialogTitle>
+          <DialogDescription
+            className="text-center text-[11px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
+            style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+          >
+            可以先以訪客身份完成訂單，也可以登入會員保留資料與優惠通知。
+          </DialogDescription>
+
+          <div className="mt-2 grid gap-3">
+            <button
+              type="button"
+              onClick={continueAsGuest}
+              className="w-full rounded-2xl border border-[#D1BE9B]/24 bg-white/58 px-5 py-4 text-left transition hover:bg-white/80 hover:shadow-sm"
+            >
+              <span
+                className="block text-[13px] tracking-[0.16em] text-[#31353A]"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                訪客結帳
+              </span>
+              <span
+                className="mt-1 block text-[11px] leading-[1.7] tracking-[0.06em] text-[#31353A]/56"
+                style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+              >
+                不登入也可以填寫資料並完成付款。
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={continueAsMember}
+              className="w-full rounded-2xl bg-[#31353A] px-5 py-4 text-left text-[#FAF7F4] shadow-md shadow-[#31353A]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A]"
+            >
+              <span className="flex items-center gap-2">
+                <UserRound size={16} strokeWidth={1.6} />
+                <span
+                  className="text-[13px] tracking-[0.16em]"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  會員登入 / 註冊
+                </span>
+              </span>
+              <span
+                className="mt-2 block text-[11px] leading-[1.7] tracking-[0.06em] opacity-78"
+                style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+              >
+                加入會員可不定時享有專屬優惠。
+              </span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
       {isOpen && (
         <div className="fixed inset-0 z-[90]">
           <button

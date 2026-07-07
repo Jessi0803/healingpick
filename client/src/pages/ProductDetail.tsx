@@ -245,31 +245,6 @@ export default function ProductDetailPage() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() =>
-                  addItem({
-                    slug: product.slug,
-                    name: product.name,
-                    price: product.price,
-                    img: product.img,
-                  })
-                }
-                className="w-full rounded-full bg-[#3D4144] px-5 py-3.5 text-xs tracking-[0.2em] text-[#FAF7F4] shadow-md shadow-[#3D4144]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] hover:shadow-[#D1BE9B]/20 active:scale-95"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                加入購物車
-              </button>
-              <a
-                href="https://lin.ee/zqRShGd"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 block w-full rounded-full border border-[#D1BE9B]/25 px-5 py-3 text-center text-xs tracking-[0.16em] text-[#31353A]/62 transition hover:bg-white/50 hover:text-[#A38D6B]"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                有問題可私訊官方 LINE
-              </a>
-
               {/* Quick feature highlights — keeps the right column visually
                   balanced with the tall hero image on the left. */}
               <div className="mt-6 pt-5 border-t border-[#D1BE9B]/15">
@@ -319,6 +294,31 @@ export default function ProductDetailPage() {
                   })}
                 </ul>
               </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  addItem({
+                    slug: product.slug,
+                    name: product.name,
+                    price: product.price,
+                    img: product.img,
+                  })
+                }
+                className="mt-6 w-full rounded-full bg-[#3D4144] px-5 py-3.5 text-xs tracking-[0.2em] text-[#FAF7F4] shadow-md shadow-[#3D4144]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] hover:shadow-[#D1BE9B]/20 active:scale-95"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                加入購物車
+              </button>
+              <a
+                href="https://lin.ee/zqRShGd"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 block w-full rounded-full border border-[#D1BE9B]/25 px-5 py-3 text-center text-xs tracking-[0.16em] text-[#31353A]/62 transition hover:bg-white/50 hover:text-[#A38D6B]"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                有問題可私訊官方 LINE
+              </a>
             </div>
           </div>
 
