@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { productOrders } from "../../drizzle/schema";
 import { getDb } from "../db";
+import { assertPayuniConfigured, createPayuniProductCheckout } from "../_core/payuni";
 import { publicProcedure, router } from "../_core/trpc";
 
 const orderItemInput = z.object({
@@ -24,7 +25,7 @@ export const shopRouter = router({
         items: z.array(orderItemInput).min(1, "購物車目前沒有商品").max(30),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) {
         throw new TRPCError({
@@ -37,6 +38,21 @@ export const shopRouter = router({
         (sum, item) => sum + item.price * item.quantity,
         0
       );
+      if (subtotal <= 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "訂單金額需大於 0",
+        });
+      }
+
+      try {
+        assertPayuniConfigured();
+      } catch (error) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: String((error as Error)?.message ?? error),
+        });
+      }
 
       const inserted = await db
         .insert(productOrders)
@@ -66,6 +82,16 @@ export const shopRouter = router({
       return {
         orderId: order.id,
         createdAt: order.createdAt,
+        checkout: createPayuniProductCheckout({
+          req: ctx.req,
+          orderId: order.id,
+          email: input.email.toLowerCase(),
+          amount: subtotal,
+          productDescription: input.items
+            .map((item) => `${item.name} x ${item.quantity}`)
+            .join("; ")
+            .slice(0, 550),
+        }),
       };
     }),
 });

@@ -102,9 +102,19 @@ Available pre-defined system envs:
 - `BUILT_IN_FORGE_API_KEY`: Bearer token used by Manus built-in apis (server-side)
 - `VITE_FRONTEND_FORGE_API_KEY`: Bearer token for frontend access to Manus built-in apis
 - `VITE_FRONTEND_FORGE_API_URL`: Manus built-in apis URL for frontend
+- `PUBLIC_SITE_URL`: Public website origin used for payment callbacks, e.g. `https://example.com`
+- `PAYUNI_MER_ID`: PAYUNi merchant ID
+- `PAYUNI_HASH_KEY`: PAYUNi Hash Key
+- `PAYUNI_HASH_IV`: PAYUNi Hash IV
+- `PAYUNI_MODE`: `production` for live PAYUNi, or `sandbox` for the test environment
 
 Do not edit these directly in code or commit `.env` files.
 The envs above are system envs, when use env in website code, refer `server/_core/env.ts` for available list.
+
+PAYUNi 後台串接設定：
+- Return URL: `${PUBLIC_SITE_URL}/api/payuni/return`
+- Notify URL: `${PUBLIC_SITE_URL}/api/payuni/notify`
+- Back URL: `${PUBLIC_SITE_URL}/buy`
 
 ---
 

@@ -4,8 +4,12 @@ import { publicProcedure, router } from "../_core/trpc";
 import { sql } from "drizzle-orm";
 import { addCredits, getCreditState, getDb, getUserByEmail, getVisitorCreditState } from "../db";
 import { isCreditsEnabled } from "../_core/credits";
+import { createPayuniCheckout } from "../_core/payuni";
 import { verifyAccessToken } from "../_core/supabase";
 import { users } from "../../drizzle/schema";
+import { CREDIT_PACKAGES } from "../../shared/creditPackages";
+
+const packageCodeSchema = z.enum(CREDIT_PACKAGES.map((p) => p.code) as [string, ...string[]]);
 
 export const creditsRouter = router({
   /** Current balance + remaining daily free quota for the visitor / user. */
@@ -90,6 +94,30 @@ export const creditsRouter = router({
 
     return out;
   }),
+
+  /** Create a PAYUNi checkout form payload for the selected credit package. */
+  createPayuniCheckout: publicProcedure
+    .input(z.object({ packageCode: packageCodeSchema }))
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "LOGIN_REQUIRED" });
+      }
+
+      try {
+        return createPayuniCheckout({
+          req: ctx.req,
+          userId: ctx.user.id,
+          userEmail: ctx.user.email ?? null,
+          packageCode: input.packageCode as (typeof CREDIT_PACKAGES)[number]["code"],
+        });
+      } catch (error) {
+        const message = String((error as Error)?.message ?? error);
+        if (message === "PAYUNI_NOT_CONFIGURED") {
+          throw new TRPCError({ code: "PRECONDITION_FAILED", message });
+        }
+        throw error;
+      }
+    }),
 
   /** Admin-only manual top-up (used for testing before real payment exists). */
   adminTopup: publicProcedure

@@ -1,5 +1,5 @@
-import { FormEvent, useState } from "react";
-import { Link, useLocation } from "wouter";
+import { FormEvent, useEffect, useState } from "react";
+import { Link } from "wouter";
 import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import PageLayout from "@/components/PageLayout";
@@ -34,16 +34,46 @@ const initialForm: CustomerForm = {
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart, openCart } = useCart();
-  const [, setLocation] = useLocation();
   const [form, setForm] = useState<CustomerForm>(initialForm);
-  const createOrderMutation = trpc.shop.createOrder.useMutation({
-    onSuccess: ({ orderId }) => {
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("payuni");
+    if (!status) return;
+    if (status === "success") {
       clearCart();
+      toast.success("付款完成，訂單已成立");
+    } else if (status === "pending") {
+      clearCart();
+      toast.info("訂單已建立，完成付款後我們會開始安排。");
+    } else if (status === "error") {
+      toast.error("付款結果驗證失敗，請聯繫客服協助查核。");
+    }
+    window.history.replaceState(null, "", window.location.pathname);
+  }, [clearCart]);
+
+  const createOrderMutation = trpc.shop.createOrder.useMutation({
+    onSuccess: ({ checkout }) => {
       setForm(initialForm);
-      toast.success(`已收到訂單 #${orderId}，我們會盡快確認。`);
-      setLocation("/shop");
+      const payuniForm = document.createElement("form");
+      payuniForm.method = "POST";
+      payuniForm.action = checkout.action;
+      payuniForm.style.display = "none";
+      Object.entries(checkout.fields).forEach(([name, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        payuniForm.appendChild(input);
+      });
+      document.body.appendChild(payuniForm);
+      payuniForm.submit();
     },
     onError: (error) => {
+      if (error.message === "PAYUNI_NOT_CONFIGURED") {
+        toast.error("金流尚未完成設定，請稍後再試。");
+        return;
+      }
       toast.error(error.message || "訂單送出失敗，請稍後再試。");
     },
   });
@@ -255,6 +285,15 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
+                <div className="mt-4 rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/58 px-4 py-3">
+                  <p className="text-[10px] tracking-[0.2em] text-[#A38D6B]">
+                    付款方式
+                  </p>
+                  <p className="mt-2 text-[12px] leading-[1.8] tracking-[0.06em] text-[#31353A]/62">
+                    信用卡一次付清、Apple Pay、ATM 轉帳
+                  </p>
+                </div>
+
                 <div className="mt-5 grid gap-3">
                   <button
                     type="submit"
@@ -262,7 +301,7 @@ export default function CheckoutPage() {
                     className="w-full rounded-full bg-[#31353A] px-5 py-3.5 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#31353A]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-50"
                     style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                   >
-                    {createOrderMutation.isPending ? "送出中" : "送出訂單"}
+                    {createOrderMutation.isPending ? "前往中" : "前往付款"}
                   </button>
                   <a
                     href={LINE_URL}
