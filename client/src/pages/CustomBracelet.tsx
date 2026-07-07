@@ -905,7 +905,6 @@ export default function CustomBraceletPage() {
                     group
                     required
                     wide
-                    hint="這題只確認是否加吊飾，款式會在下一題選擇。"
                   >
                     <button
                       type="button"
