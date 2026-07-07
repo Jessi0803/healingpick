@@ -663,7 +663,6 @@ export default function CustomBraceletPage() {
                     >
                       銀飾款式依設計不同，可能使用 14K 包金、純銀或鍍銀材質。若日常配戴會頻繁碰水，建議優先選擇金飾款，保養上會更安心。
                     </p>
-                    <input value={form.metalPreference} onChange={(e) => update('metalPreference', e.target.value)} className={inputClass} placeholder="可點上方選金／銀，也可補充特殊金屬偏好" />
                   </Field>
                   <Field label="扣件類型選擇" wide>
                     <div className="grid gap-2.5 sm:grid-cols-3">
