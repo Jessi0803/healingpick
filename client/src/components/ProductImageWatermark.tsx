@@ -38,11 +38,13 @@ export default function ProductImageWatermark({
       />
       {showWatermark && (
         <div
-          className={`pointer-events-none absolute bottom-2 right-2 flex max-w-[calc(100%-1rem)] items-center gap-1 rounded-full bg-black/42 px-2 py-1 text-[9px] leading-none tracking-[0.06em] text-white/95 shadow-sm backdrop-blur-sm ${watermarkClassName}`}
+          className={`pointer-events-none absolute bottom-2 right-2 flex max-w-[calc(100%-1rem)] items-center gap-1 rounded-full bg-black/42 px-2 py-1 text-[9px] leading-[1.35] tracking-normal text-white/95 shadow-sm backdrop-blur-sm ${watermarkClassName}`}
           aria-hidden="true"
         >
           <Instagram className="h-3 w-3 flex-shrink-0" strokeWidth={1.8} />
-          <span className="truncate">{WATERMARK_TEXT}</span>
+          <span className="whitespace-nowrap pb-px font-mono">
+            {WATERMARK_TEXT}
+          </span>
         </div>
       )}
     </div>
