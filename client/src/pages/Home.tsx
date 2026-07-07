@@ -555,7 +555,7 @@ export default function Home() {
             className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
-            把心事揉一揉，慢慢變成答案。
+            全台最萌的占卜天地
           </p>
 
           <p

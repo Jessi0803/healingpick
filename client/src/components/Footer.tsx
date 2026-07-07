@@ -52,7 +52,7 @@ export default function Footer() {
               className="mt-4 text-[11px] tracking-[0.15em] text-[#D1BE9B]/80"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
             >
-              把心事揉一揉，慢慢變成答案。
+              全台最萌的占卜天地
             </p>
           </div>
 
