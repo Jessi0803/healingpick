@@ -12,7 +12,10 @@ type CustomerForm = {
   phone: string;
   wristSize: string;
   fit: "貼手" | "剛好" | "微鬆";
-  address: string;
+  postalCode: string;
+  city: string;
+  district: string;
+  streetAddress: string;
 };
 
 const LINE_URL = "https://lin.ee/zqRShGd";
@@ -23,7 +26,10 @@ const initialForm: CustomerForm = {
   phone: "",
   wristSize: "",
   fit: "剛好",
-  address: "",
+  postalCode: "",
+  city: "",
+  district: "",
+  streetAddress: "",
 };
 
 export default function CheckoutPage() {
@@ -48,8 +54,14 @@ export default function CheckoutPage() {
       toast.error("購物車目前沒有商品。");
       return;
     }
+    const address = [form.postalCode, form.city, form.district, form.streetAddress].join("");
     createOrderMutation.mutate({
-      ...form,
+      customerName: form.customerName,
+      email: form.email,
+      phone: form.phone,
+      wristSize: form.wristSize,
+      fit: form.fit,
+      address,
       items: items.map(({ slug, name, price, quantity }) => ({
         slug,
         name,
@@ -159,20 +171,42 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <label className="mt-4 block">
-                  <span className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
-                    收件地址
-                  </span>
-                  <textarea
-                    value={form.address}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, address: event.target.value }))
-                    }
-                    required
-                    rows={4}
-                    className="w-full resize-y rounded-lg border border-[#D1BE9B]/25 bg-white/70 px-4 py-3 text-sm leading-[1.7] text-[#31353A]/78 outline-none transition focus:border-[#A38D6B]/70"
-                  />
-                </label>
+                <fieldset className="mt-5">
+                  <legend className="mb-3 text-[11px] tracking-[0.16em] text-[#A38D6B]">
+                    收件地址 <span className="text-[#D66A62]">*</span>
+                  </legend>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <AddressInput
+                      value={form.postalCode}
+                      onChange={(postalCode) => setForm((current) => ({ ...current, postalCode }))}
+                      placeholder="郵遞區號（如 100）"
+                      inputMode="numeric"
+                      autoComplete="postal-code"
+                    />
+                    <AddressInput
+                      value={form.city}
+                      onChange={(city) => setForm((current) => ({ ...current, city }))}
+                      placeholder="縣市（如 台北市）"
+                      autoComplete="address-level1"
+                    />
+                    <AddressInput
+                      value={form.district}
+                      onChange={(district) => setForm((current) => ({ ...current, district }))}
+                      placeholder="鄉鎮市區（如 信義區）"
+                      autoComplete="address-level2"
+                      className="sm:col-span-2"
+                    />
+                    <AddressInput
+                      value={form.streetAddress}
+                      onChange={(streetAddress) =>
+                        setForm((current) => ({ ...current, streetAddress }))
+                      }
+                      placeholder="路名、巷號、門牌（如 信義路五段7號）"
+                      autoComplete="street-address"
+                      className="sm:col-span-2"
+                    />
+                  </div>
+                </fieldset>
               </section>
 
               <aside className="h-fit rounded-2xl border border-[#D1BE9B]/20 bg-white/55 p-5">
@@ -219,9 +253,6 @@ export default function CheckoutPage() {
                       NT$ {subtotal.toLocaleString("zh-TW")}
                     </span>
                   </div>
-                  <p className="mt-3 rounded-lg border border-[#D1BE9B]/25 bg-[#FAF7F4]/70 px-4 py-3 text-[12px] leading-[1.8] tracking-[0.06em] text-[#8F7957]">
-                    下單一條免運，即贈送白水晶碎石一包。
-                  </p>
                 </div>
 
                 <div className="mt-5 grid gap-3">
@@ -249,6 +280,35 @@ export default function CheckoutPage() {
         </div>
       </div>
     </PageLayout>
+  );
+}
+
+function AddressInput({
+  value,
+  onChange,
+  placeholder,
+  className = "",
+  inputMode,
+  autoComplete,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  className?: string;
+  inputMode?: "numeric";
+  autoComplete?: string;
+}) {
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      placeholder={placeholder}
+      required
+      inputMode={inputMode}
+      autoComplete={autoComplete}
+      className={`h-14 w-full rounded-none border border-[#D1BE9B]/30 bg-white/72 px-4 text-sm text-[#31353A]/78 outline-none transition placeholder:text-[#31353A]/42 focus:border-[#A38D6B]/75 sm:h-[62px] sm:px-5 ${className}`}
+    />
   );
 }
 

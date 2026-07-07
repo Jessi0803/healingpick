@@ -156,9 +156,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
                   <X size={18} />
                 </button>
               </div>
-              <div className="mt-4 rounded-lg border border-[#D1BE9B]/25 bg-white/58 px-4 py-3 text-[12px] leading-[1.8] tracking-[0.08em] text-[#8F7957]">
-                下單一條免運，即贈送白水晶碎石一包。
-              </div>
             </div>
 
             <div className="flex flex-1 flex-col gap-6 px-5 py-5">

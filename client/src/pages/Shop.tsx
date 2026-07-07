@@ -312,9 +312,6 @@ export default function ShopPage() {
           {/* Product grid */}
           {!isCustomCategory && (
             <>
-              <div className="mb-6 rounded-2xl border border-[#D1BE9B]/24 bg-white/48 px-5 py-4 text-center text-[12px] leading-[1.8] tracking-[0.12em] text-[#8F7957] shadow-[0_10px_26px_rgba(163,141,107,0.06)]">
-                下單一條免運，即贈送白水晶碎石一包。
-              </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8 mb-12">
                 {filtered.map((product, i) => (
                   <div
@@ -588,11 +585,6 @@ function FeaturedBand({
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。
             </p>
-            <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-[#D1BE9B]/35 bg-[#FAF7F4]/65 px-4 py-2 text-[11px] tracking-[0.16em] text-[#8F7957] shadow-[0_10px_30px_rgba(163,141,107,0.08)]">
-              <span className="h-px w-5 shrink-0 bg-[#D1BE9B]/60" />
-              <span className="leading-relaxed">下單一條免運｜贈白水晶碎石一包</span>
-              <span className="h-px w-5 shrink-0 bg-[#D1BE9B]/60" />
-            </div>
           </div>
           <ShopModeSwitch isCustomCategory={isCustomCategory} onChange={onModeChange} />
           <div className="grid grid-cols-2 gap-4">

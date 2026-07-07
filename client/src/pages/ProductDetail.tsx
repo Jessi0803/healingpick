@@ -172,10 +172,6 @@ export default function ProductDetailPage() {
                 ୨୧ ───────── ୨୧
               </div>
 
-              <div className="mb-5 rounded-2xl border border-[#D1BE9B]/24 bg-white/50 px-4 py-3 text-center text-[12px] leading-[1.8] tracking-[0.1em] text-[#8F7957]">
-                下單一條免運，即贈送白水晶碎石一包。
-              </div>
-
               <div className="mb-4 rounded-2xl border border-[#D1BE9B]/20 bg-white/45 px-4 py-3">
                 <p className="text-[10px] tracking-[0.22em] text-[#A38D6B] mb-1"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
