@@ -112,7 +112,7 @@ const CUSTOM_BRACELETS = [
     priceLabel: "NT$ 1,580",
     image: "/products/forest-bloom/1.jpg",
     href: "/shop/custom-bracelet/numerology",
-    cta: "先諮詢生命靈數款",
+    cta: "填寫客製化表單",
   },
 ];
 
