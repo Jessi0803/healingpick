@@ -9,6 +9,7 @@ import {
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import CartBenefitNotice from "@/components/CartBenefitNotice";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import { findProduct } from "@/data/products";
 
@@ -271,6 +272,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
                     NT$ {subtotal.toLocaleString("zh-TW")}
                   </span>
                 </div>
+                {items.length > 0 && (
+                  <div className="mt-3">
+                    <CartBenefitNotice />
+                  </div>
+                )}
               </section>
 
               <div className="mt-auto grid gap-3 border-t border-[#D1BE9B]/16 pt-5">

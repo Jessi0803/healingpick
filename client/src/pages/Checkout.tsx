@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
+import CartBenefitNotice from "@/components/CartBenefitNotice";
 import PageLayout from "@/components/PageLayout";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import { useCart } from "@/contexts/CartContext";
@@ -340,6 +341,10 @@ export default function CheckoutPage() {
                       NT$ {subtotal.toLocaleString("zh-TW")}
                     </span>
                   </div>
+                </div>
+
+                <div className="mt-3">
+                  <CartBenefitNotice />
                 </div>
 
                 <div className="mt-4 rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/58 px-4 py-3">
