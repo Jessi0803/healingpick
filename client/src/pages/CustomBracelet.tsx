@@ -101,6 +101,12 @@ const METAL_OPTIONS = [
   { key: '銀飾', en: 'Silver', image: '/products/wei-lan-wei-guang/1.jpg' },
 ];
 
+const CLASP_OPTIONS = [
+  { key: '彈力繩', en: 'Elastic Cord', image: '/products/cheng-guang/1.jpg' },
+  { key: 'OT扣', en: 'Toggle Clasp', image: '/custom-bracelet/clasps/ot-toggle.png' },
+  { key: '延長鏈', en: 'Extension Chain', image: '/custom-bracelet/clasps/extension-chain.png' },
+];
+
 const FORM_INITIAL = {
   name: '',
   birthDate: '',
@@ -112,6 +118,7 @@ const FORM_INITIAL = {
   favoriteCrystals: '',
   avoidCrystals: '',
   metalPreference: '',
+  claspPreference: '',
   contact: '',
   notes: '',
 };
@@ -123,6 +130,8 @@ const PAGE_COPY: Record<
   BraceletMode,
   {
     title: string;
+    heroEyebrow: string;
+    titleAccent: number;
     formTitle: string;
     contactProductName: string;
     heroIntro: string;
@@ -131,6 +140,8 @@ const PAGE_COPY: Record<
 > = {
   general: {
     title: '一般客製化手鍊',
+    heroEyebrow: 'Custom Crystal Bracelet',
+    titleAccent: 0,
     formTitle: '一般客製化手鍊諮詢表單',
     contactProductName: '一般客製化手鍊',
     heroIntro: '',
@@ -138,6 +149,8 @@ const PAGE_COPY: Record<
   },
   numerology: {
     title: '生命靈數客製化手鍊',
+    heroEyebrow: 'Life Path Number',
+    titleAccent: 4,
     formTitle: '生命靈數客製化手鍊諮詢表單',
     contactProductName: '生命靈數客製化手鍊',
     heroIntro:
@@ -169,7 +182,8 @@ export default function CustomBraceletPage() {
         `喜歡的色系：${form.colorPreference || '未填'}`,
         `喜歡或指定的水晶：${form.favoriteCrystals || '無特別指定'}`,
         `不喜歡或想避開的水晶：${form.avoidCrystals || '無'}`,
-        `喜歡金飾還是銀飾 / 彈力繩、OY扣、延長鍊：${form.metalPreference || '未填'}`,
+        `金屬偏好：${form.metalPreference || '未填'}`,
+        `扣件類型：${form.claspPreference || '未填'}`,
         `Instagram / LINE：${form.contact || '未填'}`,
         `其他備註：${form.notes || '無'}`,
       ].join('\n'),
@@ -187,6 +201,10 @@ export default function CustomBraceletPage() {
     const withoutMetals = parts.filter((p) => p !== '金飾' && p !== '銀飾');
     const next = parts.includes(key) ? withoutMetals : [key, ...withoutMetals];
     update('metalPreference', next.join('、'));
+  };
+
+  const toggleClasp = (key: string) => {
+    update('claspPreference', form.claspPreference === key ? '' : key);
   };
 
   const galleryCount = showAllPhotos ? GALLERY_IMAGES.length : FEATURED_IMAGES.length;
@@ -272,32 +290,44 @@ export default function CustomBraceletPage() {
             </div>
 
             <div className="relative z-10 grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] md:gap-12">
-            <div className="animate-fade-in-up">
+            <div className="relative">
               <p
-                className="mb-3 text-[19px] italic tracking-[0.02em] text-[#A38D6B]"
+                className="mb-3 animate-fade-in-up text-[19px] italic tracking-[0.02em] text-[#A38D6B]"
                 style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
               >
-                Custom Crystal Bracelet
+                {copy.heroEyebrow}
               </p>
               <h1
                 className="mb-5 text-3xl leading-[1.35] tracking-[0.12em] text-[#31353A] md:text-[2.6rem]"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                {copy.title}
+                {copy.title.split('').map((ch, i) => (
+                  <span
+                    key={i}
+                    className="tagline-char"
+                    style={{ animationDelay: `${0.12 + i * 0.06}s`, color: i < copy.titleAccent ? '#A38D6B' : undefined }}
+                  >
+                    {ch}
+                  </span>
+                ))}
               </h1>
               {copy.heroIntro && (
-                <div className="mb-5 rounded-3xl border border-[#D1BE9B]/22 bg-white/45 px-5 py-4 shadow-[0_10px_28px_rgba(209,190,155,0.08)]">
-                  <div className="mb-2 flex items-center gap-2 text-[#A38D6B]">
+                <div
+                  className="animate-fade-in-up mb-5 overflow-hidden rounded-3xl border border-[#C9B7E0]/35 bg-gradient-to-br from-white/62 to-[#F1EAFA]/48 px-5 py-4 shadow-[0_12px_30px_rgba(150,130,190,0.10)]"
+                  style={{ animationDelay: '0.5s' }}
+                >
+                  <div className="mb-2 flex items-center gap-2 text-[#8E79A8]">
                     <CalendarDays className="h-4 w-4" strokeWidth={1.5} />
                     <span
-                      className="text-[11px] tracking-[0.18em]"
+                      className="text-[11px] tracking-[0.16em]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
                     >
-                      LIFE PATH NUMBER
+                      生日 · 能量方向
                     </span>
+                    <span aria-hidden className="animate-twinkle ml-auto text-[11px] text-[#C9B7E0]">✦</span>
                   </div>
                   <p
-                    className="text-[13px] leading-[1.9] tracking-[0.04em] text-[#31353A]/72"
+                    className="text-[13px] leading-[1.9] tracking-[0.04em] text-[#31353A]/74"
                     style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
                   >
                     {copy.heroIntro}
@@ -305,18 +335,18 @@ export default function CustomBraceletPage() {
                 </div>
               )}
               <p
-                className="mb-7 max-w-xl whitespace-pre-line text-[14.5px] leading-[2] tracking-[0.04em] text-[#31353A]/78"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                className="animate-fade-in-up mb-7 max-w-xl whitespace-pre-line text-[14.5px] leading-[2] tracking-[0.04em] text-[#31353A]/78"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300, animationDelay: '0.7s' }}
               >
                 {copy.heroLead}
               </p>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="animate-fade-in-up flex flex-wrap items-center gap-3" style={{ animationDelay: '0.85s' }}>
                 <a
                   href="#custom-form"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#3D4144] px-6 py-3 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#3D4144]/10 transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                  className="group inline-flex items-center gap-2 rounded-full bg-[#3D4144] px-6 py-3 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#3D4144]/10 transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
-                  <Sparkles className="h-4 w-4" />
+                  <Sparkles className="h-4 w-4 transition-transform duration-500 group-hover:rotate-[18deg]" />
                   開始客製我的手鍊
                 </a>
                 <span
@@ -626,7 +656,45 @@ export default function CustomBraceletPage() {
                     >
                       銀飾款式依設計不同，可能使用 14K 包金、純銀或鍍銀材質。若日常配戴會頻繁碰水，建議優先選擇金飾款，保養上會更安心。
                     </p>
-                    <input value={form.metalPreference} onChange={(e) => update('metalPreference', e.target.value)} className={inputClass} placeholder="點上方選金／銀，也可補充：彈力繩、OY扣或延長鍊" />
+                    <input value={form.metalPreference} onChange={(e) => update('metalPreference', e.target.value)} className={inputClass} placeholder="可點上方選金／銀，也可補充特殊金屬偏好" />
+                  </Field>
+                  <Field label="扣件類型選擇" wide>
+                    <div className="grid gap-2.5 sm:grid-cols-3">
+                      {CLASP_OPTIONS.map((option) => {
+                        const active = form.claspPreference === option.key;
+                        return (
+                          <button
+                            key={option.key}
+                            type="button"
+                            onClick={() => toggleClasp(option.key)}
+                            className={`group overflow-hidden rounded-2xl border text-left transition-all duration-200 ${
+                              active
+                                ? 'border-[#A38D6B] ring-1 ring-[#A38D6B]/30'
+                                : 'border-[#D1BE9B]/25 hover:border-[#A38D6B]/45'
+                            }`}
+                            aria-pressed={active}
+                          >
+                            <div className="aspect-[4/3] overflow-hidden bg-[#F0E8DC]">
+                              <img
+                                src={option.image}
+                                alt={`${option.key}示意圖`}
+                                loading="lazy"
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            </div>
+                            <span className="flex min-h-[44px] items-center justify-between px-3 py-2">
+                              <span className="text-[12px] tracking-[0.1em] text-[#31353A]/80" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                                {option.key}
+                                <span className="mt-0.5 block text-[10px] italic tracking-normal text-[#A38D6B]/70" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                                  {option.en}
+                                </span>
+                              </span>
+                              {active && <span className="text-[11px] text-[#A38D6B]">✓</span>}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </Field>
                   <Field label="其他備註" wide>
                     <textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} className={textareaClass} placeholder="其他想補充的需求" />
