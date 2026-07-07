@@ -137,13 +137,16 @@ const CLASP_OPTIONS = [
 
 const CUSTOM_PRICE_LABEL = '客製款 NT$ 1,580';
 const CUSTOM_ADD_ON_PRICE_NOTE = '加狐仙或貔貅 +400；加貓貓頭 +300。';
-const CUSTOM_STOCK_CONFIRM_NOTE = '實際款式與庫存會再由客服協助確認。';
-const CUSTOM_PRICE_HINT = `${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}${CUSTOM_STOCK_CONFIRM_NOTE}`;
+const CUSTOM_PRICE_HINT = `${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}`;
 const CUSTOM_BASE_PRICE = 1580;
 const CUSTOM_BRACELET_IMAGE = '/custom-bracelet/charms-reference.png';
 
-const CHARM_OPTIONS = [
+const CHARM_NEED_OPTIONS = [
+  '需要加吊飾',
   '不需要加吊飾',
+];
+
+const CHARM_STYLE_OPTIONS = [
   '狐仙 +400',
   '貔貅 +400',
   '貓貓頭 +300',
@@ -156,16 +159,17 @@ const CHARM_PRICE_MAP: Record<string, number> = {
   '貓貓頭 +300': 300,
 };
 
-const getCharmLabel = (preference: string) => {
+const getCharmLabel = (need: string, preference: string) => {
+  if (need !== '需要加吊飾') return '不加吊飾';
   if (preference.startsWith('狐仙')) return '加狐仙';
   if (preference.startsWith('貔貅')) return '加貔貅';
   if (preference.startsWith('貓貓頭')) return '加貓貓頭';
   if (preference.startsWith('都可以')) return '吊飾由設計師搭配';
-  return '不加吊飾';
+  return '加吊飾，款式待確認';
 };
 
-const getCustomPrice = (preference: string) =>
-  CUSTOM_BASE_PRICE + (CHARM_PRICE_MAP[preference] ?? 0);
+const getCustomPrice = (need: string, preference: string) =>
+  CUSTOM_BASE_PRICE + (need === '需要加吊飾' ? (CHARM_PRICE_MAP[preference] ?? 0) : 0);
 
 const FORM_INITIAL = {
   name: '',
@@ -178,6 +182,7 @@ const FORM_INITIAL = {
   avoidCrystals: '',
   metalPreference: '',
   claspPreference: '',
+  charmNeed: '',
   charmPreference: '',
   contact: '',
   notes: '',
@@ -232,8 +237,8 @@ export default function CustomBraceletPage() {
   const [referenceImagePreview, setReferenceImagePreview] = useState('');
   const referenceImageInputRef = useRef<HTMLInputElement | null>(null);
 
-  const selectedCharmLabel = getCharmLabel(form.charmPreference);
-  const selectedCustomPrice = getCustomPrice(form.charmPreference);
+  const selectedCharmLabel = getCharmLabel(form.charmNeed, form.charmPreference);
+  const selectedCustomPrice = getCustomPrice(form.charmNeed, form.charmPreference);
 
   const update = (key: keyof CustomForm, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
@@ -250,6 +255,14 @@ export default function CustomBraceletPage() {
 
   const toggleClasp = (key: string) => {
     update('claspPreference', form.claspPreference === key ? '' : key);
+  };
+
+  const selectCharmNeed = (value: string) => {
+    setForm((current) => ({
+      ...current,
+      charmNeed: value,
+      charmPreference: value === '需要加吊飾' ? current.charmPreference : '',
+    }));
   };
 
   const handleReferenceImageChange = (file?: File) => {
@@ -317,8 +330,12 @@ export default function CustomBraceletPage() {
       toast.error('請先填寫姓名、聯絡方式、手圍與主要需求');
       return;
     }
-    if (!form.charmPreference.trim()) {
+    if (!form.charmNeed.trim()) {
       toast.error('請先選擇是否需要加吊飾');
+      return;
+    }
+    if (form.charmNeed === '需要加吊飾' && !form.charmPreference.trim()) {
+      toast.error('請先選擇想加哪一種吊飾');
       return;
     }
     if (mode === 'numerology' && !form.birthDate.trim()) {
@@ -328,7 +345,7 @@ export default function CustomBraceletPage() {
 
     addItem(
       {
-        slug: `custom-bracelet-${mode}-${form.charmPreference || 'no-charm'}`,
+        slug: `custom-bracelet-${mode}-${form.charmNeed === '需要加吊飾' ? form.charmPreference : 'no-charm'}`,
         name: `${copy.contactProductName}（${selectedCharmLabel}）`,
         price: selectedCustomPrice,
         img: CUSTOM_BRACELET_IMAGE,
@@ -703,6 +720,7 @@ export default function CustomBraceletPage() {
                   </Field>
                   <Field
                     label="理想手鍊款式參考圖"
+                    group
                     hint="選填。可以上傳喜歡的手鍊款式、配色或排列照片供我們參考；我們會依照參考方向設計，成品不一定會與參考圖完全相同。"
                     wide
                   >
@@ -791,7 +809,7 @@ export default function CustomBraceletPage() {
                   <Field label="不喜歡或想避開的水晶">
                     <textarea value={form.avoidCrystals} onChange={(e) => update('avoidCrystals', e.target.value)} className={textareaClass} placeholder="例如不要黑色、不要太大顆" />
                   </Field>
-                  <Field label="喜歡金飾還是銀飾？" wide>
+                  <Field label="喜歡金飾還是銀飾？" group wide>
                     <div className="mb-2.5 grid gap-2.5 sm:grid-cols-3">
                       {METAL_OPTIONS.map((m) => {
                         const active = form.metalPreference.split('、').map((s) => s.trim()).includes(m.key);
@@ -834,7 +852,7 @@ export default function CustomBraceletPage() {
                       銀飾款式依設計不同，可能使用 14K 包金、純銀或鍍銀材質。若日常配戴會頻繁碰水，建議優先選擇金飾款，保養上會更安心。
                     </p>
                   </Field>
-                  <Field label="扣件類型選擇" wide>
+                  <Field label="扣件類型選擇" group wide>
                     <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
                       {CLASP_OPTIONS.map((option) => {
                         const active = form.claspPreference === option.key;
@@ -874,7 +892,37 @@ export default function CustomBraceletPage() {
                   </Field>
                   <Field
                     label="需要加吊飾嗎？"
+                    group
                     required
+                    wide
+                    hint="這題只確認是否加吊飾，款式會在下一題選擇。"
+                  >
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {CHARM_NEED_OPTIONS.map((option) => {
+                        const active = form.charmNeed === option;
+                        return (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => selectCharmNeed(option)}
+                            className={`rounded-full border px-4 py-3 text-center text-[12px] tracking-[0.12em] transition-all duration-200 ${
+                              active
+                                ? 'border-[#A38D6B] bg-[#3D4144] text-[#FAF7F4]'
+                                : 'border-[#D1BE9B]/28 bg-white/55 text-[#31353A]/68 hover:border-[#A38D6B]/50'
+                            }`}
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                            aria-pressed={active}
+                          >
+                            {option}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </Field>
+                  <Field
+                    label="想加哪一種吊飾？"
+                    group
+                    required={form.charmNeed === '需要加吊飾'}
                     wide
                     hint={CUSTOM_PRICE_HINT}
                   >
@@ -904,18 +952,24 @@ export default function CustomBraceletPage() {
                           </button>
                         ))}
                       </div>
-                      <div className="grid gap-2 p-3 sm:grid-cols-3">
-                        {CHARM_OPTIONS.map((option) => {
+                      <div className="grid gap-2 p-3 sm:grid-cols-2 lg:grid-cols-4">
+                        {CHARM_STYLE_OPTIONS.map((option) => {
                           const active = form.charmPreference === option;
+                          const disabled = form.charmNeed !== '需要加吊飾';
                           return (
                             <button
                               key={option}
                               type="button"
-                              onClick={() => update('charmPreference', option)}
+                              onClick={() => {
+                                if (!disabled) update('charmPreference', option);
+                              }}
+                              disabled={disabled}
                               className={`rounded-full border px-3 py-2.5 text-center text-[11px] tracking-[0.1em] transition-all duration-200 ${
                                 active
                                   ? 'border-[#A38D6B] bg-[#3D4144] text-[#FAF7F4]'
-                                  : 'border-[#D1BE9B]/28 bg-[#FAF7F4]/70 text-[#31353A]/68 hover:border-[#A38D6B]/50'
+                                  : disabled
+                                    ? 'border-[#D1BE9B]/18 bg-[#FAF7F4]/45 text-[#31353A]/35'
+                                    : 'border-[#D1BE9B]/28 bg-[#FAF7F4]/70 text-[#31353A]/68 hover:border-[#A38D6B]/50'
                               }`}
                               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                               aria-pressed={active}
@@ -934,26 +988,12 @@ export default function CustomBraceletPage() {
               </FieldGroup>
 
               <div className="mt-7 rounded-2xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/68 px-4 py-3">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span
-                    className="text-[11px] tracking-[0.18em] text-[#31353A]/60"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  >
-                    目前估算
-                  </span>
-                  <span
-                    className="text-[18px] tracking-[0.04em] text-[#A38D6B]"
-                    style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
-                  >
-                    NT$ {selectedCustomPrice.toLocaleString('zh-TW')}
-                  </span>
-                </div>
-                <p
-                  className="mt-1 text-[11px] leading-[1.8] tracking-[0.05em] text-[#31353A]/54"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                <span
+                  className="text-[18px] tracking-[0.04em] text-[#A38D6B]"
+                  style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
                 >
-                  基本款 NT$ 1,580，{selectedCharmLabel}。實際款式與庫存會再由客服協助確認。
-                </p>
+                  NT$ {selectedCustomPrice.toLocaleString('zh-TW')}
+                </span>
               </div>
 
               <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -1193,19 +1233,21 @@ function FieldGroup({ label, last, children }: { label: string; last?: boolean; 
 
 function Field({
   label,
+  group,
   required,
   wide,
   hint,
   children,
 }: {
   label: string;
+  group?: boolean;
   required?: boolean;
   wide?: boolean;
   hint?: string;
   children: ReactNode;
 }) {
-  return (
-    <label className={wide ? 'md:col-span-2' : ''}>
+  const content = (
+    <>
       <span
         className="mb-1.5 flex items-center gap-1 text-[11px] tracking-[0.12em] text-[#31353A]/70"
         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
@@ -1222,6 +1264,16 @@ function Field({
           {hint}
         </span>
       )}
+    </>
+  );
+
+  if (group) {
+    return <div className={wide ? 'md:col-span-2' : ''}>{content}</div>;
+  }
+
+  return (
+    <label className={wide ? 'md:col-span-2' : ''}>
+      {content}
     </label>
   );
 }
