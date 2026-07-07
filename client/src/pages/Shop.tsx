@@ -252,9 +252,7 @@ export default function ShopPage() {
           {!isCustomCategory && (
             <div className="mb-8 animate-fade-in-up">
               <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
-                {CATEGORY_OPTIONS.filter(
-                  cat => cat.id !== CUSTOM_BRACELET_CATEGORY
-                ).map(cat => (
+                {CATEGORY_OPTIONS.map(cat => (
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
