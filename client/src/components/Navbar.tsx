@@ -21,7 +21,7 @@ const navLinks = [
   { label: 'Mochi 解夢', href: '/dream' },
   { label: '每日運勢', href: '/fortune/daily' },
   { label: '心理測驗', href: '/quiz' },
-  { label: '能量商品', href: '/shop' },
+  { label: '療癒水晶', href: '/shop' },
   { label: '購買點數', href: '/buy' },
 ];
 

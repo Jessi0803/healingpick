@@ -33,7 +33,7 @@ export default function ProductDetailPage() {
             className="text-sm text-[#31353A]/60 mb-6"
             style={{ fontFamily: "Noto Sans TC, sans-serif" }}
           >
-            抱歉,您所尋找的能量商品可能已下架或網址不正確。
+            抱歉,您所尋找的療癒水晶可能已下架或網址不正確。
           </p>
           <Link href="/shop">
             <button

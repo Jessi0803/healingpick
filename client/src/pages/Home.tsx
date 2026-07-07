@@ -7,7 +7,7 @@
  *   3. Features Overview (五大功能入口)
  *   4. Divination Previews (紫微 / 塔羅)
  *   5. Quiz Teaser (心理測驗)
- *   6. Shop Preview (能量商品)
+ *   6. Shop Preview (療癒水晶)
  */
 
 import { useState, useRef } from "react";
@@ -112,6 +112,14 @@ const CrystalCitrine = () => (
 
 // ─── Feature Card ─────────────────────────────────────────────────────────────
 const features = [
+  {
+    icon: "✦",
+    title: "客製化療癒水晶",
+    subtitle: "Custom Healing Crystals",
+    desc: "依照你的狀態與願望，挑選適合的水晶能量，陪你走過當下的課題。",
+    href: "/shop",
+    color: "#E6DDD2",
+  },
   {
     icon: "☯",
     title: "紫微斗數",
@@ -557,7 +565,15 @@ export default function Home() {
             今日有 {dailyMochiVisitorCount} 人來找 Mochi 占卜
           </p>
 
-          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[32rem] sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[32rem] sm:grid-cols-2 lg:max-w-5xl lg:grid-cols-6">
+            <Link href="/shop">
+              <button
+                className="w-full px-4 py-3 text-xs tracking-[0.16em] bg-[#D1BE9B] text-[#31353A] rounded-full hover:bg-[#3D4144] hover:text-[#FAF7F4] transition-all duration-500 active:scale-95"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                客製化療癒水晶
+              </button>
+            </Link>
             <Link href="/ziwei">
               <button
                 className="w-full px-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
@@ -639,7 +655,7 @@ export default function Home() {
               className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
             >
-              靈性療癒的五種方式
+              靈性療癒的六種方式
             </h2>
             <div className="divider-gold mt-4 max-w-xs mx-auto">
               <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none">
@@ -651,7 +667,7 @@ export default function Home() {
             </div>
           </Reveal>
 
-          <Reveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+          <Reveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
             {features.map((f, i) => (
               <Link
                 key={f.href}
@@ -1278,7 +1294,7 @@ export default function Home() {
                 className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
               >
-                能量商品精選
+                療癒水晶精選
               </h2>
             </div>
             <Link href="/shop">

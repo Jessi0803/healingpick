@@ -36,7 +36,7 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
     description: '用輕鬆的心理測驗看見你的靈魂香氣、心情天氣、壓力模式與專屬能量水晶推薦。',
   },
   '/shop': {
-    title: `能量商品｜${SITE_NAME}`,
+    title: `療癒水晶｜${SITE_NAME}`,
     description: '挑選水晶、療癒擺飾與能量小物，為生活放進一份安定、守護與儀式感。',
   },
   '/shop/custom-bracelet/general': {

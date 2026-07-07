@@ -859,7 +859,7 @@ export default function DreamPage() {
                         fontWeight: 300,
                       }}
                     >
-                      Mochi 為這個夢想到的能量商品
+                      Mochi 為這個夢想到的療癒水晶
                     </h2>
                   </div>
                   <p

@@ -75,7 +75,7 @@ export default function Footer() {
                 { label: 'Mochi 解夢', href: '/dream' },
                 { label: '每日運勢', href: '/fortune/daily' },
                 { label: '心理測驗', href: '/quiz' },
-                { label: '能量商品', href: '/shop' },
+                { label: '療癒水晶', href: '/shop' },
                 { label: '關於我們', href: '/about' },
                 { label: '購物須知與退費政策', href: '/policy' },
               ].map((item) => (
