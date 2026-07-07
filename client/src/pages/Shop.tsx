@@ -16,7 +16,7 @@ import {
   getProductImageStyle,
   type Product,
 } from '@/data/products';
-import ContactDialog from '@/components/ContactDialog';
+import { useCart } from '@/contexts/CartContext';
 
 // 精選輪播選品，使用獨立圖片避免輪播文案遮到手鍊本身。
 type FeaturedProduct = Product & { featuredImage: string };
@@ -102,12 +102,18 @@ const CUSTOM_BRACELETS = [
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState<SortBy>('sales_desc');
-  const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
-  const [isContactOpen, setIsContactOpen] = useState(false);
+  const { addItem } = useCart();
 
-  const handleBuyProduct = (productName: string) => {
-    setSelectedProduct(productName);
-    setIsContactOpen(true);
+  const handleOrderProduct = (product: Product) => {
+    addItem(
+      {
+        slug: product.slug,
+        name: product.name,
+        price: product.price,
+        img: product.img,
+      },
+      { open: true }
+    );
   };
 
   const filtered = PRODUCTS
@@ -296,19 +302,10 @@ export default function ShopPage() {
                     </div>
                   );
 
-                  return item.href ? (
+                  return (
                     <Link key={item.title} href={item.href}>
                       {content}
                     </Link>
-                  ) : (
-                    <button
-                      key={item.title}
-                      type="button"
-                      onClick={() => handleBuyProduct(item.title)}
-                      className="border-none bg-transparent p-0 text-left"
-                    >
-                      {content}
-                    </button>
                   );
                 })}
               </div>
@@ -317,12 +314,16 @@ export default function ShopPage() {
 
           {/* Product grid */}
           {!isCustomCategory && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8 mb-12">
-              {filtered.map((product, i) => (
-                <div
-                  key={product.slug}
-                  className="group flex flex-col justify-between h-full"
-                >
+            <>
+              <div className="mb-6 rounded-2xl border border-[#D1BE9B]/24 bg-white/48 px-5 py-4 text-center text-[12px] leading-[1.8] tracking-[0.12em] text-[#8F7957] shadow-[0_10px_26px_rgba(163,141,107,0.06)]">
+                下單一條免運，即贈送白水晶碎石一包。
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8 mb-12">
+                {filtered.map((product, i) => (
+                  <div
+                    key={product.slug}
+                    className="group flex flex-col justify-between h-full"
+                  >
                   <Link href={`/shop/${product.slug}`}>
                     <div className="cursor-pointer">
                       <div className="relative overflow-hidden rounded-2xl mb-3 aspect-square bg-[#F0E8DC]">
@@ -381,15 +382,16 @@ export default function ShopPage() {
                   </Link>
 
                   <button
-                    onClick={() => handleBuyProduct(product.name)}
+                    onClick={() => handleOrderProduct(product)}
                     className="w-full py-2 text-[10px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light mt-auto"
                     style={{ fontFamily: 'Noto Serif TC, serif' }}
                   >
-                    問問適不適合我 ♡
+                    下單 ♡
                   </button>
-                </div>
-              ))}
-            </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           <div className="flex justify-center mb-8">
@@ -405,12 +407,6 @@ export default function ShopPage() {
 
         </div>
       </div>
-
-      <ContactDialog
-        isOpen={isContactOpen}
-        onClose={() => setIsContactOpen(false)}
-        productName={selectedProduct}
-      />
     </PageLayout>
   );
 }
@@ -597,7 +593,7 @@ function FeaturedBand({
             </p>
             <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-[#D1BE9B]/35 bg-[#FAF7F4]/65 px-4 py-2 text-[11px] tracking-[0.16em] text-[#8F7957] shadow-[0_10px_30px_rgba(163,141,107,0.08)]">
               <span className="h-px w-5 shrink-0 bg-[#D1BE9B]/60" />
-              <span className="leading-relaxed">買一條即享免運｜每單贈天然水晶碎石</span>
+              <span className="leading-relaxed">下單一條免運｜贈白水晶碎石一包</span>
               <span className="h-px w-5 shrink-0 bg-[#D1BE9B]/60" />
             </div>
           </div>

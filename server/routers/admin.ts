@@ -1,14 +1,14 @@
 import { desc, eq, inArray, like, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { creditTransactions, feedbacks, readings, users } from "../../drizzle/schema";
+import { creditTransactions, feedbacks, productOrders, readings, users } from "../../drizzle/schema";
 import { DEFAULT_DAILY_FREE_QUOTA, MAX_DAILY_FREE_QUOTA, getDailyFreeQuota, getDb, setDailyFreeQuota } from "../db";
 import { normalizeEmailList, sendBatchEmail } from "../_core/email";
 import { adminProcedure, router } from "../_core/trpc";
 
 const limitInput = z.object({
   limit: z.number().int().min(1).max(200).default(100),
-  tab: z.enum(["users", "orders", "visitors", "feedbacks", "transactions"]).default("users"),
+  tab: z.enum(["users", "orders", "shopOrders", "visitors", "feedbacks", "transactions"]).default("users"),
 });
 
 function toNumber(value: unknown): number {
@@ -68,12 +68,14 @@ export const adminRouter = router({
             visitorReadings: 0,
             purchases: 0,
             creditsSold: 0,
+            shopOrders: 0,
           },
           settings: {
             dailyFreeQuota: DEFAULT_DAILY_FREE_QUOTA,
           },
           users: [],
           orders: [],
+          shopOrders: [],
           transactions: [],
           readings: [],
         };
@@ -91,9 +93,11 @@ export const adminRouter = router({
         readingCount,
         visitorStats,
         purchaseStats,
+        productOrderCount,
         userRows,
         orderRows,
         transactionRows,
+        shopOrderRows,
         readingRows,
         feedbackRows,
         dailyFreeQuota,
@@ -114,6 +118,7 @@ export const adminRouter = router({
             })
             .from(creditTransactions)
             .where(like(creditTransactions.reason, "gumroad:%")),
+          db.select({ count: sql<number>`count(*)` }).from(productOrders),
           tab === "users" ? db
             .select({
               id: users.id,
@@ -174,6 +179,24 @@ export const adminRouter = router({
             .leftJoin(users, eq(creditTransactions.userId, users.id))
             .orderBy(desc(creditTransactions.createdAt))
             .limit(limit) : emptyQuery,
+          tab === "shopOrders" ? db
+            .select({
+              id: productOrders.id,
+              customerName: productOrders.customerName,
+              email: productOrders.email,
+              phone: productOrders.phone,
+              wristSize: productOrders.wristSize,
+              fit: productOrders.fit,
+              address: productOrders.address,
+              items: productOrders.items,
+              subtotal: productOrders.subtotal,
+              freeGift: productOrders.freeGift,
+              status: productOrders.status,
+              createdAt: productOrders.createdAt,
+            })
+            .from(productOrders)
+            .orderBy(desc(productOrders.createdAt))
+            .limit(limit) : emptyQuery,
           tab === "visitors" ? db
             .select({
               id: readings.id,
@@ -221,6 +244,7 @@ export const adminRouter = router({
           visitorReadings: toNumber(visitorStat?.readings),
           purchases: toNumber(purchaseStat?.count),
           creditsSold: toNumber(purchaseStat?.creditsSold),
+          shopOrders: toNumber(productOrderCount[0]?.count),
         },
         settings: {
           dailyFreeQuota,
@@ -230,6 +254,7 @@ export const adminRouter = router({
           freeUsedToday: todayFreeUsed(row),
         })),
         orders: orderRows,
+        shopOrders: shopOrderRows,
         transactions: transactionRows,
         readings: readingRows,
         feedbacks: feedbackRows,

@@ -5,18 +5,17 @@
 
 import { useState } from 'react';
 import { useParams, Link } from 'wouter';
-import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import { findProduct, getProductFitSummary, getProductImageStyle } from '@/data/products';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
-import ContactDialog from '@/components/ContactDialog';
 import ProductCareNotice from '@/components/ProductCareNotice';
+import { useCart } from '@/contexts/CartContext';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const product = findProduct(id ?? '');
   const [activeImage, setActiveImage] = useState(0);
-  const [showContactModal, setShowContactModal] = useState(false);
+  const { addItem } = useCart();
 
   if (!product) {
     return (
@@ -42,7 +41,15 @@ export default function ProductDetailPage() {
   }
 
   const handleBuy = () => {
-    setShowContactModal(true);
+    addItem(
+      {
+        slug: product.slug,
+        name: product.name,
+        price: product.price,
+        img: product.img,
+      },
+      { open: true }
+    );
   };
 
   const mochiStorySection = product.story ? (
@@ -177,6 +184,10 @@ export default function ProductDetailPage() {
                 ୨୧ ───────── ୨୧
               </div>
 
+              <div className="mb-5 rounded-2xl border border-[#D1BE9B]/24 bg-white/50 px-4 py-3 text-center text-[12px] leading-[1.8] tracking-[0.1em] text-[#8F7957]">
+                下單一條免運，即贈送白水晶碎石一包。
+              </div>
+
               <div className="mb-4 rounded-2xl border border-[#D1BE9B]/20 bg-white/45 px-4 py-3">
                 <p className="text-[10px] tracking-[0.22em] text-[#A38D6B] mb-1"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
@@ -192,8 +203,30 @@ export default function ProductDetailPage() {
                 onClick={handleBuy}
                 className="w-full py-3.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95 shadow-md shadow-[#3D4144]/10 hover:shadow-[#D1BE9B]/20"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                問問這款適不適合我 ♡
+                下單 ♡
               </button>
+              <button
+                type="button"
+                onClick={() =>
+                  addItem({
+                    slug: product.slug,
+                    name: product.name,
+                    price: product.price,
+                    img: product.img,
+                  })
+                }
+                className="mt-3 w-full rounded-full border border-[#D1BE9B]/35 px-5 py-3 text-xs tracking-[0.2em] text-[#8F7957] transition hover:bg-white/60"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                加入購物車
+              </button>
+              <a
+                href="https://lin.ee/zqRShGd"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 block w-full rounded-full border border-[#D1BE9B]/25 px-5 py-3 text-center text-xs tracking-[0.16em] text-[#31353A]/62 transition hover:bg-white/50 hover:text-[#A38D6B]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                有問題可私訊官方 LINE
+              </a>
 
               {/* Quick feature highlights — keeps the right column visually
                   balanced with the tall hero image on the left. */}
@@ -319,13 +352,6 @@ export default function ProductDetailPage() {
 
         </div>
       </div>
-
-      {/* ── CUSTOM CONTACT DIALOG ─────────────────────────────────────────── */}
-      <ContactDialog
-        isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
-        productName={product.name}
-      />
     </PageLayout>
   );
 }

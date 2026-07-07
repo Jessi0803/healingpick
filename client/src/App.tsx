@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { CartProvider } from "./contexts/CartContext";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Tarot from "./pages/Tarot";
@@ -61,12 +62,14 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <Toaster />
-          <Seo />
-          <Router />
-          <MochiWelcomeLetter />
-          <PostcardMailbox />
-          <LoginDialog />
+          <CartProvider>
+            <Toaster />
+            <Seo />
+            <Router />
+            <MochiWelcomeLetter />
+            <PostcardMailbox />
+            <LoginDialog />
+          </CartProvider>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

@@ -8,10 +8,11 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Menu, X } from 'lucide-react';
+import { Menu, ShoppingBag, X } from 'lucide-react';
 import { CatSitting } from './CatElements';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
+import { useCart } from '@/contexts/CartContext';
 
 // Navbar links – flat structure, all items at top level
 const navLinks = [
@@ -28,6 +29,7 @@ const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買�
 
 export default function Navbar() {
   const { user, isAuthenticated, login, logout } = useAuth();
+  const { itemCount, openCart } = useCart();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
     refetchOnWindowFocus: true,
   });
@@ -164,6 +166,19 @@ export default function Navbar() {
 
           {/* Right slot – auth + hamburger */}
           <div className="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={openCart}
+              className="relative grid h-9 w-9 place-items-center rounded-full border border-[#D1BE9B]/25 bg-white/35 text-[#31353A]/78 transition hover:border-[#D1BE9B]/55 hover:text-[#A38D6B]"
+              aria-label="開啟購物車"
+            >
+              <ShoppingBag size={17} />
+              {itemCount > 0 && (
+                <span className="absolute -right-1 -top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-[#C9837A] px-1 text-[10px] leading-none text-white">
+                  {itemCount}
+                </span>
+              )}
+            </button>
             {/* Desktop auth */}
             {isAuthenticated ? (
               <div className="hidden xl:flex items-center gap-3">
@@ -253,6 +268,18 @@ export default function Navbar() {
               {navLinks.map((link) => renderNavLink(link, true))}
               {/* Mobile auth links */}
               <div className="mt-4 pt-4 border-t border-[#D1BE9B]/20 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    openCart();
+                  }}
+                  className="flex items-center gap-2 py-2 text-left text-xs tracking-[0.25em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  <ShoppingBag size={15} />
+                  購物車{itemCount > 0 ? `（${itemCount}）` : ''}
+                </button>
                 {isAuthenticated ? (
                   <>
                     {credits?.enabled && (
