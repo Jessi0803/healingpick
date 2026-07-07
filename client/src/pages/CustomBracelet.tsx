@@ -91,7 +91,7 @@ const STEP_ITEMS = [
 const FEATURE_ITEMS = [
   {
     title: '依照需求搭配專屬水晶',
-    desc: '依照想加強的能量、喜歡的色系、配戴習慣與預算，討論出更貼近你的水晶組合。',
+    desc: '依照想加強的能量、喜歡的色系與配戴習慣，討論出更貼近你的水晶組合。',
   },
   {
     title: '高品質天然水晶挑選',
@@ -135,7 +135,7 @@ const CLASP_OPTIONS = [
   },
 ];
 
-const CUSTOM_PRICE_LABEL = '客製款 NT$ 1,580 起';
+const CUSTOM_PRICE_LABEL = '客製款 NT$ 1,580';
 const CUSTOM_ADD_ON_PRICE_NOTE = '加狐仙或貔貅 +400；加貓貓頭 +300。';
 const CUSTOM_STOCK_CONFIRM_NOTE = '實際款式與庫存會再由客服協助確認。';
 const CUSTOM_PRICE_HINT = `${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}${CUSTOM_STOCK_CONFIRM_NOTE}`;
@@ -172,7 +172,6 @@ const FORM_INITIAL = {
   birthDate: '',
   wristSize: '',
   fitPreference: '',
-  budget: '',
   energyNeeds: '',
   colorPreference: '',
   favoriteCrystals: '',
@@ -683,10 +682,7 @@ export default function CustomBraceletPage() {
                       <option value="微鬆">微鬆</option>
                     </select>
                   </Field>
-                  <Field label="預算" hint={CUSTOM_PRICE_HINT}>
-                    <input value={form.budget} onChange={(e) => update('budget', e.target.value)} className={inputClass} placeholder="基本款 1580，可填希望控制的總預算" />
-                  </Field>
-                  <Field label="Instagram / LINE" required>
+                  <Field label="Instagram / LINE（提供 Instagram / LINE 以便私訊客製設計完成的手鍊圖）" required>
                     <input value={form.contact} onChange={(e) => update('contact', e.target.value)} className={inputClass} placeholder="@account 或 LINE ID" />
                   </Field>
                 </div>
