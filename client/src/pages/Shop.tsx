@@ -630,7 +630,7 @@ function FeaturedBand({
               </span>
               <span className="mx-2 text-[#D1BE9B]">｜</span>
               <span style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                {FEEDBACK_PHOTOS.length} 張實拍
+                顧客實拍
               </span>
             </span>
             <span
