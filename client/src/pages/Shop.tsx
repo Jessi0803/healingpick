@@ -83,6 +83,8 @@ const CUSTOM_BRACELETS = [
     title: "一般客製化手鍊",
     subtitle: "依照需求搭配專屬水晶",
     description: "從功效、色系、手圍與配戴習慣開始，討論出最貼近你的水晶手鍊。",
+    priceLabel: "NT$ 1,580 起",
+    addOnNote: "狐仙／貔貅 +400，貓貓頭 +300",
     image: "/products/misty-starlight/1.jpg",
     href: "/shop/custom-bracelet/general",
     cta: "填寫客製化表單",
@@ -91,6 +93,8 @@ const CUSTOM_BRACELETS = [
     title: "生命靈數客製化手鍊",
     subtitle: "以生日數字整理能量方向",
     description: "結合生命靈數與近期需求，協助梳理適合加強的能量與水晶搭配。",
+    priceLabel: "NT$ 1,580 起",
+    addOnNote: "狐仙／貔貅 +400，貓貓頭 +300",
     image: "/products/forest-bloom/1.jpg",
     href: "/shop/custom-bracelet/numerology",
     cta: "先諮詢生命靈數款",
@@ -364,6 +368,26 @@ export default function ShopPage() {
                           >
                             {item.description}
                           </p>
+                          <div className="mt-3">
+                            <p
+                              className="text-[13px] tracking-[0.12em] text-[#8F7957]"
+                              style={{
+                                fontFamily: "Noto Serif TC, serif",
+                                fontWeight: 400,
+                              }}
+                            >
+                              {item.priceLabel}
+                            </p>
+                            <p
+                              className="mt-1 text-[10px] leading-relaxed tracking-[0.08em] text-[#31353A]/50"
+                              style={{
+                                fontFamily: "Noto Sans TC, sans-serif",
+                                fontWeight: 300,
+                              }}
+                            >
+                              {item.addOnNote}
+                            </p>
+                          </div>
                         </div>
                         <span
                           className="mt-5 inline-flex w-fit items-center rounded-full bg-[#3D4144] px-4 py-2 text-[10px] tracking-[0.18em] text-[#FAF7F4] transition-colors duration-300 group-hover:bg-[#D1BE9B] group-hover:text-[#31353A]"

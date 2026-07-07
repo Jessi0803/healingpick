@@ -124,7 +124,16 @@ const CLASP_OPTIONS = [
   },
 ];
 
-const CHARM_OPTIONS = ['不需要加吊飾', '需要加吊飾', '都可以，依款式造型設計'];
+const CUSTOM_PRICE_LABEL = '客製款 NT$ 1,580 起';
+const CUSTOM_ADD_ON_PRICE_NOTE = '加狐仙或貔貅 +400；加貓貓頭 +300。';
+
+const CHARM_OPTIONS = [
+  '不需要加吊飾',
+  '狐仙 +400',
+  '貔貅 +400',
+  '貓貓頭 +300',
+  '都可以，依款式造型設計',
+];
 
 const FORM_INITIAL = {
   name: '',
@@ -661,8 +670,8 @@ export default function CustomBraceletPage() {
                       <option value="微鬆">微鬆</option>
                     </select>
                   </Field>
-                  <Field label="預算">
-                    <input value={form.budget} onChange={(e) => update('budget', e.target.value)} className={inputClass} placeholder="例如 1500-2500" />
+                  <Field label="預算" hint={`${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}`}>
+                    <input value={form.budget} onChange={(e) => update('budget', e.target.value)} className={inputClass} placeholder="基本款 1580，可填希望控制的總預算" />
                   </Field>
                   <Field label="Instagram / LINE" required>
                     <input value={form.contact} onChange={(e) => update('contact', e.target.value)} className={inputClass} placeholder="@account 或 LINE ID" />
@@ -858,7 +867,7 @@ export default function CustomBraceletPage() {
                     label="需要加吊飾嗎？"
                     required
                     wide
-                    hint="可先參考示意圖挑選方向，實際款式與庫存會再由客服協助確認。"
+                    hint={`${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}實際款式與庫存會再由客服協助確認。`}
                   >
                     <div className="overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/55">
                       <button
