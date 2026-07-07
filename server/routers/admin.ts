@@ -130,23 +130,29 @@ export const adminRouter = router({
               credits: users.credits,
               freeUsedToday: users.freeUsedToday,
               lastFreeReset: users.lastFreeReset,
-              lastReadingAt: sql<Date | null>`(
-                SELECT max(${readings.createdAt})
-                FROM ${readings}
-                WHERE ${readings.userId} = ${users.id}
+              braceletPurchaseHistory: sql<string>`(
+                SELECT coalesce(
+                  json_agg(
+                    json_build_object(
+                      'id', ${productOrders.id},
+                      'items', ${productOrders.items},
+                      'subtotal', ${productOrders.subtotal},
+                      'status', ${productOrders.status},
+                      'createdAt', ${productOrders.createdAt}
+                    )
+                    ORDER BY ${productOrders.createdAt} DESC
+                  )::text,
+                  '[]'
+                )
+                FROM ${productOrders}
+                WHERE ${users.email} IS NOT NULL
+                  AND lower(${productOrders.email}) = lower(${users.email})
               )`,
               createdAt: users.createdAt,
               lastSignedIn: users.lastSignedIn,
             })
             .from(users)
-            .orderBy(
-              sql`(
-                SELECT max(${readings.createdAt})
-                FROM ${readings}
-                WHERE ${readings.userId} = ${users.id}
-              ) DESC NULLS LAST`,
-              desc(users.createdAt)
-            )
+            .orderBy(desc(users.createdAt))
             .limit(limit) : emptyQuery,
           tab === "orders" ? db
             .select({

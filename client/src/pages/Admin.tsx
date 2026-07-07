@@ -52,7 +52,7 @@ type AdminUserRow = {
   adminNote: string | null;
   credits: number;
   freeUsedToday: number;
-  lastReadingAt: Date | null;
+  braceletPurchaseHistory: string;
   createdAt: Date;
   lastSignedIn: Date;
 };
@@ -89,6 +89,11 @@ type AdminShopOrderRow = {
   status: string;
   createdAt: Date;
 };
+
+type AdminUserBraceletOrder = Pick<
+  AdminShopOrderRow,
+  "id" | "items" | "subtotal" | "status" | "createdAt"
+>;
 
 type AdminReadingRow = {
   id: number;
@@ -133,16 +138,6 @@ function formatDate(value: string | Date | null | undefined) {
   });
 }
 
-function formatLastReading(value: string | Date | null | undefined) {
-  if (!value) return "從未占卜";
-  const date = new Date(value);
-  const diffDays = Math.floor(
-    (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const relative = diffDays <= 0 ? "今天" : `${diffDays} 天前`;
-  return `${formatDate(date)}（${relative}）`;
-}
-
 function shortText(value: string | null | undefined, max = 90) {
   if (!value) return "—";
   return value.length > max ? `${value.slice(0, max)}...` : value;
@@ -169,6 +164,55 @@ function parseShopOrderItems(items: string): AdminShopOrderItem[] {
   } catch {
     return [];
   }
+}
+
+function parseBraceletPurchaseHistory(
+  value: string | null | undefined
+): AdminUserBraceletOrder[] {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function braceletOrderLabel(order: AdminUserBraceletOrder) {
+  const items = parseShopOrderItems(order.items);
+  const itemText =
+    items.map(item => `${item.name} x${item.quantity}`).join("、") ||
+    "商品明細";
+  return `#${order.id} ${itemText} · NT$ ${order.subtotal.toLocaleString("zh-TW")}`;
+}
+
+function BraceletPurchaseHistoryCell({
+  value,
+}: {
+  value: string | null | undefined;
+}) {
+  const orders = parseBraceletPurchaseHistory(value);
+  if (orders.length === 0) return <>尚無購買紀錄</>;
+
+  const [latest, second] = orders;
+  return (
+    <div className="min-w-56 max-w-[280px] space-y-1 leading-[1.7]">
+      <div className="break-words text-[#31353A]/78">
+        {braceletOrderLabel(latest)}
+      </div>
+      <div className="text-[11px] text-[#A38D6B]">
+        {formatDate(latest.createdAt)} · {latest.status}
+      </div>
+      {second && (
+        <div className="break-words text-[11px] text-[#31353A]/45">
+          另有 #{second.id}
+          {orders.length > 2
+            ? ` 等 ${orders.length - 1} 筆`
+            : " 共 2 筆"}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function getReadingPreview(row: AdminReadingRow) {
@@ -376,7 +420,7 @@ export default function AdminPage() {
     const rows = data?.users ?? [];
     if (!normalizedQuery) return rows;
     return rows.filter(row =>
-      [row.email, row.name, String(row.id)].some(value =>
+      [row.email, row.name, row.braceletPurchaseHistory, String(row.id)].some(value =>
         (value ?? "").toLowerCase().includes(normalizedQuery)
       )
     );
@@ -991,8 +1035,10 @@ function UsersTable({
             <MobileInfoRow label="註冊時間">
               {formatDate(row.createdAt)}
             </MobileInfoRow>
-            <MobileInfoRow label="最後占卜">
-              {formatLastReading(row.lastReadingAt)}
+            <MobileInfoRow label="購買手鍊紀錄">
+              <BraceletPurchaseHistoryCell
+                value={row.braceletPurchaseHistory}
+              />
             </MobileInfoRow>
             <MobileInfoRow label="點數">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -1156,7 +1202,7 @@ function UsersTable({
               <th className="px-4 py-3 font-normal">點數</th>
               <th className="px-4 py-3 font-normal">今日免費剩餘</th>
               <th className="px-4 py-3 font-normal">註冊時間</th>
-              <th className="px-4 py-3 font-normal">最後占卜</th>
+              <th className="px-4 py-3 font-normal">購買手鍊紀錄</th>
               <th className="px-4 py-3 font-normal">備註</th>
               <th className="px-4 py-3 font-normal">歷史</th>
               <th className="px-4 py-3 font-normal">操作</th>
@@ -1281,7 +1327,9 @@ function UsersTable({
                       </td>
                       <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
                       <td className="px-4 py-3">
-                        {formatLastReading(row.lastReadingAt)}
+                        <BraceletPurchaseHistoryCell
+                          value={row.braceletPurchaseHistory}
+                        />
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex min-w-64 flex-col gap-2">
