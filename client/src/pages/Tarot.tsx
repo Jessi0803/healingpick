@@ -363,6 +363,33 @@ function ProductCard({
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
   const recommendationReason = getContextualRecommendationReason(product, context, role);
   const roleLabel = role === 'primary' ? '最呼應此刻' : '想加強也可看';
+
+  if (role === 'secondary') {
+    return (
+      <Link href={`/shop/${product.slug}`}>
+        <div className="group flex items-center gap-3 rounded-2xl border border-[#D1BE9B]/22 bg-white/45 p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45">
+          <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-[#F0EBE3]/40">
+            <img src={product.img} alt={product.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" style={getProductImageStyle(product)} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[12.5px] tracking-[0.08em] text-[#31353A]/86" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+              {product.name}
+            </p>
+            <div className="mt-0.5 flex items-center gap-2">
+              <span className="text-[12px] text-[#A38D6B]" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                NT$ {product.price.toLocaleString()}
+              </span>
+              {meanings[0] && (
+                <span className="truncate text-[10px] tracking-[0.12em] text-[#31353A]/55" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                  #{meanings[0]}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
   return (
     <Link href={`/shop/${product.slug}`}>
       <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
@@ -2685,14 +2712,23 @@ export default function TarotPage() {
                           </p>
                         </div>
                         <div className="flex flex-col gap-3">
-                          {recommendedProducts.map((product, index) => (
-                            <ProductCard
-                              key={product.slug}
-                              product={product}
-                              context={tarotRecommendationMessage}
-                              role={index === 0 ? 'primary' : 'secondary'}
-                            />
-                          ))}
+                          {recommendedProducts[0] && (
+                            <ProductCard key={recommendedProducts[0].slug} product={recommendedProducts[0]} context={tarotRecommendationMessage} role="primary" />
+                          )}
+                          {recommendedProducts.length > 1 && (
+                            <>
+                              <div className="my-1 flex items-center gap-3">
+                                <span className="h-px flex-1 bg-[#D1BE9B]/25" />
+                                <span className="text-[11px] tracking-[0.2em] text-[#A38D6B]/85" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>還可以看看 ✦</span>
+                                <span className="h-px flex-1 bg-[#D1BE9B]/25" />
+                              </div>
+                              <div className="grid grid-cols-2 gap-3">
+                                {recommendedProducts.slice(1).map((product) => (
+                                  <ProductCard key={product.slug} product={product} context={tarotRecommendationMessage} role="secondary" />
+                                ))}
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     )}
