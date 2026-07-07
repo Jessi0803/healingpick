@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
-import { Camera, ChevronLeft, ChevronRight, Images, X } from 'lucide-react';
+import { Camera, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
 import { CatSitting, CatPeeking } from '@/components/CatElements';
 import {
@@ -619,44 +619,25 @@ function FeaturedBand({
           <button
             type="button"
             onClick={openFeedback}
-            className="group overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/42 text-left shadow-[0_12px_30px_rgba(61,65,68,0.06),inset_0_1px_0_rgba(255,255,255,0.85)] transition-[border-color,background-color,box-shadow,transform] duration-200 ease-out hover:border-[#A38D6B]/34 hover:bg-white/64 hover:shadow-[0_18px_36px_rgba(61,65,68,0.09),inset_0_1px_0_rgba(255,255,255,0.95)] active:scale-[0.985]"
+            className="group mx-auto inline-flex max-w-full items-center gap-2 rounded-full border border-[#D1BE9B]/30 bg-[#FAF7F4]/56 px-4 py-2.5 text-[#8F7957] shadow-[0_10px_24px_rgba(163,141,107,0.07),inset_0_1px_0_rgba(255,255,255,0.82)] transition-[border-color,background-color,box-shadow,transform] duration-200 ease-out hover:border-[#A38D6B]/42 hover:bg-white/68 hover:shadow-[0_12px_28px_rgba(163,141,107,0.10),inset_0_1px_0_rgba(255,255,255,0.92)] active:scale-[0.975]"
           >
-            <span className="grid grid-cols-5 gap-1.5 p-2 pb-0">
-              {FEEDBACK_PHOTOS.slice(0, 5).map((src, i) => (
-                <span key={src} className="aspect-[3/4] overflow-hidden rounded-xl bg-[#F0E8DC]">
-                  <img
-                    src={src}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
-                    style={{ transitionDelay: `${i * 20}ms` }}
-                  />
-                </span>
-              ))}
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/70 text-[#A38D6B] transition-colors duration-200 group-hover:bg-[#3D4144] group-hover:text-[#FAF7F4]">
+              <Camera className="h-3.5 w-3.5" strokeWidth={1.55} />
             </span>
-            <span className="flex items-center justify-between gap-3 px-3.5 py-3">
-              <span className="min-w-0">
-                <span
-                  className="flex items-center gap-1.5 text-[12px] tracking-[0.14em] text-[#31353A]"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  <Camera className="h-3.5 w-3.5 text-[#A38D6B]" strokeWidth={1.6} />
-                  顧客真實回饋
-                </span>
-                <span
-                  className="mt-1 block text-[10.5px] leading-relaxed tracking-[0.08em] text-[#31353A]/50"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                >
-                  一次瀏覽 {FEEDBACK_PHOTOS.length} 張實拍照片
-                </span>
+            <span className="min-w-0 whitespace-nowrap text-[10.5px] tracking-[0.16em]">
+              <span style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 500 }}>
+                Real Feedback
               </span>
-              <span
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#D1BE9B]/24 bg-[#FAF7F4]/86 text-[#3D4144] transition-colors duration-200 group-hover:border-[#A38D6B]/35 group-hover:bg-[#3D4144] group-hover:text-[#FAF7F4]"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              >
-                <Images className="h-4 w-4" strokeWidth={1.6} />
+              <span className="mx-2 text-[#D1BE9B]">｜</span>
+              <span style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
+                {FEEDBACK_PHOTOS.length} 張實拍
               </span>
+            </span>
+            <span
+              aria-hidden="true"
+              className="text-[13px] leading-none text-[#A38D6B] transition-transform duration-200 group-hover:translate-x-0.5"
+            >
+              →
             </span>
           </button>
         </div>
