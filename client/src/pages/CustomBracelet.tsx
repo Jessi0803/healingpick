@@ -4,7 +4,6 @@ import {
   MouseEvent as ReactMouseEvent,
   ReactNode,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -14,13 +13,12 @@ import { Link, useLocation } from 'wouter';
 import {
   CalendarDays,
   Camera,
-  Check,
   ClipboardList,
-  Copy,
   Gem,
   ImageUp,
   MessageCircle,
   Package,
+  ShoppingCart,
   Sparkles,
   Trash2,
   X,
@@ -29,6 +27,7 @@ import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import ContactDialog from '@/components/ContactDialog';
 import ProductCareNotice from '@/components/ProductCareNotice';
+import { useCart } from '@/contexts/CartContext';
 import { CUSTOMER_FEEDBACK_PHOTO_ITEMS } from '@/data/customerFeedbackPhotos';
 
 const GALLERY_PHOTOS = CUSTOMER_FEEDBACK_PHOTO_ITEMS;
@@ -40,12 +39,23 @@ const HERO_IMAGES = [
   '/products/jiao-tang-ma-qi-duo/2.jpg',
   '/products/wen-rou-yue-guang/1.jpg',
 ];
-const CHARM_REFERENCE_IMAGE = '/custom-bracelet/charms-reference.png';
+const CHARM_REFERENCE_IMAGES = [
+  {
+    src: '/custom-bracelet/fox-pixiu-reference.png',
+    title: '狐仙／貔貅示意',
+    note: '狐仙或貔貅加購款式 +400',
+  },
+  {
+    src: '/custom-bracelet/cat-head-reference.png',
+    title: '貓貓頭示意',
+    note: '貓貓頭加購款式 +300',
+  },
+];
 const FEATURED_IMAGES = GALLERY_IMAGES.slice(3, 11);
 // 顧客回饋跑馬牆：兩排照片反向捲動。
 const MARQUEE_ROW_1 = GALLERY_PHOTOS.slice(0, 12);
 const MARQUEE_ROW_2 = GALLERY_PHOTOS.slice(12);
-const LIGHTBOX_IMAGES = [...HERO_IMAGES, ...GALLERY_IMAGES, CHARM_REFERENCE_IMAGE];
+const LIGHTBOX_IMAGES = [...HERO_IMAGES, ...GALLERY_IMAGES, ...CHARM_REFERENCE_IMAGES.map(image => image.src)];
 
 // Hero 背景飄浮的微光星點位置。
 const SPARKLES = [
@@ -127,6 +137,10 @@ const CLASP_OPTIONS = [
 
 const CUSTOM_PRICE_LABEL = '客製款 NT$ 1,580 起';
 const CUSTOM_ADD_ON_PRICE_NOTE = '加狐仙或貔貅 +400；加貓貓頭 +300。';
+const CUSTOM_STOCK_CONFIRM_NOTE = '實際款式與庫存會再由客服協助確認。';
+const CUSTOM_PRICE_HINT = `${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}${CUSTOM_STOCK_CONFIRM_NOTE}`;
+const CUSTOM_BASE_PRICE = 1580;
+const CUSTOM_BRACELET_IMAGE = '/custom-bracelet/charms-reference.png';
 
 const CHARM_OPTIONS = [
   '不需要加吊飾',
@@ -135,6 +149,23 @@ const CHARM_OPTIONS = [
   '貓貓頭 +300',
   '都可以，依款式造型設計',
 ];
+
+const CHARM_PRICE_MAP: Record<string, number> = {
+  '狐仙 +400': 400,
+  '貔貅 +400': 400,
+  '貓貓頭 +300': 300,
+};
+
+const getCharmLabel = (preference: string) => {
+  if (preference.startsWith('狐仙')) return '加狐仙';
+  if (preference.startsWith('貔貅')) return '加貔貅';
+  if (preference.startsWith('貓貓頭')) return '加貓貓頭';
+  if (preference.startsWith('都可以')) return '吊飾由設計師搭配';
+  return '不加吊飾';
+};
+
+const getCustomPrice = (preference: string) =>
+  CUSTOM_BASE_PRICE + (CHARM_PRICE_MAP[preference] ?? 0);
 
 const FORM_INITIAL = {
   name: '',
@@ -193,8 +224,8 @@ export default function CustomBraceletPage() {
   const [location] = useLocation();
   const mode: BraceletMode = location.includes('/numerology') ? 'numerology' : 'general';
   const copy = PAGE_COPY[mode];
+  const { addItem } = useCart();
   const [form, setForm] = useState<CustomForm>(FORM_INITIAL);
-  const [copied, setCopied] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
@@ -202,31 +233,10 @@ export default function CustomBraceletPage() {
   const [referenceImagePreview, setReferenceImagePreview] = useState('');
   const referenceImageInputRef = useRef<HTMLInputElement | null>(null);
 
-  const formSummary = useMemo(
-    () =>
-      [
-        `【${copy.formTitle}】`,
-        `姓名：${form.name || '未填'}`,
-        ...(mode === 'numerology' ? [`出生年月日：${form.birthDate || '未填'}`] : []),
-        `手圍尺寸：${form.wristSize || '未填'}`,
-        `配戴鬆緊：${form.fitPreference || '未填'}`,
-        `預算：${form.budget || '未填'}`,
-        `想加強的功效/需求：${form.energyNeeds || '未填'}`,
-        `喜歡的色系：${form.colorPreference || '未填'}`,
-        `理想款式參考圖：${referenceImage ? `${referenceImage.name}（請於私訊時一併傳送圖片）` : '未提供'}`,
-        `喜歡或指定的水晶：${form.favoriteCrystals || '無特別指定'}`,
-        `不喜歡或想避開的水晶：${form.avoidCrystals || '無'}`,
-        `金屬偏好：${form.metalPreference || '未填'}`,
-        `扣件類型：${form.claspPreference || '未填'}`,
-        `是否加吊飾：${form.charmPreference || '未填'}`,
-        `Instagram / LINE：${form.contact || '未填'}`,
-        `其他備註：${form.notes || '無'}`,
-      ].join('\n'),
-    [copy.formTitle, form, mode, referenceImage],
-  );
+  const selectedCharmLabel = getCharmLabel(form.charmPreference);
+  const selectedCustomPrice = getCustomPrice(form.charmPreference);
 
   const update = (key: keyof CustomForm, value: string) => {
-    setCopied(false);
     setForm((current) => ({ ...current, [key]: value }));
   };
 
@@ -244,7 +254,6 @@ export default function CustomBraceletPage() {
   };
 
   const handleReferenceImageChange = (file?: File) => {
-    setCopied(false);
     if (!file) {
       setReferenceImage(null);
       return;
@@ -263,7 +272,6 @@ export default function CustomBraceletPage() {
   };
 
   const clearReferenceImage = () => {
-    setCopied(false);
     setReferenceImage(null);
     if (referenceImageInputRef.current) referenceImageInputRef.current.value = '';
   };
@@ -304,7 +312,7 @@ export default function CustomBraceletPage() {
     return () => URL.revokeObjectURL(nextPreview);
   }, [referenceImage]);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleAddToCart = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!form.name.trim() || !form.contact.trim() || !form.wristSize.trim() || !form.energyNeeds.trim()) {
       toast.error('請先填寫姓名、聯絡方式、手圍與主要需求');
@@ -319,15 +327,15 @@ export default function CustomBraceletPage() {
       return;
     }
 
-    try {
-      await navigator.clipboard.writeText(formSummary);
-      setCopied(true);
-      toast.success('表單內容已複製');
-      setShowContactModal(true);
-    } catch {
-      setCopied(false);
-      toast.error('複製失敗，請手動確認表單內容');
-    }
+    addItem(
+      {
+        slug: `custom-bracelet-${mode}-${form.charmPreference || 'no-charm'}`,
+        name: `${copy.contactProductName}（${selectedCharmLabel}）`,
+        price: selectedCustomPrice,
+        img: CUSTOM_BRACELET_IMAGE,
+      },
+      { open: true },
+    );
   };
 
   return (
@@ -645,7 +653,7 @@ export default function CustomBraceletPage() {
             </div>
 
             <form
-              onSubmit={handleSubmit}
+              onSubmit={handleAddToCart}
               className="reveal-child rounded-3xl border border-[#D1BE9B]/22 bg-white/55 p-5 shadow-[0_12px_36px_rgba(209,190,155,0.10)] md:p-8"
               style={{ transitionDelay: '90ms' }}
             >
@@ -675,7 +683,7 @@ export default function CustomBraceletPage() {
                       <option value="微鬆">微鬆</option>
                     </select>
                   </Field>
-                  <Field label="預算" hint={`${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}`}>
+                  <Field label="預算" hint={CUSTOM_PRICE_HINT}>
                     <input value={form.budget} onChange={(e) => update('budget', e.target.value)} className={inputClass} placeholder="基本款 1580，可填希望控制的總預算" />
                   </Field>
                   <Field label="Instagram / LINE" required>
@@ -699,7 +707,7 @@ export default function CustomBraceletPage() {
                   </Field>
                   <Field
                     label="理想手鍊款式參考圖"
-                    hint="選填。可以上傳喜歡的手鍊款式、配色或排列照片供我們參考。"
+                    hint="選填。可以上傳喜歡的手鍊款式、配色或排列照片供我們參考；我們會依照參考方向設計，成品不一定會與參考圖完全相同。"
                     wide
                   >
                     <div className="rounded-2xl border border-dashed border-[#D1BE9B]/38 bg-[#FAF7F4]/62 p-3">
@@ -872,21 +880,34 @@ export default function CustomBraceletPage() {
                     label="需要加吊飾嗎？"
                     required
                     wide
-                    hint={`${CUSTOM_PRICE_LABEL}。${CUSTOM_ADD_ON_PRICE_NOTE}實際款式與庫存會再由客服協助確認。`}
+                    hint={CUSTOM_PRICE_HINT}
                   >
                     <div className="overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/55">
-                      <button
-                        type="button"
-                        onClick={() => openLightbox(CHARM_REFERENCE_IMAGE)}
-                        className="group block w-full overflow-hidden bg-[#F0E8DC]"
-                      >
-                        <img
-                          src={CHARM_REFERENCE_IMAGE}
-                          alt="吊飾款式示意圖"
-                          loading="lazy"
-                          className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                        />
-                      </button>
+                      <div className="grid gap-2.5 p-2.5 sm:grid-cols-2">
+                        {CHARM_REFERENCE_IMAGES.map((image) => (
+                          <button
+                            key={image.src}
+                            type="button"
+                            onClick={() => openLightbox(image.src)}
+                            className="group overflow-hidden rounded-xl border border-[#D1BE9B]/18 bg-[#F0E8DC] text-left transition-all duration-200 hover:border-[#A38D6B]/45"
+                          >
+                            <img
+                              src={image.src}
+                              alt={image.title}
+                              loading="lazy"
+                              className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                            />
+                            <span className="block bg-white/72 px-3 py-2">
+                              <span className="block text-[12px] tracking-[0.1em] text-[#31353A]/80" style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}>
+                                {image.title}
+                              </span>
+                              <span className="mt-0.5 block text-[10px] tracking-[0.08em] text-[#A38D6B]/75" style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
+                                {image.note}
+                              </span>
+                            </span>
+                          </button>
+                        ))}
+                      </div>
                       <div className="grid gap-2 p-3 sm:grid-cols-3">
                         {CHARM_OPTIONS.map((option) => {
                           const active = form.charmPreference === option;
@@ -916,19 +937,38 @@ export default function CustomBraceletPage() {
                 </div>
               </FieldGroup>
 
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-7 rounded-2xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/68 px-4 py-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span
+                    className="text-[11px] tracking-[0.18em] text-[#31353A]/60"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    目前估算
+                  </span>
+                  <span
+                    className="text-[18px] tracking-[0.04em] text-[#A38D6B]"
+                    style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
+                  >
+                    NT$ {selectedCustomPrice.toLocaleString('zh-TW')}
+                  </span>
+                </div>
+                <p
+                  className="mt-1 text-[11px] leading-[1.8] tracking-[0.05em] text-[#31353A]/54"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                >
+                  基本款 NT$ 1,580，{selectedCharmLabel}。實際款式與庫存會再由客服協助確認。
+                </p>
+              </div>
+
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="submit"
-                  className={`inline-flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-xs tracking-[0.2em] shadow-sm transition-all duration-300 active:scale-95 ${
-                    copied
-                      ? 'bg-[#8A9A76] text-white'
-                      : 'bg-[#3D4144] text-[#FAF7F4] hover:bg-[#D1BE9B] hover:text-[#31353A]'
-                  }`}
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#3D4144] px-5 py-3.5 text-xs tracking-[0.2em] text-[#FAF7F4] shadow-sm transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
-                  <span key={copied ? 'done' : 'idle'} className="animate-btn-swap inline-flex items-center gap-2">
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    {copied ? '已複製表單' : '複製表單並聯繫'}
+                  <span className="inline-flex items-center gap-2">
+                    <ShoppingCart className="h-4 w-4" />
+                    加入購物車
                   </span>
                 </button>
                 <button
@@ -938,7 +978,7 @@ export default function CustomBraceletPage() {
                   style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                 >
                   <MessageCircle className="h-4 w-4" />
-                  直接聯繫
+                  有問題可私訊
                 </button>
               </div>
             </form>
