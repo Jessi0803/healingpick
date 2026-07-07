@@ -226,100 +226,207 @@ function pickFromSeed<T>(items: T[], seed: string, offset: number): T {
   return items[(hashSeed(seed) + offset) % items.length];
 }
 
+export function getDailyFortuneVariant(date: string, sign: string) {
+  const seed = `${date}-${sign}`;
+  const themes = [
+    "關係界線與真實表達",
+    "工作排序與資源取捨",
+    "情緒降噪與身體回訊",
+    "金錢安全感與承諾盤點",
+    "自我價值與被看見的方式",
+    "卡住的半成品與下一個現實步驟",
+    "人際配合與自己的需要",
+    "休息節奏與壓力出口",
+    "新機會的判斷與風險感",
+  ];
+  const textures = [
+    "像把桌面上的東西重新分堆",
+    "像走進比較安靜的房間後才聽見自己",
+    "像先把燈調暗一點，再看清楚細節",
+    "像把太滿的袋子先放下一半",
+    "像在訊息送出前多看一次自己的心",
+    "像把散掉的線慢慢收回手裡",
+    "像先停在門口，確認自己真的想進哪扇門",
+  ];
+  const avoid = [
+    "不要把焦慮包裝成效率",
+    "不要用配合換取短暫安全感",
+    "不要把一個人的反應當成整天的答案",
+    "不要因為怕麻煩就答應太快",
+    "不要把累解讀成自己退步",
+    "不要急著替未發生的事先道歉",
+  ];
+  const overallFocuses = [
+    "把外界的期待和你真正想做的事分開",
+    "看清楚哪件事只是習慣性硬撐",
+    "先辨認哪些訊息值得回應",
+    "把今天的力氣留給會前進的地方",
+    "不要讓一個小卡點定義整天的狀態",
+    "分清楚想被肯定和真的想完成的事",
+    "把心裡的急迫感降到可以判斷的程度",
+  ];
+  const loveScenes = [
+    "訊息往來裡的期待和落差",
+    "想靠近但又怕自己太主動",
+    "對方一句話讓你反覆解讀",
+    "關係裡誰在配合誰的節奏",
+    "想確認安全感卻不想顯得需要",
+    "把玩笑、冷淡或沉默背後的真心說清楚",
+    "舊有互動模式又悄悄重演",
+  ];
+  const loveFocuses = [
+    "把在意講小一點、講真一點",
+    "少用沉默測試對方的反應",
+    "先確認自己要的是陪伴還是答案",
+    "不要急著替對方補完整段劇情",
+    "把面子放低一點，關係會比較好靠近",
+    "不要把一次慢回覆解讀成全部答案",
+    "讓需求被聽見，而不是讓情緒自己爆開",
+  ];
+  const workScenes = [
+    "待辦很多但真正急的只有一兩件",
+    "合作分工需要重新確認",
+    "半成品卡在腦中一直被修改",
+    "想被看見的作品或成果還差最後整理",
+    "長期目標和眼前雜事互相拉扯",
+    "有人丟來新要求，讓你原本節奏被打亂",
+    "你其實知道方向，只是被細節拖慢",
+  ];
+  const moneyScenes = [
+    "情緒性消費或臨時支出",
+    "訂閱、帳單或小額開銷需要看一眼",
+    "報價、分帳或金錢界線要說清楚",
+    "想投資自己，但需要分清必要和想要",
+    "為了省麻煩而答應不划算的安排",
+    "把安全感全押在金錢數字上",
+  ];
+  const careerFocuses = [
+    "先處理最有期限感的任務，再看新的想法",
+    "檢查支出和承諾有沒有超過今天能負擔的量",
+    "把合作、報價或分工說得更清楚一點",
+    "讓半成品先落地，不要一直停在腦中修稿",
+    "把資源集中在一個最能看見成果的位置",
+    "先守住界線，再決定要不要多做",
+    "讓一個成果被整理出來，而不是一直補細節",
+  ];
+  const bodySignals = [
+    "肩頸或眼睛可能會先替壓力發聲",
+    "腸胃和睡眠會提醒你節奏有沒有太滿",
+    "身體需要一段沒有被催促的空白",
+    "呼吸變淺時，先把注意力從螢幕上拿回來",
+    "疲憊不是退步，是身體在要你降速",
+    "頭部緊繃時，可能是資訊量太滿",
+    "腰背或手臂的緊，可能和責任感有關",
+  ];
+  const bodyCare = [
+    "讓自己有一段不被追著跑的時間",
+    "把身體從緊繃姿勢裡帶出來",
+    "先補水、放慢呼吸，再處理下一件事",
+    "不要用咖啡因硬壓過疲憊",
+    "今晚比平常早一點收工會很有幫助",
+    "讓眼睛和腦袋都離線一下",
+  ];
+  const adviceFocuses = [
+    "先分清楚責任和情緒",
+    "用取捨代替硬撐",
+    "把注意力放回真正在回應你的事",
+    "讓界線比速度更重要",
+    "不要把暫時的混亂誤會成失敗",
+    "先判斷這件事值不值得你多花力氣",
+    "把今天的標準調回現實，而不是調到完美",
+  ];
+  const crystals = [
+    { name: "白水晶", reason: "幫你把雜訊降下來，回到比較清楚的判斷" },
+    { name: "月光石", reason: "陪你安放情緒，不急著把感受變成結論" },
+    { name: "黃水晶", reason: "適合整理資源、金錢感和今天的優先順序" },
+    { name: "粉晶", reason: "提醒你溫柔表達，而不是把需求全部收起來" },
+    { name: "紫水晶", reason: "適合放慢腦中的雜念，讓心先安靜一點" },
+    { name: "黑曜石", reason: "幫你看清界線，不把不屬於你的壓力往身上放" },
+    { name: "海藍寶", reason: "適合把話說柔一點、清楚一點，不用硬撐冷靜" },
+  ];
+  const luckyActions = [
+    "先回一件真正重要的事",
+    "把一個模糊承諾問清楚",
+    "替自己保留一段空白",
+    "把今天的錢花在真正補充你的地方",
+    "少看一次讓你焦慮的訊息",
+    "把未完成的事拆到可以承接的大小",
+  ];
+  const luckyColors = [
+    "霧藍色",
+    "月白色",
+    "暖金色",
+    "鼠尾草綠",
+    "珍珠粉",
+    "奶茶棕",
+    "淡薰衣草色",
+    "海鹽藍",
+    "琥珀橘",
+  ];
+  const crystal = pickFromSeed(crystals, seed, 101);
+
+  return {
+    id: `${hashSeed(seed) % 1000}`,
+    theme: pickFromSeed(themes, seed, 5),
+    texture: pickFromSeed(textures, seed, 13),
+    avoid: pickFromSeed(avoid, seed, 23),
+    overallFocus: pickFromSeed(overallFocuses, seed, 31),
+    loveScene: pickFromSeed(loveScenes, seed, 41),
+    loveFocus: pickFromSeed(loveFocuses, seed, 43),
+    workScene: pickFromSeed(workScenes, seed, 47),
+    moneyScene: pickFromSeed(moneyScenes, seed, 53),
+    careerFocus: pickFromSeed(careerFocuses, seed, 59),
+    bodySignal: pickFromSeed(bodySignals, seed, 61),
+    bodyCare: pickFromSeed(bodyCare, seed, 67),
+    adviceFocus: pickFromSeed(adviceFocuses, seed, 71),
+    luckyAction: pickFromSeed(luckyActions, seed, 83),
+    luckyColor: pickFromSeed(luckyColors, seed, 89),
+    crystal: crystal.name,
+    crystalReasonFocus: crystal.reason,
+  };
+}
+
 export function buildFallbackFortune({
   signName,
   date,
   moonPhase,
   traits,
+  variant = getDailyFortuneVariant(date, signName),
 }: {
   signName: string;
   date: string;
   moonPhase: MoonPhase;
   traits: ZodiacTraits | null;
+  variant?: ReturnType<typeof getDailyFortuneVariant>;
 }): FortuneResult {
   const element = traits?.element ?? "風";
   const strengths = traits?.strengths ?? "觀察力、調整力";
   const challenges = traits?.challenges ?? "想太多、節奏容易被外界影響";
   const signLabel = signName || "今天的你";
 
-  const elementGuide: Record<string, { color: string; crystal: string; strategy: string }> = {
-    火: { color: "暖金色", crystal: "紅瑪瑙", strategy: "不要急著把所有事情一次推到位，先確認哪件事真的值得你出力；方向選對了，你的行動感反而會回來" },
-    土: { color: "奶茶棕", crystal: "黃水晶", strategy: "不要只用撐住來換安全感，先看清楚哪個責任其實不是今天非扛不可；負擔變輕一點，你會更知道怎麼穩" },
-    風: { color: "霧藍色", crystal: "白水晶", strategy: "不要一直在腦中切換版本，先選一個最接近現實的方向試著往前；訊號變少一點，答案會更清楚" },
-    水: { color: "月白色", crystal: "月光石", strategy: "不要急著用情緒替整天定調，先分清楚這是直覺還是一時被牽動；心安定下來，關係和選擇都會比較好判斷" },
+  const elementGuide: Record<string, { strategy: string }> = {
+    火: { strategy: "不要急著把所有事情一次推到位，先確認哪件事真的值得你出力；方向選對了，你的行動感反而會回來" },
+    土: { strategy: "不要只用撐住來換安全感，先看清楚哪個責任其實不是今天非扛不可；負擔變輕一點，你會更知道怎麼穩" },
+    風: { strategy: "不要一直在腦中切換版本，先選一個最接近現實的方向試著往前；訊號變少一點，答案會更清楚" },
+    水: { strategy: "不要急著用情緒替整天定調，先分清楚這是直覺還是一時被牽動；心安定下來，關係和選擇都會比較好判斷" },
   };
   const guide = elementGuide[element] ?? elementGuide.風;
-  const seed = `${date}-${signName}-${moonPhase.name}`;
-  const overallFocus = pickFromSeed(
-    [
-      "把外界的期待和你真正想做的事分開",
-      "看清楚哪件事只是習慣性硬撐",
-      "先辨認哪些訊息值得回應",
-      "把今天的力氣留給會前進的地方",
-      "不要讓一個小卡點定義整天的狀態",
-    ],
-    seed,
-    3
-  );
-  const loveFocus = pickFromSeed(
-    [
-      "把在意講小一點、講真一點",
-      "少用沉默測試對方的反應",
-      "先確認自己要的是陪伴還是答案",
-      "不要急著替對方補完整段劇情",
-      "把面子放低一點，關係會比較好靠近",
-    ],
-    seed,
-    11
-  );
-  const careerFocus = pickFromSeed(
-    [
-      "先處理最有期限感的任務，再看新的想法",
-      "檢查支出和承諾有沒有超過今天能負擔的量",
-      "把合作、報價或分工說得更清楚一點",
-      "讓半成品先落地，不要一直停在腦中修稿",
-      "把資源集中在一個最能看見成果的位置",
-    ],
-    seed,
-    19
-  );
-  const healthFocus = pickFromSeed(
-    [
-      "肩頸或眼睛可能會先替壓力發聲",
-      "腸胃和睡眠會提醒你節奏有沒有太滿",
-      "身體需要一段沒有被催促的空白",
-      "呼吸變淺時，先把注意力從螢幕上拿回來",
-      "疲憊不是退步，是身體在要你降速",
-    ],
-    seed,
-    29
-  );
-  const adviceFocus = pickFromSeed(
-    [
-      "先分清楚責任和情緒",
-      "用取捨代替硬撐",
-      "把注意力放回真正在回應你的事",
-      "讓界線比速度更重要",
-      "不要把暫時的混亂誤會成失敗",
-    ],
-    seed,
-    37
-  );
+  const seed = `${date}-${signName}-${moonPhase.name}-${variant.id}-${variant.theme}`;
 
   return {
-    overall: `${signLabel}今天比較適合先把節奏放穩。你可能會感覺很多事情都在拉你一下，但真正重要的是${overallFocus}；**先看清楚力氣要放在哪裡**，今天會比硬推更順。`,
+    overall: `${signLabel}今天的主題比較像是${variant.theme}。\n你可能會感覺${variant.texture}，但真正重要的是${variant.overallFocus}。\n**先看清楚力氣要放在哪裡**\n今天會比硬推更順。`,
     overallScore: scoreFromSeed(seed, 11),
-    love: `感情上今天比較容易卡在「我到底要不要多說一點」。如果心裡已經有小小的不舒服，重點會是${loveFocus}；**不要用猜測代替真實靠近**，關係的溫度會比較看得清楚。`,
+    love: `感情上今天容易碰到${variant.loveScene}。\n如果心裡已經有小小的不舒服，重點會是${variant.loveFocus}。\n**不要用猜測代替真實靠近**\n關係的溫度會比較看得清楚。`,
     loveScore: scoreFromSeed(seed, 17),
-    career: `工作和財務適合用${strengths}，但也要留意${challenges}。今天別急著全部重做，比較適合${careerFocus}；**讓現實訊號先排出優先順序**，錢和效率都會比較穩。`,
+    career: `工作上可能是${variant.workScene}。\n財務上則要留意${variant.moneyScene}。\n你可以用${strengths}，但也要留意${challenges}。\n**讓現實訊號先排出優先順序**\n${variant.careerFocus}。`,
     careerScore: scoreFromSeed(seed, 23),
-    health: `身體狀態需要少一點硬撐，${healthFocus}。今天如果覺得累，**先讓身體知道你有聽見它**，不要把疲憊誤會成自己不夠努力。`,
+    health: `身體狀態需要少一點硬撐，${variant.bodySignal}。\n今天比較適合${variant.bodyCare}。\n**先讓身體知道你有聽見它**\n不要把疲憊誤會成自己不夠努力。`,
     healthScore: scoreFromSeed(seed, 31),
-    luckyColor: guide.color,
+    luckyColor: variant.luckyColor,
     luckyNumber: 1 + (Array.from(seed).reduce((sum, char) => sum + char.charCodeAt(0), 0) % 99),
-    crystal: guide.crystal,
-    crystalReason: `${guide.crystal}適合搭配${moonPhase.name}，陪你**把情緒和現實判斷分開**，不用一次承擔全部。`,
-    advice: `今天真正需要分辨的是${adviceFocus}。**${guide.strategy}**。`,
+    crystal: variant.crystal,
+    crystalReason: `${variant.crystal}適合搭配${moonPhase.name}，${variant.crystalReasonFocus}，也陪你**把情緒和現實判斷分開**。`,
+    advice: `今天真正需要分辨的是${variant.adviceFocus}。\n幸運小動作是${variant.luckyAction}，但${variant.avoid}。\n**${guide.strategy}**。`,
     moonPhase: moonPhase.name,
     moonSymbol: moonPhase.symbol,
   };
@@ -406,11 +513,13 @@ export const fortuneRouter = router({
       // 取得星座特性
       const traits = ZODIAC_TRAITS[input.sign] || null;
       const signGuide = ZODIAC_FORTUNE_GUIDES[input.sign] || null;
+      const dailyVariant = getDailyFortuneVariant(input.date, input.sign);
       const fallbackFortune = buildFallbackFortune({
         signName: input.signName,
         date: input.date,
         moonPhase,
         traits,
+        variant: dailyVariant,
       });
       const traitsDesc = traits
         ? `【星座特性】
@@ -428,6 +537,24 @@ export const fortuneRouter = router({
 - 事業財務可選角度：${signGuide.careerAngles.join('、')}
 - 健康可選角度：${signGuide.healthAngles.join('、')}`
         : '';
+      const dailyVariantDesc = `【今日變化種子】
+- 今日主題：${dailyVariant.theme}
+- 今日畫面感：${dailyVariant.texture}
+- 今日避免：${dailyVariant.avoid}
+- 整體焦點：${dailyVariant.overallFocus}
+- 感情場景：${dailyVariant.loveScene}
+- 感情焦點：${dailyVariant.loveFocus}
+- 工作場景：${dailyVariant.workScene}
+- 財務場景：${dailyVariant.moneyScene}
+- 事業財務焦點：${dailyVariant.careerFocus}
+- 身體訊號：${dailyVariant.bodySignal}
+- 身體照顧方式：${dailyVariant.bodyCare}
+- 今日策略焦點：${dailyVariant.adviceFocus}
+- 幸運小動作：${dailyVariant.luckyAction}
+- 幸運色：${dailyVariant.luckyColor}
+- 推薦水晶：${dailyVariant.crystal}
+- 水晶陪伴方向：${dailyVariant.crystalReasonFocus}
+- 種子編號：${dailyVariant.id}`;
 
       const systemPrompt = `${DAILY_FORTUNE_STYLE}
 
@@ -442,7 +569,12 @@ export const fortuneRouter = router({
 - 避免只說「能量提升」「磁場轉換」「保持覺察」這類抽象詞；如果提到抽象感受，要接一句白話例子。
 - advice 要改成「今日策略提醒」：先判斷今天真正需要分辨的是什麼，再說接下來適合用什麼姿態面對。不要固定寫成「不用等準備好」「先踏出一步」「把什麼寫下來、傳一則訊息、整理一下」這種任務型結尾，也不要提月相。
 - 水晶推薦要與月相能量和星座元素相呼應。
+- 必須自然使用「今日變化種子」作為內容差異來源，但不要在輸出中提到種子、編號或系統規則。
+- love 必須呼應「感情場景」和「感情焦點」；career 必須同時呼應「工作場景」和「財務場景」；health 必須呼應「身體訊號」和「身體照顧方式」。
+- luckyColor 必須使用「今日變化種子」裡的幸運色；crystal 必須使用「今日變化種子」裡的推薦水晶；crystalReason 要結合「水晶陪伴方向」與月相。
+- advice 必須包含「今日策略焦點」的判斷，並可自然帶入「幸運小動作」，但不要寫成制式待辦清單。
 - 若同一天不同星座生成結果，整體、感情、事業財運的具體情境不可高度相似。
+- 若同一星座不同日期生成結果，主題、畫面感、提醒句、幸運色和水晶原因都不可只是同義改寫。
 - 請務必只輸出指定的 JSON 格式，欄位內的文字都用上面範例那種 LINE 私訊口吻來寫。`;
 
       const userPrompt = `請為${input.signName}（${input.sign}）生成 ${input.date} 的每日運勢。
@@ -454,6 +586,8 @@ export const fortuneRouter = router({
 ${traitsDesc}
 
 ${signGuideDesc}
+
+${dailyVariantDesc}
 
 請結合以上月相能量與星座特性，生成個性化的每日運勢。以 JSON 格式回傳：
 {

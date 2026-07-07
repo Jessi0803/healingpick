@@ -3,7 +3,7 @@
  * Tests the moon phase calculation logic and fortune router structure
  */
 import { describe, it, expect } from "vitest";
-import { buildFallbackFortune, parseFortuneResult } from "./fortune";
+import { buildFallbackFortune, getDailyFortuneVariant, parseFortuneResult } from "./fortune";
 
 // ─── 月相計算邏輯（從 fortune.ts 複製，以便獨立測試）─────────────────────────
 function getMoonPhase(date: Date) {
@@ -190,6 +190,52 @@ describe("buildFallbackFortune", () => {
       second.career,
       second.health,
       second.advice,
+    ]);
+  });
+
+  it("can vary fallback wording with different daily variants", () => {
+    const first = buildFallbackFortune({
+      ...fallbackInput,
+      date: "2026-05-30",
+      variant: getDailyFortuneVariant("2026-05-30", "pisces"),
+    });
+    const second = buildFallbackFortune({
+      ...fallbackInput,
+      date: "2026-05-30",
+      variant: getDailyFortuneVariant("2026-05-30", "aries"),
+    });
+
+    expect(first.overall).not.toBe(second.overall);
+    expect(first.advice).not.toBe(second.advice);
+  });
+});
+
+describe("getDailyFortuneVariant", () => {
+  it("returns the same daily variant for the same date and sign", () => {
+    const first = getDailyFortuneVariant("2026-07-07", "pisces");
+    const second = getDailyFortuneVariant("2026-07-07", "pisces");
+
+    expect(first).toEqual(second);
+  });
+
+  it("varies the daily material by date", () => {
+    const first = getDailyFortuneVariant("2026-07-07", "pisces");
+    const second = getDailyFortuneVariant("2026-07-08", "pisces");
+
+    expect([
+      first.theme,
+      first.loveScene,
+      first.workScene,
+      first.bodySignal,
+      first.luckyColor,
+      first.crystal,
+    ]).not.toEqual([
+      second.theme,
+      second.loveScene,
+      second.workScene,
+      second.bodySignal,
+      second.luckyColor,
+      second.crystal,
     ]);
   });
 });

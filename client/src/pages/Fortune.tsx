@@ -26,6 +26,48 @@ const REPEAT_READING_LOGIN_PROMPT = {
   subtitle: '加入會員後，系統能依據你過往的資料與使用紀錄，讓每次解析更符合你的狀態與脈絡。',
 };
 
+const TAIPEI_TIME_ZONE = 'Asia/Taipei';
+
+function getTaipeiToday() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TAIPEI_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const getPart = (type: string) => parts.find(part => part.type === type)?.value || '';
+  const year = getPart('year');
+  const month = getPart('month');
+  const day = getPart('day');
+
+  return {
+    apiDate: `${year}-${month}-${day}`,
+    displayDate: `${Number(year)}年${Number(month)}月${Number(day)}日`,
+  };
+}
+
+function useTaipeiToday() {
+  const [today, setToday] = useState(getTaipeiToday);
+
+  useEffect(() => {
+    const refreshToday = () => {
+      setToday(current => {
+        const next = getTaipeiToday();
+        return current.apiDate === next.apiDate ? current : next;
+      });
+    };
+    const interval = window.setInterval(refreshToday, 60 * 1000);
+    document.addEventListener('visibilitychange', refreshToday);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', refreshToday);
+    };
+  }, []);
+
+  return today;
+}
+
 // ─── Zodiac Signs ─────────────────────────────────────────────────────────────
 const ZODIAC_SIGNS = [
   { id: 'aries',       name: '牡羊座', en: 'Aries',       symbol: '♈', dates: '3/21–4/19',  element: '火', color: '#C09898' },
@@ -342,9 +384,10 @@ export default function FortunePage() {
   const { isAuthenticated, login } = useAuth();
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [hasClickedGenerate, setHasClickedGenerate] = useState(false);
+  const [readingDate, setReadingDate] = useState<string | null>(null);
   const [caughtMoodPlushie, setCaughtMoodPlushie] = useState<MoodPlushie | null>(null);
   const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
-  const [today] = useState(new Date());
+  const today = useTaipeiToday();
   const savedFortuneRef = useRef<string>('');
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const fortuneResultRef = useRef<HTMLDivElement | null>(null);
@@ -356,18 +399,20 @@ export default function FortunePage() {
     if (selectedSign === signId) {
       setSelectedSign(null);
       setHasClickedGenerate(false);
+      setReadingDate(null);
       setUnlockDialogOpen(false);
       return;
     }
     setSelectedSign(signId);
     setHasClickedGenerate(false);
+    setReadingDate(null);
     setUnlockDialogOpen(true);
   }
 
   const selectedSignData = ZODIAC_SIGNS.find(s => s.id === selectedSign);
 
-  const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
-  const apiDateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const dateStr = today.displayDate;
+  const apiDateStr = today.apiDate;
 
   const saveReadingMutation = trpc.history.saveReading.useMutation();
 
@@ -376,11 +421,12 @@ export default function FortunePage() {
     {
       sign: selectedSign || '',
       signName: selectedSignData?.name || '',
-      date: apiDateStr,
+      date: readingDate || apiDateStr,
     },
     {
-      enabled: !!selectedSign && hasClickedGenerate,
-      staleTime: 1000 * 60 * 60 * 6, // 6 小時快取，同一天同一星座只呼叫一次
+      enabled: !!selectedSign && hasClickedGenerate && !!readingDate,
+      staleTime: 0,
+      refetchOnWindowFocus: false,
       retry: 1,
     }
   );
@@ -388,13 +434,14 @@ export default function FortunePage() {
   // 儲存每日運勢紀錄（僅登入後，且同一星座同一天只儲一次）
   useEffect(() => {
     if (!dailyFortuneQuery.data) return;
-    const key = `${selectedSign}-${apiDateStr}`;
+    if (!readingDate) return;
+    const key = `${selectedSign}-${readingDate}`;
     if (savedFortuneRef.current === key) return;
     savedFortuneRef.current = key;
     const d = dailyFortuneQuery.data;
     saveReadingMutation.mutate({
       type: 'fortune',
-      inputData: JSON.stringify({ sign: selectedSign, signName: selectedSignData?.name, date: apiDateStr }),
+      inputData: JSON.stringify({ sign: selectedSign, signName: selectedSignData?.name, date: readingDate }),
       interpretation: [
         `整體運勢（${d.overallScore}/10）：${d.overall}`,
         `感情愛情（${d.loveScore}/10）：${d.love}`,
@@ -406,10 +453,17 @@ export default function FortunePage() {
       ].join('\n\n'),
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyFortuneQuery.data]);
+  }, [dailyFortuneQuery.data, readingDate]);
 
   const aiData = dailyFortuneQuery.data;
   const fortuneWaitingMessage = useRotatingText(FORTUNE_WAITING_MESSAGES, dailyFortuneQuery.isLoading);
+
+  useEffect(() => {
+    setHasClickedGenerate(false);
+    setReadingDate(null);
+    setUnlockDialogOpen(false);
+    savedFortuneRef.current = '';
+  }, [apiDateStr]);
 
   const scrollToSection = useCallback((ref: RefObject<HTMLDivElement | null>, block: ScrollLogicalPosition = 'center') => {
     const scroll = () => ref.current?.scrollIntoView({ behavior: 'smooth', block });
@@ -568,6 +622,7 @@ export default function FortunePage() {
                               void login(REPEAT_READING_LOGIN_PROMPT);
                               return;
                             }
+                            setReadingDate(apiDateStr);
                             setHasClickedGenerate(true);
                             setUnlockDialogOpen(false);
                           }}
