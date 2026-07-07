@@ -730,7 +730,7 @@ export default function CustomBraceletPage() {
             </form>
           </Reveal>
 
-          <ProductCareNotice />
+          <ProductCareNotice variant="custom" />
         </div>
       </div>
 

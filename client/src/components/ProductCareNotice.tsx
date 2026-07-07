@@ -62,10 +62,22 @@ const designNotes = [
   '天然水晶的色澤、紋理及大小會有些微差異，品牌會盡力維持整體設計平衡。',
 ];
 
+type ProductCareNoticeVariant = 'standard' | 'custom';
+
 const eyebrowStyle = { fontFamily: 'Noto Serif TC, serif', fontWeight: 400 } as const;
 const bodyStyle = { fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 } as const;
 
-export default function ProductCareNotice() {
+export default function ProductCareNotice({ variant = 'standard' }: { variant?: ProductCareNoticeVariant }) {
+  const isCustom = variant === 'custom';
+  const visibleNoticeGroups = isCustom ? noticeGroups : noticeGroups.filter((group) => group.eyebrow !== 'Returns');
+  const visibleDesignNotes = isCustom
+    ? designNotes
+    : designNotes.filter(
+        (note) =>
+          note !== '客製化商品需先完成付款才會開始製作。' &&
+          note !== '設計圖提供 3 次免費修改，第四次起每次酌收設計修改費 $100。',
+      );
+
   return (
     <section className="mx-auto mb-10 mt-14 max-w-5xl animate-fade-in-up">
       {/* Header */}
@@ -127,9 +139,9 @@ export default function ProductCareNotice() {
         </div>
       </div>
 
-      {/* Notice groups — even 6-card grid, no orphan */}
+      {/* Notice groups */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {noticeGroups.map(({ title, eyebrow, icon: Icon, items }) => (
+        {visibleNoticeGroups.map(({ title, eyebrow, icon: Icon, items }) => (
           <div key={title} className="rounded-2xl border border-[#D1BE9B]/20 bg-white/50 p-5">
             <div className="mb-3 flex items-center gap-3">
               <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#D1BE9B]/20 text-[#A38D6B]">
@@ -174,7 +186,7 @@ export default function ProductCareNotice() {
           </div>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
-          {designNotes.map((note) => (
+          {visibleDesignNotes.map((note) => (
             <div key={note} className="flex items-start gap-3 rounded-2xl bg-white/48 px-4 py-3">
               <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#D1BE9B]/24 text-[#A38D6B]">
                 <Check className="h-3.5 w-3.5" strokeWidth={1.8} />
