@@ -12,6 +12,12 @@ import { CatSitting, CatPeeking } from "@/components/CatElements";
 import ProductCareNotice from "@/components/ProductCareNotice";
 import { useCart } from "@/contexts/CartContext";
 
+const CRYSTAL_ONLY_NOTICE_PRODUCT_SLUGS = new Set([
+  "xi-guang",
+  "nuan-ying",
+  "jing-lan",
+]);
+
 export default function ProductDetailPage() {
   const { id } = useParams();
   const product = findProduct(id ?? "");
@@ -415,7 +421,13 @@ export default function ProductDetailPage() {
             </div>
           </Section>
 
-          <ProductCareNotice />
+          <ProductCareNotice
+            variant={
+              CRYSTAL_ONLY_NOTICE_PRODUCT_SLUGS.has(product.slug)
+                ? "crystal-only"
+                : "standard"
+            }
+          />
 
           {/* Section: Mochi 的小故事 */}
           {mochiStorySection}
