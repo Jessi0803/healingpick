@@ -5,7 +5,14 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "wouter";
-import { Camera, ChevronLeft, ChevronRight, X } from "lucide-react";
+import {
+  Camera,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { CatSitting, CatPeeking } from "@/components/CatElements";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
@@ -274,21 +281,40 @@ export default function ShopPage() {
 
               {!isCustomCategory && (
                 <div className="flex justify-end">
-                  <select
-                    value={sortBy}
-                    onChange={e => setSortBy(e.target.value as SortBy)}
-                    className="bg-white/40 border border-[#D1BE9B]/20 rounded-full px-4 py-1.5 text-[11px] text-[#31353A]/72 tracking-wider focus:outline-none appearance-none"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    {SORT_OPTIONS.map(opt => (
-                      <option key={opt.id} value={opt.id}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
+                  <label className="group relative inline-flex min-h-[44px] items-center rounded-full border border-[#D1BE9B]/45 bg-white/72 px-4 pr-12 text-[#31353A]/82 shadow-[0_8px_18px_rgba(61,65,68,0.08),inset_0_1px_0_rgba(255,255,255,0.94)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#A38D6B]/60 hover:bg-white/90 hover:shadow-[0_12px_24px_rgba(61,65,68,0.12),inset_0_1px_0_rgba(255,255,255,0.98)] focus-within:border-[#A38D6B] focus-within:ring-2 focus-within:ring-[#D1BE9B]/30">
+                    <span className="mr-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#D1BE9B]/18 text-[#8F7957] transition-colors duration-200 group-hover:bg-[#D1BE9B]/26">
+                      <SlidersHorizontal className="h-3.5 w-3.5" />
+                    </span>
+                    <span
+                      className="mr-2 text-[10px] tracking-[0.2em] text-[#A38D6B]"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      排序
+                    </span>
+                    <select
+                      aria-label="商品排序"
+                      value={sortBy}
+                      onChange={e => setSortBy(e.target.value as SortBy)}
+                      className="min-w-[9.2rem] appearance-none bg-transparent py-2 text-[11px] tracking-wider text-[#31353A]/82 outline-none"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      {SORT_OPTIONS.map(opt => (
+                        <option key={opt.id} value={opt.id}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      aria-hidden="true"
+                      className="pointer-events-none absolute right-4 h-4 w-4 text-[#8F7957] transition-transform duration-200 group-focus-within:rotate-180"
+                    />
+                  </label>
                 </div>
               )}
             </div>
