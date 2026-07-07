@@ -465,6 +465,7 @@ function FeaturedBand({
   onModeChange: (custom: boolean) => void;
 }) {
   const [current, setCurrent] = useState(0);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [fbIndex, setFbIndex] = useState<number | null>(null);
   const count = products.length;
   const paused = useRef(false);
@@ -473,20 +474,30 @@ function FeaturedBand({
 
   const go = (i: number) => count && setCurrent((i + count) % count);
 
-  const closeFb = () => setFbIndex(null);
+  const openFeedback = () => {
+    setIsFeedbackOpen(true);
+    setFbIndex(null);
+  };
+  const closeFb = () => {
+    setIsFeedbackOpen(false);
+    setFbIndex(null);
+  };
   const stepFb = (dir: number) =>
     setFbIndex((c) => (c === null ? c : (c + dir + FEEDBACK_PHOTOS.length) % FEEDBACK_PHOTOS.length));
 
   useEffect(() => {
-    if (fbIndex === null) return;
+    if (!isFeedbackOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeFb();
+      if (e.key === 'Escape') {
+        if (fbIndex === null) closeFb();
+        else setFbIndex(null);
+      }
       if (e.key === 'ArrowRight') stepFb(1);
       if (e.key === 'ArrowLeft') stepFb(-1);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [fbIndex]);
+  }, [isFeedbackOpen, fbIndex]);
 
   useEffect(() => {
     if (count <= 1) return;
@@ -516,6 +527,7 @@ function FeaturedBand({
     fbTouchX.current = e.touches[0].clientX;
   };
   const onFeedbackTouchEnd = (e: React.TouchEvent) => {
+    if (fbIndex === null) return;
     if (fbTouchX.current === null) return;
     const dx = e.changedTouches[0].clientX - fbTouchX.current;
     if (Math.abs(dx) > 44) stepFb(dx < 0 ? 1 : -1);
@@ -606,116 +618,136 @@ function FeaturedBand({
           </div>
           <button
             type="button"
-            onClick={() => setFbIndex(0)}
-            className="group grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-2xl border border-[#D1BE9B]/28 bg-[#FBF8F3]/72 p-2.5 text-left shadow-[0_12px_28px_rgba(61,65,68,0.07),inset_0_1px_0_rgba(255,255,255,0.8)] transition-[background-color,border-color,box-shadow,transform] duration-200 ease-out hover:border-[#A38D6B]/36 hover:bg-white/82 hover:shadow-[0_16px_34px_rgba(61,65,68,0.10),inset_0_1px_0_rgba(255,255,255,0.92)] active:scale-[0.985]"
+            onClick={openFeedback}
+            className="group overflow-hidden rounded-2xl border border-[#D1BE9B]/24 bg-white/42 text-left shadow-[0_12px_30px_rgba(61,65,68,0.06),inset_0_1px_0_rgba(255,255,255,0.85)] transition-[border-color,background-color,box-shadow,transform] duration-200 ease-out hover:border-[#A38D6B]/34 hover:bg-white/64 hover:shadow-[0_18px_36px_rgba(61,65,68,0.09),inset_0_1px_0_rgba(255,255,255,0.95)] active:scale-[0.985]"
           >
-            <span className="relative flex h-12 w-16 shrink-0 overflow-hidden rounded-xl border border-white/70 bg-[#F0E8DC] shadow-inner">
-              {FEEDBACK_PHOTOS.slice(0, 3).map((src, i) => (
-                <img
-                  key={src}
-                  src={src}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  className="h-full w-1/3 object-cover"
-                  style={{ objectPosition: i === 0 ? '42% 50%' : 'center' }}
-                />
+            <span className="grid grid-cols-5 gap-1.5 p-2 pb-0">
+              {FEEDBACK_PHOTOS.slice(0, 5).map((src, i) => (
+                <span key={src} className="aspect-[3/4] overflow-hidden rounded-xl bg-[#F0E8DC]">
+                  <img
+                    src={src}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+                    style={{ transitionDelay: `${i * 20}ms` }}
+                  />
+                </span>
               ))}
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1F2224]/10" />
             </span>
-            <span className="min-w-0">
+            <span className="flex items-center justify-between gap-3 px-3.5 py-3">
+              <span className="min-w-0">
+                <span
+                  className="flex items-center gap-1.5 text-[12px] tracking-[0.14em] text-[#31353A]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  <Camera className="h-3.5 w-3.5 text-[#A38D6B]" strokeWidth={1.6} />
+                  顧客真實回饋
+                </span>
+                <span
+                  className="mt-1 block text-[10.5px] leading-relaxed tracking-[0.08em] text-[#31353A]/50"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                >
+                  一次瀏覽 {FEEDBACK_PHOTOS.length} 張實拍照片
+                </span>
+              </span>
               <span
-                className="flex items-center gap-1.5 text-[12px] tracking-[0.14em] text-[#31353A]"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#D1BE9B]/24 bg-[#FAF7F4]/86 text-[#3D4144] transition-colors duration-200 group-hover:border-[#A38D6B]/35 group-hover:bg-[#3D4144] group-hover:text-[#FAF7F4]"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                <Camera className="h-3.5 w-3.5 text-[#A38D6B]" strokeWidth={1.6} />
-                顧客真實回饋
+                <Images className="h-4 w-4" strokeWidth={1.6} />
               </span>
-              <span
-                className="mt-1 block truncate text-[10.5px] tracking-[0.08em] text-[#31353A]/50"
-                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-              >
-                {FEEDBACK_PHOTOS.length} 張照片，可左右滑看
-              </span>
-            </span>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#3D4144] text-[#FAF7F4] transition-colors duration-200 group-hover:bg-[#A38D6B]">
-              <Images className="h-4 w-4" strokeWidth={1.6} />
             </span>
           </button>
         </div>
       </div>
 
-      {fbIndex !== null && typeof document !== 'undefined' && createPortal(
+      {isFeedbackOpen && typeof document !== 'undefined' && createPortal(
         <div
-          className="lightbox-backdrop fixed inset-0 z-[70] flex flex-col items-center justify-center bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
+          className="lightbox-backdrop fixed inset-0 z-[70] flex flex-col bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
           onClick={closeFb}
           onTouchStart={onFeedbackTouchStart}
           onTouchEnd={onFeedbackTouchEnd}
         >
-          <div className="absolute left-4 top-4 text-[#FAF7F4] md:left-8 md:top-6">
-            <p
-              className="text-[12px] tracking-[0.18em]"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-            >
-              顧客真實回饋
-            </p>
-            <p className="mt-1 text-[10px] tracking-[0.12em] text-white/48">
-              {fbIndex + 1} / {FEEDBACK_PHOTOS.length}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={closeFb}
-            aria-label="關閉"
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 md:right-8 md:top-6"
-          >
-            <X className="h-4.5 w-4.5" strokeWidth={1.7} />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); stepFb(-1); }}
-            aria-label="上一張"
-            className="absolute left-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:left-8"
-          >
-            <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
-          </button>
-          <div className="flex max-h-[calc(100vh-8.5rem)] w-full items-center justify-center pt-12 md:pt-8">
-            <img
-              key={fbIndex}
-              src={FEEDBACK_PHOTOS[fbIndex]}
-              alt={`顧客回饋與實拍，第 ${fbIndex + 1} 張`}
-              onClick={(e) => e.stopPropagation()}
-              className="lightbox-image max-h-[calc(100vh-13.5rem)] max-w-full rounded-2xl object-contain shadow-2xl md:max-h-[calc(100vh-11rem)]"
-            />
-          </div>
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); stepFb(1); }}
-            aria-label="下一張"
-            className="absolute right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:right-8"
-          >
-            <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
-          </button>
-          <div
-            className="mt-4 flex w-full max-w-3xl gap-2 overflow-x-auto px-1 pb-1"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {FEEDBACK_PHOTOS.map((src, i) => (
-              <button
-                key={src}
-                type="button"
-                onClick={() => setFbIndex(i)}
-                aria-label={`查看第 ${i + 1} 張回饋照片`}
-                className={`h-14 w-11 shrink-0 overflow-hidden rounded-lg border transition-[border-color,opacity,transform] duration-200 active:scale-95 md:h-16 md:w-12 ${
-                  i === fbIndex
-                    ? 'border-[#D1BE9B] opacity-100'
-                    : 'border-white/12 opacity-48 hover:border-white/32 hover:opacity-82'
-                }`}
+          <div className="flex shrink-0 items-start justify-between gap-4 pb-4 text-[#FAF7F4] md:pb-5">
+            <div>
+              <p
+                className="text-[12px] tracking-[0.18em]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                <img src={src} alt="" aria-hidden="true" loading="lazy" className="h-full w-full object-cover" />
-              </button>
-            ))}
+                顧客真實回饋
+              </p>
+              <p className="mt-1 text-[10px] tracking-[0.12em] text-white/48">
+                {fbIndex === null ? `${FEEDBACK_PHOTOS.length} 張實拍照片` : `${fbIndex + 1} / ${FEEDBACK_PHOTOS.length}`}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={closeFb}
+              aria-label="關閉"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
+            >
+              <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+            </button>
           </div>
+
+          {fbIndex === null ? (
+            <div className="min-h-0 flex-1 overflow-y-auto pb-2" onClick={(e) => e.stopPropagation()}>
+              <div className="mx-auto grid max-w-5xl grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                {FEEDBACK_PHOTOS.map((src, i) => (
+                  <button
+                    key={src}
+                    type="button"
+                    onClick={() => setFbIndex(i)}
+                    aria-label={`放大第 ${i + 1} 張顧客回饋照片`}
+                    className="group aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 bg-white/8 shadow-[0_12px_26px_rgba(0,0,0,0.18)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#D1BE9B]/70 active:scale-[0.98]"
+                  >
+                    <img
+                      src={src}
+                      alt={`顧客回饋與實拍，第 ${i + 1} 張`}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); stepFb(-1); }}
+                aria-label="上一張"
+                className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:left-8"
+              >
+                <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
+              </button>
+              <div className="flex min-h-0 flex-1 items-center justify-center">
+                <img
+                  key={fbIndex}
+                  src={FEEDBACK_PHOTOS[fbIndex]}
+                  alt={`顧客回饋與實拍，第 ${fbIndex + 1} 張`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="lightbox-image max-h-[calc(100vh-13.5rem)] max-w-full rounded-2xl object-contain shadow-2xl md:max-h-[calc(100vh-11rem)]"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); stepFb(1); }}
+                aria-label="下一張"
+                className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:right-8"
+              >
+                <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setFbIndex(null); }}
+                className="mx-auto mt-4 rounded-full border border-white/12 bg-white/10 px-4 py-2 text-[10px] tracking-[0.14em] text-white/68 transition-colors hover:bg-white/16"
+              >
+                回到照片牆
+              </button>
+            </>
+          )}
         </div>,
         document.body,
       )}
