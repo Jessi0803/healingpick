@@ -84,8 +84,8 @@ function ProductCard({
   if (role === "secondary") {
     return (
       <Link href={productHref}>
-        <div className="group flex items-center gap-3 rounded-2xl border border-[#D1BE9B]/22 bg-white/45 p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45">
-          <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-[#F0EBE3]/40">
+        <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-white/45 p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45">
+          <div className="aspect-square w-full overflow-hidden rounded-xl bg-[#F0EBE3]/40">
             <ProductImageWatermark
               product={product}
               alt={product.name}
@@ -94,34 +94,13 @@ function ProductCard({
               watermarkClassName="bottom-1 right-1 max-w-[calc(100%-0.5rem)] px-1.5 py-0.5 text-[7px]"
             />
           </div>
-          <div className="min-w-0 flex-1">
-            <p
-              className="truncate text-[12.5px] tracking-[0.08em] text-[#31353A]/86"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-            >
-              {product.name}
-            </p>
-            <div className="mt-0.5 flex items-center gap-2">
-              <SalePrice
-                price={product.price}
-                originalPrice={product.originalPrice}
-                className="flex flex-wrap items-baseline gap-1.5"
-                originalClassName="text-[10px] text-[#31353A]/42 line-through"
-                saleClassName="text-[12px] text-[#A38D6B]"
-              />
-              {meanings[0] && (
-                <span
-                  className="truncate text-[10px] tracking-[0.12em] text-[#31353A]/55"
-                  style={{
-                    fontFamily: "Noto Sans TC, sans-serif",
-                    fontWeight: 300,
-                  }}
-                >
-                  #{meanings[0]}
-                </span>
-              )}
-            </div>
-          </div>
+          <SalePrice
+            price={product.price}
+            originalPrice={product.originalPrice}
+            className="mt-2 flex min-h-9 flex-col items-center justify-center gap-0.5 text-center"
+            originalClassName="text-[10px] leading-none text-[#31353A]/42 line-through"
+            saleClassName="text-[13px] leading-tight text-[#A38D6B]"
+          />
         </div>
       </Link>
     );

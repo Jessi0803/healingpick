@@ -30,7 +30,18 @@ type Signal = {
   preferSlugs?: string[];
 };
 
-const RECOMMENDATION_PRODUCTS = [...PRODUCTS, CUSTOM_BRACELET_RECOMMENDATION_PRODUCT];
+function isRecommendationEligibleProduct(product: Product): boolean {
+  return !(
+    product.slug.includes('test') ||
+    product.name.includes('測試') ||
+    product.tag === '測試用'
+  );
+}
+
+const RECOMMENDATION_PRODUCTS = [
+  ...PRODUCTS.filter(isRecommendationEligibleProduct),
+  CUSTOM_BRACELET_RECOMMENDATION_PRODUCT,
+];
 
 function scoreProduct(p: Product, sig: Signal): number {
   let score = 0;

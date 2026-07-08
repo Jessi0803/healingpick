@@ -15,6 +15,10 @@ function expectCustomBracelet(products: Array<{ slug: string }>) {
   expect(products.map((product) => product.slug)).toContain(customBraceletSlug);
 }
 
+function expectNoTestProducts(products: Array<{ slug: string; name?: string }>) {
+  expect(products.some((product) => product.slug.includes("test") || product.name?.includes("測試"))).toBe(false);
+}
+
 describe("reading product recommendations", () => {
   it("includes the custom bracelet option for tarot recommendations", () => {
     expectCustomBracelet(recommendForTarot("love", "最近的感情發展"));
@@ -41,5 +45,10 @@ describe("reading product recommendations", () => {
 
     expect(products).toHaveLength(1);
     expectCustomBracelet(products);
+  });
+
+  it("does not recommend test products", () => {
+    expectNoTestProducts(recommendForCategory("healing", 20));
+    expectNoTestProducts(recommendForTarot("growth", "想確認購物流程順不順"));
   });
 });
