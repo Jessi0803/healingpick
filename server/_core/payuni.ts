@@ -6,6 +6,7 @@ import { creditTransactions, productOrders } from "../../drizzle/schema";
 import { CREDIT_PACKAGES, getCreditPackage } from "../../shared/creditPackages";
 import { addCredits, getDb } from "../db";
 import { ENV } from "./env";
+import { pushLineTextMessage } from "./line";
 
 const PAYUNI_UPP_VERSION = "2.0";
 const PAYUNI_PRODUCTION_UPP_URL = "https://api.payuni.com.tw/api/upp";
@@ -274,7 +275,53 @@ async function markProductOrderPaidFromPayuniResult(data: Record<string, string>
     .set({ status: "paid" })
     .where(eq(productOrders.id, parsedTrade.orderId));
 
+  if (ENV.ownerLineUserId) {
+    const itemSummary = formatProductOrderItems(order.items);
+    const sent = await pushLineTextMessage(
+      ENV.ownerLineUserId,
+      [
+        "HealingPick 有新的已付款商品訂單",
+        `訂單編號：#${order.id}`,
+        `金額：NT$ ${order.subtotal.toLocaleString("zh-TW")}`,
+        `姓名：${order.customerName}`,
+        `Email：${order.email}`,
+        `電話：${order.phone}`,
+        `手圍：${order.wristSize}（${order.fit}）`,
+        `商品：${itemSummary}`,
+        `收件地址：${order.address}`,
+        `付款單號：${data.TradeNo ?? data.MerTradeNo ?? "未提供"}`,
+      ].join("\n")
+    );
+    if (!sent) {
+      console.warn("[PAYUNi] Owner LINE notification was not sent", {
+        orderId: order.id,
+        merTradeNo: data.MerTradeNo,
+      });
+    }
+  }
+
   return { updated: true, reason: "paid" };
+}
+
+function formatProductOrderItems(itemsJson: string) {
+  try {
+    const items = JSON.parse(itemsJson) as Array<{
+      name?: unknown;
+      quantity?: unknown;
+      price?: unknown;
+    }>;
+    if (!Array.isArray(items) || items.length === 0) return "未提供";
+    return items
+      .map((item) => {
+        const name = typeof item.name === "string" && item.name.trim() ? item.name.trim() : "未命名商品";
+        const quantity = Number.isFinite(Number(item.quantity)) ? Number(item.quantity) : 1;
+        const price = Number.isFinite(Number(item.price)) ? Number(item.price) : 0;
+        return `${name} x ${quantity}（NT$ ${price.toLocaleString("zh-TW")}）`;
+      })
+      .join("、");
+  } catch {
+    return "解析失敗，請至後台查看";
+  }
 }
 
 function redirectHtml(target: string) {
