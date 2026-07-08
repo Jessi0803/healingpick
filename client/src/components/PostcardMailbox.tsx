@@ -172,12 +172,16 @@ export default function PostcardMailbox() {
     () => (visiblePostcard?.imageUrl ? driveViewUrl(visiblePostcard.imageUrl) : ""),
     [visiblePostcard?.imageUrl],
   );
+  const isLongFormPostcard = useMemo(() => {
+    const message = visiblePostcard?.message ?? "";
+    return message.includes("\n") || message.length > 70;
+  }, [visiblePostcard?.message]);
 
   useEffect(() => {
     let cancelled = false;
     setCompositedImageUrl("");
     setCompositedImageStatus("idle");
-    if (!imageUrl || !visiblePostcard?.message) return;
+    if (!imageUrl || !visiblePostcard?.message || isLongFormPostcard) return;
     setCompositedImageStatus("loading");
 
     createPostcardImageUrl(imageUrl, visiblePostcard.message)
@@ -197,7 +201,7 @@ export default function PostcardMailbox() {
     return () => {
       cancelled = true;
     };
-  }, [imageUrl, visiblePostcard?.message]);
+  }, [imageUrl, isLongFormPostcard, visiblePostcard?.message]);
 
   if (!isAuthenticated || !visiblePostcard) return null;
 
@@ -281,7 +285,28 @@ export default function PostcardMailbox() {
             </button>
 
             <div className="relative aspect-[160/119] w-full bg-[#F8EFE5]">
-              {compositedImageUrl ? (
+              {isLongFormPostcard ? (
+                <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#FFFBF5]">
+                  <div
+                    className="h-24 shrink-0 bg-cover bg-center sm:h-32"
+                    style={{ backgroundImage: imageUrl ? `url(${imageUrl})` : undefined }}
+                    aria-hidden="true"
+                  >
+                    <div className="h-full w-full bg-gradient-to-b from-white/5 via-[#FFF7EA]/20 to-[#FFFBF5]" />
+                  </div>
+                  <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#FFFDF8]/10 to-transparent sm:h-32" />
+                  <div className="min-h-0 flex-1 overflow-y-auto px-7 pb-8 pt-5 sm:px-11 sm:pb-10 sm:pt-7">
+                    <div className="mx-auto max-w-[31rem] border-y border-[#E8DCCB] py-5 sm:py-7">
+                      <p
+                        className="whitespace-pre-line text-center text-[14px] leading-[2.05] tracking-[0.06em] text-[#6F5648] sm:text-[16px] sm:leading-[2.15]"
+                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                      >
+                        {visiblePostcard.message}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : compositedImageUrl ? (
                 <img
                   src={compositedImageUrl}
                   alt="會員明信片"
@@ -306,7 +331,7 @@ export default function PostcardMailbox() {
                 </div>
               )}
             </div>
-            {visiblePostcard.message.length > 70 && (
+            {!isLongFormPostcard && visiblePostcard.message.length > 70 && (
               <div className="border-t border-[#E8DCCB] bg-[#FFFDF8] px-5 py-4">
                 <p
                   className="mx-auto max-w-2xl whitespace-pre-wrap text-center text-[13px] leading-[1.9] tracking-[0.04em] text-[#6F5648] sm:text-[14px]"
@@ -316,18 +341,20 @@ export default function PostcardMailbox() {
                 </p>
               </div>
             )}
-            <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-2.5 sm:px-5 sm:py-3">
-              <p
-                className="text-center text-[11px] leading-[1.5] text-[#A38D6B] sm:text-xs"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                {compositedImageStatus === "ready"
-                  ? "長按照片可儲存包含文字的明信片"
-                  : compositedImageStatus === "error"
-                    ? "明信片文字已顯示，請稍後再長按儲存"
-                    : "正在產生可儲存的明信片"}
-              </p>
-            </div>
+            {!isLongFormPostcard && (
+              <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-2.5 sm:px-5 sm:py-3">
+                <p
+                  className="text-center text-[11px] leading-[1.5] text-[#A38D6B] sm:text-xs"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  {compositedImageStatus === "ready"
+                    ? "長按照片可儲存包含文字的明信片"
+                    : compositedImageStatus === "error"
+                      ? "明信片文字已顯示，請稍後再長按儲存"
+                      : "正在產生可儲存的明信片"}
+                </p>
+              </div>
+            )}
           </section>
         </div>
       )}
