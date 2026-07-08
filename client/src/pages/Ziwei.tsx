@@ -72,17 +72,20 @@ const ZIWEI_FOLLOW_UP_WAITING_MESSAGES = [
 function ProductCard({
   product,
   context,
+  recommendationContext,
   role = "primary",
 }: {
   product: Product;
   context?: string;
+  recommendationContext?: string;
   role?: "primary" | "secondary";
 }) {
   const meanings = product.meanings.slice(0, 3).map(m => m.title);
   const recommendationReason = getContextualRecommendationReason(
     product,
-    context,
-    role
+    recommendationContext ?? context,
+    role,
+    Boolean(recommendationContext)
   );
   const roleLabel = role === "primary" ? "最呼應此刻" : "想加強也可看";
   const productHref = product.href ?? `/shop/${product.slug}`;
@@ -186,7 +189,7 @@ function ProductCard({
               為什麼 Mochi 想到它
             </p>
             <p
-              className="text-[13px] leading-[1.85] tracking-[0.05em] text-[#31353A]/68"
+              className="whitespace-pre-line text-[13px] leading-[1.85] tracking-[0.05em] text-[#31353A]/68"
               style={{
                 fontFamily: "Noto Sans TC, sans-serif",
                 fontWeight: 300,
@@ -1459,6 +1462,7 @@ export default function ZiweiPage() {
                       key={ziweiRecommendedProducts[0].slug}
                       product={ziweiRecommendedProducts[0]}
                       context={ziweiRecommendationMessage}
+                      recommendationContext={readingRecommendation?.reason}
                       role="primary"
                     />
                   )}
@@ -1483,6 +1487,7 @@ export default function ZiweiPage() {
                             key={product.slug}
                             product={product}
                             context={ziweiRecommendationMessage}
+                            recommendationContext={readingRecommendation?.reason}
                             role="secondary"
                           />
                         ))}
