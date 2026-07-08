@@ -444,7 +444,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                     fontWeight: 300,
                   }}
                 >
-                  前往付款（可 ATM 轉帳）
+                  前往付款
                 </button>
                 <button
                   type="button"
