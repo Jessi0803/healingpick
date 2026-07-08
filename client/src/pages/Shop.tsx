@@ -12,6 +12,7 @@ import {
   ChevronRight,
   ShoppingBag,
   SlidersHorizontal,
+  Sparkles,
   X,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -91,7 +92,7 @@ const CUSTOM_BRACELET_ENTRY = {
   material: "CUSTOM CRYSTAL",
   note: "選不出來嗎？客製化一條專屬自己的手鍊",
   priceLabel: "NT$ 1,580",
-  image: "/custom-bracelet/general/IMG_4832.PNG",
+  image: "/custom-bracelet/feedback-optimized/full/IMG_4832.webp",
   href: "/shop/custom-bracelet/general",
 };
 
@@ -626,6 +627,15 @@ function CustomBraceletProductCard() {
               loading="lazy"
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
+            <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-[#3D4144]/92 px-3 py-1.5 text-[#FAF7F4] shadow-[0_8px_18px_rgba(49,53,58,0.18)] backdrop-blur-md">
+              <Sparkles className="h-3.5 w-3.5 text-[#D1BE9B]" strokeWidth={1.7} />
+              <span
+                className="text-[10px] tracking-[0.16em]"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                客製款
+              </span>
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/35 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <span
@@ -635,7 +645,7 @@ function CustomBraceletProductCard() {
                   fontWeight: 300,
                 }}
               >
-                查看客製化
+                開始客製
               </span>
             </div>
           </div>
@@ -689,10 +699,10 @@ function CustomBraceletProductCard() {
                 {CUSTOM_BRACELET_ENTRY.priceLabel}
               </span>
               <span
-                className="pointer-events-none hidden shrink-0 translate-y-1 items-center rounded-full border border-[#D1BE9B]/35 bg-white/78 px-2.5 py-1.5 text-[10px] tracking-[0.12em] text-[#3D4144]/78 opacity-0 shadow-[0_8px_20px_rgba(61,65,68,0.08)] backdrop-blur-md transition-all duration-300 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100 md:inline-flex"
+                className="pointer-events-none inline-flex shrink-0 items-center rounded-full border border-[#D1BE9B]/45 bg-white/82 px-2.5 py-1.5 text-[10px] tracking-[0.12em] text-[#3D4144]/82 shadow-[0_8px_20px_rgba(61,65,68,0.08)] backdrop-blur-md transition-all duration-300 group-hover:border-[#3D4144]/20 group-hover:bg-[#3D4144] group-hover:text-[#FAF7F4]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                客製
+                開始客製
               </span>
             </div>
           </div>
