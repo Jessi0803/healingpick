@@ -1096,6 +1096,9 @@ function UsersTable({
             <MobileInfoRow label="註冊時間">
               {formatDate(row.createdAt)}
             </MobileInfoRow>
+            <MobileInfoRow label="最近來訪">
+              {formatDate(row.lastSignedIn)}
+            </MobileInfoRow>
             <MobileInfoRow label="購買手鍊紀錄">
               <BraceletPurchaseHistoryCell
                 value={row.braceletPurchaseHistory}
@@ -1263,6 +1266,7 @@ function UsersTable({
               <th className="px-4 py-3 font-normal">點數</th>
               <th className="px-4 py-3 font-normal">今日免費剩餘</th>
               <th className="px-4 py-3 font-normal">註冊時間</th>
+              <th className="px-4 py-3 font-normal">最近來訪</th>
               <th className="px-4 py-3 font-normal">購買手鍊紀錄</th>
               <th className="px-4 py-3 font-normal">備註</th>
               <th className="px-4 py-3 font-normal">歷史</th>
@@ -1273,7 +1277,7 @@ function UsersTable({
             {message && (
               <tr>
                 <td
-                  colSpan={11}
+                  colSpan={12}
                   className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]"
                 >
                   {message}
@@ -1281,7 +1285,7 @@ function UsersTable({
               </tr>
             )}
             {rows.length === 0 ? (
-              <EmptyRow colSpan={11} />
+              <EmptyRow colSpan={12} />
             ) : (
               rows.map(row => {
                 const inputValue = creditInputs[row.id] ?? String(row.credits);
@@ -1388,6 +1392,9 @@ function UsersTable({
                       </td>
                       <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
                       <td className="px-4 py-3">
+                        {formatDate(row.lastSignedIn)}
+                      </td>
+                      <td className="px-4 py-3">
                         <BraceletPurchaseHistoryCell
                           value={row.braceletPurchaseHistory}
                         />
@@ -1467,7 +1474,7 @@ function UsersTable({
                     </tr>
                     {isExpanded && (
                       <tr key={`${row.id}-readings`}>
-                        <td colSpan={11} className="bg-[#FAF7F4]/70 px-4 py-4">
+                        <td colSpan={12} className="bg-[#FAF7F4]/70 px-4 py-4">
                           <UserReadingHistory
                             user={selectedUser}
                             rows={userReadingsQuery.data ?? []}

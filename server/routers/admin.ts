@@ -30,6 +30,14 @@ function todayFreeUsed(row: { freeUsedToday: number; lastFreeReset: Date }): num
   return taipeiDateKey(new Date()) === taipeiDateKey(row.lastFreeReset) ? row.freeUsedToday : 0;
 }
 
+const signedInTodaySort = sql`
+  case
+    when (${users.lastSignedIn} AT TIME ZONE 'Asia/Taipei')::date = (now() AT TIME ZONE 'Asia/Taipei')::date
+    then 0
+    else 1
+  end
+`;
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
@@ -152,7 +160,7 @@ export const adminRouter = router({
               lastSignedIn: users.lastSignedIn,
             })
             .from(users)
-            .orderBy(desc(users.createdAt))
+            .orderBy(signedInTodaySort, desc(users.lastSignedIn), desc(users.createdAt))
             .limit(limit) : emptyQuery,
           tab === "orders" ? db
             .select({
