@@ -73,6 +73,7 @@ type AdminShopOrderItem = {
   name: string;
   price: number;
   quantity: number;
+  customization?: Record<string, string | boolean | null>;
 };
 
 type AdminShopOrderRow = {
@@ -164,6 +165,66 @@ function parseShopOrderItems(items: string): AdminShopOrderItem[] {
   } catch {
     return [];
   }
+}
+
+const customOrderFieldLabels: Array<[string, string]> = [
+  ["type", "客製類型"],
+  ["birthDate", "出生年月日"],
+  ["contact", "IG / LINE"],
+  ["energyNeeds", "能量需求"],
+  ["colorPreference", "喜歡色系"],
+  ["favoriteCrystals", "指定水晶"],
+  ["avoidCrystals", "避開水晶"],
+  ["metalPreference", "金銀偏好"],
+  ["claspPreference", "扣件"],
+  ["charmNeed", "吊飾需求"],
+  ["charmPreference", "吊飾款式"],
+  ["charmLabel", "吊飾摘要"],
+  ["notes", "其他備註"],
+  ["referenceImageName", "參考圖檔名"],
+];
+
+function hasCustomization(item: AdminShopOrderItem) {
+  return Boolean(item.customization && Object.keys(item.customization).length > 0);
+}
+
+function formatCustomizationValue(value: string | boolean | null | undefined) {
+  if (value === true) return "有";
+  if (value === false) return "無";
+  if (!value) return "";
+  return value;
+}
+
+function CustomizationDetails({
+  customization,
+}: {
+  customization: Record<string, string | boolean | null>;
+}) {
+  return (
+    <div className="mt-2 rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/68 px-3 py-2">
+      <div className="mb-1.5 text-[11px] tracking-[0.14em] text-[#A38D6B]">
+        客製表單
+      </div>
+      <div className="grid gap-1.5 text-[11px] leading-[1.7] text-[#31353A]/68">
+        {customOrderFieldLabels.map(([key, label]) => {
+          const value = formatCustomizationValue(customization[key]);
+          if (!value) return null;
+          return (
+            <div key={key} className="grid gap-1 sm:grid-cols-[88px_1fr]">
+              <span className="text-[#A38D6B]/82">{label}</span>
+              <span className="break-words">{value}</span>
+            </div>
+          );
+        })}
+        {customization.hasReferenceImage === true && (
+          <div className="grid gap-1 sm:grid-cols-[88px_1fr]">
+            <span className="text-[#A38D6B]/82">參考圖</span>
+            <span className="break-words">顧客有上傳參考圖，請私訊請顧客補傳原圖。</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function parseBraceletPurchaseHistory(
@@ -1581,6 +1642,20 @@ function ShopOrdersTable({ rows }: { rows: AdminShopOrderRow[] }) {
                   <MobileInfoRow label="手圍">
                     {row.wristSize} · {row.fit}
                   </MobileInfoRow>
+                  {items.some(hasCustomization) && (
+                    <MobileInfoRow label="客製表單">
+                      <div className="space-y-2">
+                        {items.filter(hasCustomization).map(item => (
+                          <div key={item.slug}>
+                            <div className="text-[11px] text-[#31353A]/58">
+                              {item.name}
+                            </div>
+                            <CustomizationDetails customization={item.customization!} />
+                          </div>
+                        ))}
+                      </div>
+                    </MobileInfoRow>
+                  )}
                   <MobileInfoRow label="地址">{row.address}</MobileInfoRow>
                   <MobileInfoRow label="贈品">{row.freeGift}</MobileInfoRow>
                   <MobileInfoRow label="時間">{formatDate(row.createdAt)}</MobileInfoRow>
@@ -1624,10 +1699,15 @@ function ShopOrdersTable({ rows }: { rows: AdminShopOrderRow[] }) {
                       <div className="space-y-1.5">
                         {items.map(item => (
                           <div key={item.slug} className="leading-[1.7]">
-                            {item.name} x{item.quantity}
-                            <span className="ml-2 text-[#A38D6B]">
-                              NT$ {(item.price * item.quantity).toLocaleString("zh-TW")}
-                            </span>
+                            <div>
+                              {item.name} x{item.quantity}
+                              <span className="ml-2 text-[#A38D6B]">
+                                NT$ {(item.price * item.quantity).toLocaleString("zh-TW")}
+                              </span>
+                            </div>
+                            {hasCustomization(item) && (
+                              <CustomizationDetails customization={item.customization!} />
+                            )}
                           </div>
                         ))}
                       </div>

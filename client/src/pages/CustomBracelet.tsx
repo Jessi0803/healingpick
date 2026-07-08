@@ -358,11 +358,29 @@ export default function CustomBraceletPage() {
 
     addItem(
       {
-        slug: `custom-bracelet-${mode}-${form.charmNeed === '需要加吊飾' ? form.charmPreference : 'no-charm'}`,
+        slug: `custom-bracelet-${mode}-${Date.now()}`,
         name: `${copy.contactProductName}（${selectedCharmLabel}）`,
         price: getDiscountedPrice(selectedCustomPrice),
         originalPrice: selectedCustomPrice,
         img: CUSTOM_BRACELET_IMAGE,
+        customization: {
+          type: copy.contactProductName,
+          mode,
+          birthDate: mode === 'numerology' ? form.birthDate.trim() : '',
+          contact: form.contact.trim(),
+          energyNeeds: form.energyNeeds.trim(),
+          colorPreference: form.colorPreference.trim(),
+          favoriteCrystals: form.favoriteCrystals.trim(),
+          avoidCrystals: form.avoidCrystals.trim(),
+          metalPreference: form.metalPreference.trim(),
+          claspPreference: form.claspPreference.trim(),
+          charmNeed: form.charmNeed.trim(),
+          charmPreference: form.charmPreference.trim(),
+          charmLabel: selectedCharmLabel,
+          notes: form.notes.trim(),
+          hasReferenceImage: Boolean(referenceImage),
+          referenceImageName: referenceImage?.name ?? '',
+        },
       },
       { open: true },
     );

@@ -125,7 +125,7 @@ export default function Navbar() {
               className="text-[11px] tracking-[0.18em] text-[#8A7250]"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
             >
-              占卜限時優惠半小時問到飽
+              🎀 客製化手鍊全館9折 · 一條免運 ✨
             </span>
           ))}
         </div>

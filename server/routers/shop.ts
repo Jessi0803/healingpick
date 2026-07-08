@@ -11,6 +11,9 @@ const orderItemInput = z.object({
   name: z.string().trim().min(1).max(120),
   price: z.number().int().min(0).max(100000),
   quantity: z.number().int().min(1).max(20),
+  customization: z
+    .record(z.string(), z.union([z.string().max(2000), z.boolean(), z.null()]))
+    .optional(),
 });
 
 export const shopRouter = router({

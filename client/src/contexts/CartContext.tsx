@@ -29,6 +29,7 @@ export type CartProduct = {
   price: number;
   originalPrice?: number;
   img: string;
+  customization?: Record<string, string | boolean | null>;
 };
 
 type CartItem = CartProduct & {
@@ -65,7 +66,10 @@ function readStoredCart(): CartItem[] {
             typeof item.name === "string" &&
             typeof item.price === "number" &&
             typeof item.img === "string" &&
-            typeof item.quantity === "number"
+            typeof item.quantity === "number" &&
+            (item.customization === undefined ||
+              item.customization === null ||
+              typeof item.customization === "object")
         )
       : [];
   } catch {

@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link } from "wouter";
-import { ShoppingBag } from "lucide-react";
+import { CheckCircle2, MessageCircle, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import CartAddOnOffer from "@/components/CartAddOnOffer";
 import CartBenefitNotice from "@/components/CartBenefitNotice";
@@ -27,6 +27,8 @@ type CustomerForm = {
   streetAddress: string;
 };
 
+type CheckoutResult = "success" | "pending" | "error" | null;
+
 const LINE_URL = "https://lin.ee/zqRShGd";
 
 const initialForm: CustomerForm = {
@@ -44,18 +46,23 @@ const initialForm: CustomerForm = {
 export default function CheckoutPage() {
   const { items, subtotal, clearCart, openCart } = useCart();
   const [form, setForm] = useState<CustomerForm>(initialForm);
+  const [checkoutResult, setCheckoutResult] = useState<CheckoutResult>(null);
+  const [isOpeningPayment, setIsOpeningPayment] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const status = params.get("payuni");
     if (!status) return;
     if (status === "success") {
+      setCheckoutResult("success");
       clearCart();
       toast.success("付款完成，訂單已成立");
     } else if (status === "pending") {
+      setCheckoutResult("pending");
       clearCart();
       toast.info("訂單已建立，完成付款後我們會開始安排。");
     } else if (status === "error") {
+      setCheckoutResult("error");
       toast.error("付款結果驗證失敗，請聯繫客服協助查核。");
     }
     window.history.replaceState(null, "", window.location.pathname);
@@ -63,6 +70,7 @@ export default function CheckoutPage() {
 
   const createOrderMutation = trpc.shop.createOrder.useMutation({
     onSuccess: ({ checkout }) => {
+      setIsOpeningPayment(true);
       setForm(initialForm);
       const payuniForm = document.createElement("form");
       payuniForm.method = "POST";
@@ -79,6 +87,7 @@ export default function CheckoutPage() {
       payuniForm.submit();
     },
     onError: error => {
+      setIsOpeningPayment(false);
       if (error.message === "PAYUNI_NOT_CONFIGURED") {
         toast.error("金流尚未完成設定，請稍後再試。");
         return;
@@ -120,6 +129,7 @@ export default function CheckoutPage() {
             name: item.name,
             price: getDiscountedPrice(originalPrice),
             quantity: item.quantity,
+            customization: item.customization,
           };
         }),
         {
@@ -151,7 +161,9 @@ export default function CheckoutPage() {
             </h1>
           </div>
 
-          {items.length === 0 ? (
+          {checkoutResult ? (
+            <OrderResultPanel result={checkoutResult} />
+          ) : items.length === 0 ? (
             <section className="rounded-2xl border border-dashed border-[#D1BE9B]/35 bg-white/45 px-6 py-14 text-center">
               <ShoppingBag
                 className="mx-auto mb-4 text-[#A38D6B]/70"
@@ -401,15 +413,23 @@ export default function CheckoutPage() {
                 <div className="mt-5 grid gap-3">
                   <button
                     type="submit"
-                    disabled={createOrderMutation.isPending}
+                    disabled={createOrderMutation.isPending || isOpeningPayment}
                     className="w-full rounded-full bg-[#31353A] px-5 py-3.5 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#31353A]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-50"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
                       fontWeight: 300,
                     }}
                   >
-                    {createOrderMutation.isPending ? "前往中" : "前往付款"}
+                    {createOrderMutation.isPending || isOpeningPayment
+                      ? "正在開啟付款頁"
+                      : "前往付款"}
                   </button>
+                  {(createOrderMutation.isPending || isOpeningPayment) && (
+                    <div className="rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/70 px-4 py-3 text-[12px] leading-[1.8] tracking-[0.06em] text-[#31353A]/62">
+                      付款頁開啟後，請在 PAYUNi 選擇信用卡、Apple Pay 或
+                      ATM 轉帳。若選擇 ATM 轉帳，請依付款頁提供的虛擬帳號與期限完成轉帳。
+                    </div>
+                  )}
                   <a
                     href={LINE_URL}
                     target="_blank"
@@ -429,6 +449,82 @@ export default function CheckoutPage() {
         </div>
       </div>
     </PageLayout>
+  );
+}
+
+function OrderResultPanel({ result }: { result: Exclude<CheckoutResult, null> }) {
+  const isError = result === "error";
+  const title =
+    result === "success"
+      ? "訂單已成立"
+      : result === "pending"
+        ? "等待轉帳付款"
+        : "付款結果需人工確認";
+  const message =
+    result === "success"
+      ? "謝謝你的訂購，付款已完成，我們會依照你填寫的手圍與收件資料安排製作與出貨。"
+      : result === "pending"
+        ? "我們已收到你的訂單資料。若你選擇 ATM 轉帳，請依 PAYUNi 付款頁顯示的虛擬帳號、金額與期限完成轉帳；付款確認後，我們會開始安排後續流程。"
+        : "付款回傳驗證沒有成功，訂單狀態可能需要人工查核。請透過官方 LINE 聯繫我們協助確認。";
+
+  return (
+    <section className="rounded-2xl border border-[#D1BE9B]/25 bg-white/58 px-6 py-12 text-center shadow-[0_18px_48px_rgba(49,53,58,0.06)] md:px-10 md:py-16">
+      <div
+        className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border ${
+          isError
+            ? "border-[#D66A62]/25 bg-[#D66A62]/8 text-[#B95D56]"
+            : "border-[#D1BE9B]/35 bg-[#D1BE9B]/12 text-[#8F7957]"
+        }`}
+      >
+        <CheckCircle2 size={34} strokeWidth={1.5} />
+      </div>
+      <p
+        className="mb-3 text-[10px] uppercase tracking-[0.32em] text-[#D1BE9B]"
+        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+      >
+        Order Status
+      </p>
+      <h2
+        className="text-2xl tracking-[0.22em] text-[#31353A] md:text-3xl"
+        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+      >
+        {title}
+      </h2>
+      <p className="mx-auto mt-5 max-w-xl text-sm leading-[2] tracking-[0.08em] text-[#31353A]/66">
+        {message}
+      </p>
+      {!isError && (
+        <div className="mx-auto mt-7 max-w-xl rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/68 px-5 py-4 text-left">
+          <p className="text-[11px] tracking-[0.18em] text-[#A38D6B]">
+            後續提醒
+          </p>
+          <p className="mt-2 text-[12px] leading-[1.9] tracking-[0.06em] text-[#31353A]/62">
+            若付款頁沒有顯示虛擬帳號，或需要補充手圍、地址與訂單內容，可以直接私訊官方 LINE。
+          </p>
+        </div>
+      )}
+      <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+        <Link href="/shop">
+          <button
+            type="button"
+            className="w-full rounded-full bg-[#31353A] px-6 py-3 text-xs tracking-[0.2em] text-[#FAF7F4] transition hover:bg-[#D1BE9B] hover:text-[#31353A] sm:w-auto"
+            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+          >
+            返回商店
+          </button>
+        </Link>
+        <a
+          href={LINE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#D1BE9B]/35 px-6 py-3 text-xs tracking-[0.18em] text-[#8F7957] transition hover:bg-white/65 sm:w-auto"
+          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+        >
+          <MessageCircle size={15} strokeWidth={1.7} />
+          聯繫 LINE
+        </a>
+      </div>
+    </section>
   );
 }
 
