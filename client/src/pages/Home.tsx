@@ -6,8 +6,7 @@
  *   2. Crystal Altar (水晶祭壇)
  *   3. Features Overview (五大功能入口)
  *   4. Divination Previews (紫微 / 塔羅)
- *   5. Quiz Teaser (心理測驗)
- *   6. Shop Preview (療癒水晶)
+ *   5. Shop Preview (療癒水晶)
  */
 
 import { useState, useRef } from "react";
@@ -152,14 +151,6 @@ const features = [
     desc: "結合星象與塔羅能量，為你解析今日的機遇、挑戰與行動指引。",
     href: "/fortune/daily",
     color: "#EAD9B0", // 金黃奶茶，比背景深一階
-  },
-  {
-    icon: "✨",
-    title: "心理測驗",
-    subtitle: "Personality Quiz",
-    desc: "你是別人的什麼香味？前世忙什麼？零預算趣味心理測驗，測出你的專屬水晶。",
-    href: "/quiz",
-    color: "#D4C9B8", // 精選暖灰，比背景深一階
   },
 ];
 
@@ -566,7 +557,7 @@ export default function Home() {
             今日有 {dailyMochiVisitorCount} 人來找 Mochi 占卜
           </p>
 
-          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[32rem] sm:grid-cols-2 lg:max-w-5xl lg:grid-cols-6">
+          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[32rem] sm:grid-cols-2 lg:max-w-4xl lg:grid-cols-5">
             <Link href="/shop">
               <button
                 className="w-full px-4 py-3 text-xs tracking-[0.16em] bg-[#D1BE9B] text-[#31353A] rounded-full hover:bg-[#3D4144] hover:text-[#FAF7F4] transition-all duration-500 active:scale-95"
@@ -605,14 +596,6 @@ export default function Home() {
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 每日運勢
-              </button>
-            </Link>
-            <Link href="/quiz">
-              <button
-                className="w-full px-4 py-3 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-white/30 backdrop-blur-sm rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                心理測驗
               </button>
             </Link>
           </div>
@@ -656,7 +639,7 @@ export default function Home() {
               className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
             >
-              靈性療癒的六種方式
+              靈性療癒的五種方式
             </h2>
             <div className="divider-gold mt-4 max-w-xs mx-auto">
               <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none">
@@ -668,7 +651,7 @@ export default function Home() {
             </div>
           </Reveal>
 
-          <Reveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+          <Reveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
             {features.map((f, i) => (
               <Link
                 key={f.href}
@@ -1208,70 +1191,6 @@ export default function Home() {
                   }}
                 />
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── QUIZ TEASER ─────────────────────────────────────────────────── */}
-      <section className="py-20 px-6 md:px-10 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto">
-          <div
-            className="relative rounded-3xl p-10 md:p-14 border border-[#D1BE9B]/30 overflow-hidden"
-            style={{
-              background: "rgba(242,237,232,0.65)",
-              backdropFilter: "blur(16px)",
-              boxShadow: "0 8px 40px rgba(180,160,130,0.1)",
-            }}
-          >
-            {/* BG decorative elements */}
-            <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none opacity-20">
-              <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-[#D1BE9B]/20 blur-2xl" />
-              <div className="absolute -bottom-16 -left-16 w-80 h-80 rounded-full bg-[#EAD9B0]/25 blur-3xl" />
-            </div>
-
-            <div className="relative z-10 max-w-lg">
-              <span
-                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-                style={{
-                  fontFamily: "Cormorant Garamond, serif",
-                  fontWeight: 400,
-                }}
-              >
-                Psychological Resonance
-              </span>
-              <h2
-                className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
-              >
-                互動心理測驗
-              </h2>
-              <p
-                className="text-[12px] leading-[2.2] text-[#31353A]/72 tracking-wider mb-6"
-                style={{
-                  fontFamily: "Noto Sans TC, sans-serif",
-                  fontWeight: 300,
-                }}
-              >
-                你在別人眼中是什麼香味？你的靈魂住在哪裡？
-                <br />
-                有些特質，你自己或許也未曾察覺 ——
-                <br />
-                探索你的潛在靈魂氣場，
-                <br />
-                測出專屬於你目前的守護能量水晶。
-              </p>
-              <Link href="/quiz">
-                <button
-                  className="px-7 py-2.5 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95 cursor-pointer"
-                  style={{
-                    fontFamily: "Noto Serif TC, serif",
-                    fontWeight: 300,
-                  }}
-                >
-                  開始探索靈魂 ✦
-                </button>
-              </Link>
             </div>
           </div>
         </div>
