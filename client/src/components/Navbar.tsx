@@ -26,6 +26,8 @@ const navLinks = [
 ];
 
 const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、Mochi 解夢、每日運勢用完免費額度後，每次解讀消耗 1 點。';
+const marqueeMessage = '🎀 客製化手鍊全館9折 · 一條免運 ✨';
+const marqueeItems = Array.from({ length: 6 }, (_, index) => index);
 
 export default function Navbar() {
   const { user, isAuthenticated, login, logout } = useAuth();
@@ -118,15 +120,23 @@ export default function Navbar() {
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-[60] h-8 overflow-hidden border-b border-[#D1BE9B]/20 bg-[#FDFBF7]/88 backdrop-blur-md">
-        <div className="marquee-track flex h-full w-max items-center gap-10 whitespace-nowrap">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <span
-              key={index}
-              className="text-[11px] tracking-[0.18em] text-[#8A7250]"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+        <div className="marquee-track h-full whitespace-nowrap" aria-label={marqueeMessage}>
+          {[0, 1].map((groupIndex) => (
+            <div
+              key={groupIndex}
+              className="marquee-content"
+              aria-hidden={groupIndex === 1}
             >
-              🎀 客製化手鍊全館9折 · 一條免運 ✨
-            </span>
+              {marqueeItems.map((index) => (
+                <span
+                  key={`${groupIndex}-${index}`}
+                  className="text-[11px] tracking-[0.18em] text-[#8A7250]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+                >
+                  {marqueeMessage}
+                </span>
+              ))}
+            </div>
           ))}
         </div>
       </div>

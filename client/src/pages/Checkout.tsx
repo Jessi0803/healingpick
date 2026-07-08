@@ -28,6 +28,12 @@ type CustomerForm = {
 };
 
 type CheckoutResult = "success" | "pending" | "error" | null;
+type AtmPaymentInfo = {
+  bankType: string;
+  payNo: string;
+  expireDate: string;
+  tradeNo: string;
+};
 
 const LINE_URL = "https://lin.ee/zqRShGd";
 
@@ -47,22 +53,32 @@ export default function CheckoutPage() {
   const { items, subtotal, clearCart, openCart } = useCart();
   const [form, setForm] = useState<CustomerForm>(initialForm);
   const [checkoutResult, setCheckoutResult] = useState<CheckoutResult>(null);
+  const [atmPaymentInfo, setAtmPaymentInfo] = useState<AtmPaymentInfo | null>(null);
   const [isOpeningPayment, setIsOpeningPayment] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const status = params.get("payuni");
     if (!status) return;
+    const nextAtmInfo = {
+      bankType: params.get("bankType") ?? "",
+      payNo: params.get("payNo") ?? "",
+      expireDate: params.get("expireDate") ?? "",
+      tradeNo: params.get("tradeNo") ?? "",
+    };
     if (status === "success") {
       setCheckoutResult("success");
+      setAtmPaymentInfo(null);
       clearCart();
       toast.success("付款完成，訂單已成立");
     } else if (status === "pending") {
       setCheckoutResult("pending");
+      setAtmPaymentInfo(nextAtmInfo.payNo ? nextAtmInfo : null);
       clearCart();
       toast.info("訂單已建立，完成付款後我們會開始安排。");
     } else if (status === "error") {
       setCheckoutResult("error");
+      setAtmPaymentInfo(null);
       toast.error("付款結果驗證失敗，請聯繫客服協助查核。");
     }
     window.history.replaceState(null, "", window.location.pathname);
@@ -162,7 +178,7 @@ export default function CheckoutPage() {
           </div>
 
           {checkoutResult ? (
-            <OrderResultPanel result={checkoutResult} />
+            <OrderResultPanel result={checkoutResult} atmPaymentInfo={atmPaymentInfo} />
           ) : items.length === 0 ? (
             <section className="rounded-2xl border border-dashed border-[#D1BE9B]/35 bg-white/45 px-6 py-14 text-center">
               <ShoppingBag
@@ -452,7 +468,13 @@ export default function CheckoutPage() {
   );
 }
 
-function OrderResultPanel({ result }: { result: Exclude<CheckoutResult, null> }) {
+function OrderResultPanel({
+  result,
+  atmPaymentInfo,
+}: {
+  result: Exclude<CheckoutResult, null>;
+  atmPaymentInfo: AtmPaymentInfo | null;
+}) {
   const isError = result === "error";
   const title =
     result === "success"
@@ -493,6 +515,37 @@ function OrderResultPanel({ result }: { result: Exclude<CheckoutResult, null> })
       <p className="mx-auto mt-5 max-w-xl text-sm leading-[2] tracking-[0.08em] text-[#31353A]/66">
         {message}
       </p>
+      {result === "pending" && atmPaymentInfo?.payNo && (
+        <div className="mx-auto mt-7 max-w-xl rounded-xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/78 px-5 py-4 text-left">
+          <p className="text-[11px] tracking-[0.18em] text-[#A38D6B]">
+            ATM 虛擬帳號
+          </p>
+          <div className="mt-3 grid gap-2 text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/72">
+            {atmPaymentInfo.bankType && (
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-[#31353A]/48">銀行代碼</span>
+                <span className="font-medium text-[#31353A]">{atmPaymentInfo.bankType}</span>
+              </div>
+            )}
+            <div className="flex items-start justify-between gap-4">
+              <span className="text-[#31353A]/48">繳費帳號</span>
+              <span className="break-all font-medium text-[#31353A]">{atmPaymentInfo.payNo}</span>
+            </div>
+            {atmPaymentInfo.expireDate && (
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-[#31353A]/48">繳費期限</span>
+                <span className="font-medium text-[#31353A]">{atmPaymentInfo.expireDate}</span>
+              </div>
+            )}
+            {atmPaymentInfo.tradeNo && (
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-[#31353A]/48">付款單號</span>
+                <span className="break-all font-medium text-[#31353A]">{atmPaymentInfo.tradeNo}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {!isError && (
         <div className="mx-auto mt-7 max-w-xl rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/68 px-5 py-4 text-left">
           <p className="text-[11px] tracking-[0.18em] text-[#A38D6B]">

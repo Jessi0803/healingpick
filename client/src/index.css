@@ -1055,7 +1055,20 @@ body::after {
 }
 
 .marquee-track {
+  display: flex;
+  width: max-content;
+  min-width: 200%;
   animation: marqueeScroll 24s linear infinite;
+}
+
+.marquee-content {
+  display: flex;
+  min-width: 50%;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-around;
+  gap: 2.5rem;
+  padding-right: 2.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -44,6 +44,15 @@ function allowedPaymentTools() {
   };
 }
 
+function payuniExpireDate(days = 2) {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function encryptPayuni(plaintext: string) {
   const cipher = crypto.createCipheriv("aes-256-gcm", ENV.payuniHashKey, Buffer.from(ENV.payuniHashIv));
   let cipherText = cipher.update(plaintext, "utf8", "base64");
@@ -121,6 +130,7 @@ export function createPayuniCheckout(input: {
     MerTradeNo: makeMerTradeNo(input.userId, input.packageCode),
     TradeAmt: creditPackage.price,
     Timestamp: Math.floor(Date.now() / 1000),
+    ExpireDate: payuniExpireDate(),
     ReturnURL: `${baseUrl}/api/payuni/return`,
     NotifyURL: `${baseUrl}/api/payuni/notify`,
     BackURL: `${baseUrl}/buy`,
@@ -172,6 +182,7 @@ export function createPayuniProductCheckout(input: {
     MerTradeNo: makeProductMerTradeNo(input.orderId),
     TradeAmt: input.amount,
     Timestamp: Math.floor(Date.now() / 1000),
+    ExpireDate: payuniExpireDate(),
     ReturnURL: `${baseUrl}/api/payuni/return`,
     NotifyURL: `${baseUrl}/api/payuni/notify`,
     BackURL: `${baseUrl}/checkout`,
@@ -329,6 +340,30 @@ function redirectHtml(target: string) {
   return `<!doctype html><html><head><meta charset="utf-8"></head><body><script>location.replace(${safeTarget});</script></body></html>`;
 }
 
+function buildPayuniReturnUrl(input: {
+  baseUrl: string;
+  path: string;
+  status: "success" | "pending";
+  result: Record<string, string>;
+}) {
+  const target = new URL(`${input.baseUrl}${input.path}`);
+  target.searchParams.set("payuni", input.status);
+
+  if (input.status === "pending") {
+    const bankType = input.result.BankType;
+    const payNo = input.result.PayNo;
+    const expireDate = input.result.ExpireDate;
+    const tradeNo = input.result.TradeNo;
+
+    if (bankType) target.searchParams.set("bankType", bankType);
+    if (payNo) target.searchParams.set("payNo", payNo);
+    if (expireDate) target.searchParams.set("expireDate", expireDate);
+    if (tradeNo) target.searchParams.set("tradeNo", tradeNo);
+  }
+
+  return target.toString();
+}
+
 export async function handlePayuniNotify(req: Request, res: Response) {
   try {
     const result = verifyAndDecryptPayuniPost(req.body);
@@ -356,7 +391,7 @@ export async function handlePayuniReturn(req: Request, res: Response) {
     const isPaid = result.Status === "SUCCESS" && result.TradeStatus === "1";
     const status = isPaid ? "success" : "pending";
     const path = result.MerTradeNo?.startsWith("HS") ? "/checkout" : "/buy";
-    return res.type("html").send(redirectHtml(`${baseUrl}${path}?payuni=${status}`));
+    return res.type("html").send(redirectHtml(buildPayuniReturnUrl({ baseUrl, path, status, result })));
   } catch (error) {
     console.error("[PAYUNi] Return error:", error);
     return res.type("html").send(redirectHtml(`${baseUrl}/buy?payuni=error`));

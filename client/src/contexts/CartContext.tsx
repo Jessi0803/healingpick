@@ -409,6 +409,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
                     <CartBenefitNotice />
                   </div>
                 )}
+                {items.length > 0 && (
+                  <div className="mt-4 rounded-xl border border-[#D1BE9B]/18 bg-white/50 px-4 py-3">
+                    <p
+                      className="text-[10px] tracking-[0.2em] text-[#A38D6B]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      付款方式
+                    </p>
+                    <p
+                      className="mt-2 text-[12px] leading-[1.8] tracking-[0.06em] text-[#31353A]/62"
+                      style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                    >
+                      信用卡一次付清、Apple Pay、ATM 轉帳
+                    </p>
+                    <p
+                      className="mt-1 text-[11px] leading-[1.7] tracking-[0.05em] text-[#31353A]/48"
+                      style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                    >
+                      點擊付款後可在 PAYUNi 付款頁選擇 ATM 虛擬帳號轉帳。
+                    </p>
+                  </div>
+                )}
               </section>
 
               <div className="mt-auto grid gap-3 border-t border-[#D1BE9B]/16 pt-5">
@@ -422,7 +444,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                     fontWeight: 300,
                   }}
                 >
-                  前往結帳
+                  前往付款（可 ATM 轉帳）
                 </button>
                 <button
                   type="button"
