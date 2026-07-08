@@ -175,10 +175,7 @@ const getCustomPrice = (need: string, preference: string) =>
   CUSTOM_BASE_PRICE + (need === '需要加吊飾' ? (CHARM_PRICE_MAP[preference] ?? 0) : 0);
 
 const FORM_INITIAL = {
-  name: '',
   birthDate: '',
-  wristSize: '',
-  fitPreference: '',
   energyNeeds: '',
   colorPreference: '',
   favoriteCrystals: '',
@@ -340,8 +337,8 @@ export default function CustomBraceletPage() {
 
   const handleAddToCart = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!form.name.trim() || !form.contact.trim() || !form.wristSize.trim() || !form.energyNeeds.trim()) {
-      toast.error('請先填寫姓名、聯絡方式、手圍與主要需求');
+    if (!form.contact.trim() || !form.energyNeeds.trim()) {
+      toast.error('請先填寫聯絡方式與主要需求');
       return;
     }
     if (!form.charmNeed.trim()) {
@@ -700,9 +697,6 @@ export default function CustomBraceletPage() {
             >
               <FieldGroup label="基本資料">
                 <div className="grid gap-4 md:grid-cols-2">
-                  <Field label="姓名" required>
-                    <input value={form.name} onChange={(e) => update('name', e.target.value)} className={inputClass} placeholder="請填寫姓名" />
-                  </Field>
                   {mode === 'numerology' && (
                     <Field label="出生年月日" required hint="請填寫陽曆生日，作為生命靈數客製搭配參考。">
                       <input
@@ -713,17 +707,6 @@ export default function CustomBraceletPage() {
                       />
                     </Field>
                   )}
-                  <Field label="手圍尺寸" required hint="拿軟尺平貼手腕繞一圈量測。沒有軟尺時，可以用棉線或紙條繞手圍，用筆做記號後，再用一般直尺量那段長度。">
-                    <input value={form.wristSize} onChange={(e) => update('wristSize', e.target.value)} className={inputClass} placeholder="例如 15 cm" />
-                  </Field>
-                  <Field label="配戴鬆緊">
-                    <select value={form.fitPreference} onChange={(e) => update('fitPreference', e.target.value)} className={inputClass}>
-                      <option value="">請選擇</option>
-                      <option value="貼手">貼手</option>
-                      <option value="剛好">剛好</option>
-                      <option value="微鬆">微鬆</option>
-                    </select>
-                  </Field>
                   <Field label="Instagram / LINE（以便私訊客製設計完成的手鍊圖）" required>
                     <input value={form.contact} onChange={(e) => update('contact', e.target.value)} className={inputClass} placeholder="@account 或 LINE ID" />
                   </Field>
