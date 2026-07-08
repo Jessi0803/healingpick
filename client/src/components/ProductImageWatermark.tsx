@@ -1,5 +1,5 @@
 import { Instagram } from "lucide-react";
-import type { ImgHTMLAttributes } from "react";
+import type { CSSProperties, ImgHTMLAttributes } from "react";
 import { getProductImageStyle, type Product } from "@/data/products";
 
 const WATERMARKED_PRODUCT_SLUGS = new Set([
@@ -14,6 +14,7 @@ type ProductImageWatermarkProps = {
   src?: string;
   alt: string;
   imageClassName?: string;
+  imageStyle?: CSSProperties;
   watermarkClassName?: string;
 } & Pick<ImgHTMLAttributes<HTMLImageElement>, "loading">;
 
@@ -22,6 +23,7 @@ export default function ProductImageWatermark({
   src = product.img,
   alt,
   imageClassName = "h-full w-full object-cover",
+  imageStyle,
   watermarkClassName = "",
   loading,
 }: ProductImageWatermarkProps) {
@@ -34,7 +36,7 @@ export default function ProductImageWatermark({
         alt={alt}
         loading={loading}
         className={imageClassName}
-        style={getProductImageStyle(product)}
+        style={{ ...getProductImageStyle(product), ...imageStyle }}
       />
       {showWatermark && (
         <div

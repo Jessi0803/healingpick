@@ -104,12 +104,24 @@ function ProductCard({
               watermarkClassName="bottom-1 right-1 max-w-[calc(100%-0.5rem)] px-1.5 py-0.5 text-[7px]"
             />
           </div>
+          <p
+            className="mt-2 min-h-[2.6em] overflow-hidden text-center text-[11px] leading-[1.3] tracking-[0.06em] text-[#31353A]/82"
+            style={{
+              fontFamily: "Noto Serif TC, serif",
+              fontWeight: 300,
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            {product.name}
+          </p>
           <SalePrice
             price={product.price}
             originalPrice={product.originalPrice}
-            className="mt-2 flex min-h-9 flex-col items-center justify-center gap-0.5 text-center"
-            originalClassName="text-[10px] leading-none text-[#31353A]/42 line-through"
-            saleClassName="text-[13px] leading-tight text-[#A38D6B]"
+            className="mt-1 flex min-h-8 flex-col items-center justify-end gap-0.5 text-center"
+            originalClassName="text-[9px] leading-none text-[#31353A]/36 line-through"
+            saleClassName="text-[11px] leading-tight text-[#A38D6B]"
           />
         </div>
       </Link>
@@ -122,7 +134,13 @@ function ProductCard({
           <ProductImageWatermark
             product={product}
             alt={product.name}
-            imageClassName="w-full h-full object-cover"
+            imageClassName="h-full w-full object-contain"
+            imageStyle={{
+              objectFit: "contain",
+              objectPosition: "center center",
+              transform: "scale(1)",
+              transformOrigin: "center center",
+            }}
           />
         </div>
         <div className="flex-1 min-w-0">
