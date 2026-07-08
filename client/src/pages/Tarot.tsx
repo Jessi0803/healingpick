@@ -354,14 +354,21 @@ function drawCards(): Array<{ card: TarotCard; reversed: boolean }> {
 function ProductCard({
   product,
   context,
+  recommendationContext,
   role = 'primary',
 }: {
   product: Product;
   context?: string;
+  recommendationContext?: string;
   role?: 'primary' | 'secondary';
 }) {
   const meanings = product.meanings.slice(0, 3).map((m) => m.title);
-  const recommendationReason = getContextualRecommendationReason(product, context, role);
+  const recommendationReason = getContextualRecommendationReason(
+    product,
+    recommendationContext ?? context,
+    role,
+    Boolean(recommendationContext),
+  );
   const roleLabel = role === 'primary' ? '最呼應此刻' : '想加強也可看';
   return (
     <Link href={`/shop/${product.slug}`}>
@@ -409,7 +416,7 @@ function ProductCard({
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
               為什麼 Mochi 想到它
             </p>
-            <p className="text-[13px] leading-[1.85] tracking-[0.05em] text-[#31353A]/68"
+            <p className="whitespace-pre-line text-[13px] leading-[1.85] tracking-[0.05em] text-[#31353A]/68"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}>
               {recommendationReason}
             </p>
@@ -2694,6 +2701,7 @@ export default function TarotPage() {
                               key={product.slug}
                               product={product}
                               context={tarotRecommendationMessage}
+                              recommendationContext={readingRecommendation?.reason}
                               role={index === 0 ? 'primary' : 'secondary'}
                             />
                           ))}

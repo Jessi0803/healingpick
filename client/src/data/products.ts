@@ -433,11 +433,14 @@ export function getProductImageStyle(product: Product): {
 
 export function getContextualRecommendationReason(
   product: Product,
-  _context?: string,
+  context?: string,
   role: 'primary' | 'secondary' = 'primary',
+  includeContext = false,
 ): string {
   const body = role === 'secondary' ? product.pairingReason : product.gentleRecommendation;
-  return body;
+  const contextText = context?.trim();
+  if (!includeContext || !contextText) return body;
+  return `${contextText}\n\n${body}`;
 }
 
 export const CATEGORY_OPTIONS: { id: string; label: string }[] = [
