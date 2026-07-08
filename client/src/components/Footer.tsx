@@ -52,7 +52,7 @@ export default function Footer() {
               className="mt-4 text-[11px] tracking-[0.15em] text-[#D1BE9B]/80"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
             >
-              全台最萌的占卜天地
+              免費占卜完，自動推薦適合你的專屬手鍊 𓆩♡𓆪
             </p>
           </div>
 
