@@ -7,6 +7,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { handleGumroadPing } from "./gumroad";
+import { handlePayuniNotify, handlePayuniReturn } from "./payuni";
 import { resetDailyFreeQuotas } from "../db";
 import { sendReadingFollowups } from "./readingFollowups";
 
@@ -21,6 +22,8 @@ export function createApp(): Express {
   registerPostcardImageProxy(app);
   registerLineRoutes(app);
   app.post("/api/gumroad-webhook", handleGumroadPing);
+  app.post("/api/payuni/notify", handlePayuniNotify);
+  app.post("/api/payuni/return", handlePayuniReturn);
   app.get("/api/cron/reset-free-quota", async (req, res) => {
     const cronSecret = process.env.CRON_SECRET;
     if (cronSecret) {

@@ -14,6 +14,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 const tabs = [
   { id: "users", label: "會員管理" },
   { id: "orders", label: "訂單管理" },
+  { id: "shopOrders", label: "商品訂單" },
   { id: "visitors", label: "訪客問答" },
   { id: "feedbacks", label: "顧客回饋" },
   { id: "transactions", label: "點數紀錄" },
@@ -51,7 +52,7 @@ type AdminUserRow = {
   adminNote: string | null;
   credits: number;
   freeUsedToday: number;
-  lastReadingAt: Date | null;
+  braceletPurchaseHistory: string;
   createdAt: Date;
   lastSignedIn: Date;
 };
@@ -66,6 +67,33 @@ type AdminTransactionRow = {
   balanceAfter: number;
   createdAt: Date;
 };
+
+type AdminShopOrderItem = {
+  slug: string;
+  name: string;
+  price: number;
+  quantity: number;
+};
+
+type AdminShopOrderRow = {
+  id: number;
+  customerName: string;
+  email: string;
+  phone: string;
+  wristSize: string;
+  fit: "貼手" | "剛好" | "微鬆";
+  address: string;
+  items: string;
+  subtotal: number;
+  freeGift: string;
+  status: string;
+  createdAt: Date;
+};
+
+type AdminUserBraceletOrder = Pick<
+  AdminShopOrderRow,
+  "id" | "items" | "subtotal" | "status" | "createdAt"
+>;
 
 type AdminReadingRow = {
   id: number;
@@ -110,16 +138,6 @@ function formatDate(value: string | Date | null | undefined) {
   });
 }
 
-function formatLastReading(value: string | Date | null | undefined) {
-  if (!value) return "從未占卜";
-  const date = new Date(value);
-  const diffDays = Math.floor(
-    (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const relative = diffDays <= 0 ? "今天" : `${diffDays} 天前`;
-  return `${formatDate(date)}（${relative}）`;
-}
-
 function shortText(value: string | null | undefined, max = 90) {
   if (!value) return "—";
   return value.length > max ? `${value.slice(0, max)}...` : value;
@@ -137,6 +155,64 @@ function parseReadingInputData(
   } catch {
     return null;
   }
+}
+
+function parseShopOrderItems(items: string): AdminShopOrderItem[] {
+  try {
+    const parsed = JSON.parse(items);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseBraceletPurchaseHistory(
+  value: string | null | undefined
+): AdminUserBraceletOrder[] {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function braceletOrderLabel(order: AdminUserBraceletOrder) {
+  const items = parseShopOrderItems(order.items);
+  const itemText =
+    items.map(item => `${item.name} x${item.quantity}`).join("、") ||
+    "商品明細";
+  return `#${order.id} ${itemText} · NT$ ${order.subtotal.toLocaleString("zh-TW")}`;
+}
+
+function BraceletPurchaseHistoryCell({
+  value,
+}: {
+  value: string | null | undefined;
+}) {
+  const orders = parseBraceletPurchaseHistory(value);
+  if (orders.length === 0) return <>尚無購買紀錄</>;
+
+  const [latest, second] = orders;
+  return (
+    <div className="min-w-56 max-w-[280px] space-y-1 leading-[1.7]">
+      <div className="break-words text-[#31353A]/78">
+        {braceletOrderLabel(latest)}
+      </div>
+      <div className="text-[11px] text-[#A38D6B]">
+        {formatDate(latest.createdAt)} · {latest.status}
+      </div>
+      {second && (
+        <div className="break-words text-[11px] text-[#31353A]/45">
+          另有 #{second.id}
+          {orders.length > 2
+            ? ` 等 ${orders.length - 1} 筆`
+            : " 共 2 筆"}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function getReadingPreview(row: AdminReadingRow) {
@@ -344,7 +420,7 @@ export default function AdminPage() {
     const rows = data?.users ?? [];
     if (!normalizedQuery) return rows;
     return rows.filter(row =>
-      [row.email, row.name, String(row.id)].some(value =>
+      [row.email, row.name, row.braceletPurchaseHistory, String(row.id)].some(value =>
         (value ?? "").toLowerCase().includes(normalizedQuery)
       )
     );
@@ -369,6 +445,25 @@ export default function AdminPage() {
       )
     );
   }, [data?.orders, normalizedQuery]);
+
+  const filteredShopOrders = useMemo(() => {
+    const rows = data?.shopOrders ?? [];
+    if (!normalizedQuery) return rows;
+    return rows.filter(row =>
+      [
+        row.customerName,
+        row.email,
+        row.phone,
+        row.wristSize,
+        row.fit,
+        row.address,
+        row.items,
+        row.freeGift,
+        row.status,
+        String(row.id),
+      ].some(value => (value ?? "").toLowerCase().includes(normalizedQuery))
+    );
+  }, [data?.shopOrders, normalizedQuery]);
 
   const filteredReadings = useMemo(() => {
     const rows = data?.readings ?? [];
@@ -484,12 +579,13 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-6 mb-6">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-7 mb-6">
             <Metric label="會員數" value={data?.stats.users ?? 0} />
             <Metric label="占卜紀錄" value={data?.stats.readings ?? 0} />
             <Metric label="訪客數" value={data?.stats.visitors ?? 0} />
             <Metric label="訪客問答" value={data?.stats.visitorReadings ?? 0} />
             <Metric label="金流訂單" value={data?.stats.purchases ?? 0} />
+            <Metric label="商品訂單" value={data?.stats.shopOrders ?? 0} />
             <Metric label="售出點數" value={data?.stats.creditsSold ?? 0} />
           </div>
 
@@ -700,6 +796,9 @@ export default function AdminPage() {
                 </div>
               )}
               {activeTab === "orders" && <OrdersTable rows={filteredOrders} />}
+              {activeTab === "shopOrders" && (
+                <ShopOrdersTable rows={filteredShopOrders} />
+              )}
               {activeTab === "visitors" && (
                 <ReadingsTable rows={visitorReadings} />
               )}
@@ -936,8 +1035,10 @@ function UsersTable({
             <MobileInfoRow label="註冊時間">
               {formatDate(row.createdAt)}
             </MobileInfoRow>
-            <MobileInfoRow label="最後占卜">
-              {formatLastReading(row.lastReadingAt)}
+            <MobileInfoRow label="購買手鍊紀錄">
+              <BraceletPurchaseHistoryCell
+                value={row.braceletPurchaseHistory}
+              />
             </MobileInfoRow>
             <MobileInfoRow label="點數">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -1101,7 +1202,7 @@ function UsersTable({
               <th className="px-4 py-3 font-normal">點數</th>
               <th className="px-4 py-3 font-normal">今日免費剩餘</th>
               <th className="px-4 py-3 font-normal">註冊時間</th>
-              <th className="px-4 py-3 font-normal">最後占卜</th>
+              <th className="px-4 py-3 font-normal">購買手鍊紀錄</th>
               <th className="px-4 py-3 font-normal">備註</th>
               <th className="px-4 py-3 font-normal">歷史</th>
               <th className="px-4 py-3 font-normal">操作</th>
@@ -1226,7 +1327,9 @@ function UsersTable({
                       </td>
                       <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
                       <td className="px-4 py-3">
-                        {formatLastReading(row.lastReadingAt)}
+                        <BraceletPurchaseHistoryCell
+                          value={row.braceletPurchaseHistory}
+                        />
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex min-w-64 flex-col gap-2">
@@ -1436,6 +1539,113 @@ function OrdersTable({ rows }: { rows: AdminTransactionRow[] }) {
                   <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
                 </tr>
               ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+function ShopOrdersTable({ rows }: { rows: AdminShopOrderRow[] }) {
+  return (
+    <>
+      <div className="md:hidden">
+        {rows.length === 0 ? (
+          <EmptyCard />
+        ) : (
+          rows.map(row => {
+            const items = parseShopOrderItems(row.items);
+            return (
+              <details key={row.id} className="border-b border-[#D1BE9B]/12 p-4">
+                <summary className="cursor-pointer list-none">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="text-xs tracking-[0.12em] text-[#31353A]/82">
+                        #{row.id} · {row.customerName}
+                      </div>
+                      <div className="mt-1 text-[11px] leading-[1.7] text-[#31353A]/52">
+                        {items.map(item => `${item.name} x${item.quantity}`).join("、") || "商品明細"}
+                      </div>
+                    </div>
+                    <div className="shrink-0 text-[11px] text-[#A38D6B]">
+                      NT$ {row.subtotal.toLocaleString("zh-TW")}
+                    </div>
+                  </div>
+                </summary>
+                <div className="mt-4 space-y-2">
+                  <MobileInfoRow label="聯絡方式">
+                    <div>{row.email}</div>
+                    <div className="mt-1">{row.phone}</div>
+                  </MobileInfoRow>
+                  <MobileInfoRow label="手圍">
+                    {row.wristSize} · {row.fit}
+                  </MobileInfoRow>
+                  <MobileInfoRow label="地址">{row.address}</MobileInfoRow>
+                  <MobileInfoRow label="贈品">{row.freeGift}</MobileInfoRow>
+                  <MobileInfoRow label="時間">{formatDate(row.createdAt)}</MobileInfoRow>
+                </div>
+              </details>
+            );
+          })
+        )}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[980px] text-left">
+          <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
+            <tr>
+              <th className="px-4 py-3 font-normal">訂單</th>
+              <th className="px-4 py-3 font-normal">顧客</th>
+              <th className="px-4 py-3 font-normal">商品</th>
+              <th className="px-4 py-3 font-normal">手圍</th>
+              <th className="px-4 py-3 font-normal">金額</th>
+              <th className="px-4 py-3 font-normal">時間</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#D1BE9B]/12 text-xs text-[#31353A]/72">
+            {rows.length === 0 ? (
+              <EmptyRow colSpan={6} />
+            ) : (
+              rows.map(row => {
+                const items = parseShopOrderItems(row.items);
+                return (
+                  <tr key={row.id} className="align-top">
+                    <td className="px-4 py-3">
+                      <div>#{row.id}</div>
+                      <div className="mt-1 text-[11px] text-[#A38D6B]">{row.status}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="text-[#31353A]/82">{row.customerName}</div>
+                      <div className="mt-1 break-words text-[11px] text-[#31353A]/48">{row.email}</div>
+                      <div className="mt-1 text-[11px] text-[#31353A]/48">{row.phone}</div>
+                      <div className="mt-2 max-w-[220px] break-words leading-[1.7]">{row.address}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="space-y-1.5">
+                        {items.map(item => (
+                          <div key={item.slug} className="leading-[1.7]">
+                            {item.name} x{item.quantity}
+                            <span className="ml-2 text-[#A38D6B]">
+                              NT$ {(item.price * item.quantity).toLocaleString("zh-TW")}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-2 text-[11px] text-[#A38D6B]">
+                        贈品：{row.freeGift}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div>{row.wristSize}</div>
+                      <div className="mt-1 text-[11px] text-[#A38D6B]">{row.fit}</div>
+                    </td>
+                    <td className="px-4 py-3 text-[#A38D6B]">
+                      NT$ {row.subtotal.toLocaleString("zh-TW")}
+                    </td>
+                    <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

@@ -3,6 +3,7 @@ import { integer, pgEnum, pgTable, serial, text, timestamp, varchar } from "driz
 export const roleEnum = pgEnum("role", ["user", "admin"]);
 export const readingTypeEnum = pgEnum("reading_type", ["tarot", "ziwei", "fortune", "dream"]);
 export const feedbackSourceEnum = pgEnum("feedback_source", ["tarot", "ziwei"]);
+export const productOrderFitEnum = pgEnum("product_order_fit", ["貼手", "剛好", "微鬆"]);
 
 /**
  * Core user table backing auth + credits.
@@ -193,6 +194,29 @@ export const feedbacks = pgTable("feedbacks", {
 
 export type Feedback = typeof feedbacks.$inferSelect;
 export type InsertFeedback = typeof feedbacks.$inferInsert;
+
+/**
+ * Shop orders submitted from ready-made bracelet product pages.
+ * Items are stored as JSON text so the order keeps the exact product names,
+ * prices, and quantities the customer confirmed at checkout.
+ */
+export const productOrders = pgTable("product_orders", {
+  id: serial("id").primaryKey(),
+  customerName: text("customerName").notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  wristSize: varchar("wristSize", { length: 32 }).notNull(),
+  fit: productOrderFitEnum("fit").notNull(),
+  address: text("address").notNull(),
+  items: text("items").notNull(),
+  subtotal: integer("subtotal").notNull(),
+  freeGift: text("freeGift").default("白水晶碎石一包").notNull(),
+  status: varchar("status", { length: 24 }).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ProductOrder = typeof productOrders.$inferSelect;
+export type InsertProductOrder = typeof productOrders.$inferInsert;
 
 /**
  * Treehole session records (comfort conversations).

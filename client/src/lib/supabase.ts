@@ -46,10 +46,10 @@ export async function completeOAuthRedirect(): Promise<{ handled: boolean; ok: b
 }
 
 /** Start the LINE sign-in redirect flow and prompt users to add the linked official account. */
-export async function signInWithLine(): Promise<{ ok: boolean; error?: string }> {
+export async function signInWithLine(returnTo?: string): Promise<{ ok: boolean; error?: string }> {
   if (typeof window === "undefined") return { ok: false, error: "Auth not configured" };
-  const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-  window.location.href = `/api/line-login?return_to=${encodeURIComponent(returnTo)}`;
+  const destination = returnTo ?? `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  window.location.href = `/api/line-login?return_to=${encodeURIComponent(destination)}`;
   return { ok: true };
 }
 

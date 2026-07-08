@@ -722,6 +722,275 @@ body::after {
 }
 
 /* ============================================================
+   Custom Bracelet — dreamy motion layer
+   ============================================================ */
+
+/* Scroll-triggered reveal (paired with IntersectionObserver toggling .is-visible).
+   Starts slightly below + blurred, settles with a soft ease-out curve.
+   --reveal-delay lets siblings stagger. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(6px);
+  transition:
+    opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+    filter 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Children that stagger in once their .reveal ancestor becomes visible.
+   Per-item delay is set inline via style (transitionDelay). */
+.reveal-child {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.reveal.is-visible .reveal-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero images: barely-there floating, like crystals suspended in light. */
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+.animate-float-soft {
+  animation: floatSoft 7s ease-in-out infinite;
+}
+.animate-float-soft-delay-1 { animation: floatSoft 7.6s ease-in-out -2.2s infinite; }
+.animate-float-soft-delay-2 { animation: floatSoft 8.2s ease-in-out -4.1s infinite; }
+
+/* Ambient gradient blobs drifting behind the hero. */
+@keyframes blobDrift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(4%, -6%) scale(1.08); }
+  66%  { transform: translate(-5%, 4%) scale(0.96); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+.animate-blob-drift {
+  animation: blobDrift 24s ease-in-out infinite;
+}
+.animate-blob-drift-slow {
+  animation: blobDrift 32s ease-in-out -8s infinite;
+}
+
+/* Floating sparkles / star dust twinkle. */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: translateY(0) scale(0.85); }
+  50%      { opacity: 0.9;  transform: translateY(-6px) scale(1); }
+}
+.animate-twinkle {
+  animation: twinkle 5s ease-in-out infinite;
+}
+
+/* Lightbox entrance — backdrop fades, image scales up from 0.96 (never from 0). */
+@keyframes lightboxBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes lightboxImageIn {
+  from { opacity: 0; transform: scale(0.96); filter: blur(4px); }
+  to   { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.lightbox-backdrop {
+  animation: lightboxBackdropIn 0.25s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.lightbox-image {
+  animation: lightboxImageIn 0.28s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* One-time light sweep across a freshly revealed result panel.
+   Parent needs position:relative + overflow:hidden. */
+@keyframes resultSweep {
+  0%   { transform: translateX(-140%); opacity: 0; }
+  25%  { opacity: 0.55; }
+  100% { transform: translateX(160%); opacity: 0; }
+}
+.result-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: 1;
+}
+.result-sweep::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-140%);
+  animation: resultSweep 1.15s cubic-bezier(0.23, 1, 0.32, 1) 0.12s 1 both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .result-sweep::before { animation: none; }
+}
+
+/* Feedback photo marquee — two rows scrolling opposite ways, pause on hover.
+   Rows render their images twice; translateX(-50%) loops seamlessly. */
+@keyframes galleryScrollLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes galleryScrollRight {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.gallery-row {
+  display: flex;
+  width: max-content;
+}
+.gallery-row-left  { animation: galleryScrollLeft 64s linear infinite; }
+.gallery-row-right { animation: galleryScrollRight 74s linear infinite; }
+.gallery-marquee:hover .gallery-row { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .gallery-row-left,
+  .gallery-row-right { animation: none; }
+}
+
+/* Tagline — characters rise + de-blur in sequence (set delay inline per char). */
+@keyframes taglineChar {
+  from { opacity: 0; transform: translateY(16px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.tagline-char {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+  animation: taglineChar 0.72s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tagline-char { animation: none; opacity: 1; filter: none; transform: none; }
+}
+
+/* 仙氣層 — 呼吸柔光暈 + 飄散星塵 + 光澤掃過 */
+@keyframes taglineGlow {
+  0%, 100% { opacity: 0.32; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 0.6; transform: translate(-50%, -50%) scale(1.14); }
+}
+.tagline-glow {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: min(360px, 80%);
+  height: 190px;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse at center, rgba(209, 190, 155, 0.55), rgba(233, 201, 201, 0.22) 45%, transparent 72%);
+  filter: blur(34px);
+  pointer-events: none;
+  z-index: 0;
+  animation: taglineGlow 6.5s ease-in-out infinite;
+}
+
+@keyframes stardustRise {
+  0%   { opacity: 0; transform: translateY(8px) scale(0.6); }
+  20%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-28px) scale(1); }
+}
+.tagline-stardust {
+  position: absolute;
+  pointer-events: none;
+  color: #D1BE9B;
+  z-index: 0;
+  animation: stardustRise 5.5s ease-in-out infinite;
+}
+
+@keyframes taglineShimmer {
+  0%        { transform: translateX(-160%); opacity: 0; }
+  45%, 55%  { opacity: 0.5; }
+  100%      { transform: translateX(240%); opacity: 0; }
+}
+.tagline-shimmer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+.tagline-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 32%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: translateX(-160%);
+  animation: taglineShimmer 6s cubic-bezier(0.23, 1, 0.32, 1) 1.6s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tagline-glow,
+  .tagline-stardust,
+  .tagline-shimmer::before { animation: none; }
+  .tagline-glow { opacity: 0.4; }
+}
+
+/* Copy button success morph — icon/label crossfade with a soft blur mask. */
+@keyframes btnSwap {
+  from { opacity: 0; transform: scale(0.9); filter: blur(2px); }
+  to   { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.animate-btn-swap {
+  animation: btnSwap 0.28s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Step connector line that draws in when its .reveal ancestor is visible.
+   pathLength=1 normalises the stroke so dashoffset 1 → hidden, 0 → drawn. */
+.step-connector {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.77, 0, 0.175, 1) 0.15s;
+}
+.reveal.is-visible .step-connector {
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Reduced motion: keep gentle fades, drop all sustained/positional movement. */
+  .reveal {
+    transform: none;
+    filter: none;
+    transition: opacity 0.4s ease;
+  }
+  .reveal.is-visible { transform: none; }
+  .reveal-child {
+    transform: none;
+    transition: opacity 0.4s ease;
+  }
+  .reveal.is-visible .reveal-child { transform: none; }
+  .animate-float-soft,
+  .animate-float-soft-delay-1,
+  .animate-float-soft-delay-2,
+  .animate-blob-drift,
+  .animate-blob-drift-slow,
+  .animate-twinkle {
+    animation: none;
+  }
+  .lightbox-image { animation: lightboxBackdropIn 0.2s ease both; }
+  .step-connector {
+    transition: opacity 0.4s ease;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  .reveal.is-visible .step-connector { opacity: 1; }
+}
+
+/* ============================================================
    Layout Utilities
    ============================================================ */
 @layer components {

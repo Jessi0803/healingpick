@@ -8,10 +8,11 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Menu, X } from 'lucide-react';
+import { Menu, ShoppingBag, X } from 'lucide-react';
 import { CatSitting } from './CatElements';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
+import { useCart } from '@/contexts/CartContext';
 
 // Navbar links – flat structure, all items at top level
 const navLinks = [
@@ -20,7 +21,7 @@ const navLinks = [
   { label: 'Mochi 解夢', href: '/dream' },
   { label: '每日運勢', href: '/fortune/daily' },
   { label: '心理測驗', href: '/quiz' },
-  { label: '能量商品', href: '/shop' },
+  { label: '療癒水晶', href: '/shop' },
   { label: '購買點數', href: '/buy' },
 ];
 
@@ -28,6 +29,7 @@ const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買�
 
 export default function Navbar() {
   const { user, isAuthenticated, login, logout } = useAuth();
+  const { itemCount, openCart } = useCart();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
     refetchOnWindowFocus: true,
   });
@@ -64,8 +66,10 @@ export default function Navbar() {
       ? `text-xs tracking-[0.25em] py-3 border-b border-[#D1BE9B]/15 transition-colors whitespace-nowrap ${
           isActive(link.href) ? 'text-[#D1BE9B]' : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
         }`
-      : `text-xs tracking-[0.2em] transition-colors duration-300 whitespace-nowrap ${
-          isActive(link.href) ? 'text-[#D1BE9B]' : 'text-[#31353A]/82 hover:text-[#D1BE9B]'
+      : `relative text-xs tracking-[0.2em] transition-colors duration-300 whitespace-nowrap after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:bg-[#D1BE9B] after:transition-transform after:duration-300 after:ease-out ${
+          isActive(link.href)
+            ? 'text-[#D1BE9B] after:scale-x-100'
+            : 'text-[#31353A]/82 hover:text-[#D1BE9B] after:scale-x-0 hover:after:scale-x-100'
         }`;
 
     const style = { fontFamily: 'Noto Serif TC, serif', fontWeight: 300 };
@@ -136,7 +140,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between gap-4 relative">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5 group">
             <CatSitting className="w-7 h-9 opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex-shrink-0" />
             <div className="flex flex-col items-start">
               <span
@@ -155,16 +159,29 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav – centred, flat */}
-          <div className="hidden xl:flex items-center justify-center gap-5 absolute left-1/2 -translate-x-1/2">
+          <div className="hidden 2xl:flex items-center justify-center gap-4 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => renderNavLink(link))}
           </div>
 
 
           {/* Right slot – auth + hamburger */}
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex shrink-0 items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={openCart}
+              className="relative grid h-9 w-9 place-items-center rounded-full border border-[#D1BE9B]/25 bg-white/35 text-[#31353A]/78 transition hover:border-[#D1BE9B]/55 hover:text-[#A38D6B]"
+              aria-label="開啟購物車"
+            >
+              <ShoppingBag size={17} />
+              {itemCount > 0 && (
+                <span className="absolute -right-1 -top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-[#C9837A] px-1 text-[10px] leading-none text-white">
+                  {itemCount}
+                </span>
+              )}
+            </button>
             {/* Desktop auth */}
             {isAuthenticated ? (
-              <div className="hidden xl:flex items-center gap-3">
+              <div className="hidden 2xl:flex items-center gap-3">
                 {credits?.enabled && (
                   <Link
                     href="/buy"
@@ -209,7 +226,7 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <div className="hidden xl:flex items-center gap-3">
+              <div className="hidden 2xl:flex items-center gap-3">
                 {freeQuotaLabel && (
                   <span className="text-xs tracking-[0.15em] text-[#A38D6B]"
                     title={creditsHint}
@@ -229,7 +246,7 @@ export default function Navbar() {
 
             {/* Hamburger */}
             <button
-              className="xl:hidden p-2 text-[#31353A]/80 hover:text-[#D1BE9B] transition-colors"
+              className="2xl:hidden p-2 text-[#31353A]/80 hover:text-[#D1BE9B] transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
@@ -241,7 +258,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-36 bottom-0 z-40 xl:hidden">
+        <div className="fixed inset-x-0 top-36 bottom-0 z-40 2xl:hidden">
           <div
             className="absolute inset-0 bg-[#3D4144]/20 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
@@ -251,6 +268,18 @@ export default function Navbar() {
               {navLinks.map((link) => renderNavLink(link, true))}
               {/* Mobile auth links */}
               <div className="mt-4 pt-4 border-t border-[#D1BE9B]/20 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    openCart();
+                  }}
+                  className="flex items-center gap-2 py-2 text-left text-xs tracking-[0.25em] text-[#31353A]/82 hover:text-[#D1BE9B] transition-colors"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  <ShoppingBag size={15} />
+                  購物車{itemCount > 0 ? `（${itemCount}）` : ''}
+                </button>
                 {isAuthenticated ? (
                   <>
                     {credits?.enabled && (

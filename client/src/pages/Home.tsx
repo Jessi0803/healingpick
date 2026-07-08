@@ -7,15 +7,17 @@
  *   3. Features Overview (五大功能入口)
  *   4. Divination Previews (紫微 / 塔羅)
  *   5. Quiz Teaser (心理測驗)
- *   6. Shop Preview (能量商品)
+ *   6. Shop Preview (療癒水晶)
  */
 
 import { useState, useRef } from "react";
 import { Link } from "wouter";
 import PageLayout from "@/components/PageLayout";
+import Reveal from "@/components/Reveal";
 import { CatPeeking } from "@/components/CatElements";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { PRODUCTS, getProductImageStyle } from "@/data/products";
+import ProductImageWatermark from "@/components/ProductImageWatermark";
+import { PRODUCTS } from "@/data/products";
 import ContactDialog from "@/components/ContactDialog";
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
@@ -110,6 +112,14 @@ const CrystalCitrine = () => (
 
 // ─── Feature Card ─────────────────────────────────────────────────────────────
 const features = [
+  {
+    icon: "✦",
+    title: "客製化療癒水晶",
+    subtitle: "Custom Healing Crystals",
+    desc: "依照你的狀態與願望，挑選適合的水晶能量，陪你走過當下的課題。",
+    href: "/shop",
+    color: "#E6DDD2",
+  },
   {
     icon: "☯",
     title: "紫微斗數",
@@ -545,7 +555,7 @@ export default function Home() {
             className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
-            把心事揉一揉，慢慢變成答案。
+            全台最萌的占卜天地
           </p>
 
           <p
@@ -555,7 +565,15 @@ export default function Home() {
             今日有 {dailyMochiVisitorCount} 人來找 Mochi 占卜
           </p>
 
-          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[32rem] sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[32rem] sm:grid-cols-2 lg:max-w-5xl lg:grid-cols-6">
+            <Link href="/shop">
+              <button
+                className="w-full px-4 py-3 text-xs tracking-[0.16em] bg-[#D1BE9B] text-[#31353A] rounded-full hover:bg-[#3D4144] hover:text-[#FAF7F4] transition-all duration-500 active:scale-95"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                客製化療癒水晶
+              </button>
+            </Link>
             <Link href="/ziwei">
               <button
                 className="w-full px-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
@@ -623,10 +641,13 @@ export default function Home() {
       <section className="py-20 px-6 md:px-10">
         <div className="max-w-6xl mx-auto">
           {/* Section header */}
-          <div className="text-center mb-14 animate-fade-in-up">
+          <Reveal className="text-center mb-14">
             <span
-              className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+              style={{
+                fontFamily: "Cormorant Garamond, serif",
+                fontWeight: 400,
+              }}
             >
               Our Services
             </span>
@@ -634,7 +655,7 @@ export default function Home() {
               className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
             >
-              靈性療癒的五種方式
+              靈性療癒的六種方式
             </h2>
             <div className="divider-gold mt-4 max-w-xs mx-auto">
               <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none">
@@ -644,16 +665,20 @@ export default function Home() {
                 />
               </svg>
             </div>
-          </div>
+          </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+          <Reveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
             {features.map((f, i) => (
-              <Link key={f.href} href={f.href}>
+              <Link
+                key={f.href}
+                href={f.href}
+                className="reveal-child block"
+                style={{ transitionDelay: `${i * 70}ms` }}
+              >
                 <div
-                  className="group relative p-6 rounded-xl border border-[#D1BE9B]/20 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)] animate-fade-in-up"
+                  className="group relative h-full p-6 rounded-xl border border-[#D1BE9B]/20 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)]"
                   style={{
                     background: `linear-gradient(145deg, ${f.color}, #FAF7F4)`,
-                    animationDelay: `${i * 0.1}s`,
                   }}
                 >
                   <div className="text-3xl mb-4 opacity-80">{f.icon}</div>
@@ -704,7 +729,7 @@ export default function Home() {
                 </div>
               </Link>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -772,8 +797,11 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <span
-              className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+              style={{
+                fontFamily: "Cormorant Garamond, serif",
+                fontWeight: 400,
+              }}
             >
               Crystal Altar
             </span>
@@ -947,8 +975,11 @@ export default function Home() {
             {/* Ziwei text */}
             <div className="order-1 lg:order-2 animate-fade-in-up delay-200">
               <span
-                className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
               >
                 Zi Wei Dou Shu
               </span>
@@ -1021,8 +1052,11 @@ export default function Home() {
             {/* Tarot */}
             <div className="animate-fade-in-up">
               <span
-                className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
               >
                 Tarot Reading
               </span>
@@ -1197,8 +1231,11 @@ export default function Home() {
 
             <div className="relative z-10 max-w-lg">
               <span
-                className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
               >
                 Psychological Resonance
               </span>
@@ -1245,8 +1282,11 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
             <div>
               <span
-                className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
               >
                 Energy Crystals
               </span>
@@ -1254,7 +1294,7 @@ export default function Home() {
                 className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
               >
-                能量商品精選
+                療癒水晶精選
               </h2>
             </div>
             <Link href="/shop">
@@ -1277,11 +1317,10 @@ export default function Home() {
                 <Link href={`/shop/${p.slug}`}>
                   <div className="cursor-pointer">
                     <div className="relative overflow-hidden rounded-xl mb-3 aspect-square bg-[#F0E8DC]">
-                      <img
-                        src={p.img}
+                      <ProductImageWatermark
+                        product={p}
                         alt={p.name}
-                        className="w-full h-full object-cover transition-transform duration-700"
-                        style={getProductImageStyle(p)}
+                        imageClassName="w-full h-full object-cover transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#3D4144]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       {p.tag && (
@@ -1346,8 +1385,11 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <span
-              className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+              style={{
+                fontFamily: "Cormorant Garamond, serif",
+                fontWeight: 400,
+              }}
             >
               Gentle Echoes
             </span>

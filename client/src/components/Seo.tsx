@@ -36,8 +36,16 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
     description: '用輕鬆的心理測驗看見你的靈魂香氣、心情天氣、壓力模式與專屬能量水晶推薦。',
   },
   '/shop': {
-    title: `能量商品｜${SITE_NAME}`,
+    title: `療癒水晶｜${SITE_NAME}`,
     description: '挑選水晶、療癒擺飾與能量小物，為生活放進一份安定、守護與儀式感。',
+  },
+  '/shop/custom-bracelet/general': {
+    title: `一般客製化手鍊｜${SITE_NAME}`,
+    description: '依照需求、手圍、色系與喜歡的能量客製專屬水晶手鍊，提供顧客回饋實拍圖與客製化需求表單。',
+  },
+  '/shop/custom-bracelet/numerology': {
+    title: `生命靈數客製化手鍊｜${SITE_NAME}`,
+    description: '以出生年月日整理生命靈數能量方向，結合近期需求、手圍、色系與偏好客製專屬水晶手鍊。',
   },
   '/about': {
     title: `關於我們｜${SITE_NAME}`,

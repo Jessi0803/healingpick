@@ -4,14 +4,7 @@ import { Link } from 'wouter';
 import PageLayout from '@/components/PageLayout';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
-
-const GUMROAD_PRODUCT_URL = 'https://bubbly572.gumroad.com/l/healingpick-credits';
-
-const PACKAGES = [
-  { variant: 'Starter Pack', credits: 30, price: 'NT$70', tag: '輕巧' },
-  { variant: 'Standard Pack', credits: 100, price: 'NT$180', tag: '最受歡迎' },
-  { variant: 'Premium Pack', credits: 300, price: 'NT$450', tag: '超值' },
-];
+import { CREDIT_PACKAGES, type CreditPackageCode } from '@shared/creditPackages';
 
 function PurchasePolicySummary() {
   return (
@@ -83,8 +76,7 @@ function PurchasePolicySummary() {
 
 export default function BuyPage() {
   const { user, isAuthenticated, login } = useAuth();
-  // Refetch credits whenever the user comes back to the page (e.g. after
-  // the Gumroad overlay closes), so newly-bought points show up automatically.
+  // Refetch credits whenever the user comes back from PAYUNi.
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
     enabled: isAuthenticated,
     refetchOnWindowFocus: true,
@@ -103,22 +95,53 @@ export default function BuyPage() {
     onError: (e) => toast.error(e.message),
   });
 
-  // Load Gumroad's overlay script once when this page mounts.
   useEffect(() => {
-    if (document.querySelector('script[src*="gumroad.com/js/gumroad.js"]')) return;
-    const s = document.createElement('script');
-    s.src = 'https://gumroad.com/js/gumroad.js';
-    s.async = true;
-    document.body.appendChild(s);
-  }, []);
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('payuni');
+    if (!status) return;
+    if (status === 'success') {
+      toast.success('付款完成，點數正在確認入帳');
+      creditsQuery.refetch();
+    } else if (status === 'pending') {
+      toast.info('訂單已建立，完成付款後點數會自動入帳');
+    } else if (status === 'error') {
+      toast.error('付款結果驗證失敗，請聯繫客服協助查核');
+    }
+    window.history.replaceState(null, '', window.location.pathname);
+  }, [creditsQuery]);
 
-  // Build the Gumroad checkout URL — prefill the buyer's email so the
-  // webhook can match the purchase back to this account.
-  const checkoutUrl = (() => {
-    const params = new URLSearchParams({ wanted: 'true' });
-    if (user?.email) params.set('email', user.email);
-    return `${GUMROAD_PRODUCT_URL}?${params.toString()}`;
-  })();
+  const checkout = trpc.credits.createPayuniCheckout.useMutation({
+    onSuccess: (data) => {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = data.action;
+      form.style.display = 'none';
+      Object.entries(data.fields).forEach(([name, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      });
+      document.body.appendChild(form);
+      form.submit();
+    },
+    onError: (e) => {
+      if (e.message === 'PAYUNI_NOT_CONFIGURED') {
+        toast.error('金流尚未完成設定，請稍後再試');
+        return;
+      }
+      toast.error(e.message);
+    },
+  });
+
+  const startCheckout = (packageCode: CreditPackageCode) => {
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+    checkout.mutate({ packageCode });
+  };
 
   return (
     <PageLayout>
@@ -167,24 +190,24 @@ export default function BuyPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                {PACKAGES.map((p) => (
-                  <a
-                    key={p.credits}
-                    href={checkoutUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {CREDIT_PACKAGES.map((p) => (
+                  <button
+                    key={p.code}
+                    type="button"
+                    onClick={() => startCheckout(p.code)}
+                    disabled={checkout.isPending}
                     className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 text-center flex flex-col items-center gap-3 hover:border-[#D1BE9B]/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer no-underline"
                   >
                     <span className="text-[10px] tracking-[0.2em] text-[#D1BE9B]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>{p.tag}</span>
                     <div className="text-2xl font-extralight text-[#31353A]"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>{p.credits} 點</div>
-                    <div className="text-[13px] text-[#31353A]/70" style={{ fontFamily: 'Noto Serif TC, serif' }}>{p.price}</div>
+                    <div className="text-[13px] text-[#31353A]/70" style={{ fontFamily: 'Noto Serif TC, serif' }}>NT${p.price}</div>
                     <span className="mt-2 px-6 py-2 text-[11px] tracking-[0.2em] bg-[#31353A] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all"
                       style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}>
-                      購買
+                      {checkout.isPending ? '前往中' : '購買'}
                     </span>
-                  </a>
+                  </button>
                 ))}
               </div>
 
@@ -194,7 +217,7 @@ export default function BuyPage() {
               </p>
               <p className="text-center text-[10px] text-[#31353A]/35 tracking-wider"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}>
-                請在結帳頁面選擇上面對應的方案
+                付款頁面由 PAYUNi 統一金流安全處理
               </p>
 
               {isAdmin && (

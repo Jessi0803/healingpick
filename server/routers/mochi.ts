@@ -51,7 +51,7 @@ export const mochiRouter = router({
         "/tarot": "使用者目前在塔羅占卜頁面",
         "/ziwei": "使用者目前在紫微斗數命盤頁面",
         "/fortune/daily": "使用者目前在查看每日運勢",
-        "/shop": "使用者目前在能量商品頁面",
+        "/shop": "使用者目前在療癒水晶頁面",
         "/history": "使用者目前在查看自己的占卜歷史",
       };
 

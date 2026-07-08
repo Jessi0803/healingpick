@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { CartProvider } from "./contexts/CartContext";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Tarot from "./pages/Tarot";
@@ -16,6 +17,8 @@ import Fortune from "./pages/Fortune";
 import Quiz from "./pages/Quiz";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import Checkout from "./pages/Checkout";
+import CustomBracelet from "./pages/CustomBracelet";
 import History from "./pages/History";
 import Buy from "./pages/Buy";
 import Policy from "./pages/Policy";
@@ -41,6 +44,9 @@ function Router() {
       <Route path="/fortune/daily" component={Fortune} />
       <Route path="/quiz" component={Quiz} />
       <Route path="/shop" component={Shop} />
+      <Route path="/checkout" component={Checkout} />
+      <Route path="/shop/custom-bracelet/general" component={CustomBracelet} />
+      <Route path="/shop/custom-bracelet/numerology" component={CustomBracelet} />
       <Route path="/shop/:id" component={ProductDetail} />
       <Route path="/history" component={History} />
       <Route path="/buy" component={Buy} />
@@ -58,12 +64,14 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <Toaster />
-          <Seo />
-          <Router />
-          <MochiWelcomeLetter />
-          <PostcardMailbox />
-          <LoginDialog />
+          <CartProvider>
+            <Toaster />
+            <Seo />
+            <Router />
+            <MochiWelcomeLetter />
+            <PostcardMailbox />
+            <LoginDialog />
+          </CartProvider>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   sendPasswordResetEmail,
@@ -13,6 +14,7 @@ type Mode = "login" | "register" | "forgot";
 type LoginPromptDetail = {
   title?: string;
   subtitle?: string;
+  redirectTo?: string;
 };
 
 const TITLE: Record<Mode, string> = {
@@ -32,11 +34,13 @@ export default function LoginDialog() {
   const [mode, setMode] = useState<Mode>("login");
   const [customTitle, setCustomTitle] = useState<string | null>(null);
   const [customSubtitle, setCustomSubtitle] = useState<string | null>(null);
+  const [redirectTo, setRedirectTo] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -45,6 +49,7 @@ export default function LoginDialog() {
       setMode("login");
       setCustomTitle(typeof detail?.title === "string" ? detail.title : null);
       setCustomSubtitle(typeof detail?.subtitle === "string" ? detail.subtitle : null);
+      setRedirectTo(typeof detail?.redirectTo === "string" ? detail.redirectTo : null);
       setError(null);
       setInfo(null);
     };
@@ -59,6 +64,7 @@ export default function LoginDialog() {
       setMode("login");
       setCustomTitle(null);
       setCustomSubtitle(null);
+      setRedirectTo(null);
       setError(translateAuthError(typeof detail === "string" ? detail : "登入失敗,請稍後再試"));
       setInfo(null);
     };
@@ -75,6 +81,7 @@ export default function LoginDialog() {
     setMode("login");
     setCustomTitle(null);
     setCustomSubtitle(null);
+    setRedirectTo(null);
     setError(translateLineError(lineError));
     setInfo(null);
     url.searchParams.delete("line_error");
@@ -91,8 +98,14 @@ export default function LoginDialog() {
     if (!open) {
       setCustomTitle(null);
       setCustomSubtitle(null);
+      setRedirectTo(null);
     }
   }, [open]);
+
+  const closeAndRedirect = () => {
+    setOpen(false);
+    if (redirectTo) setLocation(redirectTo);
+  };
 
   if (!supabaseEnabled) return null;
 
@@ -109,7 +122,7 @@ export default function LoginDialog() {
         setError(translateAuthError(res.error));
         return;
       }
-      setOpen(false);
+      closeAndRedirect();
     } else if (mode === "register") {
       if (password.length < 6) {
         setBusy(false);
@@ -127,7 +140,7 @@ export default function LoginDialog() {
         return;
       }
       // Already signed in (no email verification required)
-      setOpen(false);
+      closeAndRedirect();
     } else {
       const res = await sendPasswordResetEmail(email.trim());
       setBusy(false);
@@ -250,7 +263,7 @@ export default function LoginDialog() {
               onClick={async () => {
                 setError(null);
                 setInfo(null);
-                const res = await signInWithLine();
+                const res = await signInWithLine(redirectTo ?? undefined);
                 if (!res.ok) setError(translateAuthError(res.error));
               }}
               className="w-full py-3 text-[12px] tracking-[0.25em] border border-[#06C755]/45 bg-[#06C755] text-white rounded-full hover:bg-[#05B94F] transition-all duration-500"

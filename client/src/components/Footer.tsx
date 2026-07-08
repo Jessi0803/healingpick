@@ -52,12 +52,16 @@ export default function Footer() {
               className="mt-4 text-[11px] tracking-[0.15em] text-[#D1BE9B]/80"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
             >
-              把心事揉一揉，慢慢變成答案。
+              全台最萌的占卜天地
             </p>
           </div>
 
           {/* Navigation */}
           <div>
+            <p className="mb-1 text-[13px] italic tracking-[0.04em] text-[#A38D6B]/75"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              Explore
+            </p>
             <h4
               className="text-[11px] tracking-[0.35em] text-[#D1BE9B] mb-5 uppercase"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
@@ -71,14 +75,14 @@ export default function Footer() {
                 { label: 'Mochi 解夢', href: '/dream' },
                 { label: '每日運勢', href: '/fortune/daily' },
                 { label: '心理測驗', href: '/quiz' },
-                { label: '能量商品', href: '/shop' },
+                { label: '療癒水晶', href: '/shop' },
                 { label: '關於我們', href: '/about' },
                 { label: '購物須知與退費政策', href: '/policy' },
               ].map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-[12px] tracking-[0.15em] text-[#31353A]/68 hover:text-[#D1BE9B] transition-colors duration-300"
+                    className="inline-block text-[12px] tracking-[0.15em] text-[#31353A]/68 hover:text-[#D1BE9B] hover:translate-x-1 transition-all duration-300"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     {item.label}
@@ -90,6 +94,10 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
+            <p className="mb-1 text-[13px] italic tracking-[0.04em] text-[#A38D6B]/75"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              Contact
+            </p>
             <h4
               className="text-[11px] tracking-[0.35em] text-[#D1BE9B] mb-5 uppercase"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
@@ -107,7 +115,7 @@ export default function Footer() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[12px] tracking-[0.15em] text-[#31353A]/68 hover:text-[#D1BE9B] transition-colors duration-300"
+                    className="inline-block text-[12px] tracking-[0.15em] text-[#31353A]/68 hover:text-[#D1BE9B] hover:translate-x-1 transition-all duration-300"
                     style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                   >
                     {item.label}
