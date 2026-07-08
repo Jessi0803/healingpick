@@ -18,6 +18,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import { CatSitting, CatPeeking } from "@/components/CatElements";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
+import SalePrice from "@/components/SalePrice";
 import {
   PRODUCTS,
   CATEGORY_OPTIONS,
@@ -27,6 +28,7 @@ import {
 } from "@/data/products";
 import { CUSTOMER_FEEDBACK_PHOTO_ITEMS } from "@/data/customerFeedbackPhotos";
 import { useCart } from "@/contexts/CartContext";
+import { getDiscountedPrice } from "@shared/productPricing";
 
 // 精選輪播選品，使用獨立圖片避免輪播文案遮到手鍊本身。
 type FeaturedProduct = Product & { featuredImage: string };
@@ -91,7 +93,7 @@ const CUSTOM_BRACELET_ENTRY = {
   title: "客製化手鍊",
   material: "CUSTOM CRYSTAL",
   note: "選不出來嗎？客製化一條專屬自己的手鍊",
-  priceLabel: "NT$ 1,580",
+  price: 1580,
   image: "/custom-bracelet/feedback-optimized/full/IMG_4832.webp",
   href: "/shop/custom-bracelet/general",
 };
@@ -101,7 +103,7 @@ const CUSTOM_BRACELETS = [
     title: "一般客製化手鍊",
     subtitle: "依照需求搭配專屬水晶",
     description: "從功效、色系、手圍與配戴習慣開始，討論出最貼近你的水晶手鍊。",
-    priceLabel: "NT$ 1,580",
+    price: 1580,
     image: "/products/misty-starlight/1.jpg",
     href: "/shop/custom-bracelet/general",
     cta: "填寫客製化表單",
@@ -110,7 +112,7 @@ const CUSTOM_BRACELETS = [
     title: "生命靈數客製化手鍊",
     subtitle: "以生日數字整理能量方向",
     description: "結合生命靈數與近期需求，協助梳理適合加強的能量與水晶搭配。",
-    priceLabel: "NT$ 1,580",
+    price: 1580,
     image: "/products/forest-bloom/1.jpg",
     href: "/shop/custom-bracelet/numerology",
     cta: "填寫客製化表單",
@@ -126,7 +128,8 @@ export default function ShopPage() {
     addItem({
       slug: product.slug,
       name: product.name,
-      price: product.price,
+      price: getDiscountedPrice(product.price),
+      originalPrice: product.price,
       img: product.img,
     });
   };
@@ -409,7 +412,12 @@ export default function ShopPage() {
                                 fontWeight: 400,
                               }}
                             >
-                              {item.priceLabel}
+                              <SalePrice
+                                price={item.price}
+                                className="flex flex-wrap items-baseline gap-2"
+                                originalClassName="text-[12px] text-[#31353A]/42 line-through"
+                                saleClassName="text-[13px] tracking-[0.12em] text-[#8F7957]"
+                              />
                             </p>
                           </div>
                         </div>
@@ -511,25 +519,13 @@ export default function ShopPage() {
                           </p>
                           <div className="mb-3 flex min-h-8 items-center gap-2 pr-20">
                             <div className="flex min-w-0 flex-wrap items-center gap-2">
-                              <span
-                                className="text-sm text-[#A38D6B]"
-                                style={{
-                                  fontFamily: "Cormorant Garamond, serif",
-                                }}
-                              >
-                                {product.priceLabel ??
-                                  `NT$ ${product.price.toLocaleString()}`}
-                              </span>
-                              {product.originalPrice && (
-                                <span
-                                  className="text-[11px] text-[#31353A]/46 line-through"
-                                  style={{
-                                    fontFamily: "Cormorant Garamond, serif",
-                                  }}
-                                >
-                                  {product.originalPrice.toLocaleString()}
-                                </span>
-                              )}
+                              <SalePrice
+                                price={product.price}
+                                originalPrice={product.originalPrice}
+                                className="flex min-w-0 flex-wrap items-baseline gap-2"
+                                originalClassName="text-[11px] text-[#31353A]/46 line-through"
+                                saleClassName="text-sm text-[#A38D6B]"
+                              />
                             </div>
                           </div>
                         </div>
@@ -696,7 +692,12 @@ function CustomBraceletProductCard() {
                   fontFamily: "Cormorant Garamond, serif",
                 }}
               >
-                {CUSTOM_BRACELET_ENTRY.priceLabel}
+                <SalePrice
+                  price={CUSTOM_BRACELET_ENTRY.price}
+                  className="flex flex-wrap items-baseline gap-2"
+                  originalClassName="text-[11px] text-[#31353A]/42 line-through"
+                  saleClassName="text-[13px] text-[#A38D6B]"
+                />
               </span>
               <span
                 className="pointer-events-none inline-flex shrink-0 items-center rounded-full border border-[#D1BE9B]/45 bg-white/82 px-2.5 py-1.5 text-[10px] tracking-[0.12em] text-[#3D4144]/82 shadow-[0_8px_20px_rgba(61,65,68,0.08)] backdrop-blur-md transition-all duration-300 group-hover:border-[#3D4144]/20 group-hover:bg-[#3D4144] group-hover:text-[#FAF7F4]"

@@ -35,6 +35,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ReadingFeedback from "@/components/ReadingFeedback";
+import SalePrice from "@/components/SalePrice";
 import {
   getMoodPlushieOpening,
   MoodClawMachine,
@@ -889,12 +890,13 @@ function ProductCard({
               {product.name}
             </p>
             <div className="mt-0.5 flex items-center gap-2">
-              <span
-                className="text-[12px] text-[#A38D6B]"
-                style={{ fontFamily: "Cormorant Garamond, serif" }}
-              >
-                NT$ {product.price.toLocaleString()}
-              </span>
+              <SalePrice
+                price={product.price}
+                originalPrice={product.originalPrice}
+                className="flex flex-wrap items-baseline gap-1.5"
+                originalClassName="text-[10px] text-[#31353A]/42 line-through"
+                saleClassName="text-[12px] text-[#A38D6B]"
+              />
               {meanings[0] && (
                 <span
                   className="truncate text-[10px] tracking-[0.12em] text-[#31353A]/55"
@@ -949,12 +951,13 @@ function ProductCard({
                 {product.name}
               </p>
             </div>
-            <p
-              className="text-sm font-light text-[#D1BE9B] flex-shrink-0"
-              style={{ fontFamily: "Cormorant Garamond, serif" }}
-            >
-              NT$ {product.price.toLocaleString()}
-            </p>
+            <SalePrice
+              price={product.price}
+              originalPrice={product.originalPrice}
+              className="flex flex-shrink-0 flex-col items-end gap-0.5"
+              originalClassName="text-[11px] text-[#31353A]/38 line-through"
+              saleClassName="text-sm font-light text-[#D1BE9B]"
+            />
           </div>
           <div className="flex flex-wrap gap-1 mb-2">
             {meanings.map(m => (

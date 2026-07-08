@@ -17,6 +17,7 @@ import Reveal from "@/components/Reveal";
 import { CatPeeking } from "@/components/CatElements";
 import { useAuth } from "@/_core/hooks/useAuth";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
+import SalePrice from "@/components/SalePrice";
 import { PRODUCTS } from "@/data/products";
 import ContactDialog from "@/components/ContactDialog";
 
@@ -1354,12 +1355,13 @@ export default function Home() {
                       >
                         {p.name}
                       </h3>
-                      <p
-                        className="text-[11px] tracking-[0.1em] text-[#A38D6B] mb-2.5"
-                        style={{ fontFamily: "Cormorant Garamond, serif" }}
-                      >
-                        NT$ {p.price.toLocaleString()}
-                      </p>
+                      <SalePrice
+                        price={p.price}
+                        originalPrice={p.originalPrice}
+                        className="mb-2.5 flex flex-wrap items-baseline gap-2"
+                        originalClassName="text-[10px] tracking-[0.1em] text-[#31353A]/38 line-through"
+                        saleClassName="text-[11px] tracking-[0.1em] text-[#A38D6B]"
+                      />
                     </div>
                   </div>
                 </Link>

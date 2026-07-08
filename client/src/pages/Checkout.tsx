@@ -7,11 +7,13 @@ import CartBenefitNotice from "@/components/CartBenefitNotice";
 import CartGiftNotice from "@/components/CartGiftNotice";
 import PageLayout from "@/components/PageLayout";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
+import SalePrice from "@/components/SalePrice";
 import { useCart } from "@/contexts/CartContext";
 import { CLEAR_QUARTZ_CHIPS_GIFT } from "@/data/cartAddOns";
 import { findProduct } from "@/data/products";
 import { trpc } from "@/lib/trpc";
 import { canShowAmethystChipsAddOn, validateCartRules } from "@shared/cartRules";
+import { getDiscountedPrice } from "@shared/productPricing";
 
 type CustomerForm = {
   customerName: string;
@@ -110,12 +112,16 @@ export default function CheckoutPage() {
       fit: form.fit,
       address,
       items: [
-        ...items.map(({ slug, name, price, quantity }) => ({
-          slug,
-          name,
-          price,
-          quantity,
-        })),
+        ...items.map(item => {
+          const originalPrice =
+            item.originalPrice ?? findProduct(item.slug)?.price ?? item.price;
+          return {
+            slug: item.slug,
+            name: item.name,
+            price: getDiscountedPrice(originalPrice),
+            quantity: item.quantity,
+          };
+        }),
         {
           slug: CLEAR_QUARTZ_CHIPS_GIFT.slug,
           name: CLEAR_QUARTZ_CHIPS_GIFT.name,
@@ -315,6 +321,8 @@ export default function CheckoutPage() {
                 <div className="space-y-3">
                   {items.map(item => {
                     const product = findProduct(item.slug);
+                    const originalPrice =
+                      item.originalPrice ?? product?.price ?? item.price;
 
                     return (
                       <div
@@ -341,10 +349,17 @@ export default function CheckoutPage() {
                           <p className="break-words text-[12px] tracking-[0.1em] text-[#31353A]/82">
                             {item.name}
                           </p>
-                          <p className="mt-1 text-[12px] text-[#A38D6B]">
-                            NT$ {item.price.toLocaleString("zh-TW")} x{" "}
-                            {item.quantity}
-                          </p>
+                          <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                            <SalePrice
+                              price={originalPrice}
+                              className="flex flex-wrap items-baseline gap-2"
+                              originalClassName="text-[11px] text-[#31353A]/42 line-through"
+                              saleClassName="text-[12px] text-[#A38D6B]"
+                            />
+                            <span className="text-[12px] text-[#31353A]/52">
+                              x {item.quantity}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     );

@@ -13,6 +13,7 @@ import CartAddOnOffer from "@/components/CartAddOnOffer";
 import CartBenefitNotice from "@/components/CartBenefitNotice";
 import CartGiftNotice from "@/components/CartGiftNotice";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
+import SalePrice from "@/components/SalePrice";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { findProduct } from "@/data/products";
 import {
@@ -20,11 +21,13 @@ import {
   getAddItemRuleError,
   validateCartRules,
 } from "@shared/cartRules";
+import { getDiscountedPrice } from "@shared/productPricing";
 
 export type CartProduct = {
   slug: string;
   name: string;
   price: number;
+  originalPrice?: number;
   img: string;
 };
 
@@ -45,6 +48,10 @@ type CartContextValue = {
 const STORAGE_KEY = "soul-ease-cart";
 
 const CartContext = createContext<CartContextValue | null>(null);
+
+function getCartOriginalPrice(item: CartProduct) {
+  return item.originalPrice ?? findProduct(item.slug)?.price ?? item.price;
+}
 
 function readStoredCart(): CartItem[] {
   if (typeof window === "undefined") return [];
@@ -78,7 +85,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + getDiscountedPrice(getCartOriginalPrice(item)) * item.quantity,
     0
   );
 
@@ -99,7 +106,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
             : item
         );
       }
-      return [...current, { ...product, quantity: 1 }];
+      const originalPrice = product.originalPrice ?? product.price;
+      return [
+        ...current,
+        {
+          ...product,
+          originalPrice,
+          price: getDiscountedPrice(originalPrice),
+          quantity: 1,
+        },
+      ];
     });
     toast.success(`已加入購物車：${product.name}`);
     if (options?.open) setIsOpen(true);
@@ -291,6 +307,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                   <div className="space-y-3">
                     {items.map(item => {
                       const product = findProduct(item.slug);
+                      const originalPrice = getCartOriginalPrice(item);
 
                       return (
                         <div
@@ -319,9 +336,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
                                 <p className="break-words text-[13px] tracking-[0.12em] text-[#31353A]">
                                   {item.name}
                                 </p>
-                                <p className="mt-1 text-[12px] text-[#A38D6B]">
-                                  NT$ {item.price.toLocaleString("zh-TW")}
-                                </p>
+                                <SalePrice
+                                  price={originalPrice}
+                                  className="mt-1 flex flex-wrap items-baseline gap-2"
+                                  originalClassName="text-[11px] text-[#31353A]/42 line-through"
+                                  saleClassName="text-[12px] text-[#A38D6B]"
+                                />
                               </div>
                               <button
                                 type="button"

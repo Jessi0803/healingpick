@@ -27,8 +27,10 @@ import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import ContactDialog from '@/components/ContactDialog';
 import ProductCareNotice from '@/components/ProductCareNotice';
+import SalePrice from '@/components/SalePrice';
 import { useCart } from '@/contexts/CartContext';
 import { CUSTOMER_FEEDBACK_PHOTO_ITEMS } from '@/data/customerFeedbackPhotos';
+import { getDiscountedPrice } from '@shared/productPricing';
 
 const GALLERY_PHOTOS = CUSTOMER_FEEDBACK_PHOTO_ITEMS;
 const GALLERY_IMAGES = GALLERY_PHOTOS.map(photo => photo.full);
@@ -201,7 +203,7 @@ const PAGE_COPY: Record<
     contactProductName: string;
     heroIntro: string;
     heroLead: string;
-    priceLabel: string;
+    price: number;
   }
 > = {
   general: {
@@ -212,7 +214,7 @@ const PAGE_COPY: Record<
     contactProductName: '一般客製化手鍊',
     heroIntro: '',
     heroLead: '老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。',
-    priceLabel: 'NT$ 1,580',
+    price: CUSTOM_BASE_PRICE,
   },
   numerology: {
     title: '生命靈數客製化手鍊',
@@ -223,7 +225,7 @@ const PAGE_COPY: Record<
     heroIntro:
       '生命靈數會從你的出生年月日整理出天生特質、行動節奏與現階段適合補強的能量方向。客製時會把生日數字與你近期的需求一起參考，讓水晶搭配更貼近你的個人狀態。',
     heroLead: '老闆只嚴選高品質、雜質少的天然水晶，所以每一顆看起來都特別透亮，也蘊藏著更飽滿的能量。',
-    priceLabel: 'NT$ 1,580',
+    price: CUSTOM_BASE_PRICE,
   },
 };
 
@@ -358,7 +360,8 @@ export default function CustomBraceletPage() {
       {
         slug: `custom-bracelet-${mode}-${form.charmNeed === '需要加吊飾' ? form.charmPreference : 'no-charm'}`,
         name: `${copy.contactProductName}（${selectedCharmLabel}）`,
-        price: selectedCustomPrice,
+        price: getDiscountedPrice(selectedCustomPrice),
+        originalPrice: selectedCustomPrice,
         img: CUSTOM_BRACELET_IMAGE,
       },
       { open: true },
@@ -428,9 +431,12 @@ export default function CustomBraceletPage() {
                 <span className="text-[11px] tracking-[0.18em]" style={{ fontWeight: 300 }}>
                   客製價格
                 </span>
-                <span className="text-[18px] tracking-[0.08em]" style={{ fontWeight: 400 }}>
-                  {copy.priceLabel}
-                </span>
+                <SalePrice
+                  price={copy.price}
+                  className="flex flex-wrap items-baseline gap-2"
+                  originalClassName="text-[12px] tracking-[0.08em] text-[#31353A]/40 line-through"
+                  saleClassName="text-[18px] tracking-[0.08em] text-[#8F7957]"
+                />
               </div>
               {copy.heroIntro && (
                 <div
@@ -1005,12 +1011,12 @@ export default function CustomBraceletPage() {
               </FieldGroup>
 
               <div className="mt-7 rounded-2xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/68 px-4 py-3">
-                <span
-                  className="text-[18px] tracking-[0.04em] text-[#A38D6B]"
-                  style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
-                >
-                  NT$ {selectedCustomPrice.toLocaleString('zh-TW')}
-                </span>
+                <SalePrice
+                  price={selectedCustomPrice}
+                  className="flex flex-wrap items-baseline gap-3"
+                  originalClassName="text-[13px] tracking-[0.04em] text-[#31353A]/40 line-through"
+                  saleClassName="text-[18px] tracking-[0.04em] text-[#A38D6B]"
+                />
               </div>
 
               <div className="mt-4 flex flex-col gap-3 sm:flex-row">

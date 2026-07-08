@@ -7,10 +7,12 @@ import { useState } from "react";
 import { useParams, Link } from "wouter";
 import PageLayout from "@/components/PageLayout";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
+import SalePrice from "@/components/SalePrice";
 import { findProduct, getProductFitSummary } from "@/data/products";
 import { CatSitting, CatPeeking } from "@/components/CatElements";
 import ProductCareNotice from "@/components/ProductCareNotice";
 import { useCart } from "@/contexts/CartContext";
+import { getDiscountedPrice } from "@shared/productPricing";
 
 const CRYSTAL_ONLY_NOTICE_PRODUCT_SLUGS = new Set([
   "xi-guang",
@@ -209,23 +211,13 @@ export default function ProductDetailPage() {
                 {product.tagline}
               </p>
 
-              <div className="flex items-baseline gap-4 mb-3">
-                <span
-                  className="text-3xl text-[#A38D6B]"
-                  style={{ fontFamily: "Cormorant Garamond, serif" }}
-                >
-                  {product.priceLabel ??
-                    `NT$ ${product.price.toLocaleString()}`}
-                </span>
-                {product.originalPrice && (
-                  <span
-                    className="text-base text-[#31353A]/38 line-through"
-                    style={{ fontFamily: "Cormorant Garamond, serif" }}
-                  >
-                    NT$ {product.originalPrice.toLocaleString()}
-                  </span>
-                )}
-              </div>
+              <SalePrice
+                price={product.price}
+                originalPrice={product.originalPrice}
+                className="mb-3 flex flex-wrap items-baseline gap-4"
+                originalClassName="text-base text-[#31353A]/38 line-through"
+                saleClassName="text-3xl text-[#A38D6B]"
+              />
               <div className="text-center text-[10px] text-[#D1BE9B]/60 tracking-[0.25em] mb-6 py-1 select-none">
                 ୨୧ ───────── ୨୧
               </div>
@@ -307,7 +299,8 @@ export default function ProductDetailPage() {
                   addItem({
                     slug: product.slug,
                     name: product.name,
-                    price: product.price,
+                    price: getDiscountedPrice(product.price),
+                    originalPrice: product.price,
                     img: product.img,
                   })
                 }

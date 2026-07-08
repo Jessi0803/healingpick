@@ -8,6 +8,7 @@ import PageLayout from "@/components/PageLayout";
 import { CatSitting, CatPeeking } from "@/components/CatElements";
 import { QUIZZES, Quiz, QuizQuestion } from "@/data/quizzes";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
+import SalePrice from "@/components/SalePrice";
 import {
   findProduct,
   getContextualRecommendationReason,
@@ -768,12 +769,13 @@ export default function QuizPage() {
                           )}
                         </p>
                         <div className="flex items-center justify-center sm:justify-start gap-3">
-                          <span
-                            className="text-sm text-[#A38D6B]"
-                            style={{ fontFamily: "Cormorant Garamond, serif" }}
-                          >
-                            NT$ {recommendedProduct.price.toLocaleString()}
-                          </span>
+                          <SalePrice
+                            price={recommendedProduct.price}
+                            originalPrice={recommendedProduct.originalPrice}
+                            className="flex flex-wrap items-baseline justify-center gap-2 sm:justify-start"
+                            originalClassName="text-[11px] text-[#31353A]/38 line-through"
+                            saleClassName="text-sm text-[#A38D6B]"
+                          />
                         </div>
                       </div>
 

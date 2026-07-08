@@ -13,6 +13,7 @@ import { useLocation } from "wouter";
 import { PRODUCTS, Product } from "../data/products";
 import ContactDialog from "./ContactDialog";
 import ProductImageWatermark from "./ProductImageWatermark";
+import SalePrice from "./SalePrice";
 
 type Pearl = {
   text: string;
@@ -691,9 +692,13 @@ export default function CatCompanion() {
                       <p className="text-[9px] text-[#D1BE9B] tracking-[0.1em] mt-0.5 truncate">
                         {recommendedProduct.material} · ✦
                       </p>
-                      <p className="text-[11px] font-semibold text-[#8A7250] mt-1">
-                        NT$ {recommendedProduct.price}
-                      </p>
+                      <SalePrice
+                        price={recommendedProduct.price}
+                        originalPrice={recommendedProduct.originalPrice}
+                        className="mt-1 flex flex-wrap items-baseline gap-1.5"
+                        originalClassName="text-[9px] text-[#31353A]/38 line-through"
+                        saleClassName="text-[11px] font-semibold text-[#8A7250]"
+                      />
                     </div>
                   </div>
 
