@@ -121,7 +121,10 @@ function includeCustomBraceletOption(picks: Product[], limit: number): Product[]
     return [...picks, CUSTOM_BRACELET_RECOMMENDATION_PRODUCT];
   }
 
-  return [...picks.slice(0, Math.max(1, limit - 1)), CUSTOM_BRACELET_RECOMMENDATION_PRODUCT];
+  return [
+    ...picks.slice(0, Math.max(0, limit - 1)),
+    CUSTOM_BRACELET_RECOMMENDATION_PRODUCT,
+  ];
 }
 
 

@@ -29,6 +29,7 @@ export const ENV = {
   lineChannelId: process.env.LINE_CHANNEL_ID ?? "",
   lineChannelSecret: process.env.LINE_CHANNEL_SECRET ?? "",
   lineMessagingAccessToken: process.env.LINE_MESSAGING_ACCESS_TOKEN ?? "",
+  ownerLineUserId: process.env.OWNER_LINE_USER_ID ?? "",
   lineLoginRedirectUri: process.env.LINE_LOGIN_REDIRECT_URI ?? "",
   lineLoginRequestEmail: process.env.LINE_LOGIN_REQUEST_EMAIL === "true",
   resendApiKey: process.env.RESEND_API_KEY ?? "",
