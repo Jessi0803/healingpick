@@ -1471,13 +1471,13 @@ export default function ZiweiPage() {
                       <div className="my-1 flex items-center gap-3">
                         <span className="h-px flex-1 bg-[#D1BE9B]/25" />
                         <span
-                          className="text-[11px] tracking-[0.2em] text-[#A38D6B]/85"
+                          className="whitespace-nowrap text-[11px] tracking-[0.2em] text-[#A38D6B]/85"
                           style={{
                             fontFamily: "Noto Serif TC, serif",
                             fontWeight: 300,
                           }}
                         >
-                          還可以看看 ✦
+                          以下商品也呼應您的需求 ✦
                         </span>
                         <span className="h-px flex-1 bg-[#D1BE9B]/25" />
                       </div>
