@@ -178,6 +178,7 @@ const getCustomPrice = (need: string, preference: string) =>
 
 const FORM_INITIAL = {
   birthDate: '',
+  gender: '',
   energyNeeds: '',
   colorPreference: '',
   favoriteCrystals: '',
@@ -192,6 +193,7 @@ const FORM_INITIAL = {
 
 type CustomForm = typeof FORM_INITIAL;
 type BraceletMode = 'general' | 'numerology';
+const GENDER_OPTIONS = ['男生', '女生'] as const;
 
 const PAGE_COPY: Record<
   BraceletMode,
@@ -367,6 +369,7 @@ export default function CustomBraceletPage() {
           type: copy.contactProductName,
           mode,
           birthDate: mode === 'numerology' ? form.birthDate.trim() : '',
+          gender: form.gender.trim(),
           contact: form.contact.trim(),
           energyNeeds: form.energyNeeds.trim(),
           colorPreference: form.colorPreference.trim(),
@@ -733,6 +736,29 @@ export default function CustomBraceletPage() {
                   )}
                   <Field label="Instagram / LINE（以便私訊客製設計完成的手鍊圖）" required>
                     <input value={form.contact} onChange={(e) => update('contact', e.target.value)} className={inputClass} placeholder="@account 或 LINE ID" />
+                  </Field>
+                  <Field label="配戴對象（選填）" group>
+                    <div className="grid grid-cols-2 gap-2">
+                      {GENDER_OPTIONS.map((gender) => {
+                        const active = form.gender === gender;
+                        return (
+                          <button
+                            key={gender}
+                            type="button"
+                            onClick={() => update('gender', active ? '' : gender)}
+                            className={`rounded-full border px-4 py-3 text-center text-[12px] tracking-[0.12em] transition-all duration-200 ${
+                              active
+                                ? 'border-[#A38D6B] bg-[#3D4144] text-[#FAF7F4]'
+                                : 'border-[#D1BE9B]/28 bg-white/55 text-[#31353A]/68 hover:border-[#A38D6B]/50'
+                            }`}
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                            aria-pressed={active}
+                          >
+                            {gender}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </Field>
                 </div>
               </FieldGroup>

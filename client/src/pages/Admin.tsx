@@ -170,6 +170,7 @@ function parseShopOrderItems(items: string): AdminShopOrderItem[] {
 const customOrderFieldLabels: Array<[string, string]> = [
   ["type", "客製類型"],
   ["birthDate", "出生年月日"],
+  ["gender", "配戴對象"],
   ["contact", "IG / LINE"],
   ["energyNeeds", "能量需求"],
   ["colorPreference", "喜歡色系"],
