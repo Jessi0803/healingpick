@@ -693,6 +693,7 @@ export default function FortunePage() {
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [hasClickedGenerate, setHasClickedGenerate] = useState(false);
   const [readingDate, setReadingDate] = useState<string | null>(null);
+  const [generationNonce, setGenerationNonce] = useState<string | null>(null);
   const [caughtMoodPlushie, setCaughtMoodPlushie] =
     useState<MoodPlushie | null>(null);
   const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
@@ -709,12 +710,14 @@ export default function FortunePage() {
       setSelectedSign(null);
       setHasClickedGenerate(false);
       setReadingDate(null);
+      setGenerationNonce(null);
       setUnlockDialogOpen(false);
       return;
     }
     setSelectedSign(signId);
     setHasClickedGenerate(false);
     setReadingDate(null);
+    setGenerationNonce(null);
     setUnlockDialogOpen(true);
   }
 
@@ -731,9 +734,10 @@ export default function FortunePage() {
       sign: selectedSign || "",
       signName: selectedSignData?.name || "",
       date: readingDate || apiDateStr,
+      nonce: generationNonce || "",
     },
     {
-      enabled: !!selectedSign && hasClickedGenerate && !!readingDate,
+      enabled: !!selectedSign && hasClickedGenerate && !!readingDate && !!generationNonce,
       staleTime: 0,
       refetchOnWindowFocus: false,
       retry: 1,
@@ -744,7 +748,8 @@ export default function FortunePage() {
   useEffect(() => {
     if (!dailyFortuneQuery.data) return;
     if (!readingDate) return;
-    const key = `${selectedSign}-${readingDate}`;
+    if (!generationNonce) return;
+    const key = `${selectedSign}-${readingDate}-${generationNonce}`;
     if (savedFortuneRef.current === key) return;
     savedFortuneRef.current = key;
     const d = dailyFortuneQuery.data;
@@ -755,6 +760,7 @@ export default function FortunePage() {
         sign: selectedSign,
         signName: selectedSignData?.name,
         date: readingDate,
+        generationNonce,
       }),
       interpretation: [
         `整體運勢（${d.overallScore}/10）：${d.overall}`,
@@ -767,7 +773,7 @@ export default function FortunePage() {
       ].join("\n\n"),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyFortuneQuery.data, readingDate]);
+  }, [dailyFortuneQuery.data, readingDate, generationNonce]);
 
   const aiData = dailyFortuneQuery.data;
   const fortuneWaitingMessage = useRotatingText(
@@ -778,6 +784,7 @@ export default function FortunePage() {
   useEffect(() => {
     setHasClickedGenerate(false);
     setReadingDate(null);
+    setGenerationNonce(null);
     setUnlockDialogOpen(false);
     savedFortuneRef.current = "";
   }, [apiDateStr]);
@@ -1010,6 +1017,10 @@ export default function FortunePage() {
                             return;
                           }
                           setReadingDate(apiDateStr);
+                          setGenerationNonce(
+                            globalThis.crypto?.randomUUID?.() ||
+                              `${Date.now()}-${Math.random()}`
+                          );
                           setHasClickedGenerate(true);
                           setUnlockDialogOpen(false);
                         }}

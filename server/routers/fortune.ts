@@ -241,8 +241,8 @@ function pickFromSeed<T>(items: T[], seed: string, offset: number): T {
   return items[hashSeed(`${seed}:pick:${offset}`) % items.length];
 }
 
-export function getDailyFortuneVariant(date: string, sign: string) {
-  const seed = `${date}-${sign}`;
+export function getDailyFortuneVariant(date: string, sign: string, nonce = "") {
+  const seed = `${date}-${sign}-${nonce || "daily"}`;
   const themes = [
     "關係界線與真實表達",
     "工作排序與資源取捨",
@@ -418,7 +418,7 @@ export function getDailyFortuneVariant(date: string, sign: string) {
   const crystal = pickFromSeed(crystals, seed, 101);
 
   return {
-    id: `${hashSeed(seed) % 1000}`,
+    id: `${hashSeed(seed) % 100000}`,
     theme: pickFromSeed(themes, seed, 5),
     texture: pickFromSeed(textures, seed, 13),
     avoid: pickFromSeed(avoid, seed, 23),
@@ -556,6 +556,7 @@ export const fortuneRouter = router({
         sign: z.string(),
         signName: z.string(),
         date: z.string(), // YYYY-MM-DD
+        nonce: z.string().max(120).optional(),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -569,7 +570,7 @@ export const fortuneRouter = router({
       // 取得星座特性
       const traits = ZODIAC_TRAITS[input.sign] || null;
       const signGuide = ZODIAC_FORTUNE_GUIDES[input.sign] || null;
-      const dailyVariant = getDailyFortuneVariant(input.date, input.sign);
+      const dailyVariant = getDailyFortuneVariant(input.date, input.sign, input.nonce);
       const fallbackFortune = buildFallbackFortune({
         signName: input.signName,
         date: input.date,
@@ -616,6 +617,7 @@ export const fortuneRouter = router({
 - 推薦水晶：${dailyVariant.crystal}
 - 水晶陪伴方向：${dailyVariant.crystalReasonFocus}
 - 今日禁用重複詞：${repetitionGuards.join('、') || '無'}
+- 本次生成碼：${input.nonce || dailyVariant.id}
 - 種子編號：${dailyVariant.id}`;
 
       const systemPrompt = `${DAILY_FORTUNE_STYLE}
@@ -634,6 +636,7 @@ export const fortuneRouter = router({
 - advice 要改成「今日策略提醒」：先判斷今天真正需要分辨的是什麼，再說接下來適合用什麼姿態面對。不要固定寫成「不用等準備好」「先踏出一步」「把什麼寫下來、傳一則訊息、整理一下」這種任務型結尾，也不要提月相。
 - 水晶推薦要與月相能量和星座元素相呼應。
 - 必須自然使用「今日變化種子」作為內容差異來源，但不要在輸出中提到種子、編號或系統規則。
+- 「本次生成碼」代表這次解鎖要重新創作，不可只把同一套每日運勢換句話說；請讓核心事件、提醒重點、畫面感和收尾策略都跟同星座其他日期或其他生成不同。
 - love 必須呼應「感情場景」和「感情焦點」；career 必須同時呼應「工作場景」和「財務場景」；health 必須呼應「身體訊號」和「身體照顧方式」。
 - luckyColor 必須使用「今日變化種子」裡的幸運色；crystal 必須使用「今日變化種子」裡的推薦水晶；crystalReason 要結合「水晶陪伴方向」與月相。
 - advice 必須包含「今日策略焦點」的判斷，並可自然帶入「幸運小動作」，但不要寫成制式待辦清單。

@@ -219,6 +219,36 @@ describe("getDailyFortuneVariant", () => {
     expect(first).toEqual(second);
   });
 
+  it("returns the same variant for the same generation nonce", () => {
+    const first = getDailyFortuneVariant("2026-07-07", "pisces", "nonce-a");
+    const second = getDailyFortuneVariant("2026-07-07", "pisces", "nonce-a");
+
+    expect(first).toEqual(second);
+  });
+
+  it("varies the daily material by generation nonce", () => {
+    const first = getDailyFortuneVariant("2026-07-07", "pisces", "nonce-a");
+    const second = getDailyFortuneVariant("2026-07-07", "pisces", "nonce-b");
+
+    expect([
+      first.theme,
+      first.dailyDomain,
+      first.conflictFrame,
+      first.loveScene,
+      first.workScene,
+      first.luckyColor,
+      first.crystal,
+    ]).not.toEqual([
+      second.theme,
+      second.dailyDomain,
+      second.conflictFrame,
+      second.loveScene,
+      second.workScene,
+      second.luckyColor,
+      second.crystal,
+    ]);
+  });
+
   it("varies the daily material by date", () => {
     const first = getDailyFortuneVariant("2026-07-07", "pisces");
     const second = getDailyFortuneVariant("2026-07-08", "pisces");
