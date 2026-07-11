@@ -268,12 +268,12 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-36 bottom-0 z-40 2xl:hidden">
+        <div className="fixed inset-x-0 top-36 bottom-0 z-[85] 2xl:hidden">
           <div
             className="absolute inset-0 bg-[#3D4144]/20 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute top-0 right-0 bottom-0 w-72 bg-[#FAF7F4] shadow-2xl flex flex-col pt-6 pb-8 px-6">
+          <div className="absolute top-0 right-0 bottom-0 flex w-72 flex-col overflow-y-auto overscroll-contain bg-[#FAF7F4] px-6 pt-6 pb-8 shadow-2xl">
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => renderNavLink(link, true))}
               {/* Mobile auth links */}
