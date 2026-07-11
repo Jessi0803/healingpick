@@ -91,11 +91,6 @@ type AdminShopOrderRow = {
   createdAt: Date;
 };
 
-type AdminUserBraceletOrder = Pick<
-  AdminShopOrderRow,
-  "id" | "items" | "subtotal" | "status" | "createdAt"
->;
-
 type AdminReadingRow = {
   id: number;
   userId: number | null;
@@ -224,55 +219,6 @@ function CustomizationDetails({
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function parseBraceletPurchaseHistory(
-  value: string | null | undefined
-): AdminUserBraceletOrder[] {
-  if (!value) return [];
-  try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function braceletOrderLabel(order: AdminUserBraceletOrder) {
-  const items = parseShopOrderItems(order.items);
-  const itemText =
-    items.map(item => `${item.name} x${item.quantity}`).join("、") ||
-    "商品明細";
-  return `#${order.id} ${itemText} · NT$ ${order.subtotal.toLocaleString("zh-TW")}`;
-}
-
-function BraceletPurchaseHistoryCell({
-  value,
-}: {
-  value: string | null | undefined;
-}) {
-  const orders = parseBraceletPurchaseHistory(value);
-  if (orders.length === 0) return <>尚無購買紀錄</>;
-
-  const [latest, second] = orders;
-  return (
-    <div className="min-w-56 max-w-[280px] space-y-1 leading-[1.7]">
-      <div className="break-words text-[#31353A]/78">
-        {braceletOrderLabel(latest)}
-      </div>
-      <div className="text-[11px] text-[#A38D6B]">
-        {formatDate(latest.createdAt)} · {latest.status}
-      </div>
-      {second && (
-        <div className="break-words text-[11px] text-[#31353A]/45">
-          另有 #{second.id}
-          {orders.length > 2
-            ? ` 等 ${orders.length - 1} 筆`
-            : " 共 2 筆"}
-        </div>
-      )}
     </div>
   );
 }
@@ -1094,17 +1040,6 @@ function UsersTable({
             <MobileInfoRow label="姓名 / 登入">
               {row.name ?? row.loginMethod ?? "—"}
             </MobileInfoRow>
-            <MobileInfoRow label="註冊時間">
-              {formatDate(row.createdAt)}
-            </MobileInfoRow>
-            <MobileInfoRow label="最近來訪">
-              {formatDate(row.lastSignedIn)}
-            </MobileInfoRow>
-            <MobileInfoRow label="購買手鍊紀錄">
-              <BraceletPurchaseHistoryCell
-                value={row.braceletPurchaseHistory}
-              />
-            </MobileInfoRow>
             <MobileInfoRow label="點數">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input
@@ -1236,7 +1171,7 @@ function UsersTable({
         {rows.length === 0 ? <EmptyCard /> : rows.map(renderMobileUser)}
       </div>
       <div className="hidden overflow-x-auto md:block">
-        <table className="w-full min-w-[1380px] text-left">
+        <table className="w-full min-w-[1040px] text-left">
           <thead className="bg-[#D1BE9B]/10 text-[11px] tracking-[0.14em] text-[#A38D6B]">
             <tr>
               <th className="px-4 py-3 font-normal">
@@ -1266,9 +1201,6 @@ function UsersTable({
               <th className="px-4 py-3 font-normal">角色</th>
               <th className="px-4 py-3 font-normal">點數</th>
               <th className="px-4 py-3 font-normal">今日免費剩餘</th>
-              <th className="px-4 py-3 font-normal">註冊時間</th>
-              <th className="px-4 py-3 font-normal">最近來訪</th>
-              <th className="px-4 py-3 font-normal">購買手鍊紀錄</th>
               <th className="px-4 py-3 font-normal">備註</th>
               <th className="px-4 py-3 font-normal">歷史</th>
               <th className="px-4 py-3 font-normal">操作</th>
@@ -1278,7 +1210,7 @@ function UsersTable({
             {message && (
               <tr>
                 <td
-                  colSpan={12}
+                  colSpan={9}
                   className="px-4 py-3 text-[11px] tracking-[0.12em] text-[#A38D6B]"
                 >
                   {message}
@@ -1286,7 +1218,7 @@ function UsersTable({
               </tr>
             )}
             {rows.length === 0 ? (
-              <EmptyRow colSpan={12} />
+              <EmptyRow colSpan={9} />
             ) : (
               rows.map(row => {
                 const inputValue = creditInputs[row.id] ?? String(row.credits);
@@ -1391,15 +1323,6 @@ function UsersTable({
                       <td className="px-4 py-3">
                         {freeRemaining}/{dailyFreeQuota}
                       </td>
-                      <td className="px-4 py-3">{formatDate(row.createdAt)}</td>
-                      <td className="px-4 py-3">
-                        {formatDate(row.lastSignedIn)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <BraceletPurchaseHistoryCell
-                          value={row.braceletPurchaseHistory}
-                        />
-                      </td>
                       <td className="px-4 py-3">
                         <div className="flex min-w-64 flex-col gap-2">
                           <textarea
@@ -1475,7 +1398,7 @@ function UsersTable({
                     </tr>
                     {isExpanded && (
                       <tr key={`${row.id}-readings`}>
-                        <td colSpan={12} className="bg-[#FAF7F4]/70 px-4 py-4">
+                        <td colSpan={9} className="bg-[#FAF7F4]/70 px-4 py-4">
                           <UserReadingHistory
                             user={selectedUser}
                             rows={userReadingsQuery.data ?? []}
