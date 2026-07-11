@@ -161,6 +161,21 @@ const ZODIAC_FORTUNE_GUIDES: Record<string, {
   },
 };
 
+const ZODIAC_REPETITION_GUARDS: Record<string, string[]> = {
+  aries: ["快點有結果", "被拖住", "急著往前衝", "動太慢"],
+  taurus: ["需要安全感", "一改變就失控", "穩定才安心", "不想變動"],
+  gemini: ["很多想法", "不知道先回哪一個", "腦中很多分頁", "同時開太多"],
+  cancer: ["很在意對方反應", "不想顯得太需要", "照顧別人情緒", "怕別人失望"],
+  leo: ["被看見", "不夠亮", "等掌聲", "有沒有人看到我", "夠不夠好"],
+  virgo: ["還不夠完整", "再確認一次", "想做好一點", "可交付版本"],
+  libra: ["讓大家舒服", "自己的需求不被放進去", "為了和諧", "配合對方節奏"],
+  scorpio: ["想知道真相", "問出口會失控", "測試安全感", "直覺和證據"],
+  sagittarius: ["想往前走", "細節拉回來", "用玩笑帶過", "大方向和下一步"],
+  capricorn: ["不能鬆", "鬆了就會落後", "責任感", "長期目標"],
+  aquarius: ["想法很多", "哪個真的要落地", "理性分析感受", "保持距離"],
+  pisces: ["感覺很多", "分不清哪些是自己的", "替別人承擔情緒", "像海綿"],
+};
+
 const fortuneResultSchema = z.object({
   overall: z.string(),
   overallScore: z.coerce.number().int().min(1).max(10),
@@ -335,6 +350,28 @@ export function getDailyFortuneVariant(date: string, sign: string) {
     "先判斷這件事值不值得你多花力氣",
     "把今天的標準調回現實，而不是調到完美",
   ];
+  const dailyDomains = [
+    "未讀訊息、臨時邀約和回覆節奏",
+    "工作交付、時間分配和責任界線",
+    "花費選擇、訂閱帳單和金錢安全感",
+    "家人室友、生活空間和日常秩序",
+    "身體疲勞、睡眠品質和資訊過量",
+    "合作溝通、分工落差和說明成本",
+    "自我期待、外界評價和實際進度",
+    "舊習慣重演、情緒反射和新的選擇",
+    "學習整理、作品曝光和下一步承諾",
+    "休息安排、社交消耗和能量回收",
+  ];
+  const conflictFrames = [
+    "想趕快處理完，卻發現真正卡住的是界線",
+    "表面是小事，實際上是在測試你要不要繼續配合",
+    "看起來是效率問題，其實是你把標準放得太滿",
+    "不是沒有答案，而是你需要先決定哪個訊號值得聽",
+    "不是要更用力，而是要把責任、情緒和現實分開",
+    "你以為自己在猶豫，其實是在等一個更誠實的理由",
+    "今天容易把短暫反應看成整體結論，需要慢一拍判斷",
+    "事情不一定很大，但會讓你看見自己最近的慣性",
+  ];
   const openingAngles = [
     "從一個今天可能遇到的具體小場景切入，不要用星座核心特質開頭",
     "從身體或情緒的細微信號切入，再帶到星座課題",
@@ -394,7 +431,9 @@ export function getDailyFortuneVariant(date: string, sign: string) {
     bodySignal: pickFromSeed(bodySignals, seed, 61),
     bodyCare: pickFromSeed(bodyCare, seed, 67),
     adviceFocus: pickFromSeed(adviceFocuses, seed, 71),
+    dailyDomain: pickFromSeed(dailyDomains, seed, 72),
     openingAngle: pickFromSeed(openingAngles, seed, 73),
+    conflictFrame: pickFromSeed(conflictFrames, seed, 77),
     signExpressionRule: pickFromSeed(signExpressionRules, seed, 79),
     luckyAction: pickFromSeed(luckyActions, seed, 83),
     luckyColor: pickFromSeed(luckyColors, seed, 89),
@@ -431,7 +470,7 @@ export function buildFallbackFortune({
   const seed = `${date}-${signName}-${moonPhase.name}-${variant.id}-${variant.theme}`;
 
   return {
-    overall: `${signLabel}今天的主題比較像是${variant.theme}。\n你可能會感覺${variant.texture}，但真正重要的是${variant.overallFocus}。\n**先看清楚力氣要放在哪裡**\n今天會比硬推更順。`,
+    overall: `${signLabel}今天比較容易在${variant.dailyDomain}裡感覺到拉扯。\n${variant.conflictFrame}。\n**先看清楚力氣要放在哪裡**\n${variant.overallFocus}會比硬推更順。`,
     overallScore: scoreFromSeed(seed, 11),
     love: `感情上今天容易碰到${variant.loveScene}。\n如果心裡已經有小小的不舒服，重點會是${variant.loveFocus}。\n**不要用猜測代替真實靠近**\n關係的溫度會比較看得清楚。`,
     loveScore: scoreFromSeed(seed, 17),
@@ -443,7 +482,7 @@ export function buildFallbackFortune({
     luckyNumber: 1 + (Array.from(seed).reduce((sum, char) => sum + char.charCodeAt(0), 0) % 99),
     crystal: variant.crystal,
     crystalReason: `${variant.crystal}適合搭配${moonPhase.name}，${variant.crystalReasonFocus}，也陪你**把情緒和現實判斷分開**。`,
-    advice: `今天真正需要分辨的是${variant.adviceFocus}。\n幸運小動作是${variant.luckyAction}，但${variant.avoid}。\n**${guide.strategy}**。`,
+    advice: `今天真正需要分辨的是${variant.adviceFocus}。\n你可以從${variant.luckyAction}開始，但${variant.avoid}。\n**${guide.strategy}**。`,
     moonPhase: moonPhase.name,
     moonSymbol: moonPhase.symbol,
   };
@@ -549,14 +588,17 @@ export const fortuneRouter = router({
         : '';
       const signGuideDesc = signGuide
         ? `【今日星座寫作方向】
-- 內在聲音：${signGuide.innerVoice}
+- 星座底色（只能當背景，不可直接照抄或近似改寫）：${signGuide.innerVoice}
 - 感情可選角度：${signGuide.loveAngles.join('、')}
 - 事業財務可選角度：${signGuide.careerAngles.join('、')}
 - 健康可選角度：${signGuide.healthAngles.join('、')}`
         : '';
+      const repetitionGuards = ZODIAC_REPETITION_GUARDS[input.sign] ?? [];
       const dailyVariantDesc = `【今日變化種子】
+- 今日生活領域：${dailyVariant.dailyDomain}
 - 今日主題：${dailyVariant.theme}
 - 今日畫面感：${dailyVariant.texture}
+- 今日衝突框架：${dailyVariant.conflictFrame}
 - 今日避免：${dailyVariant.avoid}
 - 整體焦點：${dailyVariant.overallFocus}
 - 感情場景：${dailyVariant.loveScene}
@@ -573,6 +615,7 @@ export const fortuneRouter = router({
 - 幸運色：${dailyVariant.luckyColor}
 - 推薦水晶：${dailyVariant.crystal}
 - 水晶陪伴方向：${dailyVariant.crystalReasonFocus}
+- 今日禁用重複詞：${repetitionGuards.join('、') || '無'}
 - 種子編號：${dailyVariant.id}`;
 
       const systemPrompt = `${DAILY_FORTUNE_STYLE}
@@ -581,8 +624,9 @@ export const fortuneRouter = router({
 - 運勢要實際、給得出具體感受，不空泛。
 - 星座差異是主角，月相只是今天的背景節奏。每個欄位都要至少有 1 個地方明顯呼應該星座的內在聲音、優勢或課題。
 - 今天的月相名稱最多在 overall、crystalReason、advice 其中 2 個欄位明確出現；其他欄位可改用「起點感」「整理的氣氛」「適合收尾的節奏」等語感，但不要讓每個星座都像同一篇月相日記。
-- 星座特性要寫成使用者自己的內在聲音或日常慣性，不要只列特質名詞。請優先使用「今日星座寫作方向」裡的角度，但不要逐字或近似重複「內在聲音」原句。
-- overall 必須依「今日開場角度」切入，並依「星座表現方式」改寫星座特性；不要每次用該星座最固定的招牌詞開場，例如獅子座不要每天都寫「不夠亮／被看見」、雙魚座不要每天都寫「感覺很多／分不清是不是自己的」、處女座不要每天都寫「還不夠完整」。
+- 「星座底色」只能用來校準性格，不可直接照抄、近似改寫，且不可放在 overall 第一、二行。
+- overall 必須依「今日生活領域」「今日衝突框架」「今日開場角度」切入，並依「星座表現方式」改寫星座特性；開頭要像今天真的發生的一個情境，而不是星座人格介紹。
+- 今日禁用重複詞不可出現在輸出中，也不要用同義句偷換。若需要表達該星座課題，請改用今日生活領域裡的具體事件、動作、互動或身體訊號來呈現。
 - love 要少一點教導感，多一點日常互動感；不要每次都只寫晚回訊息、小邀請或不要腦補。請依星座改寫成不同情境，例如界線、表達、確認需求、放下面子、少測試、少配合、說清楚。
 - career 必須同時寫到工作與財務，不可以只寫工作；不要每次都只寫報價、待收帳款或衝動消費。請依星座改寫成不同情境，例如曝光作品、整理流程、合作分工、資源分配、長期目標、半成品落地、接案承諾。
 - health 必須寫到身體感受和今天該怎麼對待身體；可以是肩頸、腸胃、睡眠、補水、散步、伸展或放下螢幕，但不要每次都收成待辦。
