@@ -38,6 +38,28 @@ const signedInTodaySort = sql`
   end
 `;
 
+const readTodaySort = sql`
+  case
+    when exists (
+      select 1
+      from ${readings}
+      where ${readings.userId} = ${users.id}
+        and (${readings.createdAt} AT TIME ZONE 'Asia/Taipei')::date = (now() AT TIME ZONE 'Asia/Taipei')::date
+    )
+    then 0
+    else 1
+  end
+`;
+
+const latestReadingTodaySort = sql`
+  (
+    select max(${readings.createdAt})
+    from ${readings}
+    where ${readings.userId} = ${users.id}
+      and (${readings.createdAt} AT TIME ZONE 'Asia/Taipei')::date = (now() AT TIME ZONE 'Asia/Taipei')::date
+  )
+`;
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
@@ -160,7 +182,13 @@ export const adminRouter = router({
               lastSignedIn: users.lastSignedIn,
             })
             .from(users)
-            .orderBy(signedInTodaySort, desc(users.lastSignedIn), desc(users.createdAt))
+            .orderBy(
+              readTodaySort,
+              desc(latestReadingTodaySort),
+              signedInTodaySort,
+              desc(users.lastSignedIn),
+              desc(users.createdAt)
+            )
             .limit(limit) : emptyQuery,
           tab === "orders" ? db
             .select({
