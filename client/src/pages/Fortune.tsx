@@ -750,6 +750,7 @@ export default function FortunePage() {
     const d = dailyFortuneQuery.data;
     saveReadingMutation.mutate({
       type: "fortune",
+      question: `${selectedSignData?.name ?? "每日運勢"} ${readingDate}`,
       inputData: JSON.stringify({
         sign: selectedSign,
         signName: selectedSignData?.name,

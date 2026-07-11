@@ -163,7 +163,8 @@ describe("buildFallbackFortune", () => {
     expect(result.overall).toContain("雙魚座");
     expect(result.moonPhase).toBe("滿月");
     expect(result.moonSymbol).toBe("🌕");
-    expect(result.crystal).toBe("月光石");
+    expect(result.crystal.length).toBeGreaterThan(0);
+    expect(result.crystalReason).toContain(result.crystal);
     expect(result.overallScore).toBeGreaterThanOrEqual(1);
     expect(result.luckyNumber).toBeGreaterThanOrEqual(1);
   });
@@ -221,6 +222,27 @@ describe("getDailyFortuneVariant", () => {
   it("varies the daily material by date", () => {
     const first = getDailyFortuneVariant("2026-07-07", "pisces");
     const second = getDailyFortuneVariant("2026-07-08", "pisces");
+
+    expect([
+      first.theme,
+      first.loveScene,
+      first.workScene,
+      first.bodySignal,
+      first.luckyColor,
+      first.crystal,
+    ]).not.toEqual([
+      second.theme,
+      second.loveScene,
+      second.workScene,
+      second.bodySignal,
+      second.luckyColor,
+      second.crystal,
+    ]);
+  });
+
+  it("varies the daily material by sign on the same date", () => {
+    const first = getDailyFortuneVariant("2026-07-11", "pisces");
+    const second = getDailyFortuneVariant("2026-07-11", "aries");
 
     expect([
       first.theme,

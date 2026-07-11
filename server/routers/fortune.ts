@@ -212,18 +212,18 @@ export function parseFortuneResult(content: string): FortuneResult {
 }
 
 function scoreFromSeed(seed: string, offset: number) {
-  const total = Array.from(seed).reduce((sum, char) => sum + char.charCodeAt(0), offset);
-  return 6 + (total % 4);
+  return 6 + (hashSeed(`${seed}:score:${offset}`) % 4);
 }
 
 function hashSeed(seed: string) {
-  return Array.from(seed).reduce((sum, char, index) => {
-    return sum + char.charCodeAt(0) * (index + 17);
-  }, 0);
+  return Array.from(seed).reduce((hash, char) => {
+    hash ^= char.charCodeAt(0);
+    return Math.imul(hash, 16777619) >>> 0;
+  }, 2166136261);
 }
 
 function pickFromSeed<T>(items: T[], seed: string, offset: number): T {
-  return items[(hashSeed(seed) + offset) % items.length];
+  return items[hashSeed(`${seed}:pick:${offset}`) % items.length];
 }
 
 export function getDailyFortuneVariant(date: string, sign: string) {
@@ -335,6 +335,21 @@ export function getDailyFortuneVariant(date: string, sign: string) {
     "先判斷這件事值不值得你多花力氣",
     "把今天的標準調回現實，而不是調到完美",
   ];
+  const openingAngles = [
+    "從一個今天可能遇到的具體小場景切入，不要用星座核心特質開頭",
+    "從身體或情緒的細微信號切入，再帶到星座課題",
+    "從工作、金錢或關係裡的一個現實選擇切入",
+    "從使用者心裡一句很日常的碎念切入，但不要重複星座內在聲音原句",
+    "從今天最容易誤判的訊號切入，讓星座特性藏在判斷方式裡",
+    "從一個需要取捨的瞬間切入，不要把整篇寫成自我價值確認",
+  ];
+  const signExpressionRules = [
+    "星座特性要換成今天的行為畫面，不要直接重複固定標籤",
+    "避免沿用昨天常見的核心句，改寫成新的情境和判斷",
+    "同一個星座課題只當底色，今天的主角必須是日期種子裡的場景",
+    "不要用同一組關鍵詞開場，先寫事件再寫心理聲音",
+    "把星座慣性寫成具體互動、支出、任務或身體反應",
+  ];
   const crystals = [
     { name: "白水晶", reason: "幫你把雜訊降下來，回到比較清楚的判斷" },
     { name: "月光石", reason: "陪你安放情緒，不急著把感受變成結論" },
@@ -379,6 +394,8 @@ export function getDailyFortuneVariant(date: string, sign: string) {
     bodySignal: pickFromSeed(bodySignals, seed, 61),
     bodyCare: pickFromSeed(bodyCare, seed, 67),
     adviceFocus: pickFromSeed(adviceFocuses, seed, 71),
+    openingAngle: pickFromSeed(openingAngles, seed, 73),
+    signExpressionRule: pickFromSeed(signExpressionRules, seed, 79),
     luckyAction: pickFromSeed(luckyActions, seed, 83),
     luckyColor: pickFromSeed(luckyColors, seed, 89),
     crystal: crystal.name,
@@ -550,6 +567,8 @@ export const fortuneRouter = router({
 - 身體訊號：${dailyVariant.bodySignal}
 - 身體照顧方式：${dailyVariant.bodyCare}
 - 今日策略焦點：${dailyVariant.adviceFocus}
+- 今日開場角度：${dailyVariant.openingAngle}
+- 星座表現方式：${dailyVariant.signExpressionRule}
 - 幸運小動作：${dailyVariant.luckyAction}
 - 幸運色：${dailyVariant.luckyColor}
 - 推薦水晶：${dailyVariant.crystal}
@@ -562,7 +581,8 @@ export const fortuneRouter = router({
 - 運勢要實際、給得出具體感受，不空泛。
 - 星座差異是主角，月相只是今天的背景節奏。每個欄位都要至少有 1 個地方明顯呼應該星座的內在聲音、優勢或課題。
 - 今天的月相名稱最多在 overall、crystalReason、advice 其中 2 個欄位明確出現；其他欄位可改用「起點感」「整理的氣氛」「適合收尾的節奏」等語感，但不要讓每個星座都像同一篇月相日記。
-- 星座特性要寫成使用者自己的內在聲音或日常慣性，不要只列特質名詞。請優先使用「今日星座寫作方向」裡的角度。
+- 星座特性要寫成使用者自己的內在聲音或日常慣性，不要只列特質名詞。請優先使用「今日星座寫作方向」裡的角度，但不要逐字或近似重複「內在聲音」原句。
+- overall 必須依「今日開場角度」切入，並依「星座表現方式」改寫星座特性；不要每次用該星座最固定的招牌詞開場，例如獅子座不要每天都寫「不夠亮／被看見」、雙魚座不要每天都寫「感覺很多／分不清是不是自己的」、處女座不要每天都寫「還不夠完整」。
 - love 要少一點教導感，多一點日常互動感；不要每次都只寫晚回訊息、小邀請或不要腦補。請依星座改寫成不同情境，例如界線、表達、確認需求、放下面子、少測試、少配合、說清楚。
 - career 必須同時寫到工作與財務，不可以只寫工作；不要每次都只寫報價、待收帳款或衝動消費。請依星座改寫成不同情境，例如曝光作品、整理流程、合作分工、資源分配、長期目標、半成品落地、接案承諾。
 - health 必須寫到身體感受和今天該怎麼對待身體；可以是肩頸、腸胃、睡眠、補水、散步、伸展或放下螢幕，但不要每次都收成待辦。
