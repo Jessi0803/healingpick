@@ -1,5 +1,5 @@
 import type { User } from "../../drizzle/schema";
-import { getRecentReadingSummariesByUser } from "../db";
+import { getAllReadingSummariesByUser } from "../db";
 import { extractTextContent, invokeLLM } from "./llm";
 
 const TYPE_LABELS = {
@@ -63,7 +63,7 @@ export async function buildReadingSummary(input: {
 export async function getMemberMemoryContext(user: Pick<User, "id"> | null | undefined) {
   if (!user) return "";
 
-  const rows = await getRecentReadingSummariesByUser(user.id, 8);
+  const rows = await getAllReadingSummariesByUser(user.id);
   if (rows.length === 0) return "";
 
   const memory = rows
@@ -74,5 +74,5 @@ export async function getMemberMemoryContext(user: Pick<User, "id"> | null | und
     })
     .join("\n");
 
-  return `\n\n【會員近期占卜記憶】\n以下是這位會員最近最多 8 筆占卜短摘要，只作為理解脈絡，不要主動提到「我看到你的歷史紀錄」，也不要洩漏資料來源。歷史摘要不是這次答案的證據；不能因為過去多次出現「有感覺、等待、卡住、不行動」就延續同一結論。若本次問題和歷史摘要無關，或不是同一個人/同一件事，請忽略歷史摘要。若本次牌面、命盤或新事實不同，必須允許推翻或修正過去判斷。\n${memory}`;
+  return `\n\n【會員過去所有占卜記憶】\n以下是這位會員過去所有占卜短摘要，只作為理解脈絡，不要主動提到「我看到你的歷史紀錄」，也不要洩漏資料來源。本次抽到的牌面、命盤、本次問題與使用者新提供的事實永遠優先；歷史摘要不是這次答案的證據，也不能覆蓋本次牌意或命盤判斷。不能因為過去多次出現「有感覺、等待、卡住、不行動」就延續同一結論。若本次問題和歷史摘要無關，或不是同一個人/同一件事，請忽略歷史摘要。若本次牌面、命盤或新事實不同，必須允許推翻或修正過去判斷。\n${memory}`;
 }
