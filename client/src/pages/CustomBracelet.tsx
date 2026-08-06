@@ -231,6 +231,26 @@ const PAGE_COPY: Record<
   },
 };
 
+const MODE_OPTIONS: Array<{
+  mode: BraceletMode;
+  href: string;
+  label: string;
+  note: string;
+}> = [
+  {
+    mode: 'general',
+    href: '/shop/custom-bracelet/general',
+    label: '一般客製化',
+    note: '需求 / 色系 / 手圍',
+  },
+  {
+    mode: 'numerology',
+    href: '/shop/custom-bracelet/numerology',
+    label: '生命靈數',
+    note: '生日 / 能量方向',
+  },
+];
+
 export default function CustomBraceletPage() {
   const [location] = useLocation();
   const mode: BraceletMode = location.includes('/numerology') ? 'numerology' : 'general';
@@ -458,6 +478,40 @@ export default function CustomBraceletPage() {
                   originalClassName="text-[12px] tracking-[0.08em] text-[#31353A]/40 line-through"
                   saleClassName="text-[18px] tracking-[0.08em] text-[#8F7957]"
                 />
+              </div>
+              <div
+                className="animate-fade-in-up mb-5 grid max-w-xl grid-cols-2 rounded-2xl border border-[#D1BE9B]/24 bg-white/50 p-1.5 shadow-[0_10px_28px_rgba(163,141,107,0.08)]"
+                style={{ animationDelay: '0.48s' }}
+              >
+                {MODE_OPTIONS.map((option) => {
+                  const active = mode === option.mode;
+                  return (
+                    <Link
+                      key={option.mode}
+                      href={option.href}
+                      className={`rounded-xl px-3 py-3 text-center transition-all duration-200 ${
+                        active
+                          ? 'bg-[#3D4144] text-[#FAF7F4] shadow-[0_8px_18px_rgba(61,65,68,0.16)]'
+                          : 'text-[#31353A]/68 hover:bg-[#D1BE9B]/14 hover:text-[#8A7250]'
+                      }`}
+                    >
+                      <span
+                        className="block text-[12px] tracking-[0.16em]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
+                      >
+                        {option.label}
+                      </span>
+                      <span
+                        className={`mt-1 block text-[10px] tracking-[0.08em] ${
+                          active ? 'text-[#FAF7F4]/72' : 'text-[#31353A]/45'
+                        }`}
+                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                      >
+                        {option.note}
+                      </span>
+                    </Link>
+                  );
+                })}
               </div>
               {copy.heroIntro && (
                 <div

@@ -39,6 +39,10 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
     title: `療癒水晶｜${SITE_NAME}`,
     description: '挑選水晶、療癒擺飾與能量小物，為生活放進一份安定、守護與儀式感。',
   },
+  '/shop/custom-bracelet': {
+    title: `客製化水晶手鍊｜${SITE_NAME}`,
+    description: '選擇一般客製化或生命靈數客製化，依照需求、手圍、色系與能量方向搭配專屬水晶手鍊。',
+  },
   '/shop/custom-bracelet/general': {
     title: `一般客製化手鍊｜${SITE_NAME}`,
     description: '依照需求、手圍、色系與喜歡的能量客製專屬水晶手鍊，提供顧客回饋實拍圖與客製化需求表單。',

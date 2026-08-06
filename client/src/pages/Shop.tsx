@@ -95,7 +95,7 @@ const CUSTOM_BRACELET_ENTRY = {
   note: "選不出來嗎？客製化一條專屬自己的手鍊",
   price: 1580,
   image: "/custom-bracelet/feedback-optimized/full/IMG_4832.webp",
-  href: "/shop/custom-bracelet/general",
+  href: "/shop/custom-bracelet",
 };
 
 const CUSTOM_BRACELETS = [

@@ -62,7 +62,7 @@ export const CUSTOM_BRACELET_RECOMMENDATION_PRODUCT: Product = {
   material: '依照需求客製搭配',
   price: 1580,
   priceLabel: 'NT$ 1,580 起',
-  href: '/shop/custom-bracelet/general',
+  href: '/shop/custom-bracelet',
   originalPrice: null,
   tag: '客製款',
   fitSummary: '適合想依照個人狀態、手圍與喜好客製搭配的你',
