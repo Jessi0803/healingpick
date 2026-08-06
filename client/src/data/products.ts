@@ -675,8 +675,13 @@ export const PRODUCTS: Product[] = [
       '如果你想要更貼近個人狀態的搭配,光羽之境會是可以私訊討論的客製方向。',
     imageZoom: 1,
     imagePosition: 'center center',
-    images: imgs('guang-yu-zhi-jing', 4),
-    img: '/products/guang-yu-zhi-jing/1.jpg',
+    images: [
+      '/products/guang-yu-zhi-jing/2.jpg',
+      '/products/guang-yu-zhi-jing/1.jpg',
+      '/products/guang-yu-zhi-jing/3.jpg',
+      '/products/guang-yu-zhi-jing/4.jpg',
+    ],
+    img: '/products/guang-yu-zhi-jing/2.jpg',
     features: [
       { emoji: '🪽', title: '客製化設計', desc: '依照個人狀態與喜好搭配,每一條都有自己的光。' },
       { emoji: '🖤', title: '黑金超七', desc: '呈現深色礦絲交錯的層次,象徵沉穩與守護。' },
