@@ -120,7 +120,13 @@ const CUSTOM_BRACELETS = [
 ];
 
 export default function ShopPage() {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState(() => {
+    if (typeof window === "undefined") return "all";
+    return new URLSearchParams(window.location.search).get("category") ===
+      CUSTOM_BRACELET_CATEGORY
+      ? CUSTOM_BRACELET_CATEGORY
+      : "all";
+  });
   const [sortBy, setSortBy] = useState<SortBy>("sales_desc");
   const { addItem } = useCart();
 

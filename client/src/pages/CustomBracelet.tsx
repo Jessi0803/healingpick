@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom';
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import { Link, useLocation } from 'wouter';
 import {
+  ArrowLeft,
   CalendarDays,
   Camera,
   ClipboardList,
@@ -250,6 +251,7 @@ const MODE_OPTIONS: Array<{
     note: '生日 / 能量方向',
   },
 ];
+const CUSTOM_BRACELET_CATEGORY_HREF = '/shop?category=custom-bracelet';
 
 export default function CustomBraceletPage() {
   const [location] = useLocation();
@@ -414,13 +416,13 @@ export default function CustomBraceletPage() {
       <div className="min-h-screen bg-[#FAF7F4] px-4 py-12 md:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 animate-fade-in-up">
-            <Link href="/shop">
+            <Link href={CUSTOM_BRACELET_CATEGORY_HREF}>
               <button
                 className="inline-flex items-center gap-2 border-none bg-transparent text-xs tracking-[0.2em] text-[#31353A]/62 transition-colors duration-300 hover:text-[#31353A]"
                 style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
-                <span>←</span>
-                返回療癒水晶
+                <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.6} />
+                返回客製款列表
               </button>
             </Link>
           </div>
@@ -565,6 +567,14 @@ export default function CustomBraceletPage() {
                     顧客回饋
                   </span>
                 </a>
+                <Link
+                  href={CUSTOM_BRACELET_CATEGORY_HREF}
+                  className="group inline-flex items-center gap-2 rounded-full border border-[#D1BE9B]/30 bg-white/42 px-5 py-3 text-xs tracking-[0.18em] text-[#31353A]/62 shadow-[0_10px_24px_rgba(163,141,107,0.05)] transition-all duration-300 hover:border-[#A38D6B]/42 hover:bg-white/72 hover:text-[#31353A] active:scale-95"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" strokeWidth={1.55} />
+                  返回客製款列表
+                </Link>
                 <span
                   className="text-[11px] tracking-[0.14em] text-[#31353A]/50"
                   style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
