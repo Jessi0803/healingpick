@@ -299,8 +299,8 @@ export default function ProductDetailPage() {
                   addItem({
                     slug: product.slug,
                     name: product.name,
-                    price: getDiscountedPrice(product.price),
-                    originalPrice: product.price,
+                    price: getDiscountedPrice(product.originalPrice ?? product.price),
+                    originalPrice: product.originalPrice ?? product.price,
                     img: product.img,
                   })
                 }

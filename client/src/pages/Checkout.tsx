@@ -138,8 +138,9 @@ export default function CheckoutPage() {
       address,
       items: [
         ...items.map(item => {
+          const product = findProduct(item.slug);
           const originalPrice =
-            item.originalPrice ?? findProduct(item.slug)?.price ?? item.price;
+            item.originalPrice ?? product?.originalPrice ?? product?.price ?? item.price;
           return {
             slug: item.slug,
             name: item.name,

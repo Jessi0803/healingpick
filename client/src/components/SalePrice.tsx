@@ -1,4 +1,4 @@
-import { formatTwd, getDiscountedPrice } from "@shared/productPricing";
+import { formatTwd } from "@shared/productPricing";
 
 type SalePriceProps = {
   price: number;
@@ -13,21 +13,16 @@ export default function SalePrice({
   price,
   originalPrice,
   saleClassName = "text-[#A38D6B]",
-  originalClassName = "text-[#31353A]/42 line-through",
+  originalClassName,
   className = "flex flex-wrap items-baseline gap-2",
   suffix = "",
 }: SalePriceProps) {
   const displayOriginalPrice = originalPrice ?? price;
-  const salePrice = getDiscountedPrice(price);
 
   return (
     <span className={className}>
-      <span className={originalClassName}>
+      <span className={saleClassName || originalClassName}>
         {formatTwd(displayOriginalPrice)}
-        {suffix}
-      </span>
-      <span className={saleClassName}>
-        {formatTwd(salePrice)}
         {suffix}
       </span>
     </span>

@@ -26,7 +26,7 @@ const navLinks = [
 ];
 
 const creditsHint = '每日免費額度於台灣時間 00:00 重置，已購買點數不會被清空。塔羅、紫微、Mochi 解夢、每日運勢用完免費額度後，每次解讀消耗 1 點。';
-const marqueeMessage = '🎀 客製化手鍊全館9折 · 一條免運 ✨';
+const marqueeMessage = '🎀 客製化手鍊 · 一條免運 ✨';
 const marqueeItems = Array.from({ length: 6 }, (_, index) => index);
 
 export default function Navbar() {

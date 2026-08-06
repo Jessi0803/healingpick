@@ -1,7 +1,5 @@
-export const SITE_WIDE_DISCOUNT_RATE = 0.9;
-
 export function getDiscountedPrice(price: number) {
-  return Math.max(1, Math.round(price * SITE_WIDE_DISCOUNT_RATE));
+  return Math.max(1, Math.round(price));
 }
 
 export function formatTwd(price: number) {
