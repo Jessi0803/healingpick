@@ -414,6 +414,9 @@ export default function ProductDetailPage() {
             </div>
           </Section>
 
+          {/* Section: Mochi 的小故事 */}
+          {mochiStorySection}
+
           <ProductCareNotice
             variant={
               CRYSTAL_ONLY_NOTICE_PRODUCT_SLUGS.has(product.slug)
@@ -421,9 +424,6 @@ export default function ProductDetailPage() {
                 : "standard"
             }
           />
-
-          {/* Section: Mochi 的小故事 */}
-          {mochiStorySection}
 
           {/* HealingPick 想對你說 */}
           <div className="w-full max-w-3xl mx-auto mt-8 mb-16 animate-fade-in-up">
