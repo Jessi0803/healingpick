@@ -37,6 +37,8 @@ function Router() {
       <Route path="/tarot/knowledge" component={TarotKnowledge} />
       <Route path="/tarot/reviews" component={TarotReviews} />
       <Route path="/tarot/teacher" component={TarotTeacher} />
+      <Route path="/tarot/human" component={Tarot} />
+      <Route path="/tarot/ai" component={Tarot} />
       <Route path="/tarot" component={Tarot} />
       <Route path="/ziwei" component={Ziwei} />
       <Route path="/dream" component={Dream} />

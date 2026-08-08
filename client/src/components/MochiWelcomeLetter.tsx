@@ -8,6 +8,7 @@ export default function MochiWelcomeLetter() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (window.location.pathname.startsWith("/tarot")) return;
     const hasSeenLetter = window.localStorage.getItem(STORAGE_KEY);
     if (!hasSeenLetter) setIsVisible(true);
   }, []);

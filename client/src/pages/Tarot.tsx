@@ -20,7 +20,7 @@ import {
   type PointerEvent,
   type RefObject,
 } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import PageLayout from "@/components/PageLayout";
 import { trpc } from "@/lib/trpc";
@@ -1234,6 +1234,7 @@ const REPEAT_READING_LOGIN_PROMPT = {
 };
 
 export default function TarotPage() {
+  const [location] = useLocation();
   const { isAuthenticated, login } = useAuth();
   const creditsQuery = trpc.credits.state.useQuery(undefined, {
     refetchOnWindowFocus: true,
@@ -1957,6 +1958,394 @@ export default function TarotPage() {
     );
   };
 
+  if (location === "/tarot") {
+    return (
+      <PageLayout>
+        <div className="tarot-entry-page min-h-screen px-4 py-20 md:px-8">
+          <style>{`
+            .tarot-entry-page {
+              --entry-ink: #34322d;
+              --entry-muted: rgba(52, 50, 45, 0.62);
+              --entry-line: rgba(164, 145, 104, 0.18);
+              --entry-gold: #9d7b3f;
+              --entry-sage: #557255;
+              position: relative;
+              overflow: hidden;
+              background:
+                radial-gradient(580px 360px at 50% 0%, rgba(255, 253, 248, 0.92), transparent 72%),
+                linear-gradient(180deg, rgba(255, 253, 248, 0.42), rgba(246, 241, 226, 0.22));
+            }
+            .tarot-entry-shell {
+              position: relative;
+              z-index: 1;
+              width: min(100%, 760px);
+              margin: 0 auto;
+            }
+            .tarot-entry-heading {
+              color: var(--entry-ink);
+              font-family: 'Noto Serif TC', serif;
+              font-weight: 200;
+              letter-spacing: 0.18em;
+            }
+            .tarot-entry-copy {
+              color: var(--entry-muted);
+              font-family: 'Noto Sans TC', sans-serif;
+              font-weight: 300;
+              letter-spacing: 0.08em;
+            }
+            .tarot-entry-options {
+              display: grid;
+              gap: 14px;
+              margin-top: 30px;
+            }
+            .tarot-entry-card {
+              position: relative;
+              display: grid;
+              min-height: 168px;
+              grid-template-columns: minmax(0, 1fr) auto;
+              gap: 16px;
+              align-items: center;
+              overflow: hidden;
+              border-radius: 22px;
+              border: 1px solid var(--entry-line);
+              padding: 22px;
+              text-decoration: none;
+              box-shadow: 0 18px 46px rgba(80, 72, 45, 0.1), inset 0 1px 0 rgba(255,255,255,0.82);
+              transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 180ms ease, border-color 180ms ease;
+            }
+            .tarot-entry-card:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 22px 54px rgba(80, 72, 45, 0.13), inset 0 1px 0 rgba(255,255,255,0.88);
+            }
+            .tarot-entry-card:active {
+              transform: scale(0.98);
+            }
+            .tarot-entry-card--human {
+              border-color: rgba(112, 138, 106, 0.28);
+              background: linear-gradient(145deg, rgba(255,253,248,0.94), rgba(235,245,232,0.78));
+            }
+            .tarot-entry-card--ai {
+              border-color: rgba(184, 145, 79, 0.28);
+              background: linear-gradient(145deg, rgba(255,253,248,0.94), rgba(248,240,219,0.8));
+            }
+            .tarot-entry-card-label {
+              display: inline-flex;
+              width: fit-content;
+              border-radius: 999px;
+              border: 1px solid currentColor;
+              padding: 5px 10px;
+              font-family: 'Noto Serif TC', serif;
+              font-size: 10px;
+              font-weight: 300;
+              letter-spacing: 0.14em;
+              line-height: 1.2;
+              opacity: 0.78;
+            }
+            .tarot-entry-card--human .tarot-entry-card-label,
+            .tarot-entry-card--human .tarot-entry-card-arrow {
+              color: var(--entry-sage);
+            }
+            .tarot-entry-card--ai .tarot-entry-card-label,
+            .tarot-entry-card--ai .tarot-entry-card-arrow {
+              color: var(--entry-gold);
+            }
+            .tarot-entry-card-title {
+              margin-top: 14px;
+              color: var(--entry-ink);
+              font-family: 'Noto Serif TC', serif;
+              font-size: 24px;
+              font-weight: 300;
+              letter-spacing: 0.14em;
+              line-height: 1.45;
+            }
+            .tarot-entry-card-note {
+              margin-top: 8px;
+              color: var(--entry-muted);
+              font-family: 'Noto Sans TC', sans-serif;
+              font-size: 12px;
+              font-weight: 300;
+              letter-spacing: 0.08em;
+              line-height: 1.8;
+            }
+            .tarot-entry-card-media {
+              display: grid;
+              width: 82px;
+              height: 82px;
+              place-items: center;
+              overflow: hidden;
+              border-radius: 999px;
+              border: 1px solid rgba(255,255,255,0.72);
+              background: rgba(255, 253, 248, 0.72);
+              box-shadow: 0 12px 28px rgba(80, 72, 45, 0.12);
+            }
+            .tarot-entry-card-media img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+            .tarot-entry-card-media--ai img {
+              width: 128%;
+              height: 128%;
+              object-fit: contain;
+            }
+            .tarot-entry-card-arrow {
+              grid-column: 1 / -1;
+              font-family: 'Noto Serif TC', serif;
+              font-size: 11px;
+              font-weight: 300;
+              letter-spacing: 0.16em;
+            }
+            @media (min-width: 760px) {
+              .tarot-entry-options {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+              }
+              .tarot-entry-card {
+                min-height: 240px;
+                grid-template-columns: minmax(0, 1fr);
+                align-content: space-between;
+              }
+              .tarot-entry-card-media {
+                position: absolute;
+                right: 20px;
+                top: 20px;
+              }
+              .tarot-entry-card-title {
+                max-width: 210px;
+              }
+            }
+            @media (max-width: 420px) {
+              .tarot-entry-page {
+                padding-top: 66px;
+              }
+              .tarot-entry-card {
+                min-height: 152px;
+                padding: 19px;
+              }
+              .tarot-entry-card-title {
+                font-size: 21px;
+              }
+              .tarot-entry-card-media {
+                width: 68px;
+                height: 68px;
+              }
+            }
+          `}</style>
+
+          <div className="tarot-entry-shell">
+            <div className="text-center">
+              <span
+                className="block text-[11px] uppercase tracking-[0.42em] text-[#D1BE9B]"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              >
+                Tarot Reading
+              </span>
+              <h1 className="tarot-entry-heading mt-4 text-2xl leading-[1.7] md:text-3xl">
+                選擇占卜方式
+              </h1>
+              <p className="tarot-entry-copy mx-auto mt-3 max-w-[28rem] text-[13px] leading-[2]">
+                真人深入聊，AI 快速看方向。
+              </p>
+            </div>
+
+            <div className="tarot-entry-options" aria-label="塔羅占卜方式">
+              <Link href="/tarot/human" className="tarot-entry-card tarot-entry-card--human">
+                <div>
+                  <span className="tarot-entry-card-label">日日好日合作</span>
+                  <h2 className="tarot-entry-card-title">真人占卜</h2>
+                  <p className="tarot-entry-card-note">
+                    真人老師一對一解讀，適合感情、事業與人生選擇想深入聊。
+                  </p>
+                </div>
+                <div className="tarot-entry-card-media">
+                  <img src="/gooday-logo.png" alt="Gooday 日日好日" />
+                </div>
+                <span className="tarot-entry-card-arrow">查看真人占卜詳情 ↓</span>
+              </Link>
+
+              <Link href="/tarot/ai" className="tarot-entry-card tarot-entry-card--ai">
+                <div>
+                  <span className="tarot-entry-card-label">免費即時</span>
+                  <h2 className="tarot-entry-card-title">AI 占卜</h2>
+                  <p className="tarot-entry-card-note">
+                    Mochi 即時抽牌，不用預約，適合先整理目前狀態與下一步。
+                  </p>
+                </div>
+                <div className="tarot-entry-card-media tarot-entry-card-media--ai">
+                  <img src="/tarot-mochi-cards.png" alt="Mochi 拿著塔羅牌" />
+                </div>
+                <span className="tarot-entry-card-arrow">開始 AI 塔羅占卜 ↓</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (location === "/tarot/human") {
+    return (
+      <PageLayout>
+        <div className="tarot-human-page min-h-screen px-4 py-20 md:px-8">
+          <style>{`
+            .tarot-human-page {
+              --human-ink: #34322d;
+              --human-muted: rgba(52, 50, 45, 0.64);
+              --human-sage: #557255;
+              --human-gold: #9d7b3f;
+              background:
+                radial-gradient(620px 380px at 50% 0%, rgba(235,245,232,0.66), transparent 70%),
+                linear-gradient(180deg, rgba(255,253,248,0.5), rgba(246,241,226,0.24));
+            }
+            .tarot-human-shell {
+              width: min(100%, 760px);
+              margin: 0 auto;
+            }
+            .tarot-human-panel {
+              overflow: hidden;
+              border-radius: 26px;
+              border: 1px solid rgba(112, 138, 106, 0.24);
+              background: linear-gradient(145deg, rgba(255,253,248,0.94), rgba(235,245,232,0.72));
+              box-shadow: 0 22px 58px rgba(80, 72, 45, 0.12), inset 0 1px 0 rgba(255,255,255,0.84);
+            }
+            .tarot-human-logo {
+              width: 70px;
+              height: 70px;
+              border-radius: 999px;
+              object-fit: cover;
+              box-shadow: 0 12px 28px rgba(80, 72, 45, 0.13);
+            }
+            .tarot-human-title {
+              color: var(--human-ink);
+              font-family: 'Noto Serif TC', serif;
+              font-weight: 300;
+              letter-spacing: 0.16em;
+            }
+            .tarot-human-copy {
+              color: var(--human-muted);
+              font-family: 'Noto Sans TC', sans-serif;
+              font-weight: 300;
+              letter-spacing: 0.08em;
+            }
+            .tarot-human-price {
+              border: 1px solid rgba(112, 138, 106, 0.2);
+              background: rgba(255,253,248,0.62);
+            }
+            .tarot-human-price strong {
+              color: #267345;
+            }
+            .tarot-human-line {
+              background: linear-gradient(135deg, #06c755, #4f7750);
+              box-shadow: 0 14px 32px rgba(6, 199, 85, 0.22);
+            }
+            .tarot-human-secondary {
+              border: 1px solid rgba(112, 138, 106, 0.22);
+              background: rgba(255,253,248,0.64);
+              color: var(--human-sage);
+            }
+            @media (max-width: 420px) {
+              .tarot-human-page {
+                padding-top: 58px;
+              }
+              .tarot-human-logo {
+                width: 58px;
+                height: 58px;
+              }
+            }
+          `}</style>
+
+          <div className="tarot-human-shell">
+            <Link
+              href="/tarot"
+              className="mb-5 inline-flex text-[12px] tracking-[0.14em] text-[#8A7250] no-underline"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              ← 回到占卜方式
+            </Link>
+
+            <section className="tarot-human-panel p-5 md:p-9">
+              <div className="flex items-center gap-4">
+                <img
+                  src="/gooday-logo.png"
+                  alt="Gooday 日日好日"
+                  className="tarot-human-logo"
+                />
+                <div>
+                  <span
+                    className="text-[11px] uppercase tracking-[0.34em] text-[#557255]"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    HealingPick × Gooday
+                  </span>
+                  <h1 className="tarot-human-title mt-3 text-2xl leading-[1.7] md:text-3xl">
+                    真人占卜
+                  </h1>
+                </div>
+              </div>
+
+              <p className="tarot-human-copy mt-6 text-[14px] leading-[2.1]">
+                由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。
+              </p>
+
+              <div className="mt-6 grid gap-3">
+                <div className="tarot-human-price rounded-2xl px-5 py-3.5">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <span
+                      className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      30 分鐘問到飽
+                    </span>
+                    <strong
+                      className="text-[20px] tracking-[0.08em]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
+                    >
+                      NT$500
+                    </strong>
+                  </div>
+                </div>
+                <div className="tarot-human-price rounded-2xl px-5 py-3.5">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <span
+                      className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      單題解讀
+                    </span>
+                    <strong
+                      className="text-[20px] tracking-[0.08em]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
+                    >
+                      NT$300
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <a
+                  href={OFFICIAL_LINE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="tarot-human-line inline-flex min-h-12 items-center justify-center rounded-full px-5 py-3 text-center text-[12px] tracking-[0.18em] text-white no-underline transition active:scale-[0.98]"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  LINE 預約真人占卜
+                </a>
+                <Link
+                  href="/tarot/reviews"
+                  className="tarot-human-secondary inline-flex min-h-12 items-center justify-center rounded-full px-5 py-3 text-center text-[12px] tracking-[0.18em] no-underline transition active:scale-[0.98]"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  查看顧客好評
+                </Link>
+              </div>
+            </section>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
+
   return (
     <PageLayout>
       <div className="min-h-screen py-12 px-4 md:px-8">
@@ -2121,6 +2510,9 @@ export default function TarotPage() {
                   max-width: 1060px;
                   text-align: left;
                   perspective: 1400px;
+                }
+                .tarot-choice-grid--single {
+                  max-width: 540px;
                 }
                 .tarot-choice-card {
                   --choice-rx: 0deg;
@@ -2787,7 +3179,7 @@ export default function TarotPage() {
                         fontWeight: 200,
                       }}
                     >
-                      塔羅牌占卜
+                      {location === "/tarot/ai" ? "AI 免費塔羅" : "塔羅牌占卜"}
                     </h1>
 
                     {/* Envelope anchored at a fixed distance from centre — absolute so h1 centering is never disturbed */}
@@ -2973,60 +3365,77 @@ export default function TarotPage() {
                     "The cards don't predict the future — they illuminate the
                     present."
                   </p>
-                  <div
-                    className="tarot-choice-shortcuts"
-                    aria-label="選擇塔羅占卜方式"
-                  >
-                    <p className="tarot-choice-shortcuts-label">
-                      選擇你的占卜方式
-                    </p>
-                    <div className="tarot-choice-shortcuts-grid">
-                      <button
-                        type="button"
-                        className="tarot-choice-shortcut tarot-choice-shortcut--human"
-                        onClick={() => handleChoiceShortcutClick("human")}
-                      >
-                        <span>
-                          <span className="tarot-choice-shortcut-title">
-                            真人塔羅占卜
+                  {location !== "/tarot/ai" ? (
+                    <div
+                      className="tarot-choice-shortcuts"
+                      aria-label="選擇塔羅占卜方式"
+                    >
+                      <p className="tarot-choice-shortcuts-label">
+                        選擇你的占卜方式
+                      </p>
+                      <div className="tarot-choice-shortcuts-grid">
+                        <button
+                          type="button"
+                          className="tarot-choice-shortcut tarot-choice-shortcut--human"
+                          onClick={() => handleChoiceShortcutClick("human")}
+                        >
+                          <span>
+                            <span className="tarot-choice-shortcut-title">
+                              真人塔羅占卜
+                            </span>
+                            <span className="tarot-choice-shortcut-note">
+                              Gooday 合作・一對一深入解讀
+                            </span>
                           </span>
-                          <span className="tarot-choice-shortcut-note">
-                            Gooday 合作・一對一深入解讀
+                          <span className="tarot-choice-shortcut-badge">
+                            付費
                           </span>
-                        </span>
-                        <span className="tarot-choice-shortcut-badge">
-                          付費
-                        </span>
-                        <span className="tarot-choice-shortcut-arrow">
-                          看真人方案 ↓
-                        </span>
-                      </button>
+                          <span className="tarot-choice-shortcut-arrow">
+                            看真人方案 ↓
+                          </span>
+                        </button>
 
-                      <button
-                        type="button"
-                        className="tarot-choice-shortcut tarot-choice-shortcut--ai"
-                        onClick={() => handleChoiceShortcutClick("ai")}
-                      >
-                        <span>
-                          <span className="tarot-choice-shortcut-title">
-                            AI 免費塔羅
+                        <button
+                          type="button"
+                          className="tarot-choice-shortcut tarot-choice-shortcut--ai"
+                          onClick={() => handleChoiceShortcutClick("ai")}
+                        >
+                          <span>
+                            <span className="tarot-choice-shortcut-title">
+                              AI 免費塔羅
+                            </span>
+                            <span className="tarot-choice-shortcut-note">
+                              Mochi 即時抽牌・不用預約
+                            </span>
                           </span>
-                          <span className="tarot-choice-shortcut-note">
-                            Mochi 即時抽牌・不用預約
+                          <span className="tarot-choice-shortcut-badge">
+                            免費
                           </span>
-                        </span>
-                        <span className="tarot-choice-shortcut-badge">
-                          免費
-                        </span>
-                        <span className="tarot-choice-shortcut-arrow">
-                          看 AI 方案 ↓
-                        </span>
-                      </button>
+                          <span className="tarot-choice-shortcut-arrow">
+                            看 AI 方案 ↓
+                          </span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <Link
+                      href="/tarot"
+                      className="mt-5 inline-flex text-[12px] tracking-[0.14em] text-[#8A7250] no-underline"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      ← 回到占卜方式
+                    </Link>
+                  )}
                 </div>
 
-                <div className="tarot-choice-grid">
+                <div
+                  className={`tarot-choice-grid ${
+                    location === "/tarot/ai" ? "tarot-choice-grid--single" : ""
+                  }`}
+                >
                   <article
                     ref={aiTarotChoiceRef}
                     className="tarot-choice-card tarot-choice-card--free"
@@ -3105,21 +3514,22 @@ export default function TarotPage() {
                     </div>
                   </article>
 
-                  <article
-                    ref={humanTarotChoiceRef}
-                    className="tarot-choice-card tarot-choice-card--human"
-                    onPointerMove={handleTarotChoiceMove}
-                    onPointerLeave={handleTarotChoiceLeave}
-                    style={
-                      {
-                        "--choice-rx": "0deg",
-                        "--choice-ry": "0deg",
-                        "--choice-mx": "50%",
-                        "--choice-my": "50%",
-                        order: 1,
-                      } as CSSProperties
-                    }
-                  >
+                  {location !== "/tarot/ai" && (
+                    <article
+                      ref={humanTarotChoiceRef}
+                      className="tarot-choice-card tarot-choice-card--human"
+                      onPointerMove={handleTarotChoiceMove}
+                      onPointerLeave={handleTarotChoiceLeave}
+                      style={
+                        {
+                          "--choice-rx": "0deg",
+                          "--choice-ry": "0deg",
+                          "--choice-mx": "50%",
+                          "--choice-my": "50%",
+                          order: 1,
+                        } as CSSProperties
+                      }
+                    >
                     <span
                       className="tarot-choice-badge tarot-choice-layer"
                       style={{ "--choice-z": "50px" } as CSSProperties}
@@ -3205,7 +3615,8 @@ export default function TarotPage() {
                         </Link>
                       </li>
                     </ul>
-                  </article>
+                    </article>
+                  )}
                 </div>
               </div>
             </div>
