@@ -2812,6 +2812,7 @@ export default function TarotPage() {
                         "--choice-ry": "0deg",
                         "--choice-mx": "50%",
                         "--choice-my": "50%",
+                        order: 2,
                       } as CSSProperties
                     }
                   >
@@ -2888,6 +2889,7 @@ export default function TarotPage() {
                         "--choice-ry": "0deg",
                         "--choice-mx": "50%",
                         "--choice-my": "50%",
+                        order: 1,
                       } as CSSProperties
                     }
                   >
