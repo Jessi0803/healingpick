@@ -1441,6 +1441,44 @@ export function getProductFeatureSummary(product: Product, limit = 2): string {
     .join(' ');
 }
 
+const PRODUCT_CARD_SUMMARIES: Record<string, string> = {
+  'custom-bracelet-general': '依需求客製招財、桃花、守護或勇氣。',
+  'test-product-1-twd': '測試購物車與結帳流程使用。',
+  'glimmer-fox': '守護界線，遠離消耗型人事物。',
+  'wish-fox': '招桃花、好人緣，也招來新機會。',
+  'courage-cat': '增添勇氣、自信與行動力。',
+  'wish-bunny': '好運、新開始，也守住心願方向。',
+  'calm-light': '整理思緒，讓節奏慢慢沉澱。',
+  'moonlight-wings': '帶來清晰智慧，守住前進方向。',
+  'wealth-stone': '招財、聚財，也招來貴人機會。',
+  'forest-bloom': '招財旺事業，也招來貴人緣。',
+  'starwish-fox-bracelet': '招桃花、好人緣，也帶招財寓意。',
+  'misty-starlight': '招桃花與人緣，也守住關係界線。',
+  'cheng-guang': '清晰思緒，增添自信行動力。',
+  'guang-yu-zhi-jing': '避小人、守護界線，沉穩落地。',
+  'hu-yu-wei-tian': '招桃花、人緣，也帶一點招財。',
+  'jiao-tang-ma-qi-duo': '安放心緒，讓節奏慢慢沉澱。',
+  'lan-jing-zhi-yao': '招財守護，也讓溝通更清楚。',
+  'liu-jin-zhi-yao': '招財聚財，增添自信行動力。',
+  'mei-yu-xin-yuan': '招桃花、好人緣，也累積豐盛。',
+  'nuan-yu': '提升人緣，也安放心緒與力量。',
+  'wei-lan-wei-guang': '溫柔溝通，也帶來清晰思緒。',
+  'wen-rou-yue-guang': '安放心緒，讓感受慢慢沉澱。',
+  'xi-guang-zhi-yong': '招財、自信，也穩定累積。',
+  'xin-yu-ni-nan': '安放心緒，整理內在重新開始。',
+  'xing-yao-zhi-xing': '避小人、守護界線，遠離消耗。',
+  'xue-jing-wen-rou': '安放心緒，整理狀態重新開始。',
+  'yue-ying-rou-guang': '守護界線，也增添自信行動力。',
+  'yue-ying-zhi-hua': '避小人與守護界線，穩住自己。',
+  'xi-guang': '招財聚財，也增添自信行動力。',
+  'nuan-ying': '招桃花與人緣，表達更柔和。',
+  'jing-lan': '清楚表達，整理思緒再開口。',
+};
+
+export function getProductCardSummary(product: Product): string {
+  return PRODUCT_CARD_SUMMARIES[product.slug] ?? product.fitSummary;
+}
+
 const PRODUCT_RECOMMENDATION_REASONS: Record<string, string> = {
   'glimmer-fox':
     '這款商品對應「安定、保護、界線」的能量，適合你在疲憊或容易被外界影響時，提醒自己先回到內在的安全感。',

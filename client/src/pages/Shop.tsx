@@ -22,8 +22,8 @@ import SalePrice from "@/components/SalePrice";
 import {
   PRODUCTS,
   CATEGORY_OPTIONS,
+  getProductCardSummary,
   getProductCategories,
-  getProductFitSummary,
   type Product,
 } from "@/data/products";
 import { CUSTOMER_FEEDBACK_PHOTO_ITEMS } from "@/data/customerFeedbackPhotos";
@@ -483,17 +483,8 @@ export default function ShopPage() {
                         </div>
 
                         <div>
-                          <div className="mb-0.5 flex min-h-5 flex-wrap items-center gap-1.5">
-                            <p
-                              className="text-[10px] tracking-[0.2em] text-[#8F7957]"
-                              style={{
-                                fontFamily: "Noto Serif TC, serif",
-                                fontWeight: 200,
-                              }}
-                            >
-                              {product.material}
-                            </p>
-                            {product.tag && (
+                          {product.tag && (
+                            <div className="mb-1 flex min-h-5 items-center">
                               <span
                                 className="rounded-full bg-[#D1BE9B]/28 px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-[#A38D6B]"
                                 style={{
@@ -503,8 +494,8 @@ export default function ShopPage() {
                               >
                                 {product.tag}
                               </span>
-                            )}
-                          </div>
+                            </div>
+                          )}
                           <h3
                             className="text-xs tracking-[0.12em] text-[#31353A]/86 mb-0.5"
                             style={{
@@ -515,13 +506,13 @@ export default function ShopPage() {
                             {product.name}
                           </h3>
                           <p
-                            className="text-[11px] leading-relaxed tracking-[0.08em] text-[#31353A]/62 mb-2 min-h-[2.75em]"
+                            className="mb-2 min-h-[2.7em] text-[11px] leading-[1.65] tracking-[0.06em] text-[#31353A]/62"
                             style={{
                               fontFamily: "Noto Sans TC, sans-serif",
                               fontWeight: 300,
                             }}
                           >
-                            {getProductFitSummary(product)}
+                            {getProductCardSummary(product)}
                           </p>
                           <div className="mb-3 flex min-h-8 items-center gap-2 pr-20">
                             <div className="flex min-w-0 flex-wrap items-center gap-2">
