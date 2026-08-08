@@ -1534,8 +1534,6 @@ export const CATEGORY_OPTIONS: { id: string; label: string }[] = [
   { id: 'love', label: '愛情人緣' },
   { id: 'career', label: '事業學業' },
   { id: 'wealth', label: '財運招福' },
-  { id: 'healing', label: '健康療癒' },
-  { id: 'sleep', label: '靜心安眠' },
   { id: 'courage', label: '勇氣自信' },
 ];
 
