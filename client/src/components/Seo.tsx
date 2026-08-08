@@ -4,7 +4,7 @@ import { findProduct } from '@/data/products';
 
 const SITE_URL = 'https://healingpick.com';
 const SITE_NAME = 'HealingPick 癒見好物';
-const DEFAULT_DESCRIPTION = '有些心事，可以先放進 Mochi 小宇宙。塔羅占卜、紫微斗數、Mochi 解夢、每日運勢、心靈療癒與能量水晶。';
+const DEFAULT_DESCRIPTION = 'HealingPick 癒見好物提供療癒水晶、客製化水晶手鍊、塔羅占卜、紫微斗數與每日運勢服務，依照你的狀態與願望，找到適合當下的能量陪伴。';
 
 const PAGE_META: Record<string, { title: string; description: string }> = {
   '/': {
