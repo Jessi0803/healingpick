@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Heart, Sparkles, X } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 
-const STORAGE_KEY = "healingpick-mochi-welcome-letter:v2";
+const STORAGE_KEY = "healingpick-mochi-welcome-letter:v3";
 
 export default function MochiWelcomeLetter() {
   const [isVisible, setIsVisible] = useState(false);
@@ -53,23 +53,27 @@ export default function MochiWelcomeLetter() {
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
             <p className="text-[15px] leading-[1.9] tracking-[0.12em] text-[#8A7250] sm:text-[16px]">
-              𓂃 𓈒𓏸 Mochi 給你的信 𓂃 𓈒𓏸
+              𓂃 𓈒𓏸 HealingPick × Gooday 日日好日 𓂃 𓈒𓏸
             </p>
 
-            <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-[#D1BE9B]/55 bg-[#FFF8E8]/80 text-[#A38D6B] shadow-[0_10px_28px_rgba(163,141,107,0.16)]">
-              <Heart size={24} strokeWidth={1.5} />
+            <div className="mx-auto grid h-16 w-16 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/55 bg-[#FFF8E8]/80 text-[#A38D6B] shadow-[0_10px_28px_rgba(163,141,107,0.16)]">
+              <img
+                src="/gooday-logo.png"
+                alt="Gooday 日日好日"
+                className="h-full w-full object-cover"
+              />
             </div>
 
             <p className="text-[16px] leading-[1.95] tracking-[0.08em] sm:text-[17px]">
-              𓂃 𓈒𓏸 HealingPick 的會員寶寶們看過來 𓂃 𓈒𓏸
+              𓂃 𓈒𓏸 真人占卜合作企劃 𓂃 𓈒𓏸
             </p>
 
             <p className="text-[14px] leading-[2] tracking-[0.06em] text-[#5B524C] sm:text-[15px]">
-              除了 AI 免費占卜之外，HealingPick 現在也有「真人占卜服務」啦 𓆩♡𓆪
+              除了 AI 免費占卜之外，HealingPick 這次與 Gooday 日日好日合作，帶來「真人占卜服務」啦 𓆩♡𓆪
             </p>
 
             <p className="text-[14px] leading-[2] tracking-[0.06em] text-[#5B524C] sm:text-[15px]">
-              這次邀請到擁有 30 年占卜經驗的占卜老師，擅長感情、事業、人際關係，以及各種人生小煩惱的解析 ☽⋆
+              由 Gooday 日日好日真人老師一對一解讀，擅長感情、事業、人際關係，以及各種人生小煩惱的解析 ☽⋆
             </p>
 
             <div className="mx-auto my-5 max-w-[22rem] rounded-[8px] border border-[#D1BE9B]/45 bg-[#FFF9F1]/82 px-4 py-4 text-[#6F5648] shadow-[0_12px_30px_rgba(163,141,107,0.1)]">

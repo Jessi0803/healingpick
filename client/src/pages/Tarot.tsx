@@ -1312,6 +1312,8 @@ export default function TarotPage() {
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const readingResultRef = useRef<HTMLDivElement | null>(null);
   const tarotStardustCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const humanTarotChoiceRef = useRef<HTMLElement | null>(null);
+  const aiTarotChoiceRef = useRef<HTMLElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
 
@@ -1846,6 +1848,12 @@ export default function TarotPage() {
     });
   };
 
+  const handleChoiceShortcutClick = (target: "human" | "ai") => {
+    const card =
+      target === "human" ? humanTarotChoiceRef.current : aiTarotChoiceRef.current;
+    card?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   const renderPopularQuestions = (nextStep?: Step) => {
     const activeCategory =
       QUESTION_CATEGORIES.find(
@@ -2009,6 +2017,102 @@ export default function TarotPage() {
                   box-shadow: inset 0 1px 0 rgba(255,255,255,0.88), 0 16px 38px rgba(120, 102, 70, 0.16);
                   backdrop-filter: blur(8px);
                 }
+                .tarot-choice-shortcuts {
+                  display: grid;
+                  gap: 10px;
+                  width: min(100%, 620px);
+                  margin: 22px auto 0;
+                  text-align: left;
+                }
+                .tarot-choice-shortcuts-label {
+                  margin: 0;
+                  color: rgba(49, 53, 58, 0.62);
+                  font-family: 'Noto Serif TC', serif;
+                  font-size: 12px;
+                  font-weight: 300;
+                  letter-spacing: 0.18em;
+                  line-height: 1.8;
+                  text-align: center;
+                }
+                .tarot-choice-shortcuts-grid {
+                  display: grid;
+                  gap: 10px;
+                }
+                .tarot-choice-shortcut {
+                  position: relative;
+                  display: grid;
+                  min-height: 78px;
+                  width: 100%;
+                  grid-template-columns: minmax(0, 1fr) auto;
+                  gap: 8px 14px;
+                  align-items: center;
+                  border-radius: 18px;
+                  border: 1px solid;
+                  padding: 14px 16px;
+                  text-align: left;
+                  box-shadow: inset 0 1px 0 rgba(255,255,255,0.82), 0 12px 28px rgba(80, 72, 45, 0.08);
+                  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+                }
+                .tarot-choice-shortcut:hover {
+                  transform: translateY(-2px);
+                  box-shadow: inset 0 1px 0 rgba(255,255,255,0.88), 0 16px 34px rgba(80, 72, 45, 0.12);
+                }
+                .tarot-choice-shortcut:active {
+                  transform: translateY(0);
+                }
+                .tarot-choice-shortcut--human {
+                  border-color: rgba(184, 205, 178, 0.58);
+                  background: linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(234, 243, 231, 0.72));
+                  color: #42663f;
+                }
+                .tarot-choice-shortcut--ai {
+                  border-color: rgba(216, 199, 155, 0.64);
+                  background: linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(247, 239, 219, 0.72));
+                  color: #8a7250;
+                }
+                .tarot-choice-shortcut-title {
+                  display: block;
+                  color: #31353a;
+                  font-family: 'Noto Serif TC', serif;
+                  font-size: 15px;
+                  font-weight: 400;
+                  letter-spacing: 0.14em;
+                  line-height: 1.35;
+                }
+                .tarot-choice-shortcut-note {
+                  display: block;
+                  margin-top: 5px;
+                  color: rgba(49, 53, 58, 0.58);
+                  font-family: 'Noto Sans TC', sans-serif;
+                  font-size: 11px;
+                  font-weight: 300;
+                  letter-spacing: 0.08em;
+                  line-height: 1.55;
+                }
+                .tarot-choice-shortcut-badge {
+                  align-self: start;
+                  border-radius: 999px;
+                  border: 1px solid currentColor;
+                  padding: 5px 9px;
+                  font-family: 'Noto Serif TC', serif;
+                  font-size: 10px;
+                  font-weight: 300;
+                  letter-spacing: 0.12em;
+                  line-height: 1.2;
+                  white-space: nowrap;
+                  opacity: 0.82;
+                }
+                .tarot-choice-shortcut-arrow {
+                  grid-column: 1 / -1;
+                  justify-self: start;
+                  color: currentColor;
+                  font-family: 'Noto Serif TC', serif;
+                  font-size: 10px;
+                  font-weight: 300;
+                  letter-spacing: 0.14em;
+                  line-height: 1;
+                  opacity: 0.72;
+                }
                 .tarot-choice-grid {
                   display: grid;
                   grid-template-columns: minmax(0, 1fr);
@@ -2125,6 +2229,47 @@ export default function TarotPage() {
                   font-weight: 300;
                   letter-spacing: 0.16em;
                   line-height: 1.35;
+                }
+                .tarot-choice-collab {
+                  display: inline-flex;
+                  width: fit-content;
+                  max-width: 100%;
+                  align-items: center;
+                  gap: 10px;
+                  margin: -10px 0 20px;
+                  border-radius: 999px;
+                  border: 1px solid rgba(184, 205, 178, 0.56);
+                  background: rgba(255, 253, 248, 0.84);
+                  padding: 7px 14px 7px 8px;
+                  color: #5f7d5a;
+                  box-shadow: 0 10px 24px rgba(111, 138, 106, 0.12);
+                  backdrop-filter: blur(8px);
+                }
+                .tarot-choice-collab-logo {
+                  width: 34px;
+                  height: 34px;
+                  flex: 0 0 34px;
+                  border-radius: 999px;
+                  object-fit: cover;
+                  box-shadow: 0 6px 16px rgba(80, 72, 45, 0.12);
+                }
+                .tarot-choice-collab-text {
+                  display: grid;
+                  gap: 1px;
+                  font-family: 'Noto Serif TC', serif;
+                  font-weight: 300;
+                  letter-spacing: 0.12em;
+                  line-height: 1.45;
+                }
+                .tarot-choice-collab-text span:first-child {
+                  color: #7f6a49;
+                  font-size: 10px;
+                  letter-spacing: 0.2em;
+                  text-transform: uppercase;
+                }
+                .tarot-choice-collab-text span:last-child {
+                  color: #42663f;
+                  font-size: 12px;
                 }
                 .tarot-choice-desc {
                   color: rgba(49, 53, 58, 0.68);
@@ -2500,6 +2645,12 @@ export default function TarotPage() {
                     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
                     gap: 34px;
                   }
+                  .tarot-choice-shortcuts {
+                    width: min(100%, 700px);
+                  }
+                  .tarot-choice-shortcuts-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                  }
                   .tarot-choice-card {
                     padding: 42px 38px 36px;
                   }
@@ -2517,6 +2668,32 @@ export default function TarotPage() {
                     margin-right: 70px;
                     font-size: 23px;
                     letter-spacing: 0.12em;
+                  }
+                  .tarot-choice-shortcuts {
+                    margin-top: 20px;
+                  }
+                  .tarot-choice-shortcut {
+                    min-height: 86px;
+                    border-radius: 16px;
+                    padding: 14px 15px;
+                  }
+                  .tarot-choice-shortcut-title {
+                    font-size: 14px;
+                  }
+                  .tarot-choice-shortcut-note {
+                    font-size: 10.5px;
+                  }
+                  .tarot-choice-collab {
+                    margin-top: -8px;
+                    padding-right: 12px;
+                  }
+                  .tarot-choice-collab-logo {
+                    width: 30px;
+                    height: 30px;
+                    flex-basis: 30px;
+                  }
+                  .tarot-choice-collab-text span:last-child {
+                    font-size: 11px;
                   }
                   .tarot-choice-card {
                     padding: 30px 20px 24px;
@@ -2796,13 +2973,62 @@ export default function TarotPage() {
                     "The cards don't predict the future — they illuminate the
                     present."
                   </p>
-                  <p className="tarot-choice-pill mt-5">
-                    我們提供兩種塔羅占卜方式 ✦
-                  </p>
+                  <div
+                    className="tarot-choice-shortcuts"
+                    aria-label="選擇塔羅占卜方式"
+                  >
+                    <p className="tarot-choice-shortcuts-label">
+                      選擇你的占卜方式
+                    </p>
+                    <div className="tarot-choice-shortcuts-grid">
+                      <button
+                        type="button"
+                        className="tarot-choice-shortcut tarot-choice-shortcut--human"
+                        onClick={() => handleChoiceShortcutClick("human")}
+                      >
+                        <span>
+                          <span className="tarot-choice-shortcut-title">
+                            真人塔羅占卜
+                          </span>
+                          <span className="tarot-choice-shortcut-note">
+                            Gooday 合作・一對一深入解讀
+                          </span>
+                        </span>
+                        <span className="tarot-choice-shortcut-badge">
+                          付費
+                        </span>
+                        <span className="tarot-choice-shortcut-arrow">
+                          看真人方案 ↓
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="tarot-choice-shortcut tarot-choice-shortcut--ai"
+                        onClick={() => handleChoiceShortcutClick("ai")}
+                      >
+                        <span>
+                          <span className="tarot-choice-shortcut-title">
+                            AI 免費塔羅
+                          </span>
+                          <span className="tarot-choice-shortcut-note">
+                            Mochi 即時抽牌・不用預約
+                          </span>
+                        </span>
+                        <span className="tarot-choice-shortcut-badge">
+                          免費
+                        </span>
+                        <span className="tarot-choice-shortcut-arrow">
+                          看 AI 方案 ↓
+                        </span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="tarot-choice-grid">
                   <article
+                    ref={aiTarotChoiceRef}
                     className="tarot-choice-card tarot-choice-card--free"
                     onPointerMove={handleTarotChoiceMove}
                     onPointerLeave={handleTarotChoiceLeave}
@@ -2880,6 +3106,7 @@ export default function TarotPage() {
                   </article>
 
                   <article
+                    ref={humanTarotChoiceRef}
                     className="tarot-choice-card tarot-choice-card--human"
                     onPointerMove={handleTarotChoiceMove}
                     onPointerLeave={handleTarotChoiceLeave}
@@ -2913,6 +3140,21 @@ export default function TarotPage() {
                     </h2>
 
                     <div
+                      className="tarot-choice-collab tarot-choice-layer"
+                      style={{ "--choice-z": "34px" } as CSSProperties}
+                    >
+                      <img
+                        src="/gooday-logo.png"
+                        alt="Gooday 日日好日"
+                        className="tarot-choice-collab-logo"
+                      />
+                      <span className="tarot-choice-collab-text">
+                        <span>HealingPick × Gooday</span>
+                        <span>日日好日合作占卜師</span>
+                      </span>
+                    </div>
+
+                    <div
                       className="tarot-choice-human-visual tarot-choice-layer"
                       style={{ "--choice-z": "24px" } as CSSProperties}
                     >
@@ -2944,7 +3186,7 @@ export default function TarotPage() {
                       style={{ "--choice-z": "18px" } as CSSProperties}
                     >
                       <li>
-                        師承白中道博士，30 年占卜經驗
+                        Gooday 日日好日真人老師，師承白中道博士，30 年占卜經驗
                         <Link
                           href="/tarot/teacher"
                           className="tarot-choice-inline-link"
