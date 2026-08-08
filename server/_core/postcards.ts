@@ -7,6 +7,7 @@ import {
   getUserById,
   incrementUserLoginCount,
   markPostcardNotified,
+  upsertUnopenedPostcard,
 } from "../db";
 import { extractTextContent, invokeLLM } from "./llm";
 
@@ -43,19 +44,8 @@ const FALLBACK_MESSAGES = [
 ];
 
 const CUSTOM_BRACELET_POSTCARD_LOGIN_COUNT = -20260708;
-const CUSTOM_BRACELET_POSTCARD_IMAGE_URL = "/custom-bracelet/feedback-optimized/full/IMG_4848.webp";
-const CUSTOM_BRACELET_POSTCARD_MESSAGE = `客製化水晶手鍊上架啦！！ ✦
-一條就免運！還贈送一包淨化碎石 𓂃
-老闆特地選用雜質棉絮很少的高品水晶
-所以整條手鏈看起來超亮！！  ♡
-累積5000+很多顧客好評 🧡
-
-有很多設計款還提供客製化
-當顧客在healingpick占卜完後
-網站會建議你現在適合什麼樣的水晶手鏈，去幫助你現在的心情跟困難 ✧
-
-想知道你現在適合哪一條？
-先去 HealingPick 占卜看看 𓆩♡𓆪`;
+const CUSTOM_BRACELET_POSTCARD_IMAGE_URL = "/postcards/bracelet-crystal-gift.png";
+const CUSTOM_BRACELET_POSTCARD_MESSAGE = "買一條手鏈，送以下水晶，數量有限送完為止。";
 
 const READING_TYPE_LABELS = {
   tarot: "塔羅",
@@ -266,7 +256,7 @@ function serializePostcard(postcard: UserPostcard | undefined): PostcardPayload 
 }
 
 async function ensureCustomBraceletPostcard(userId: number) {
-  return createScheduledPostcard({
+  return upsertUnopenedPostcard({
     userId,
     createdLoginCount: CUSTOM_BRACELET_POSTCARD_LOGIN_COUNT,
     deliverLoginCount: 0,

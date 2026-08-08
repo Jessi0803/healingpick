@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc";
 
 const recordedUsers = new Set<number>();
 const sessionRecordedPrefix = "healingpick-postcard-open:";
+const braceletGiftPostcardUrl = "/postcards/bracelet-crystal-gift.png";
 const floatingLetterStyles = `
 @keyframes hp-letter-float {
   0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
@@ -176,12 +177,13 @@ export default function PostcardMailbox() {
     const message = visiblePostcard?.message ?? "";
     return message.includes("\n") || message.length > 70;
   }, [visiblePostcard?.message]);
+  const isBraceletGiftPostcard = visiblePostcard?.imageUrl === braceletGiftPostcardUrl;
 
   useEffect(() => {
     let cancelled = false;
     setCompositedImageUrl("");
     setCompositedImageStatus("idle");
-    if (!imageUrl || !visiblePostcard?.message || isLongFormPostcard) return;
+    if (!imageUrl || !visiblePostcard?.message || isLongFormPostcard || isBraceletGiftPostcard) return;
     setCompositedImageStatus("loading");
 
     createPostcardImageUrl(imageUrl, visiblePostcard.message)
@@ -201,7 +203,7 @@ export default function PostcardMailbox() {
     return () => {
       cancelled = true;
     };
-  }, [imageUrl, isLongFormPostcard, visiblePostcard?.message]);
+  }, [imageUrl, isBraceletGiftPostcard, isLongFormPostcard, visiblePostcard?.message]);
 
   if (!isAuthenticated || !visiblePostcard) return null;
 
@@ -263,18 +265,20 @@ export default function PostcardMailbox() {
             aria-hidden="true"
           />
           <section className="relative w-full max-w-3xl overflow-hidden rounded-[8px] border border-white/70 bg-[#FFFDF8] shadow-[0_24px_70px_rgba(49,53,58,0.24)]">
-            <div className="absolute left-3 top-3 z-10 flex gap-2">
-              <a
-                href={originalUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="grid h-9 w-9 place-items-center rounded-full bg-white/82 text-[#6F5648] shadow-sm transition hover:bg-white"
-                aria-label="在 Google Drive 開啟原圖"
-                title="開啟原圖"
-              >
-                <ExternalLink size={17} />
-              </a>
-            </div>
+            {!isBraceletGiftPostcard && (
+              <div className="absolute left-3 top-3 z-10 flex gap-2">
+                <a
+                  href={originalUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="grid h-9 w-9 place-items-center rounded-full bg-white/82 text-[#6F5648] shadow-sm transition hover:bg-white"
+                  aria-label="在 Google Drive 開啟原圖"
+                  title="開啟原圖"
+                >
+                  <ExternalLink size={17} />
+                </a>
+              </div>
+            )}
             <button
               type="button"
               onClick={closePostcard}
@@ -284,8 +288,21 @@ export default function PostcardMailbox() {
               <X size={18} />
             </button>
 
-            <div className="relative aspect-[160/119] w-full bg-[#F8EFE5]">
-              {isLongFormPostcard ? (
+            <div
+              className={
+                isBraceletGiftPostcard
+                  ? "relative max-h-[82vh] w-full overflow-y-auto bg-[#F8EFE5]"
+                  : "relative aspect-[160/119] w-full bg-[#F8EFE5]"
+              }
+            >
+              {isBraceletGiftPostcard ? (
+                <img
+                  src={imageUrl}
+                  alt="買一條手鏈送水晶贈品活動明信片"
+                  className="mx-auto h-auto max-h-none w-full object-contain sm:max-h-[82vh] sm:w-auto"
+                  referrerPolicy="no-referrer"
+                />
+              ) : isLongFormPostcard ? (
                 <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#FFFBF5]">
                   <div
                     className="h-24 shrink-0 bg-cover bg-center sm:h-32"
@@ -331,7 +348,7 @@ export default function PostcardMailbox() {
                 </div>
               )}
             </div>
-            {!isLongFormPostcard && visiblePostcard.message.length > 70 && (
+            {!isBraceletGiftPostcard && !isLongFormPostcard && visiblePostcard.message.length > 70 && (
               <div className="border-t border-[#E8DCCB] bg-[#FFFDF8] px-5 py-4">
                 <p
                   className="mx-auto max-w-2xl whitespace-pre-wrap text-center text-[13px] leading-[1.9] tracking-[0.04em] text-[#6F5648] sm:text-[14px]"
@@ -341,7 +358,7 @@ export default function PostcardMailbox() {
                 </p>
               </div>
             )}
-            {!isLongFormPostcard && (
+            {!isBraceletGiftPostcard && !isLongFormPostcard && (
               <div className="border-t border-[#E8DCCB] bg-[#FFF9F1] px-4 py-2.5 sm:px-5 sm:py-3">
                 <p
                   className="text-center text-[11px] leading-[1.5] text-[#A38D6B] sm:text-xs"

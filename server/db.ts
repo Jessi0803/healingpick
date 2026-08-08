@@ -6,6 +6,7 @@ import {
   InsertReadingFollowup,
   InsertReading,
   InsertUser,
+  UserPostcard,
   anonymousSessions,
   appSettings,
   creditTransactions,
@@ -1042,6 +1043,27 @@ export async function createScheduledPostcard(data: InsertUserPostcard) {
     .onConflictDoNothing()
     .returning();
   return inserted[0];
+}
+
+export async function upsertUnopenedPostcard(data: InsertUserPostcard) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.execute(sql`
+    INSERT INTO "user_postcards"
+      ("userId", "createdLoginCount", "deliverLoginCount", "imageUrl", "message", "status", "notifiedAt")
+    VALUES
+      (${data.userId}, ${data.createdLoginCount}, ${data.deliverLoginCount}, ${data.imageUrl}, ${data.message}, ${data.status ?? "scheduled"}, ${data.notifiedAt ?? null})
+    ON CONFLICT ("userId", "createdLoginCount")
+    DO UPDATE SET
+      "deliverLoginCount" = EXCLUDED."deliverLoginCount",
+      "imageUrl" = EXCLUDED."imageUrl",
+      "message" = EXCLUDED."message",
+      "status" = EXCLUDED."status",
+      "notifiedAt" = COALESCE(EXCLUDED."notifiedAt", "user_postcards"."notifiedAt")
+    WHERE "user_postcards"."status" != 'opened'
+    RETURNING *
+  `);
+  return rows[0] as UserPostcard | undefined;
 }
 
 export async function getPostcardForDelivery(userId: number, deliverLoginCount: number) {
