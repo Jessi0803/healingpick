@@ -214,15 +214,28 @@ async function ensureProductOrdersTable(db: Db) {
       "customerName" text NOT NULL,
       "email" varchar(320) NOT NULL,
       "phone" varchar(32) NOT NULL,
-      "wristSize" varchar(32) NOT NULL,
-      "fit" "product_order_fit" NOT NULL,
-      "address" text NOT NULL,
+      "wristSize" varchar(32),
+      "fit" "product_order_fit",
+      "address" text,
       "items" text NOT NULL,
       "subtotal" integer NOT NULL,
       "freeGift" text DEFAULT '白水晶碎石一包' NOT NULL,
       "status" varchar(24) DEFAULT 'pending' NOT NULL,
+      "detailToken" varchar(64),
       "createdAt" timestamp DEFAULT now() NOT NULL
     )
+  `);
+  await db.execute(sql`
+    ALTER TABLE "product_orders" ALTER COLUMN "wristSize" DROP NOT NULL
+  `);
+  await db.execute(sql`
+    ALTER TABLE "product_orders" ALTER COLUMN "fit" DROP NOT NULL
+  `);
+  await db.execute(sql`
+    ALTER TABLE "product_orders" ALTER COLUMN "address" DROP NOT NULL
+  `);
+  await db.execute(sql`
+    ALTER TABLE "product_orders" ADD COLUMN IF NOT EXISTS "detailToken" varchar(64)
   `);
   await db.execute(sql`
     CREATE INDEX IF NOT EXISTS "product_orders_created_idx"

@@ -205,13 +205,14 @@ export const productOrders = pgTable("product_orders", {
   customerName: text("customerName").notNull(),
   email: varchar("email", { length: 320 }).notNull(),
   phone: varchar("phone", { length: 32 }).notNull(),
-  wristSize: varchar("wristSize", { length: 32 }).notNull(),
-  fit: productOrderFitEnum("fit").notNull(),
-  address: text("address").notNull(),
+  wristSize: varchar("wristSize", { length: 32 }),
+  fit: productOrderFitEnum("fit"),
+  address: text("address"),
   items: text("items").notNull(),
   subtotal: integer("subtotal").notNull(),
   freeGift: text("freeGift").default("白水晶碎石一包").notNull(),
   status: varchar("status", { length: 24 }).default("pending").notNull(),
+  detailToken: varchar("detailToken", { length: 64 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

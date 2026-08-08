@@ -81,9 +81,9 @@ type AdminShopOrderRow = {
   customerName: string;
   email: string;
   phone: string;
-  wristSize: string;
-  fit: "貼手" | "剛好" | "微鬆";
-  address: string;
+  wristSize: string | null;
+  fit: "貼手" | "剛好" | "微鬆" | null;
+  address: string | null;
   items: string;
   subtotal: number;
   freeGift: string;
@@ -1540,6 +1540,7 @@ function OrdersTable({ rows }: { rows: AdminTransactionRow[] }) {
 }
 
 function ShopOrdersTable({ rows }: { rows: AdminShopOrderRow[] }) {
+  const pendingDetailsText = "待補資料";
   return (
     <>
       <div className="md:hidden">
@@ -1571,7 +1572,7 @@ function ShopOrdersTable({ rows }: { rows: AdminShopOrderRow[] }) {
                     <div className="mt-1">{row.phone}</div>
                   </MobileInfoRow>
                   <MobileInfoRow label="手圍">
-                    {row.wristSize} · {row.fit}
+                    {row.wristSize && row.fit ? `${row.wristSize} · ${row.fit}` : pendingDetailsText}
                   </MobileInfoRow>
                   {items.some(hasCustomization) && (
                     <MobileInfoRow label="客製表單">
@@ -1587,7 +1588,7 @@ function ShopOrdersTable({ rows }: { rows: AdminShopOrderRow[] }) {
                       </div>
                     </MobileInfoRow>
                   )}
-                  <MobileInfoRow label="地址">{row.address}</MobileInfoRow>
+                  <MobileInfoRow label="地址">{row.address ?? pendingDetailsText}</MobileInfoRow>
                   <MobileInfoRow label="贈品">{row.freeGift}</MobileInfoRow>
                   <MobileInfoRow label="時間">{formatDate(row.createdAt)}</MobileInfoRow>
                 </div>
@@ -1624,7 +1625,7 @@ function ShopOrdersTable({ rows }: { rows: AdminShopOrderRow[] }) {
                       <div className="text-[#31353A]/82">{row.customerName}</div>
                       <div className="mt-1 break-words text-[11px] text-[#31353A]/48">{row.email}</div>
                       <div className="mt-1 text-[11px] text-[#31353A]/48">{row.phone}</div>
-                      <div className="mt-2 max-w-[220px] break-words leading-[1.7]">{row.address}</div>
+                      <div className="mt-2 max-w-[220px] break-words leading-[1.7]">{row.address ?? pendingDetailsText}</div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="space-y-1.5">
@@ -1647,8 +1648,8 @@ function ShopOrdersTable({ rows }: { rows: AdminShopOrderRow[] }) {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <div>{row.wristSize}</div>
-                      <div className="mt-1 text-[11px] text-[#A38D6B]">{row.fit}</div>
+                      <div>{row.wristSize ?? pendingDetailsText}</div>
+                      {row.fit && <div className="mt-1 text-[11px] text-[#A38D6B]">{row.fit}</div>}
                     </td>
                     <td className="px-4 py-3 text-[#A38D6B]">
                       NT$ {row.subtotal.toLocaleString("zh-TW")}

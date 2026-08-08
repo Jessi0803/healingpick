@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, SetStateAction, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { CheckCircle2, MessageCircle, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
@@ -19,6 +19,9 @@ type CustomerForm = {
   customerName: string;
   email: string;
   phone: string;
+};
+
+type OrderDetailsForm = {
   wristSize: string;
   fit: "貼手" | "剛好" | "微鬆";
   postalCode: string;
@@ -28,6 +31,11 @@ type CustomerForm = {
 };
 
 type CheckoutResult = "success" | "pending" | "error" | null;
+type DetailStep = {
+  orderId: number;
+  detailToken: string;
+  result: Exclude<CheckoutResult, null>;
+};
 type AtmPaymentInfo = {
   bankType: string;
   payNo: string;
@@ -41,6 +49,9 @@ const initialForm: CustomerForm = {
   customerName: "",
   email: "",
   phone: "",
+};
+
+const initialDetailsForm: OrderDetailsForm = {
   wristSize: "",
   fit: "剛好",
   postalCode: "",
@@ -52,7 +63,9 @@ const initialForm: CustomerForm = {
 export default function CheckoutPage() {
   const { items, subtotal, clearCart, openCart } = useCart();
   const [form, setForm] = useState<CustomerForm>(initialForm);
+  const [detailsForm, setDetailsForm] = useState<OrderDetailsForm>(initialDetailsForm);
   const [checkoutResult, setCheckoutResult] = useState<CheckoutResult>(null);
+  const [detailStep, setDetailStep] = useState<DetailStep | null>(null);
   const [atmPaymentInfo, setAtmPaymentInfo] = useState<AtmPaymentInfo | null>(null);
   const [isOpeningPayment, setIsOpeningPayment] = useState(false);
 
@@ -66,18 +79,31 @@ export default function CheckoutPage() {
       expireDate: params.get("expireDate") ?? "",
       tradeNo: params.get("tradeNo") ?? "",
     };
+    const orderId = Number(params.get("orderId"));
+    const detailToken = params.get("detailToken") ?? "";
     if (status === "success") {
-      setCheckoutResult("success");
+      if (Number.isInteger(orderId) && orderId > 0 && detailToken) {
+        setDetailStep({ orderId, detailToken, result: "success" });
+        setCheckoutResult(null);
+      } else {
+        setCheckoutResult("success");
+      }
       setAtmPaymentInfo(null);
       clearCart();
-      toast.success("付款完成，訂單已成立");
+      toast.success("付款完成，請補上手圍與收件資料。");
     } else if (status === "pending") {
-      setCheckoutResult("pending");
+      if (Number.isInteger(orderId) && orderId > 0 && detailToken) {
+        setDetailStep({ orderId, detailToken, result: "pending" });
+        setCheckoutResult(null);
+      } else {
+        setCheckoutResult("pending");
+      }
       setAtmPaymentInfo(nextAtmInfo.payNo ? nextAtmInfo : null);
       clearCart();
-      toast.info("訂單已建立，完成付款後我們會開始安排。");
+      toast.info("付款資訊已建立，請補上手圍與收件資料。");
     } else if (status === "error") {
       setCheckoutResult("error");
+      setDetailStep(null);
       setAtmPaymentInfo(null);
       toast.error("付款結果驗證失敗，請聯繫客服協助查核。");
     }
@@ -112,6 +138,19 @@ export default function CheckoutPage() {
     },
   });
 
+  const completeOrderDetailsMutation = trpc.shop.completeOrderDetails.useMutation({
+    onSuccess: () => {
+      setDetailsForm(initialDetailsForm);
+      setDetailStep(null);
+      setCheckoutResult("success");
+      setAtmPaymentInfo(null);
+      toast.success("資料已送出，訂單資料已完整。");
+    },
+    onError: error => {
+      toast.error(error.message || "資料送出失敗，請稍後再試。");
+    },
+  });
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (items.length === 0) {
@@ -123,19 +162,10 @@ export default function CheckoutPage() {
       toast.error(ruleError);
       return;
     }
-    const address = [
-      form.postalCode,
-      form.city,
-      form.district,
-      form.streetAddress,
-    ].join("");
     createOrderMutation.mutate({
       customerName: form.customerName,
       email: form.email,
       phone: form.phone,
-      wristSize: form.wristSize,
-      fit: form.fit,
-      address,
       items: [
         ...items.map(item => {
           const product = findProduct(item.slug);
@@ -159,6 +189,24 @@ export default function CheckoutPage() {
     });
   };
 
+  const handleDetailsSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    if (!detailStep) return;
+    const address = [
+      detailsForm.postalCode,
+      detailsForm.city,
+      detailsForm.district,
+      detailsForm.streetAddress,
+    ].join("");
+    completeOrderDetailsMutation.mutate({
+      orderId: detailStep.orderId,
+      detailToken: detailStep.detailToken,
+      wristSize: detailsForm.wristSize,
+      fit: detailsForm.fit,
+      address,
+    });
+  };
+
   return (
     <PageLayout>
       <div className="min-h-screen bg-[#FAF7F4] px-4 py-12 md:px-8">
@@ -178,7 +226,16 @@ export default function CheckoutPage() {
             </h1>
           </div>
 
-          {checkoutResult ? (
+          {detailStep ? (
+            <OrderDetailsPanel
+              form={detailsForm}
+              atmPaymentInfo={atmPaymentInfo}
+              isSubmitting={completeOrderDetailsMutation.isPending}
+              paymentResult={detailStep.result}
+              onSubmit={handleDetailsSubmit}
+              onChange={setDetailsForm}
+            />
+          ) : checkoutResult ? (
             <OrderResultPanel result={checkoutResult} atmPaymentInfo={atmPaymentInfo} />
           ) : items.length === 0 ? (
             <section className="rounded-2xl border border-dashed border-[#D1BE9B]/35 bg-white/45 px-6 py-14 text-center">
@@ -216,7 +273,7 @@ export default function CheckoutPage() {
                       fontWeight: 300,
                     }}
                   >
-                    收件與手圍資料
+                    付款聯絡資料
                   </p>
                 </div>
 
@@ -247,84 +304,13 @@ export default function CheckoutPage() {
                     }
                     required
                   />
-                  <OrderInput
-                    label="手圍大小"
-                    placeholder="例如 15.5 cm"
-                    value={form.wristSize}
-                    onChange={wristSize =>
-                      setForm(current => ({ ...current, wristSize }))
-                    }
-                    hint="手圍量法：拿軟尺平貼手腕繞一圈量測。沒有軟尺時，可以用棉線或紙條繞手圍，用筆做記號後，再用一般直尺量那段長度。"
-                    required
-                  />
                 </div>
 
-                <div className="mt-4">
-                  <label className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
-                    配戴鬆緊
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(["貼手", "剛好", "微鬆"] as const).map(fit => (
-                      <button
-                        key={fit}
-                        type="button"
-                        onClick={() =>
-                          setForm(current => ({ ...current, fit }))
-                        }
-                        className={`rounded-full border px-3 py-2.5 text-xs tracking-[0.14em] transition ${
-                          form.fit === fit
-                            ? "border-[#31353A] bg-[#31353A] text-[#FAF7F4]"
-                            : "border-[#D1BE9B]/28 bg-white/40 text-[#31353A]/68 hover:border-[#D1BE9B]/60"
-                        }`}
-                      >
-                        {fit}
-                      </button>
-                    ))}
-                  </div>
+                <div className="mt-5 rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/58 px-4 py-3">
+                  <p className="text-[12px] leading-[1.9] tracking-[0.06em] text-[#31353A]/62">
+                    手圍大小與收件地址會在付款頁完成後填寫。付款成功或建立 ATM 轉帳資訊後，系統會帶你回來補資料。
+                  </p>
                 </div>
-
-                <fieldset className="mt-5">
-                  <legend className="mb-3 text-[11px] tracking-[0.16em] text-[#A38D6B]">
-                    收件地址 <span className="text-[#D66A62]">*</span>
-                  </legend>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <AddressInput
-                      value={form.postalCode}
-                      onChange={postalCode =>
-                        setForm(current => ({ ...current, postalCode }))
-                      }
-                      placeholder="郵遞區號（如 100）"
-                      inputMode="numeric"
-                      autoComplete="postal-code"
-                    />
-                    <AddressInput
-                      value={form.city}
-                      onChange={city =>
-                        setForm(current => ({ ...current, city }))
-                      }
-                      placeholder="縣市（如 台北市）"
-                      autoComplete="address-level1"
-                    />
-                    <AddressInput
-                      value={form.district}
-                      onChange={district =>
-                        setForm(current => ({ ...current, district }))
-                      }
-                      placeholder="鄉鎮市區（如 信義區）"
-                      autoComplete="address-level2"
-                      className="sm:col-span-2"
-                    />
-                    <AddressInput
-                      value={form.streetAddress}
-                      onChange={streetAddress =>
-                        setForm(current => ({ ...current, streetAddress }))
-                      }
-                      placeholder="路名、巷號、門牌（如 信義路五段7號）"
-                      autoComplete="street-address"
-                      className="sm:col-span-2"
-                    />
-                  </div>
-                </fieldset>
               </section>
 
               <aside className="h-fit rounded-2xl border border-[#D1BE9B]/20 bg-white/55 p-5">
@@ -579,6 +565,167 @@ function OrderResultPanel({
         </a>
       </div>
     </section>
+  );
+}
+
+function OrderDetailsPanel({
+  form,
+  atmPaymentInfo,
+  isSubmitting,
+  paymentResult,
+  onSubmit,
+  onChange,
+}: {
+  form: OrderDetailsForm;
+  atmPaymentInfo: AtmPaymentInfo | null;
+  isSubmitting: boolean;
+  paymentResult: Exclude<CheckoutResult, null>;
+  onSubmit: (event: FormEvent) => void;
+  onChange: (updater: SetStateAction<OrderDetailsForm>) => void;
+}) {
+  return (
+    <form
+      onSubmit={onSubmit}
+      className="mx-auto max-w-3xl rounded-2xl border border-[#D1BE9B]/25 bg-white/58 px-5 py-8 shadow-[0_18px_48px_rgba(49,53,58,0.06)] md:px-8"
+    >
+      <div className="mb-6 text-center">
+        <p
+          className="mb-2 text-[10px] uppercase tracking-[0.32em] text-[#D1BE9B]"
+          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+        >
+          Shipping Details
+        </p>
+        <h2
+          className="text-2xl tracking-[0.2em] text-[#31353A] md:text-3xl"
+          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+        >
+          補上手圍與收件資料
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-sm leading-[2] tracking-[0.08em] text-[#31353A]/62">
+          {paymentResult === "success"
+            ? "付款已完成，請填寫製作與出貨需要的資料。"
+            : "ATM 付款資訊已建立，請先保存帳號，並補上製作與出貨資料。"}
+        </p>
+      </div>
+
+      {paymentResult === "pending" && atmPaymentInfo?.payNo && (
+        <div className="mb-6 rounded-xl border border-[#D1BE9B]/22 bg-[#FAF7F4]/78 px-5 py-4">
+          <p className="text-[11px] tracking-[0.18em] text-[#A38D6B]">
+            ATM 虛擬帳號
+          </p>
+          <div className="mt-3 grid gap-2 text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/72">
+            {atmPaymentInfo.bankType && (
+              <InfoLine label="銀行代碼" value={atmPaymentInfo.bankType} />
+            )}
+            <InfoLine label="繳費帳號" value={atmPaymentInfo.payNo} />
+            {atmPaymentInfo.expireDate && (
+              <InfoLine label="繳費期限" value={atmPaymentInfo.expireDate} />
+            )}
+            {atmPaymentInfo.tradeNo && (
+              <InfoLine label="付款單號" value={atmPaymentInfo.tradeNo} />
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <OrderInput
+          label="手圍大小"
+          placeholder="例如 15.5 cm"
+          value={form.wristSize}
+          onChange={wristSize => onChange(current => ({ ...current, wristSize }))}
+          hint="手圍量法：拿軟尺平貼手腕繞一圈量測。沒有軟尺時，可以用棉線或紙條繞手圍，用筆做記號後，再用一般直尺量那段長度。"
+          required
+        />
+      </div>
+
+      <div className="mt-4">
+        <label className="mb-2 block text-[11px] tracking-[0.16em] text-[#A38D6B]">
+          配戴鬆緊
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          {(["貼手", "剛好", "微鬆"] as const).map(fit => (
+            <button
+              key={fit}
+              type="button"
+              onClick={() => onChange(current => ({ ...current, fit }))}
+              className={`rounded-full border px-3 py-2.5 text-xs tracking-[0.14em] transition ${
+                form.fit === fit
+                  ? "border-[#31353A] bg-[#31353A] text-[#FAF7F4]"
+                  : "border-[#D1BE9B]/28 bg-white/40 text-[#31353A]/68 hover:border-[#D1BE9B]/60"
+              }`}
+            >
+              {fit}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <fieldset className="mt-5">
+        <legend className="mb-3 text-[11px] tracking-[0.16em] text-[#A38D6B]">
+          收件地址 <span className="text-[#D66A62]">*</span>
+        </legend>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <AddressInput
+            value={form.postalCode}
+            onChange={postalCode => onChange(current => ({ ...current, postalCode }))}
+            placeholder="郵遞區號（如 100）"
+            inputMode="numeric"
+            autoComplete="postal-code"
+          />
+          <AddressInput
+            value={form.city}
+            onChange={city => onChange(current => ({ ...current, city }))}
+            placeholder="縣市（如 台北市）"
+            autoComplete="address-level1"
+          />
+          <AddressInput
+            value={form.district}
+            onChange={district => onChange(current => ({ ...current, district }))}
+            placeholder="鄉鎮市區（如 信義區）"
+            autoComplete="address-level2"
+            className="sm:col-span-2"
+          />
+          <AddressInput
+            value={form.streetAddress}
+            onChange={streetAddress => onChange(current => ({ ...current, streetAddress }))}
+            placeholder="路名、巷號、門牌（如 信義路五段7號）"
+            autoComplete="street-address"
+            className="sm:col-span-2"
+          />
+        </div>
+      </fieldset>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="rounded-full bg-[#31353A] px-6 py-3.5 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#31353A]/10 transition hover:bg-[#D1BE9B] hover:text-[#31353A] disabled:cursor-not-allowed disabled:opacity-50"
+          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+        >
+          {isSubmitting ? "資料送出中" : "送出出貨資料"}
+        </button>
+        <a
+          href={LINE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-[#D1BE9B]/35 px-6 py-3 text-xs tracking-[0.18em] text-[#8F7957] transition hover:bg-white/65"
+          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+        >
+          <MessageCircle size={15} strokeWidth={1.7} />
+          聯繫 LINE
+        </a>
+      </div>
+    </form>
+  );
+}
+
+function InfoLine({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <span className="text-[#31353A]/48">{label}</span>
+      <span className="break-all font-medium text-[#31353A]">{value}</span>
+    </div>
   );
 }
 

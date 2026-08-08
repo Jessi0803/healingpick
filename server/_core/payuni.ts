@@ -38,8 +38,8 @@ export function assertPayuniConfigured() {
 
 function allowedPaymentTools() {
   return {
-    Credit: 1,
     ApplePay: 1,
+    Credit: 1,
     ATM: 1,
   };
 }
@@ -274,34 +274,48 @@ async function markProductOrderPaidFromPayuniResult(data: Record<string, string>
   if (!order) {
     return { updated: false, reason: "order_not_found" };
   }
-  if (order.status === "paid") {
+  if (order.status === "paid" || order.status === "paid_pending_details") {
     return { updated: false, reason: "already_paid" };
   }
   if (Number(data.TradeAmt) !== order.subtotal) {
     return { updated: false, reason: "amount_mismatch" };
   }
 
+  const detailsCompleted = Boolean(order.wristSize && order.fit && order.address);
+  const nextStatus = detailsCompleted ? "paid" : "paid_pending_details";
   await db
     .update(productOrders)
-    .set({ status: "paid" })
+    .set({ status: nextStatus })
     .where(eq(productOrders.id, parsedTrade.orderId));
 
   if (ENV.ownerLineUserId) {
     const itemSummary = formatProductOrderItems(order.items);
+    const message = detailsCompleted
+      ? [
+          "HealingPick 有新的已付款商品訂單",
+          `訂單編號：#${order.id}`,
+          `金額：NT$ ${order.subtotal.toLocaleString("zh-TW")}`,
+          `姓名：${order.customerName}`,
+          `Email：${order.email}`,
+          `電話：${order.phone}`,
+          `手圍：${order.wristSize}（${order.fit}）`,
+          `商品：${itemSummary}`,
+          `收件地址：${order.address}`,
+          `付款單號：${data.TradeNo ?? data.MerTradeNo ?? "未提供"}`,
+        ]
+      : [
+          "HealingPick 有新的已付款商品訂單，待補手圍與收件地址",
+          `訂單編號：#${order.id}`,
+          `金額：NT$ ${order.subtotal.toLocaleString("zh-TW")}`,
+          `姓名：${order.customerName}`,
+          `Email：${order.email}`,
+          `電話：${order.phone}`,
+          `商品：${itemSummary}`,
+          `付款單號：${data.TradeNo ?? data.MerTradeNo ?? "未提供"}`,
+        ];
     const sent = await pushLineTextMessage(
       ENV.ownerLineUserId,
-      [
-        "HealingPick 有新的已付款商品訂單",
-        `訂單編號：#${order.id}`,
-        `金額：NT$ ${order.subtotal.toLocaleString("zh-TW")}`,
-        `姓名：${order.customerName}`,
-        `Email：${order.email}`,
-        `電話：${order.phone}`,
-        `手圍：${order.wristSize}（${order.fit}）`,
-        `商品：${itemSummary}`,
-        `收件地址：${order.address}`,
-        `付款單號：${data.TradeNo ?? data.MerTradeNo ?? "未提供"}`,
-      ].join("\n")
+      message.join("\n")
     );
     if (!sent) {
       console.warn("[PAYUNi] Owner LINE notification was not sent", {
@@ -345,9 +359,19 @@ function buildPayuniReturnUrl(input: {
   path: string;
   status: "success" | "pending";
   result: Record<string, string>;
+  orderDetails?: {
+    orderId: number;
+    detailToken: string | null;
+  };
 }) {
   const target = new URL(`${input.baseUrl}${input.path}`);
   target.searchParams.set("payuni", input.status);
+  if (input.orderDetails) {
+    target.searchParams.set("orderId", String(input.orderDetails.orderId));
+    if (input.orderDetails.detailToken) {
+      target.searchParams.set("detailToken", input.orderDetails.detailToken);
+    }
+  }
 
   if (input.status === "pending") {
     const bankType = input.result.BankType;
@@ -390,8 +414,24 @@ export async function handlePayuniReturn(req: Request, res: Response) {
     const result = verifyAndDecryptPayuniPost(req.body);
     const isPaid = result.Status === "SUCCESS" && result.TradeStatus === "1";
     const status = isPaid ? "success" : "pending";
-    const path = result.MerTradeNo?.startsWith("HS") ? "/checkout" : "/buy";
-    return res.type("html").send(redirectHtml(buildPayuniReturnUrl({ baseUrl, path, status, result })));
+    const productTrade = parseProductMerTradeNo(result.MerTradeNo ?? "");
+    const path = productTrade ? "/checkout" : "/buy";
+    let orderDetails: { orderId: number; detailToken: string | null } | undefined;
+    if (productTrade) {
+      const db = await getDb();
+      const rows = db
+        ? await db
+            .select({ detailToken: productOrders.detailToken })
+            .from(productOrders)
+            .where(eq(productOrders.id, productTrade.orderId))
+            .limit(1)
+        : [];
+      orderDetails = {
+        orderId: productTrade.orderId,
+        detailToken: rows[0]?.detailToken ?? null,
+      };
+    }
+    return res.type("html").send(redirectHtml(buildPayuniReturnUrl({ baseUrl, path, status, result, orderDetails })));
   } catch (error) {
     console.error("[PAYUNi] Return error:", error);
     return res.type("html").send(redirectHtml(`${baseUrl}/buy?payuni=error`));
