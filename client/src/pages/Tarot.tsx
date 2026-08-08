@@ -2083,6 +2083,10 @@ export default function TarotPage() {
               height: 100%;
               object-fit: cover;
             }
+            .tarot-entry-card-media--human {
+              width: 104px;
+              height: 104px;
+            }
             .tarot-entry-card-media--ai img {
               width: 128%;
               height: 128%;
@@ -2128,6 +2132,10 @@ export default function TarotPage() {
                 width: 68px;
                 height: 68px;
               }
+              .tarot-entry-card-media--human {
+                width: 88px;
+                height: 88px;
+              }
             }
           `}</style>
 
@@ -2156,7 +2164,7 @@ export default function TarotPage() {
                     真人老師一對一解讀，適合感情、事業與人生選擇想深入聊。
                   </p>
                 </div>
-                <div className="tarot-entry-card-media">
+                <div className="tarot-entry-card-media tarot-entry-card-media--human">
                   <img src="/gooday-logo.png" alt="Gooday 日日好日" />
                 </div>
                 <span className="tarot-entry-card-arrow">查看真人占卜詳情 ↓</span>
@@ -2208,8 +2216,8 @@ export default function TarotPage() {
               box-shadow: 0 22px 58px rgba(80, 72, 45, 0.12), inset 0 1px 0 rgba(255,255,255,0.84);
             }
             .tarot-human-logo {
-              width: 70px;
-              height: 70px;
+              width: 92px;
+              height: 92px;
               border-radius: 999px;
               object-fit: cover;
               box-shadow: 0 12px 28px rgba(80, 72, 45, 0.13);
@@ -2247,8 +2255,8 @@ export default function TarotPage() {
                 padding-top: 58px;
               }
               .tarot-human-logo {
-                width: 58px;
-                height: 58px;
+                width: 76px;
+                height: 76px;
               }
             }
           `}</style>
