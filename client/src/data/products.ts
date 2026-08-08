@@ -1276,7 +1276,7 @@ export const PRODUCTS: Product[] = [
     category: 'protect',
     categories: ['protect', 'sleep'],
     material: '銀曜石・月光石・白水晶',
-    price: 1380,
+    price: 1580,
     originalPrice: null,
     tag: null,
     fitSummary: '適合喜歡黑白灰色調、星花墜飾與穩定守護感的你',
