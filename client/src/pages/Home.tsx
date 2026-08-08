@@ -114,7 +114,7 @@ const CrystalCitrine = () => (
 const features = [
   {
     icon: "✦",
-    title: "客製化療癒水晶",
+    title: "客製化能量水晶",
     subtitle: "Custom Healing Crystals",
     desc: "依照你的狀態與願望，挑選適合的水晶能量，陪你走過當下的課題。",
     href: "/shop",
@@ -167,20 +167,20 @@ const altarData: Record<
 > = {
   purple: {
     tag: "薰衣草紫水晶簇",
-    hz: "432Hz ｜ 頂輪淨化",
-    title: "靜心避難所：撫平焦慮與失眠",
+    hz: "432Hz ｜ 思緒留白",
+    title: "靜心小角落：整理思緒與安放心緒",
     description:
-      "紫水晶擁有極高的振動頻率，能溫和、快速地沉澱過載的思緒。若你近期常感到緊繃、疲憊或夜晚難以入眠，這份紫色光芒將為你構築一個溫和的心靈保護界限，讓你安然呼吸、重拾深層睡眠。",
+      "紫水晶常被視為智慧與專注的代表晶石，帶來理性與清晰的能量，陪伴整理思緒與專注內在。若你近期覺得腦中聲音太多，這份紫色光芒會像一個安靜界線，提醒你把注意力慢慢收回自己身上。",
     bgGradient:
       "linear-gradient(135deg, #F2EDE8 0%, #EDE8E2 45%, #E6E0ED 100%)",
     glowColor: "rgba(160, 142, 195, 0.45)",
   },
   rose: {
     tag: "馬達加斯加粉晶",
-    hz: "528Hz ｜ 心輪復甦",
-    title: "溫柔的擁抱：撫平遺憾，接納脆弱",
+    hz: "528Hz ｜ 溫柔連結",
+    title: "溫柔的擁抱：招桃花與好人緣",
     description:
-      "粉晶帶來無條件的愛與療癒。它輕柔地觸碰那些在拉扯感情中留下的微小傷口，陪伴你接納生活中的不完美與脆弱。當心輪重新開啟，你會發現本屬於你的安全感與溫暖人緣，正慢慢流回身邊。",
+      "粉晶常被視為招桃花、人緣與溫柔魅力的代表晶石。它不是要你討好誰，而是提醒你把自己的柔軟與吸引力自然展現出來，讓關係互動多一點親和與舒服的距離。",
     bgGradient:
       "linear-gradient(135deg, #F2EDE8 0%, #EDE0D8 42%, #EDE8E2 100%)",
     glowColor: "rgba(234, 168, 172, 0.5)",
@@ -188,9 +188,9 @@ const altarData: Record<
   citrine: {
     tag: "天然黃水晶原礦",
     hz: "396Hz ｜ 太陽神經叢能量",
-    title: "豐盛顯化：提振自信與財富磁場",
+    title: "豐盛顯化：招財與自信光芒",
     description:
-      "黃水晶對應你的意志力與財富中心。如果你正面臨轉職卡關、專案瓶頸或缺乏行動力，黃水晶的璀璨光芒能點燃你內心的熱情、驅散猶豫不決的雜音，在清明理智中顯化你本應獲得的豐盛回饋。",
+      "黃水晶常被視為招財、聚財與自我價值的代表晶石。如果你正在累積工作成果、整理金錢目標或需要行動亮度，它會提醒你相信自己的努力值得被看見，也值得被好好累積。",
     bgGradient:
       "linear-gradient(135deg, #F2EDE8 0%, #EDE5D4 40%, #EDE8E2 100%)",
     glowColor: "rgba(222, 193, 128, 0.45)",
@@ -278,8 +278,8 @@ export default function Home() {
     string,
     { f1: number; f2: number; label: string }
   > = {
-    purple: { f1: 432, f2: 648, label: "432Hz · 頂輪淨化" },
-    rose: { f1: 528, f2: 792, label: "528Hz · 心輪復甦" },
+    purple: { f1: 432, f2: 648, label: "432Hz · 思緒留白" },
+    rose: { f1: 528, f2: 792, label: "528Hz · 溫柔連結" },
     citrine: { f1: 396, f2: 594, label: "396Hz · 豐盛顯化" },
   };
 
@@ -563,7 +563,7 @@ export default function Home() {
                 className="w-full px-4 py-3 text-xs tracking-[0.16em] bg-[#D1BE9B] text-[#31353A] rounded-full hover:bg-[#3D4144] hover:text-[#FAF7F4] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                客製化療癒水晶
+                客製化能量水晶
               </button>
             </Link>
             <Link href="/ziwei">
@@ -1214,7 +1214,7 @@ export default function Home() {
                 className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
               >
-                療癒水晶精選
+                能量水晶精選
               </h2>
             </div>
             <Link href="/shop">

@@ -830,7 +830,7 @@ export default function CustomBraceletPage() {
               <FieldGroup label="能量需求">
                 <div className="grid gap-4">
                   <Field label="想加強的功效或需求" required wide>
-                    <textarea value={form.energyNeeds} onChange={(e) => update('energyNeeds', e.target.value)} className={textareaClass} placeholder="例如招財、桃花、人緣、穩定情緒，或最近遇到的狀態" />
+                    <textarea value={form.energyNeeds} onChange={(e) => update('energyNeeds', e.target.value)} className={textareaClass} placeholder="例如招財、桃花、人緣、安放心緒，或最近遇到的狀態" />
                   </Field>
                 </div>
               </FieldGroup>

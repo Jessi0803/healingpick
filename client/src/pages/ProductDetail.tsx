@@ -243,8 +243,7 @@ export default function ProductDetailPage() {
                 </p>
               </div>
 
-              {/* Quick feature highlights — keeps the right column visually
-                  balanced with the tall hero image on the left. */}
+              {/* Quick suited-for highlights — helps customers decide at a glance. */}
               <div className="mt-6 pt-5 border-t border-[#D1BE9B]/15">
                 <p
                   className="text-[10px] tracking-[0.3em] text-[#D1BE9B] uppercase mb-3"
@@ -253,15 +252,15 @@ export default function ProductDetailPage() {
                     fontWeight: 300,
                   }}
                 >
-                  𓂃 ࣪˖ ִֶָ𐀔 商品特色快覽
+                  𓂃 ࣪˖ ִֶָ𐀔 適合這樣的你
                 </p>
                 <ul className="space-y-2">
-                  {product.meanings.map((f, idx) => {
+                  {product.suitedFor.map((s, idx) => {
                     const cuteIcons = ["♡", "𓇢𓆸", "☁︎", "⟡", "𓂃 ࣪˖", "ִֶָ𐀔"];
                     const icon = cuteIcons[idx % cuteIcons.length];
                     return (
                       <li
-                        key={f.title}
+                        key={s}
                         className="flex items-start gap-2.5 text-left"
                       >
                         <span className="flex-shrink-0 text-[13px] text-[#A38D6B] leading-none mt-0.5">
@@ -275,16 +274,7 @@ export default function ProductDetailPage() {
                               fontWeight: 400,
                             }}
                           >
-                            {f.title}
-                          </span>
-                          <span
-                            className="text-[11.5px] tracking-wider text-[#31353A]/68 ml-1.5"
-                            style={{
-                              fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 300,
-                            }}
-                          >
-                            {f.desc}
+                            {s}
                           </span>
                         </span>
                       </li>
@@ -321,10 +311,16 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Section: 適合這樣的你 */}
-          <Section title="適合這樣的你" subtitle="Suited For" icon="☁︎">
+          {/* Section: 商品特色快覽 */}
+          <Section title="商品特色快覽" subtitle="Highlights" icon="☁︎">
+            <p
+              className="mb-4 max-w-3xl text-[12.5px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              每一顆水晶都不是單獨堆疊，而是在這件作品裡負責不同角色：主打方向、輔助節奏，以及調和整體配戴感。
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-              {product.suitedFor.map((s, idx) => {
+              {product.meanings.map((f, idx) => {
                 const cuteHearts = [
                   "ෆ",
                   "ღ",
@@ -342,7 +338,7 @@ export default function ProductDetailPage() {
                 const tail = idx % 2 === 0 ? "𓂃𓈒𓏸" : "⊹ ࣪ ˖";
                 return (
                   <div
-                    key={s}
+                    key={f.title}
                     className="flex items-start gap-3 px-4 py-2.5 rounded-2xl bg-[#D1BE9B]/10 border border-[#D1BE9B]/20 shadow-sm hover:scale-[1.01] transition-transform duration-300"
                   >
                     <span className="text-[#A38D6B] text-[13px] leading-none mt-0.5 select-none">
@@ -355,7 +351,8 @@ export default function ProductDetailPage() {
                         fontWeight: 300,
                       }}
                     >
-                      {s}{" "}
+                      <span className="text-[#A38D6B]">{f.title}</span>
+                      <span className="ml-1.5">{f.desc}</span>{" "}
                       <span className="text-[9px] text-[#D1BE9B]/70 ml-0.5 select-none">
                         {tail}
                       </span>

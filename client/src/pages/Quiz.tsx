@@ -81,22 +81,22 @@ const RESULT_HEALING_IMAGES: Record<string, ResultHealingImage> = {
   },
   "past-life:D": {
     src: "/quiz-results/past-life-artist.webp",
-    alt: "自由藝術家的畫室療癒插畫",
+    alt: "自由藝術家的畫室安心插畫",
     caption: "自由藝術家｜把敏感變成創作和魅力",
   },
   "past-life:E": {
     src: "/quiz-results/past-life-voyager.webp",
-    alt: "流浪冒險家的地圖旅行療癒插畫",
+    alt: "流浪冒險家的地圖旅行安心插畫",
     caption: "流浪冒險家｜想去遠方，也要帶著穩定感",
   },
   "love-magnet:A": {
     src: "/quiz-results/love-safe-harbor.webp",
-    alt: "成熟治癒型的安心港灣療癒插畫",
-    caption: "成熟治癒型｜慢慢靠近，穩穩接住",
+    alt: "成熟安定型的安心港灣插畫",
+    caption: "成熟安定型｜慢慢靠近，穩穩接住",
   },
   "love-magnet:B": {
     src: "/quiz-results/love-direct-light.webp",
-    alt: "熱烈直球型的陽光療癒插畫",
+    alt: "熱烈直球型的陽光安心插畫",
     caption: "熱烈直球型｜喜歡就靠近，明亮又直接",
   },
   "love-magnet:C": {

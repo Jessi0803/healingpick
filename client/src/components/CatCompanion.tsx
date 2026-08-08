@@ -194,7 +194,7 @@ const MINI_QUIZ_QUESTIONS: MiniQuizQuestion[] = [
     ],
   },
   {
-    question: "如果可以帶一個療癒能量回家，你希望它如何陪你？",
+    question: "如果可以帶一個能量小物回家，你希望它如何陪你？",
     options: [
       {
         text: "🛌 擺在床頭或桌前默默陪我",
@@ -204,7 +204,7 @@ const MINI_QUIZ_QUESTIONS: MiniQuizQuestion[] = [
         text: "💼 放在桌旁幫我吸引好運財氣",
         scores: { "wealth-stone": 2, "courage-cat": 1 },
       },
-      { text: "🕯️ 寫日記或冥想淨化心靈磁場", scores: { "calm-light": 2 } },
+      { text: "🕯️ 寫日記或冥想整理心裡雜訊", scores: { "calm-light": 2 } },
       { text: "💍 隨身佩戴做我的自信護身符", scores: { "moonlight-wings": 2 } },
     ],
   },
@@ -226,11 +226,11 @@ const BLESSINGS: Record<string, string> = {
   "wish-fox":
     "“九尾狐會幫你把心願收在尾巴裡，提醒你找回自信與魅力。相信自己，你值得世上所有的溫柔與幸運。🦊🌈”",
   "courage-cat":
-    "“虎眼石小貓會陪你做那個「深呼吸」，帶給你前行的勇氣與穩定力量。不用急，慢慢來，一定跳得過去。🐾🤎”",
+    "“虎眼石小貓會陪你做那個「深呼吸」，為自己增添一份勇敢前行的力量感，寓意堅定、自信與行動力。🐾🤎”",
   "wish-bunny":
     "“白水晶小兔幫你回歸初心、收藏小小但珍貴的心願。只要一直相信，美好的期待就會朝你慢慢走來。🐰🤍”",
   "calm-light":
-    "“當思緒過於繁雜時，白菘石的淨化能量能提醒你先停 30 秒。努力的人也需要好好呼吸，慢下來也是一種前進。🤍☁️”",
+    "“當思緒過於繁雜時，白菘石會提醒你先停 30 秒，把心裡雜訊慢慢放輕。努力的人也需要好好呼吸，慢下來也是一種前進。🤍☁️”",
   "moonlight-wings":
     "“拉長石散發的神祕藍光會指引你的直覺，陪你傾聽內在深處最真實的聲音。勇敢相信自己，你一直都很有力量。🪽☽”",
   "wealth-stone":
@@ -722,7 +722,7 @@ export default function CatCompanion() {
                         fontWeight: 400,
                       }}
                     >
-                      了解療癒詳情 →
+                      了解能量詳情 →
                     </button>
                     <button
                       onClick={() => setIsContactOpen(true)}

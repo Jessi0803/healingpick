@@ -158,7 +158,7 @@ const TAROT_SIGNAL: Record<string, Signal> = {
   },
   growth: {
     categories: ['healing', 'sleep'],
-    keywords: ['自我', '成長', '情緒', '照顧', '釐清', '低潮', '節奏'],
+    keywords: ['自我', '成長', '心緒', '照顧', '釐清', '低潮', '節奏'],
     preferSlugs: ['xin-yu-ni-nan', 'calm-light'],
   },
   other: {
@@ -253,7 +253,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
     patterns: ['追', '逃', '躲', '跑不動', '被抓', '攻擊', '怪物', '鬼', '黑影', '害怕', '恐怖'],
     signal: {
       categories: ['protect', 'sleep'],
-      keywords: ['安全感', '界線', '安定', '焦慮', '保護', '壓力'],
+      keywords: ['安全感', '界線', '安定', '守護', '壓力', '避小人'],
       preferSlugs: ['glimmer-fox', 'calm-light'],
     },
   },
@@ -269,7 +269,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
     patterns: ['牙齒', '掉牙', '流血', '裸', '考試', '遲到', '失控', '跌倒', '墜落', '掉下去'],
     signal: {
       categories: ['sleep', 'courage'],
-      keywords: ['焦慮', '自信', '穩定情緒', '壓力', '相信自己'],
+      keywords: ['自信', '安放心緒', '壓力', '相信自己', '行動力'],
       preferSlugs: ['calm-light', 'courage-cat'],
     },
   },
@@ -293,7 +293,7 @@ const DREAM_SIGNALS: Array<{ patterns: string[]; signal: Signal }> = [
     patterns: ['水', '海', '河', '下雨', '淹水', '游泳', '浴室', '洗澡', '哭', '眼淚'],
     signal: {
       categories: ['sleep', 'healing'],
-      keywords: ['情緒', '釋放', '平靜', '自我療癒', '照顧'],
+      keywords: ['心緒', '安放', '平靜', '自我照顧', '整理'],
       preferSlugs: ['calm-light', 'wish-bunny'],
     },
   },
