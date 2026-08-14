@@ -580,10 +580,14 @@ export default function Home() {
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <span
-                  className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-[#D1BE9B]/45 bg-white/55 text-[13px] leading-none text-[#A38D6B] shadow-[0_5px_18px_rgba(209,190,155,0.14)] transition-colors duration-500 group-hover:border-white/25 group-hover:bg-white/12 group-hover:text-[#E3D3AF]"
+                  className="grid h-7 w-7 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/45 bg-white/75 shadow-[0_5px_18px_rgba(209,190,155,0.14)] transition-colors duration-500 group-hover:border-white/25 group-hover:bg-white/90"
                   aria-hidden="true"
                 >
-                  日
+                  <img
+                    src="/gooday-logo.png"
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
                 </span>
                 <span className="flex min-w-0 flex-col items-start leading-none">
                   <span className="text-[11px] tracking-[0.14em] sm:text-xs">
