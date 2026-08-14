@@ -69,16 +69,271 @@ const HUMAN_TAROT_FEATURED_PACKAGES = [
   { title: "流年運勢", price: "NT$1088 起", note: "未來一年狀態、月份或季節重點提醒" },
 ];
 
-const HUMAN_TAROT_PRICING_IMAGES = [
-  { src: "/gooday-tarot-pricing/question-pricing.jpg", alt: "Gooday 個人訊息占卜價格" },
-  { src: "/gooday-tarot-pricing/value-pack-1.jpg", alt: "Gooday 塔羅超值套裝戀愛與感情題組" },
-  { src: "/gooday-tarot-pricing/value-pack-2.jpg", alt: "Gooday 塔羅超值套裝財富與工作題組" },
-  { src: "/gooday-tarot-pricing/value-pack-3.jpg", alt: "Gooday 塔羅超值套裝人生與療癒題組" },
-  { src: "/gooday-tarot-pricing/guardian.jpg", alt: "Gooday 守護神占卜題組" },
-  { src: "/gooday-tarot-pricing/past-life-1.jpg", alt: "Gooday 前世今生占卜題組一" },
-  { src: "/gooday-tarot-pricing/past-life-2.jpg", alt: "Gooday 前世今生占卜題組二" },
-  { src: "/gooday-tarot-pricing/year-fortune-1.jpg", alt: "Gooday 流年運勢占卜題組一" },
-  { src: "/gooday-tarot-pricing/year-fortune-2.jpg", alt: "Gooday 流年運勢占卜題組二" },
+const HUMAN_TAROT_DETAIL_PLANS = [
+  {
+    category: "個人訊息占卜",
+    title: "依題數詢問",
+    price: "NT$250 起",
+    summary: "適合已經有明確問題，想針對 1、3、5 題得到訊息整理。",
+    details: [
+      "1 question：NT$250",
+      "3 questions：NT$700",
+      "5 questions：NT$1100",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "戀愛指南",
+    price: "NT$999",
+    summary: "適合想看目前關係、相處方式與未來三個月感情運勢。",
+    details: [
+      "他對你的想法",
+      "你們適合嗎",
+      "相處上的建議",
+      "未來三個月你和他的感情運勢",
+      "如何突破過往在愛情中的盲點",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "感情復合",
+    price: "NT$999",
+    summary: "適合想理解復合機會、阻礙與需要調整的關係模式。",
+    details: [
+      "他對復合的態度",
+      "他對你的想法",
+      "未來三個月有機會復合嗎",
+      "你需要改善的點",
+      "若要復合，你們的阻礙是甚麼",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "緣來暗戀",
+    price: "NT$999",
+    summary: "適合想確認對方心意、正緣可能與是否要主動追求。",
+    details: [
+      "他喜歡你嗎",
+      "他是我得正緣嗎",
+      "他理想中的愛情是怎麼樣的",
+      "他現在是否有喜歡的人",
+      "是否要展開追求",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "旺桃花運",
+    price: "NT$999",
+    summary: "適合想改善桃花狀態、看適合對象與感情突破點。",
+    details: [
+      "未來三個月的感情運勢",
+      "如何提升感情運",
+      "怎樣的人適合你",
+      "你需要改善的點",
+      "如何突破過往在愛情中的盲點",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "財富密碼",
+    price: "NT$999",
+    summary: "適合整理財務阻礙、支出風險與增加財富的條件。",
+    details: [
+      "求財面對的阻礙",
+      "支出風險",
+      "有利於增加財富的條件",
+      "暗示生活中帶來財富的機遇",
+      "影響財運的原因",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "創業衝衝",
+    price: "NT$999",
+    summary: "適合想評估創業適合度、成功機率與困難解法。",
+    details: [
+      "現在的你是適合創業的嗎",
+      "創業會成功嗎",
+      "創業需注意的事",
+      "如何解決困難",
+      "創業會對你的生活帶來的影響",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "職涯探索",
+    price: "NT$999",
+    summary: "適合想看工作適性、能力提升與未來三個月工作運。",
+    details: [
+      "你適合什麼工作",
+      "如何提升自己的工作能力",
+      "你的優勢是什麼",
+      "未來三個月的工作運勢",
+      "如何獲得他人支持或幫助",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "面試勝經",
+    price: "NT$999",
+    summary: "適合面試或轉職前，確認機會、阻礙與可能結果。",
+    details: [
+      "內心糾結的問題",
+      "眼前的工作機會適合自己嗎",
+      "有機率成功嗎",
+      "目前的阻礙",
+      "這份工作機會最終的結果",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "進化人生",
+    price: "NT$999",
+    summary: "適合想回到自身狀態，整理自信、使命、優缺點與相處提醒。",
+    details: [
+      "如何提升自信",
+      "你的優勢與缺點",
+      "你的人生使命",
+      "未來三個月的整體運勢",
+      "與他人相處上的建議或提醒",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "雙向之路",
+    price: "NT$999",
+    summary: "適合正在 A/B 選擇之間猶豫，想比較兩條路的發展與結果。",
+    details: [
+      "你當前的狀態",
+      "選擇 A 的未來三個月發展",
+      "選擇 B 的未來三個月發展",
+      "選擇 A 的結果",
+      "選擇 B 的結果",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "友情可貴",
+    price: "NT$999",
+    summary: "適合想整理朋友關係、彼此想法、隱藏心結與未來走向。",
+    details: [
+      "他對你的想法",
+      "你們之間產生的問題",
+      "問題如何解決",
+      "對方隱藏的心結",
+      "未來三個月的友情運勢",
+    ],
+  },
+  {
+    category: "塔羅超值套裝",
+    title: "心靈療癒",
+    price: "NT$999",
+    summary: "適合想看痛苦根源、事件影響與接下來的療癒行動。",
+    details: [
+      "痛苦真正的根源",
+      "這件事帶給生活的影響",
+      "如何讓自己平靜",
+      "為了療癒自己，你要採取的行動",
+      "療癒完能獲得的成長與改變",
+    ],
+  },
+  {
+    category: "守護神",
+    title: "守護神",
+    price: "NT$1088",
+    summary: "透過牌卡理解你的守護能量，以及它想提醒你的方向。",
+    details: [
+      "我的守護星",
+      "我的守護神",
+      "守護神的過去與故事",
+      "守護神與你之間的連結",
+      "守護神想提醒你的事",
+      "要如何與守護神有更深刻的感應",
+    ],
+  },
+  {
+    category: "前世今生",
+    title: "前世今生 1",
+    price: "NT$1288",
+    summary: "適合想看自己的前世印象、內在世界與今生課題。",
+    details: [
+      "為何轉世來到今生",
+      "前世的外在印象 / 外表個性特質",
+      "前世的內心世界",
+      "前世的家庭生活",
+      "前世的情感與愛人",
+      "前世的職涯方向",
+      "今生的課題 / 想得到的一個目標",
+    ],
+  },
+  {
+    category: "前世今生",
+    title: "前世今生 2",
+    price: "NT$999",
+    summary: "適合想看你與某人的前世連結，以及今生關係課題。",
+    details: [
+      "你和他前世的關係",
+      "你和他前世如何相遇 / 發生了什麼事",
+      "今生你們在這段關係的課題",
+      "如何跨過你們今生的課題",
+      "神諭卡祝福",
+    ],
+  },
+  {
+    category: "前世今生",
+    title: "前世今生 3",
+    price: "NT$800",
+    summary: "以故事模式闡述前世的一生，約 500-1000 字。",
+    details: [
+      "前世的你是誰",
+      "前世住在哪",
+      "前世過著怎麼樣的生活",
+      "前世遇到了什麼事",
+      "以故事的模式闡述前世的一生，約 500-1000 字",
+    ],
+  },
+  {
+    category: "流年運勢",
+    title: "流年運勢 1",
+    price: "NT$1288",
+    summary: "以黃道十二宮了解未來一年各領域運勢。",
+    details: [
+      "第一宮：整體運勢",
+      "第二宮：財運",
+      "第三宮：溝通、學習、交通",
+      "第四宮：家庭、親情、房產",
+      "第五宮：感情、創意、娛樂",
+      "第六宮：健康、工作、日常事務",
+      "第七宮：人際、合作、婚姻",
+      "第八宮：潛意識、轉化、死亡",
+      "第九宮：信仰、遠方、旅行",
+      "第十宮：事業、社會地位、名聲",
+      "第十一宮：友誼、理想、團體",
+      "第十二宮：自我犧牲、困境、隱藏",
+    ],
+  },
+  {
+    category: "流年運勢",
+    title: "流年運勢 2",
+    price: "NT$1588",
+    summary: "看未來一年每個月會遇到的事情、阻礙與建議。",
+    details: [
+      "未來一年主要會是怎樣的狀態",
+      "未來一年每月會遇到的事與建議",
+      "未來一年神諭卡祝福",
+    ],
+  },
+  {
+    category: "流年運勢",
+    title: "流年運勢 3",
+    price: "NT$1088",
+    summary: "看未來一年每個季節會遇到的事情、阻礙與建議。",
+    details: [
+      "未來一年主要會是怎樣的狀態",
+      "春夏秋冬每季會遇到的事與建議",
+      "神諭卡祝福",
+    ],
+  },
 ];
 
 // ─── Tarot Card Data ──────────────────────────────────────────────────────────
@@ -2354,30 +2609,28 @@ export default function TarotPage() {
               border: 1px solid rgba(157, 123, 63, 0.18);
               background: rgba(255,253,248,0.54);
             }
-            .tarot-human-image-strip {
+            .tarot-human-plan-card {
+              min-height: 142px;
+              border: 1px solid rgba(112, 138, 106, 0.19);
+              background: rgba(255,253,248,0.62);
+              text-align: left;
+              box-shadow: 0 10px 24px rgba(80, 72, 45, 0.07);
+            }
+            .tarot-human-plan-card:hover {
+              border-color: rgba(112, 138, 106, 0.36);
+              background: rgba(255,253,248,0.82);
+              transform: translateY(-1px);
+            }
+            .tarot-human-detail-list {
               display: grid;
-              grid-auto-flow: column;
-              grid-auto-columns: minmax(220px, 280px);
-              gap: 14px;
-              overflow-x: auto;
-              overscroll-behavior-x: contain;
-              scroll-snap-type: x mandatory;
-              padding-bottom: 6px;
+              gap: 10px;
+              margin-top: 18px;
             }
-            .tarot-human-image-strip::-webkit-scrollbar {
-              height: 8px;
-            }
-            .tarot-human-image-strip::-webkit-scrollbar-thumb {
-              border-radius: 999px;
-              background: rgba(112, 138, 106, 0.28);
-            }
-            .tarot-human-menu-image {
-              scroll-snap-align: start;
-              aspect-ratio: 960 / 1706;
-              width: 100%;
+            .tarot-human-detail-list li {
+              border: 1px solid rgba(112, 138, 106, 0.16);
               border-radius: 8px;
-              object-fit: cover;
-              box-shadow: 0 16px 34px rgba(29, 28, 25, 0.16);
+              background: rgba(255,253,248,0.58);
+              padding: 10px 12px;
             }
             .tarot-human-line {
               background: linear-gradient(135deg, #06c755, #4f7750);
@@ -2502,25 +2755,101 @@ export default function TarotPage() {
                         className="mt-2 text-[18px] tracking-[0.14em] text-[#34322d]"
                         style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                       >
-                        題組與價格
+                        點開看細項
                       </h2>
                     </div>
                     <span
                       className="hidden text-[11px] tracking-[0.12em] text-[#31353A]/42 sm:inline"
                       style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
                     >
-                      左右滑動
+                      {HUMAN_TAROT_DETAIL_PLANS.length} 個方案
                     </span>
                   </div>
-                  <div className="tarot-human-image-strip" aria-label="Gooday 塔羅題組價格圖片">
-                    {HUMAN_TAROT_PRICING_IMAGES.map((image) => (
-                      <img
-                        key={image.src}
-                        src={image.src}
-                        alt={image.alt}
-                        className="tarot-human-menu-image"
-                        loading="lazy"
-                      />
+                  <div className="grid max-h-[640px] gap-3 overflow-y-auto pr-1 sm:grid-cols-2 lg:max-h-[760px]">
+                    {HUMAN_TAROT_DETAIL_PLANS.map((plan) => (
+                      <Dialog key={`${plan.category}-${plan.title}`}>
+                        <DialogTrigger asChild>
+                          <button
+                            type="button"
+                            className="tarot-human-plan-card rounded-lg p-4 transition"
+                          >
+                            <span
+                              className="text-[10px] uppercase tracking-[0.2em] text-[#557255]"
+                              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                            >
+                              {plan.category}
+                            </span>
+                            <div className="mt-2 flex items-start justify-between gap-3">
+                              <h3
+                                className="text-[15px] leading-[1.5] tracking-[0.12em] text-[#34322d]"
+                                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
+                              >
+                                {plan.title}
+                              </h3>
+                              <strong
+                                className="shrink-0 text-[14px] tracking-[0.08em] text-[#9d7b3f]"
+                                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
+                              >
+                                {plan.price}
+                              </strong>
+                            </div>
+                            <p
+                              className="mt-3 line-clamp-2 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/58"
+                              style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                            >
+                              {plan.summary}
+                            </p>
+                            <span
+                              className="mt-4 inline-flex text-[11px] tracking-[0.14em] text-[#267345]"
+                              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                            >
+                              查看細項
+                            </span>
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-h-[82vh] max-w-[560px] overflow-y-auto rounded-lg border-[#D1BE9B]/30 bg-[#FFFDF8] text-[#34322d]">
+                          <DialogHeader>
+                            <p
+                              className="text-[11px] uppercase tracking-[0.24em] text-[#557255]"
+                              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                            >
+                              {plan.category}
+                            </p>
+                            <DialogTitle
+                              className="flex flex-wrap items-baseline justify-between gap-3 text-left text-[22px] tracking-[0.14em] text-[#34322d]"
+                              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                            >
+                              <span>{plan.title}</span>
+                              <strong className="text-[18px] tracking-[0.08em] text-[#9d7b3f]">
+                                {plan.price}
+                              </strong>
+                            </DialogTitle>
+                          </DialogHeader>
+                          <p
+                            className="mt-2 text-[13px] leading-[1.9] tracking-[0.06em] text-[#31353A]/66"
+                            style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                          >
+                            {plan.summary}
+                          </p>
+                          <ul
+                            className="tarot-human-detail-list text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/74"
+                            style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                          >
+                            {plan.details.map((detail) => (
+                              <li key={detail}>{detail}</li>
+                            ))}
+                          </ul>
+                          <a
+                            href={OFFICIAL_LINE_URL}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="tarot-human-line mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full px-5 py-3 text-center text-[12px] tracking-[0.16em] text-white no-underline transition active:scale-[0.98]"
+                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                          >
+                            LINE 預約此方案
+                          </a>
+                        </DialogContent>
+                      </Dialog>
                     ))}
                   </div>
                 </div>
