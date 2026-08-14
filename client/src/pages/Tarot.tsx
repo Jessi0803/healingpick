@@ -327,7 +327,7 @@ const HUMAN_TAROT_MENU_PLANS = [
   {
     title: "個人訊息占卜",
     price: "NT$250 起",
-    summary: "單題、三題、五題整合在同一個方案中，適合已經有明確問題。",
+    summary: "心裡已經有那個卡住的問題？從 1 題到 5 題，陪你把答案慢慢整理清楚。",
     planTitles: ["依題數詢問"],
   },
   {
