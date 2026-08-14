@@ -251,13 +251,13 @@ export default function TarotTeacher() {
                         className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                       >
-                        30 分鐘問到飽
+                        1 題訊息占卜
                       </span>
                       <strong
                         className="teacher-price text-[20px] tracking-[0.08em]"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}
                       >
-                        NT$500
+                        NT$250
                       </strong>
                     </div>
                   </div>
@@ -267,13 +267,29 @@ export default function TarotTeacher() {
                         className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                       >
-                        單題解讀
+                        3 題組合
                       </span>
                       <strong
                         className="teacher-price text-[20px] tracking-[0.08em]"
                         style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}
                       >
-                        NT$300
+                        NT$700
+                      </strong>
+                    </div>
+                  </div>
+                  <div className="teacher-price-card rounded-2xl px-5 py-4">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <span
+                        className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        主題套裝
+                      </span>
+                      <strong
+                        className="teacher-price text-[20px] tracking-[0.08em]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 500 }}
+                      >
+                        NT$999 起
                       </strong>
                     </div>
                   </div>

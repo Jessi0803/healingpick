@@ -79,10 +79,11 @@ export default function MochiWelcomeLetter() {
 
             <div className="mx-auto my-5 max-w-[22rem] rounded-[8px] border border-[#D1BE9B]/45 bg-[#FFF9F1]/82 px-4 py-4 text-[#6F5648] shadow-[0_12px_30px_rgba(163,141,107,0.1)]">
               <p className="mb-3 text-[14px] leading-[1.8] tracking-[0.12em] text-[#A38D6B]">
-                現在推出限時優惠 𓇬
+                真人塔羅價格 𓇬
               </p>
-              <p className="text-[15px] leading-[1.9] tracking-[0.06em]">✦ 30 分鐘問到飽只要 500 元</p>
-              <p className="text-[15px] leading-[1.9] tracking-[0.06em]">✧ 單題詢問 300 元</p>
+              <p className="text-[15px] leading-[1.9] tracking-[0.06em]">✦ 1 題訊息占卜 250 元</p>
+              <p className="text-[15px] leading-[1.9] tracking-[0.06em]">✧ 3 題組合 700 元</p>
+              <p className="text-[15px] leading-[1.9] tracking-[0.06em]">✦ 主題套裝 999 元起</p>
             </div>
 
             <p className="text-[14px] leading-[2] tracking-[0.06em] text-[#5B524C] sm:text-[15px]">

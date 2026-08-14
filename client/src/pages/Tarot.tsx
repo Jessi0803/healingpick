@@ -56,6 +56,31 @@ import { useRotatingText } from "@/hooks/useRotatingText";
 
 const OFFICIAL_LINE_URL = "https://lin.ee/6PBHLFX";
 
+const HUMAN_TAROT_QUESTION_PRICING = [
+  { label: "1 question", note: "單題訊息占卜", price: "NT$250" },
+  { label: "3 questions", note: "三題組合", price: "NT$700" },
+  { label: "5 questions", note: "五題深度整理", price: "NT$1100" },
+];
+
+const HUMAN_TAROT_FEATURED_PACKAGES = [
+  { title: "塔羅超值套裝", price: "NT$999", note: "戀愛、復合、財富、職涯、人生進化等主題" },
+  { title: "守護神", price: "NT$1088", note: "認識守護星、守護神與想提醒你的事" },
+  { title: "前世今生", price: "NT$800 起", note: "從前世故事、靈魂課題看今生連結" },
+  { title: "流年運勢", price: "NT$1088 起", note: "未來一年狀態、月份或季節重點提醒" },
+];
+
+const HUMAN_TAROT_PRICING_IMAGES = [
+  { src: "/gooday-tarot-pricing/question-pricing.jpg", alt: "Gooday 個人訊息占卜價格" },
+  { src: "/gooday-tarot-pricing/value-pack-1.jpg", alt: "Gooday 塔羅超值套裝戀愛與感情題組" },
+  { src: "/gooday-tarot-pricing/value-pack-2.jpg", alt: "Gooday 塔羅超值套裝財富與工作題組" },
+  { src: "/gooday-tarot-pricing/value-pack-3.jpg", alt: "Gooday 塔羅超值套裝人生與療癒題組" },
+  { src: "/gooday-tarot-pricing/guardian.jpg", alt: "Gooday 守護神占卜題組" },
+  { src: "/gooday-tarot-pricing/past-life-1.jpg", alt: "Gooday 前世今生占卜題組一" },
+  { src: "/gooday-tarot-pricing/past-life-2.jpg", alt: "Gooday 前世今生占卜題組二" },
+  { src: "/gooday-tarot-pricing/year-fortune-1.jpg", alt: "Gooday 流年運勢占卜題組一" },
+  { src: "/gooday-tarot-pricing/year-fortune-2.jpg", alt: "Gooday 流年運勢占卜題組二" },
+];
+
 // ─── Tarot Card Data ──────────────────────────────────────────────────────────
 type TarotCard = {
   id: number;
@@ -2289,12 +2314,12 @@ export default function TarotPage() {
                 linear-gradient(180deg, rgba(255,253,248,0.5), rgba(246,241,226,0.24));
             }
             .tarot-human-shell {
-              width: min(100%, 760px);
+              width: min(100%, 1040px);
               margin: 0 auto;
             }
             .tarot-human-panel {
               overflow: hidden;
-              border-radius: 26px;
+              border-radius: 8px;
               border: 1px solid rgba(112, 138, 106, 0.24);
               background: linear-gradient(145deg, rgba(255,253,248,0.94), rgba(235,245,232,0.72));
               box-shadow: 0 22px 58px rgba(80, 72, 45, 0.12), inset 0 1px 0 rgba(255,255,255,0.84);
@@ -2324,6 +2349,35 @@ export default function TarotPage() {
             }
             .tarot-human-price strong {
               color: #267345;
+            }
+            .tarot-human-package {
+              border: 1px solid rgba(157, 123, 63, 0.18);
+              background: rgba(255,253,248,0.54);
+            }
+            .tarot-human-image-strip {
+              display: grid;
+              grid-auto-flow: column;
+              grid-auto-columns: minmax(220px, 280px);
+              gap: 14px;
+              overflow-x: auto;
+              overscroll-behavior-x: contain;
+              scroll-snap-type: x mandatory;
+              padding-bottom: 6px;
+            }
+            .tarot-human-image-strip::-webkit-scrollbar {
+              height: 8px;
+            }
+            .tarot-human-image-strip::-webkit-scrollbar-thumb {
+              border-radius: 999px;
+              background: rgba(112, 138, 106, 0.28);
+            }
+            .tarot-human-menu-image {
+              scroll-snap-align: start;
+              aspect-ratio: 960 / 1706;
+              width: 100%;
+              border-radius: 8px;
+              object-fit: cover;
+              box-shadow: 0 16px 34px rgba(29, 28, 25, 0.16);
             }
             .tarot-human-line {
               background: linear-gradient(135deg, #06c755, #4f7750);
@@ -2355,60 +2409,119 @@ export default function TarotPage() {
             </Link>
 
             <section className="tarot-human-panel p-5 md:p-9">
-              <div className="flex items-center gap-4">
-                <img
-                  src="/gooday-logo.png"
-                  alt="Gooday 日日好日"
-                  className="tarot-human-logo"
-                />
+              <div className="grid gap-7 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
                 <div>
-                  <span
-                    className="text-[11px] uppercase tracking-[0.34em] text-[#557255]"
-                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                  >
-                    HealingPick × Gooday
-                  </span>
-                  <h1 className="tarot-human-title mt-3 text-2xl leading-[1.7] md:text-3xl">
-                    真人占卜
-                  </h1>
-                </div>
-              </div>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src="/gooday-logo.png"
+                      alt="Gooday 日日好日"
+                      className="tarot-human-logo"
+                    />
+                    <div>
+                      <span
+                        className="text-[11px] uppercase tracking-[0.34em] text-[#557255]"
+                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                      >
+                        HealingPick × Gooday
+                      </span>
+                      <h1 className="tarot-human-title mt-3 text-2xl leading-[1.7] md:text-3xl">
+                        真人占卜
+                      </h1>
+                    </div>
+                  </div>
 
-              <p className="tarot-human-copy mt-6 text-[14px] leading-[2.1]">
-                由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。
-              </p>
+                  <p className="tarot-human-copy mt-6 text-[14px] leading-[2.1]">
+                    由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。可依題數詢問，也可以直接選主題套裝。
+                  </p>
 
-              <div className="mt-6 grid gap-3">
-                <div className="tarot-human-price rounded-2xl px-5 py-3.5">
-                  <div className="flex items-baseline justify-between gap-4">
-                    <span
-                      className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                    >
-                      30 分鐘問到飽
-                    </span>
-                    <strong
-                      className="text-[20px] tracking-[0.08em]"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
-                    >
-                      NT$500
-                    </strong>
+                  <div className="mt-6 grid gap-3">
+                    {HUMAN_TAROT_QUESTION_PRICING.map((item) => (
+                      <div key={item.label} className="tarot-human-price rounded-lg px-5 py-3.5">
+                        <div className="flex items-baseline justify-between gap-4">
+                          <span
+                            className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
+                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                          >
+                            {item.note}
+                          </span>
+                          <strong
+                            className="text-[20px] tracking-[0.08em]"
+                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
+                          >
+                            {item.price}
+                          </strong>
+                        </div>
+                        <p
+                          className="mt-1 text-[11px] tracking-[0.16em] text-[#31353A]/46"
+                          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                        >
+                          {item.label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {HUMAN_TAROT_FEATURED_PACKAGES.map((item) => (
+                      <div key={item.title} className="tarot-human-package rounded-lg p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <h2
+                            className="text-[14px] tracking-[0.12em] text-[#34322d]"
+                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
+                          >
+                            {item.title}
+                          </h2>
+                          <strong
+                            className="shrink-0 text-[15px] tracking-[0.08em] text-[#9d7b3f]"
+                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
+                          >
+                            {item.price}
+                          </strong>
+                        </div>
+                        <p
+                          className="mt-2 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/58"
+                          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                        >
+                          {item.note}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="tarot-human-price rounded-2xl px-5 py-3.5">
-                  <div className="flex items-baseline justify-between gap-4">
+
+                <div className="min-w-0">
+                  <div className="mb-4 flex items-end justify-between gap-4">
+                    <div>
+                      <p
+                        className="text-[11px] uppercase tracking-[0.28em] text-[#557255]"
+                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                      >
+                        Gooday Menu
+                      </p>
+                      <h2
+                        className="mt-2 text-[18px] tracking-[0.14em] text-[#34322d]"
+                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                      >
+                        題組與價格
+                      </h2>
+                    </div>
                     <span
-                      className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                      className="hidden text-[11px] tracking-[0.12em] text-[#31353A]/42 sm:inline"
+                      style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
                     >
-                      單題解讀
+                      左右滑動
                     </span>
-                    <strong
-                      className="text-[20px] tracking-[0.08em]"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
-                    >
-                      NT$300
-                    </strong>
+                  </div>
+                  <div className="tarot-human-image-strip" aria-label="Gooday 塔羅題組價格圖片">
+                    {HUMAN_TAROT_PRICING_IMAGES.map((image) => (
+                      <img
+                        key={image.src}
+                        src={image.src}
+                        alt={image.alt}
+                        className="tarot-human-menu-image"
+                        loading="lazy"
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -3674,10 +3787,10 @@ export default function TarotPage() {
                         className="tarot-choice-human-mochi"
                       />
                       <p className="tarot-choice-human-caption">
-                        30 分鐘問到飽
-                        <strong>NT$500</strong>
-                        單題解讀
-                        <strong>NT$300</strong>
+                        1 題訊息占卜
+                        <strong>NT$250</strong>
+                        主題套裝
+                        <strong>NT$999 起</strong>
                       </p>
                     </div>
 
@@ -4922,7 +5035,7 @@ export default function TarotPage() {
                           fontWeight: 400,
                         }}
                       >
-                        單題 NT$300｜30 分鐘問到飽 NT$500
+                        1 題 NT$250｜3 題 NT$700｜主題套裝 NT$999 起
                       </p>
                       <div className="mt-4 flex flex-col gap-3">
                         <a
