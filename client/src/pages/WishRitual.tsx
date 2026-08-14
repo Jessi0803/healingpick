@@ -1,5 +1,5 @@
 import PageLayout from "@/components/PageLayout";
-import { Instagram, Sparkles } from "lucide-react";
+import { MessageCircle, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 
 const ritualOptions = [
@@ -54,7 +54,7 @@ const ritualFees = [
   },
 ];
 
-const GOODAY_INSTAGRAM_URL = "https://www.instagram.com/gooday_tarot_/";
+const HEALING_PICK_LINE_URL = "https://lin.ee/6PBHLFX";
 
 export default function WishRitual() {
   return (
@@ -78,10 +78,11 @@ export default function WishRitual() {
                 MAGIC RITUAL
               </p>
               <h1
-                className="mt-4 text-xl font-light tracking-[0.22em] text-[#245879] md:text-3xl"
+                className="mt-4 text-[22px] font-light leading-[1.75] tracking-[0.12em] text-[#245879] md:text-3xl md:leading-[1.55] md:tracking-[0.22em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                日日好日許願魔法儀式
+                <span className="block">日日好日</span>
+                <span className="block">許願魔法儀式</span>
               </h1>
               <p
                 className="mx-auto mt-5 max-w-2xl text-[13px] leading-[2] tracking-[0.1em] text-[#245879]/76"
@@ -205,14 +206,14 @@ export default function WishRitual() {
 
             <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
-                href={GOODAY_INSTAGRAM_URL}
+                href={HEALING_PICK_LINE_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#245879] px-6 py-3 text-xs tracking-[0.2em] text-white shadow-[0_12px_28px_rgba(36,88,121,0.2)] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 sm:w-auto"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                <Instagram className="h-4 w-4" aria-hidden="true" />
-                私訊預約儀式
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                官方 LINE 預約儀式
               </a>
               <Link
                 href="/"
@@ -226,7 +227,7 @@ export default function WishRitual() {
                 className="text-[11px] tracking-[0.14em] text-[#245879]/72"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                @gooday_tarot_
+                HealingPick 官方 LINE
               </span>
             </div>
           </div>
