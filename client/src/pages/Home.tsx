@@ -579,7 +579,7 @@ export default function Home() {
                 className="w-full px-4 py-3 text-xs tracking-[0.25em] border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                塔羅占卜
+                塔羅占卜（日日好日合作）
               </button>
             </Link>
             <Link href="/dream">
