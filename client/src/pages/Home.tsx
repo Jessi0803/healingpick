@@ -599,9 +599,6 @@ export default function Home() {
                       gooday
                     </span>
                   </span>
-                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6F6688]/68 transition-colors duration-500 group-hover:text-white/62 sm:tracking-[0.14em]">
-                    塔羅占卜（日日好日合作）
-                  </span>
                 </span>
               </button>
             </Link>
