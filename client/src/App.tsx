@@ -11,6 +11,7 @@ import Tarot from "./pages/Tarot";
 import TarotKnowledge from "./pages/TarotKnowledge";
 import TarotReviews from "./pages/TarotReviews";
 import TarotTeacher from "./pages/TarotTeacher";
+import WishRitual from "./pages/WishRitual";
 import Ziwei from "./pages/Ziwei";
 import Dream from "./pages/Dream";
 import Fortune from "./pages/Fortune";
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/tarot/knowledge" component={TarotKnowledge} />
       <Route path="/tarot/reviews" component={TarotReviews} />
       <Route path="/tarot/teacher" component={TarotTeacher} />
+      <Route path="/wish-ritual" component={WishRitual} />
       <Route path="/tarot/human" component={Tarot} />
       <Route path="/tarot/ai" component={Tarot} />
       <Route path="/tarot" component={Tarot} />

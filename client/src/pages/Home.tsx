@@ -19,13 +19,6 @@ import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
 import { PRODUCTS } from "@/data/products";
 import ContactDialog from "@/components/ContactDialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { ChevronDown, ExternalLink, Instagram, Sparkles } from "lucide-react";
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
@@ -164,55 +157,6 @@ const features = [
   },
 ];
 
-const ritualOptions = [
-  {
-    title: "邱比特之吻",
-    desc: "修補感情裂痕、療癒彼此關係，讓他心裡有你，讓感情更緊密與順利",
-  },
-  {
-    title: "桃花朵朵開",
-    desc: "增加個人魅力與吸引力、招好桃花、識別爛桃花，讓你身邊只能容納對的人",
-  },
-  {
-    title: "財神爺來臨",
-    desc: "正財、偏財通通來，提升貴人運、事業飛黃騰達，使事業順利且有意外收穫",
-  },
-  {
-    title: "療癒知我心",
-    desc: "釐清思緒、平靜心情、消除體內負能量，讓身體健康，保持身心靈的放鬆",
-  },
-  {
-    title: "幸福敲敲門",
-    desc: "增強感知幸福的能力、強化靈性與能良連結，讓你幸福到能夠常常微笑",
-  },
-  {
-    title: "客製化儀式",
-    desc: "有特別的需求都可以與日日好日聊聊，如金榜題名、友誼修補等",
-  },
-];
-
-const tenWishItems = [
-  ["感情順遂", "財運旺盛"],
-  ["身體健康", "人緣提升"],
-  ["招貴人助", "家庭和諧"],
-  ["自我魅力", "事業順利"],
-  ["好運循環", "負能量淨化"],
-];
-
-const ritualFees = [
-  {
-    title: "888$ / 儀式",
-    desc: "天使數字 888 意指儀式能帶領你，重整與提高自我能量，實現願望獲得成功。",
-  },
-  {
-    title: "2888$ / 4 儀式",
-    note: "可以 1 次使用 4 儀式或每週 1 次",
-    desc: "天使數字 2888 意指你發送的能量將以你有意願接收的方式返回給你。",
-  },
-];
-
-const GOODAY_INSTAGRAM_URL = "https://www.instagram.com/gooday_tarot_/";
-
 const altarData: Record<
   string,
   {
@@ -326,7 +270,6 @@ export default function Home() {
   );
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isMochiMenuOpen, setIsMochiMenuOpen] = useState(false);
-  const [isRitualDialogOpen, setIsRitualDialogOpen] = useState(false);
 
   const handleBuyProduct = (productName: string) => {
     setSelectedProduct(productName);
@@ -618,16 +561,6 @@ export default function Home() {
             今日有 {dailyMochiVisitorCount} 人來找 Mochi 占卜
           </p>
 
-          <button
-            type="button"
-            onClick={() => setIsRitualDialogOpen(true)}
-            className="mx-auto mb-4 flex min-h-[3.4rem] w-full max-w-[17rem] items-center justify-center gap-2.5 rounded-full border border-[#C9D5E8]/70 bg-[linear-gradient(135deg,#EFF5FF_0%,#F1E9F6_45%,#F7E7DE_100%)] px-5 py-3 text-xs tracking-[0.18em] text-[#245879] shadow-[0_14px_36px_rgba(36,88,121,0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#245879]/35 hover:shadow-[0_18px_42px_rgba(36,88,121,0.2)] active:scale-95 sm:max-w-sm"
-            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
-          >
-            <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>許願魔法儀式</span>
-          </button>
-
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
             <Link href="/tarot">
               <button
@@ -668,174 +601,15 @@ export default function Home() {
                 客製化能量手鍊
               </button>
             </Link>
-            <Dialog open={isRitualDialogOpen} onOpenChange={setIsRitualDialogOpen}>
-              <DialogTrigger asChild>
-                <button
-                  type="button"
-                  className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#D1BE9B]/34 bg-white/38 px-4 py-3 text-xs tracking-[0.14em] text-[#8A7250] shadow-[0_10px_28px_rgba(209,190,155,0.12)] backdrop-blur-sm transition-all duration-500 hover:border-[#A38D6B]/55 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
-                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                >
-                  <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  <span>許願魔法儀式</span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="max-h-[86vh] max-w-[min(960px,calc(100%-1.5rem))] overflow-y-auto rounded-xl border-[#C9D5E8]/55 bg-[#F8F4F3] p-0 text-[#245879] shadow-[0_24px_70px_rgba(36,88,121,0.22)]">
-                <div className="relative overflow-hidden rounded-xl bg-[linear-gradient(135deg,#dce6f6_0%,#e8e1f0_44%,#f3dfd2_100%)] px-5 py-8 md:px-8">
-                  <div className="absolute left-8 top-8 text-3xl text-white/90" aria-hidden="true">
-                    ✦
-                  </div>
-                  <div className="absolute bottom-8 right-8 text-3xl text-white/90" aria-hidden="true">
-                    ✦
-                  </div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_84%,rgba(255,244,224,0.66),transparent_30%),radial-gradient(circle_at_82%_18%,rgba(210,232,246,0.62),transparent_34%)]" />
-
-                  <div className="relative mx-auto max-w-4xl">
-                    <DialogHeader className="items-center text-center">
-                      <p
-                        className="text-[11px] tracking-[0.42em] text-[#246188]/82"
-                        style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 500 }}
-                      >
-                        MAGIC RITUAL
-                      </p>
-                      <DialogTitle
-                        className="mt-3 text-center text-xl font-light tracking-[0.22em] text-[#245879] md:text-2xl"
-                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                      >
-                        日日好日許願魔法儀式
-                      </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="mt-7 rounded-xl border border-white/45 bg-white/36 p-5 shadow-[0_16px_46px_rgba(255,255,255,0.24)] backdrop-blur-md md:p-7">
-                      <h3
-                        className="text-center text-[15px] tracking-[0.2em] text-[#245879] md:text-base"
-                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                      >
-                        日好日儀式
-                      </h3>
-                      <div className="mt-6 grid gap-4 md:grid-cols-2">
-                        {ritualOptions.map((ritual, index) => (
-                          <div
-                            key={ritual.title}
-                            className="rounded-lg border border-white/48 bg-[#F8FBFF]/42 px-4 py-4"
-                          >
-                            <p
-                              className="text-[12px] tracking-[0.16em] text-[#245879]"
-                              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
-                            >
-                              {String.fromCharCode(65 + index)}. {ritual.title}
-                            </p>
-                            <p
-                              className="mt-2 text-[12px] leading-[1.9] tracking-[0.07em] text-[#245879]/82"
-                              style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
-                            >
-                              {ritual.desc}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="mt-5 grid gap-5 lg:grid-cols-[0.92fr_1.08fr]">
-                      <div className="rounded-xl border border-white/45 bg-white/36 p-5 shadow-[0_16px_46px_rgba(255,255,255,0.2)] backdrop-blur-md md:p-7">
-                        <h3
-                          className="text-center text-[15px] tracking-[0.2em] text-[#245879] md:text-base"
-                          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                        >
-                          日日好日十願儀式
-                        </h3>
-                        <p
-                          className="mt-4 text-center text-[12px] tracking-[0.14em] text-[#245879]/78"
-                          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                        >
-                          內容包含十大願望
-                        </p>
-                        <div className="mx-auto mt-5 grid max-w-sm grid-cols-2 gap-x-6 gap-y-3">
-                          {tenWishItems.flat().map((item) => (
-                            <span
-                              key={item}
-                              className="text-[13px] tracking-[0.1em] text-[#245879]"
-                              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
-                            >
-                              ✨ {item}
-                            </span>
-                          ))}
-                        </div>
-                        <div
-                          className="mt-6 space-y-2 text-center text-[11px] leading-[1.8] tracking-[0.08em] text-[#245879]/78"
-                          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
-                        >
-                          <p>✨ 效果維持一個月左右</p>
-                          <p>✨ 每月固定做一次效果會一直維持甚至疊增</p>
-                          <p>✨ 特殊儀式不開放個別許願，已涵蓋 10 種面向祝福</p>
-                        </div>
-                      </div>
-
-                      <div className="rounded-xl border border-white/45 bg-white/36 p-5 shadow-[0_16px_46px_rgba(255,255,255,0.2)] backdrop-blur-md md:p-7">
-                        <h3
-                          className="text-center text-[15px] tracking-[0.2em] text-[#245879] md:text-base"
-                          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                        >
-                          儀式費用
-                        </h3>
-                        <div className="mt-5 grid gap-4">
-                          {ritualFees.map((fee, index) => (
-                            <div key={fee.title} className="rounded-lg border border-white/48 bg-[#F8FBFF]/42 px-4 py-4">
-                              <p
-                                className="text-center text-[13px] tracking-[0.16em] text-[#245879]"
-                                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
-                              >
-                                {String.fromCharCode(65 + index)}. {fee.title}
-                              </p>
-                              {fee.note && (
-                                <p
-                                  className="mt-2 text-center text-[11px] tracking-[0.1em] text-[#245879]/72"
-                                  style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
-                                >
-                                  {fee.note}
-                                </p>
-                              )}
-                              <p
-                                className="mt-2 text-center text-[12px] leading-[1.9] tracking-[0.07em] text-[#245879]/82"
-                                style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
-                              >
-                                {fee.desc}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                        <p
-                          className="mt-5 text-center text-[12px] leading-[1.9] tracking-[0.08em] text-[#245879]/78"
-                          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
-                        >
-                          一個方案會包含 1-3 顆許願蠟燭，蠟燭顆數會依照您的需求與燭火訊息做搭配。
-                          <br />
-                          *1 儀式最多容納一個願望*
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                      <a
-                        href={GOODAY_INSTAGRAM_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#245879] px-6 py-3 text-xs tracking-[0.2em] text-white shadow-[0_12px_28px_rgba(36,88,121,0.2)] transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 sm:w-auto"
-                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                      >
-                        <Instagram className="h-4 w-4" aria-hidden="true" />
-                        私訊預約儀式
-                      </a>
-                      <span
-                        className="text-[11px] tracking-[0.14em] text-[#245879]/72"
-                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                      >
-                        @gooday_tarot_
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Link href="/wish-ritual">
+              <button
+                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#D1BE9B]/34 bg-white/38 px-4 py-3 text-xs tracking-[0.14em] text-[#8A7250] shadow-[0_10px_28px_rgba(209,190,155,0.12)] backdrop-blur-sm transition-all duration-500 hover:border-[#A38D6B]/55 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>許願魔法儀式</span>
+              </button>
+            </Link>
             <button
               type="button"
               aria-expanded={isMochiMenuOpen}
