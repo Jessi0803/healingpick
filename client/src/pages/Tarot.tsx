@@ -56,19 +56,6 @@ import { useRotatingText } from "@/hooks/useRotatingText";
 
 const OFFICIAL_LINE_URL = "https://lin.ee/6PBHLFX";
 
-const HUMAN_TAROT_QUESTION_PRICING = [
-  { label: "1 question", note: "單題訊息占卜", price: "NT$250" },
-  { label: "3 questions", note: "三題組合", price: "NT$700" },
-  { label: "5 questions", note: "五題深度整理", price: "NT$1100" },
-];
-
-const HUMAN_TAROT_FEATURED_PACKAGES = [
-  { title: "塔羅超值套裝", price: "NT$999", note: "戀愛、復合、財富、職涯、人生進化等主題" },
-  { title: "守護神", price: "NT$1088", note: "認識守護星、守護神與想提醒你的事" },
-  { title: "前世今生", price: "NT$800 起", note: "從前世故事、靈魂課題看今生連結" },
-  { title: "流年運勢", price: "NT$1088 起", note: "未來一年狀態、月份或季節重點提醒" },
-];
-
 const HUMAN_TAROT_DETAIL_PLANS = [
   {
     category: "個人訊息占卜",
@@ -336,46 +323,53 @@ const HUMAN_TAROT_DETAIL_PLANS = [
   },
 ];
 
-const HUMAN_TAROT_PLAN_GROUPS = [
+const HUMAN_TAROT_MENU_PLANS = [
   {
-    title: "基礎詢問",
-    tone: "已經有明確問題",
-    summary: "用題數計價，適合先問單一事件，或把同一個主題拆成幾個小問題。",
+    title: "個人訊息占卜",
+    price: "NT$250 起",
+    summary: "單題、三題、五題整合在同一個方案中，適合已經有明確問題。",
     planTitles: ["依題數詢問"],
   },
   {
-    title: "感情關係",
-    tone: "喜歡、復合、桃花、友情",
-    summary: "把曖昧、伴侶、復合、人際心結放在一起，使用者通常會從這裡最快找到題組。",
-    planTitles: ["戀愛指南", "感情復合", "緣來暗戀", "旺桃花運", "友情可貴"],
+    title: "塔羅超值套裝",
+    price: "NT$999",
+    summary: "戀愛、復合、財富、職涯、人生進化等主題。",
+    planTitles: [
+      "戀愛指南",
+      "感情復合",
+      "緣來暗戀",
+      "旺桃花運",
+      "財富密碼",
+      "創業衝衝",
+      "職涯探索",
+      "面試勝經",
+      "進化人生",
+      "雙向之路",
+      "友情可貴",
+      "心靈療癒",
+    ],
   },
   {
-    title: "事業財富",
-    tone: "工作、面試、創業、金錢",
-    summary: "適合正在換工作、準備面試、想創業，或想釐清財務與資源流動的人。",
-    planTitles: ["財富密碼", "創業衝衝", "職涯探索", "面試勝經"],
+    title: "守護神",
+    price: "NT$1088",
+    summary: "認識守護星、守護神與想提醒你的事。",
+    planTitles: ["守護神"],
   },
   {
-    title: "人生選擇與療癒",
-    tone: "選擇、自信、低潮整理",
-    summary: "不是只看事件結果，而是回到自己的狀態、盲點與下一步行動。",
-    planTitles: ["進化人生", "雙向之路", "心靈療癒"],
-  },
-  {
-    title: "靈魂與前世",
-    tone: "守護能量、前世故事",
-    summary: "適合想看更深層的靈魂連結、守護神訊息與前世今生課題。",
-    planTitles: ["守護神", "前世今生 1", "前世今生 2", "前世今生 3"],
+    title: "前世今生",
+    price: "NT$800 起",
+    summary: "從前世故事、靈魂課題看今生連結。",
+    planTitles: ["前世今生 1", "前世今生 2", "前世今生 3"],
   },
   {
     title: "流年運勢",
-    tone: "年度、月份、季節",
-    summary: "把未來一年拆成不同粒度，看整體、每月或每季會遇到的重點。",
+    price: "NT$1088 起",
+    summary: "未來一年狀態、月份或季節重點提醒。",
     planTitles: ["流年運勢 1", "流年運勢 2", "流年運勢 3"],
   },
-].map((group) => ({
-  ...group,
-  plans: group.planTitles
+].map((menu) => ({
+  ...menu,
+  plans: menu.planTitles
     .map((title) => HUMAN_TAROT_DETAIL_PLANS.find((plan) => plan.title === title))
     .filter((plan): plan is (typeof HUMAN_TAROT_DETAIL_PLANS)[number] => Boolean(plan)),
 }));
@@ -2613,7 +2607,7 @@ export default function TarotPage() {
                 linear-gradient(180deg, rgba(255,253,248,0.5), rgba(246,241,226,0.24));
             }
             .tarot-human-shell {
-              width: min(100%, 1040px);
+              width: min(100%, 760px);
               margin: 0 auto;
             }
             .tarot-human-panel {
@@ -2649,47 +2643,38 @@ export default function TarotPage() {
             .tarot-human-price strong {
               color: #267345;
             }
-            .tarot-human-package {
-              border: 1px solid rgba(157, 123, 63, 0.18);
-              background: rgba(255,253,248,0.54);
-            }
-            .tarot-human-plan-scroll {
-              max-height: 760px;
-              overflow-y: auto;
-              padding-right: 4px;
-            }
-            .tarot-human-plan-scroll::-webkit-scrollbar {
-              width: 8px;
-            }
-            .tarot-human-plan-scroll::-webkit-scrollbar-thumb {
-              border-radius: 999px;
-              background: rgba(112, 138, 106, 0.24);
-            }
-            .tarot-human-plan-group {
-              border: 1px solid rgba(112, 138, 106, 0.18);
-              border-radius: 8px;
-              background: rgba(255,253,248,0.4);
-              padding: 16px;
-            }
-            .tarot-human-plan-group + .tarot-human-plan-group {
-              margin-top: 14px;
-            }
             .tarot-human-plan-card {
-              min-height: 128px;
-              border: 1px solid rgba(112, 138, 106, 0.19);
-              background: rgba(255,253,248,0.62);
+              width: 100%;
+              min-height: 116px;
+              border: 1px solid rgba(157, 123, 63, 0.18);
+              background: rgba(255,253,248,0.56);
               text-align: left;
               box-shadow: 0 10px 24px rgba(80, 72, 45, 0.07);
             }
             .tarot-human-plan-card:hover {
-              border-color: rgba(112, 138, 106, 0.36);
+              border-color: rgba(157, 123, 63, 0.32);
               background: rgba(255,253,248,0.82);
               transform: translateY(-1px);
+            }
+            .tarot-human-plan-card--primary {
+              border-color: rgba(112, 138, 106, 0.22);
+            }
+            .tarot-human-plan-card--primary strong {
+              color: #267345;
+            }
+            .tarot-human-detail-section {
+              border: 1px solid rgba(112, 138, 106, 0.16);
+              border-radius: 8px;
+              background: rgba(255,253,248,0.58);
+              padding: 14px;
+            }
+            .tarot-human-detail-section + .tarot-human-detail-section {
+              margin-top: 12px;
             }
             .tarot-human-detail-list {
               display: grid;
               gap: 10px;
-              margin-top: 18px;
+              margin-top: 12px;
             }
             .tarot-human-detail-list li {
               border: 1px solid rgba(112, 138, 106, 0.16);
@@ -2705,13 +2690,6 @@ export default function TarotPage() {
               border: 1px solid rgba(112, 138, 106, 0.22);
               background: rgba(255,253,248,0.64);
               color: var(--human-sage);
-            }
-            @media (max-width: 1023px) {
-              .tarot-human-plan-scroll {
-                max-height: none;
-                overflow: visible;
-                padding-right: 0;
-              }
             }
             @media (max-width: 420px) {
               .tarot-human-page {
@@ -2734,226 +2712,141 @@ export default function TarotPage() {
             </Link>
 
             <section className="tarot-human-panel p-5 md:p-9">
-              <div className="grid gap-7 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+              <div className="flex items-center gap-4">
+                <img
+                  src="/gooday-logo.png"
+                  alt="Gooday 日日好日"
+                  className="tarot-human-logo"
+                />
                 <div>
-                  <div className="flex items-center gap-4">
-                    <img
-                      src="/gooday-logo.png"
-                      alt="Gooday 日日好日"
-                      className="tarot-human-logo"
-                    />
-                    <div>
-                      <span
-                        className="text-[11px] uppercase tracking-[0.34em] text-[#557255]"
-                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                      >
-                        HealingPick × Gooday
-                      </span>
-                      <h1 className="tarot-human-title mt-3 text-2xl leading-[1.7] md:text-3xl">
-                        真人占卜
-                      </h1>
-                    </div>
-                  </div>
-
-                  <p className="tarot-human-copy mt-6 text-[14px] leading-[2.1]">
-                    由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。可依題數詢問，也可以直接選主題套裝。
-                  </p>
-
-                  <div className="mt-6 grid gap-3">
-                    {HUMAN_TAROT_QUESTION_PRICING.map((item) => (
-                      <div key={item.label} className="tarot-human-price rounded-lg px-5 py-3.5">
-                        <div className="flex items-baseline justify-between gap-4">
-                          <span
-                            className="text-[13px] tracking-[0.12em] text-[#31353A]/72"
-                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                          >
-                            {item.note}
-                          </span>
-                          <strong
-                            className="text-[20px] tracking-[0.08em]"
-                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
-                          >
-                            {item.price}
-                          </strong>
-                        </div>
-                        <p
-                          className="mt-1 text-[11px] tracking-[0.16em] text-[#31353A]/46"
-                          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-                        >
-                          {item.label}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {HUMAN_TAROT_FEATURED_PACKAGES.map((item) => (
-                      <div key={item.title} className="tarot-human-package rounded-lg p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <h2
-                            className="text-[14px] tracking-[0.12em] text-[#34322d]"
-                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
-                          >
-                            {item.title}
-                          </h2>
-                          <strong
-                            className="shrink-0 text-[15px] tracking-[0.08em] text-[#9d7b3f]"
-                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
-                          >
-                            {item.price}
-                          </strong>
-                        </div>
-                        <p
-                          className="mt-2 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/58"
-                          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-                        >
-                          {item.note}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                  <span
+                    className="text-[11px] uppercase tracking-[0.34em] text-[#557255]"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    HealingPick × Gooday
+                  </span>
+                  <h1 className="tarot-human-title mt-3 text-2xl leading-[1.7] md:text-3xl">
+                    真人占卜
+                  </h1>
                 </div>
+              </div>
 
-                <div className="min-w-0">
-                  <div className="mb-4 flex items-end justify-between gap-4">
-                    <div>
-                      <p
-                        className="text-[11px] uppercase tracking-[0.28em] text-[#557255]"
-                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              <p className="tarot-human-copy mt-6 text-[14px] leading-[2.1]">
+                由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。先選想看的方案，點開就能查看細項。
+              </p>
+
+              <div className="mt-6 grid gap-3">
+                {HUMAN_TAROT_MENU_PLANS.map((menu, index) => (
+                  <Dialog key={menu.title}>
+                    <DialogTrigger asChild>
+                      <button
+                        type="button"
+                        className={`tarot-human-plan-card rounded-lg p-4 transition ${
+                          index === 0 ? "tarot-human-plan-card--primary" : ""
+                        }`}
                       >
-                        Gooday Menu
-                      </p>
-                      <h2
-                        className="mt-2 text-[18px] tracking-[0.14em] text-[#34322d]"
-                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                      >
-                        依問題分類
-                      </h2>
-                    </div>
-                    <span
-                      className="hidden text-[11px] tracking-[0.12em] text-[#31353A]/42 sm:inline"
-                      style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-                    >
-                      {HUMAN_TAROT_DETAIL_PLANS.length} 個方案
-                    </span>
-                  </div>
-                  <div className="tarot-human-plan-scroll">
-                    {HUMAN_TAROT_PLAN_GROUPS.map((group) => (
-                      <section key={group.title} className="tarot-human-plan-group">
-                        <div className="mb-4">
-                          <div className="flex flex-wrap items-baseline justify-between gap-2">
-                            <h3
-                              className="text-[16px] tracking-[0.14em] text-[#34322d]"
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <h2
+                              className="text-[18px] leading-[1.5] tracking-[0.12em] text-[#34322d]"
                               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
                             >
-                              {group.title}
-                            </h3>
-                            <span
-                              className="text-[11px] tracking-[0.1em] text-[#557255]"
-                              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                              {menu.title}
+                            </h2>
+                            <p
+                              className="mt-3 text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/62"
+                              style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
                             >
-                              {group.tone}
-                            </span>
+                              {menu.summary}
+                            </p>
                           </div>
-                          <p
-                            className="mt-2 text-[12px] leading-[1.8] tracking-[0.06em] text-[#31353A]/58"
-                            style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                          <strong
+                            className="shrink-0 text-[20px] tracking-[0.08em] text-[#9d7b3f]"
+                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
                           >
-                            {group.summary}
-                          </p>
+                            {menu.price}
+                          </strong>
                         </div>
+                        <span
+                          className="mt-4 inline-flex text-[11px] tracking-[0.14em] text-[#267345]"
+                          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                        >
+                          查看細項
+                        </span>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-h-[82vh] max-w-[620px] overflow-y-auto rounded-lg border-[#D1BE9B]/30 bg-[#FFFDF8] text-[#34322d]">
+                      <DialogHeader>
+                        <p
+                          className="text-[11px] uppercase tracking-[0.24em] text-[#557255]"
+                          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                        >
+                          Gooday Menu
+                        </p>
+                        <DialogTitle
+                          className="flex flex-wrap items-baseline justify-between gap-3 text-left text-[22px] tracking-[0.14em] text-[#34322d]"
+                          style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                        >
+                          <span>{menu.title}</span>
+                          <strong className="text-[18px] tracking-[0.08em] text-[#9d7b3f]">
+                            {menu.price}
+                          </strong>
+                        </DialogTitle>
+                      </DialogHeader>
+                      <p
+                        className="mt-2 text-[13px] leading-[1.9] tracking-[0.06em] text-[#31353A]/66"
+                        style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                      >
+                        {menu.summary}
+                      </p>
 
-                        <div className="grid gap-3 sm:grid-cols-2">
-                          {group.plans.map((plan) => (
-                            <Dialog key={`${group.title}-${plan.title}`}>
-                              <DialogTrigger asChild>
-                                <button
-                                  type="button"
-                                  className="tarot-human-plan-card rounded-lg p-4 transition"
-                                >
-                                  <span
-                                    className="text-[10px] uppercase tracking-[0.2em] text-[#557255]"
-                                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                                  >
-                                    {plan.category}
-                                  </span>
-                                  <div className="mt-2 flex items-start justify-between gap-3">
-                                    <h4
-                                      className="text-[15px] leading-[1.5] tracking-[0.12em] text-[#34322d]"
-                                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
-                                    >
-                                      {plan.title}
-                                    </h4>
-                                    <strong
-                                      className="shrink-0 text-[14px] tracking-[0.08em] text-[#9d7b3f]"
-                                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
-                                    >
-                                      {plan.price}
-                                    </strong>
-                                  </div>
-                                  <p
-                                    className="mt-3 line-clamp-2 text-[12px] leading-[1.7] tracking-[0.06em] text-[#31353A]/58"
-                                    style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-                                  >
-                                    {plan.summary}
-                                  </p>
-                                  <span
-                                    className="mt-4 inline-flex text-[11px] tracking-[0.14em] text-[#267345]"
-                                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                                  >
-                                    查看細項
-                                  </span>
-                                </button>
-                              </DialogTrigger>
-                              <DialogContent className="max-h-[82vh] max-w-[560px] overflow-y-auto rounded-lg border-[#D1BE9B]/30 bg-[#FFFDF8] text-[#34322d]">
-                                <DialogHeader>
-                                  <p
-                                    className="text-[11px] uppercase tracking-[0.24em] text-[#557255]"
-                                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                                  >
-                                    {group.title} / {plan.category}
-                                  </p>
-                                  <DialogTitle
-                                    className="flex flex-wrap items-baseline justify-between gap-3 text-left text-[22px] tracking-[0.14em] text-[#34322d]"
-                                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                                  >
-                                    <span>{plan.title}</span>
-                                    <strong className="text-[18px] tracking-[0.08em] text-[#9d7b3f]">
-                                      {plan.price}
-                                    </strong>
-                                  </DialogTitle>
-                                </DialogHeader>
-                                <p
-                                  className="mt-2 text-[13px] leading-[1.9] tracking-[0.06em] text-[#31353A]/66"
-                                  style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-                                >
-                                  {plan.summary}
-                                </p>
-                                <ul
-                                  className="tarot-human-detail-list text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/74"
-                                  style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-                                >
-                                  {plan.details.map((detail) => (
-                                    <li key={detail}>{detail}</li>
-                                  ))}
-                                </ul>
-                                <a
-                                  href={OFFICIAL_LINE_URL}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="tarot-human-line mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full px-5 py-3 text-center text-[12px] tracking-[0.16em] text-white no-underline transition active:scale-[0.98]"
-                                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                                >
-                                  LINE 預約此方案
-                                </a>
-                              </DialogContent>
-                            </Dialog>
-                          ))}
-                        </div>
-                      </section>
-                    ))}
-                  </div>
-                </div>
+                      <div className="mt-5">
+                        {menu.plans.map((plan) => (
+                          <section key={plan.title} className="tarot-human-detail-section">
+                            <div className="flex flex-wrap items-baseline justify-between gap-3">
+                              <h3
+                                className="text-[15px] tracking-[0.12em] text-[#34322d]"
+                                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
+                              >
+                                {plan.title}
+                              </h3>
+                              <strong
+                                className="text-[15px] tracking-[0.08em] text-[#9d7b3f]"
+                                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
+                              >
+                                {plan.price}
+                              </strong>
+                            </div>
+                            <p
+                              className="mt-2 text-[12px] leading-[1.8] tracking-[0.06em] text-[#31353A]/62"
+                              style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                            >
+                              {plan.summary}
+                            </p>
+                            <ul
+                              className="tarot-human-detail-list text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/74"
+                              style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                            >
+                              {plan.details.map((detail) => (
+                                <li key={detail}>{detail}</li>
+                              ))}
+                            </ul>
+                          </section>
+                        ))}
+                      </div>
+
+                      <a
+                        href={OFFICIAL_LINE_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="tarot-human-line mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full px-5 py-3 text-center text-[12px] tracking-[0.16em] text-white no-underline transition active:scale-[0.98]"
+                        style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                      >
+                        LINE 預約此方案
+                      </a>
+                    </DialogContent>
+                  </Dialog>
+                ))}
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
