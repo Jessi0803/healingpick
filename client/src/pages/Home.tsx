@@ -5,7 +5,7 @@
  *   1. Hero + 3D Book (星夢之書)
  *   2. Crystal Altar (水晶祭壇)
  *   3. Features Overview (五大功能入口)
- *   4. Divination Previews (紫微 / 塔羅)
+ *   4. Divination Previews (塔羅 / 紫微)
  *   5. Shop Preview (療癒水晶)
  */
 
@@ -19,6 +19,7 @@ import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
 import { PRODUCTS } from "@/data/products";
 import ContactDialog from "@/components/ContactDialog";
+import { ExternalLink, Instagram } from "lucide-react";
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
@@ -121,20 +122,20 @@ const features = [
     color: "#E6DDD2",
   },
   {
-    icon: "☯",
-    title: "紫微斗數",
-    subtitle: "Zi Wei Dou Shu",
-    desc: "輸入生辰八字，排出專屬命盤，洞悉人生格局與流年運勢。",
-    href: "/ziwei",
-    color: "#DDD5C8", // 暖米棕，比背景深一階
-  },
-  {
     icon: "🔮",
     title: "塔羅牌占卜",
     subtitle: "Tarot Reading",
     desc: "凱爾特十字完整牌陣，深度解析過去、現在與未來的能量流動。",
     href: "/tarot",
     color: "#D8CEEA", // 薰衣草紫，比背景深一階
+  },
+  {
+    icon: "☯",
+    title: "紫微斗數",
+    subtitle: "Zi Wei Dou Shu",
+    desc: "輸入生辰八字，排出專屬命盤，洞悉人生格局與流年運勢。",
+    href: "/ziwei",
+    color: "#DDD5C8", // 暖米棕，比背景深一階
   },
   {
     icon: "🌙",
@@ -566,21 +567,13 @@ export default function Home() {
                 客製化能量水晶
               </button>
             </Link>
-            <Link href="/ziwei">
-              <button
-                className="w-full px-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                紫微斗數
-              </button>
-            </Link>
             <Link href="/tarot">
               <button
                 className="group flex w-full items-center justify-center gap-2.5 rounded-full border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 px-4 py-2.5 text-[#6F6688] transition-all duration-500 hover:border-[#3D4144] hover:bg-[#3D4144] hover:text-white active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <span
-                  className="grid h-7 w-7 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/45 bg-white/75 shadow-[0_5px_18px_rgba(209,190,155,0.14)] transition-colors duration-500 group-hover:border-white/25 group-hover:bg-white/90"
+                  className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/45 bg-white/75 shadow-[0_5px_18px_rgba(209,190,155,0.14)] transition-colors duration-500 group-hover:border-white/25 group-hover:bg-white/90"
                   aria-hidden="true"
                 >
                   <img
@@ -591,6 +584,9 @@ export default function Home() {
                 </span>
                 <span className="flex min-w-0 flex-col items-start leading-none">
                   <span className="text-[11px] tracking-[0.14em] sm:text-xs">
+                    塔羅占卜
+                  </span>
+                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6F6688]/68 transition-colors duration-500 group-hover:text-white/62 sm:tracking-[0.14em]">
                     日日好日
                     <span
                       className="ml-1.5 text-[12px] italic tracking-[0.08em] sm:text-[13px]"
@@ -600,6 +596,14 @@ export default function Home() {
                     </span>
                   </span>
                 </span>
+              </button>
+            </Link>
+            <Link href="/ziwei">
+              <button
+                className="w-full px-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                紫微斗數
               </button>
             </Link>
             <Link href="/dream">
@@ -639,6 +643,78 @@ export default function Home() {
           </span>
           <div className="w-px h-8 bg-gradient-to-b from-[#D1BE9B] to-transparent" />
         </div>
+      </section>
+
+      {/* ── GOODAY PARTNER ───────────────────────────────────────────────── */}
+      <section className="px-6 py-14 md:px-10 md:py-16">
+        <Reveal className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 border-y border-[#D1BE9B]/22 py-10 md:grid-cols-[0.85fr_1.15fr] md:py-12">
+          <div className="flex items-center gap-5">
+            <div className="grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/35 bg-white/70 shadow-[0_16px_42px_rgba(209,190,155,0.18)] md:h-28 md:w-28">
+              <img
+                src="/gooday-logo.png"
+                alt="日日好日塔羅牌占卜"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div>
+              <span
+                className="text-[15px] italic tracking-[0.06em] text-[#A38D6B]"
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
+              >
+                Gooday Tarot
+              </span>
+              <h2
+                className="mt-2 text-lg font-extralight tracking-[0.18em] text-[#31353A] md:text-xl"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              >
+                真人塔羅師，一對一陪你看清問題
+              </h2>
+            </div>
+          </div>
+
+          <div>
+            <p
+              className="max-w-2xl text-[13px] leading-[2.1] tracking-[0.08em] text-[#31353A]/68 md:text-sm"
+              style={{
+                fontFamily: "Noto Sans TC, sans-serif",
+                fontWeight: 300,
+              }}
+            >
+              HealingPick
+              與「日日好日塔羅牌占卜」合作，提供真人塔羅師一對一諮詢，陪你看懂感情、事業、財運與人生方向。
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link href="/tarot">
+                <button
+                  className="inline-flex w-full items-center justify-center rounded-full bg-[#3D4144] px-6 py-3 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-[0_10px_28px_rgba(49,53,58,0.16)] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 sm:w-auto"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
+                >
+                  立即預約占卜
+                </button>
+              </Link>
+              <a
+                href="https://www.instagram.com/gooday_tarot_/"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#D1BE9B]/45 bg-white/42 px-6 py-3 text-xs tracking-[0.18em] text-[#8A7250] transition-all duration-500 hover:border-[#A38D6B]/55 hover:bg-white/70 hover:text-[#31353A] active:scale-95 sm:w-auto"
+                style={{
+                  fontFamily: "Noto Serif TC, serif",
+                  fontWeight: 300,
+                }}
+              >
+                <Instagram className="h-4 w-4" aria-hidden="true" />
+                查看日日好日 IG
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* ── FEATURES GRID ─────────────────────────────────────────────────── */}
@@ -957,264 +1033,276 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── ZIWEI PREVIEW ─────────────────────────────────────────────────── */}
-      <section className="py-20 px-6 md:px-10 bg-[#F2EDE8]/60">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Ziwei image */}
-            <div className="order-2 lg:order-1 flex justify-center animate-fade-in-up delay-100">
-              <div className="relative w-64 h-64 md:w-72 md:h-72">
-                {/* Peeking cat at top-right corner of chart */}
-                <div className="absolute -top-8 -right-6 z-10">
-                  <CatPeeking className="w-14 h-16" side="left" />
+      <div className="flex flex-col">
+        {/* ── ZIWEI PREVIEW ─────────────────────────────────────────────────── */}
+        <section className="order-2 py-20 px-6 md:px-10 bg-[#F2EDE8]/60">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Ziwei image */}
+              <div className="order-2 lg:order-1 flex justify-center animate-fade-in-up delay-100">
+                <div className="relative w-64 h-64 md:w-72 md:h-72">
+                  {/* Peeking cat at top-right corner of chart */}
+                  <div className="absolute -top-8 -right-6 z-10">
+                    <CatPeeking className="w-14 h-16" side="left" />
+                  </div>
+                  <img
+                    src="https://d2xsxph8kpxj0f.cloudfront.net/310519663525376407/gAsTZ8KCRUAuJ8Jah3ZYFq/ziwei-chart-jyKEJJhPyoHRbNoBt5L4ZH.webp"
+                    alt="紫微斗數命盤"
+                    className="w-full h-full object-cover rounded-xl shadow-[0_8px_32px_rgba(61,65,68,0.12)] border border-[#D1BE9B]/20"
+                  />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#D1BE9B]/10 to-transparent pointer-events-none" />
                 </div>
-                <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663525376407/gAsTZ8KCRUAuJ8Jah3ZYFq/ziwei-chart-jyKEJJhPyoHRbNoBt5L4ZH.webp"
-                  alt="紫微斗數命盤"
-                  className="w-full h-full object-cover rounded-xl shadow-[0_8px_32px_rgba(61,65,68,0.12)] border border-[#D1BE9B]/20"
-                />
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#D1BE9B]/10 to-transparent pointer-events-none" />
               </div>
-            </div>
-            {/* Ziwei text */}
-            <div className="order-1 lg:order-2 animate-fade-in-up delay-200">
-              <span
-                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-                style={{
-                  fontFamily: "Cormorant Garamond, serif",
-                  fontWeight: 400,
-                }}
-              >
-                Zi Wei Dou Shu
-              </span>
-              <h2
-                className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
-              >
-                紫微斗數命盤
-              </h2>
-              <p
-                className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6 max-w-sm"
-                style={{
-                  fontFamily: "Noto Sans TC, sans-serif",
-                  fontWeight: 300,
-                }}
-              >
-                輸入出生年月日時，系統自動排出傳統十二宮位命盤。
-                從命宮、財帛宮到夫妻宮，全面解析你的人生格局、
-                個性特質與流年運勢。
-              </p>
-              <Link href="/ziwei">
-                <button
-                  className="px-7 py-2.5 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-transparent rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
+              {/* Ziwei text */}
+              <div className="order-1 lg:order-2 animate-fade-in-up delay-200">
+                <span
+                  className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                  style={{
+                    fontFamily: "Cormorant Garamond, serif",
+                    fontWeight: 400,
+                  }}
+                >
+                  Zi Wei Dou Shu
+                </span>
+                <h2
+                  className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
                   style={{
                     fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 200,
+                  }}
+                >
+                  紫微斗數命盤
+                </h2>
+                <p
+                  className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6 max-w-sm"
+                  style={{
+                    fontFamily: "Noto Sans TC, sans-serif",
                     fontWeight: 300,
                   }}
                 >
-                  排出我的命盤
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── TAROT PREVIEW · Night Sky ─────────────────────────────────────── */}
-      <section className="night-sky-section relative overflow-hidden py-24 px-6 md:px-10">
-        {/* Stardust + moonlight */}
-        <div className="night-stardust" aria-hidden="true" />
-        <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#D1BE9B]/[0.08] blur-3xl pointer-events-none" />
-        {/* Twinkling stars */}
-        <span
-          className="night-star text-[10px]"
-          style={{ top: "14%", left: "8%" }}
-        >
-          ✦
-        </span>
-        <span
-          className="night-star text-[8px]"
-          style={{ top: "70%", left: "14%", animationDelay: "-2s" }}
-        >
-          ✦
-        </span>
-        <span
-          className="night-star text-[9px]"
-          style={{ top: "22%", right: "10%", animationDelay: "-3.5s" }}
-        >
-          ✦
-        </span>
-        <span
-          className="night-star text-[8px]"
-          style={{ bottom: "16%", right: "20%", animationDelay: "-1.2s" }}
-        >
-          ✦
-        </span>
-
-        <div className="max-w-6xl mx-auto relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Tarot */}
-            <div className="animate-fade-in-up">
-              <span
-                className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-                style={{
-                  fontFamily: "Cormorant Garamond, serif",
-                  fontWeight: 400,
-                }}
-              >
-                Tarot Reading
-              </span>
-              <h2
-                className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#F2EDE6] mt-2 mb-4"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
-              >
-                塔羅牌占卜
-              </h2>
-              <p
-                className="text-[12px] leading-[2.1] text-[#F2EDE6]/64 tracking-wider mb-6 max-w-sm"
-                style={{
-                  fontFamily: "Noto Sans TC, sans-serif",
-                  fontWeight: 300,
-                  fontSize: "12px",
-                }}
-              >
-                採用凱爾特十字完整牌陣，十張牌從不同維度解析你的問題——
-                過去的根源、現在的阻礙、潛意識的渴望，以及最終的可能結果。
-              </p>
-              <div className="flex gap-3 mb-8">
-                {["過去", "現在", "未來", "潛意識", "建議"].map(tag => (
-                  <span
-                    key={tag}
-                    className="text-[11px] tracking-[0.15em] px-2.5 py-1 rounded-full bg-white/[0.06] text-[#EFE9DC]/75 border border-[#D1BE9B]/30 backdrop-blur-sm"
+                  輸入出生年月日時，系統自動排出傳統十二宮位命盤。
+                  從命宮、財帛宮到夫妻宮，全面解析你的人生格局、
+                  個性特質與流年運勢。
+                </p>
+                <Link href="/ziwei">
+                  <button
+                    className="px-7 py-2.5 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-transparent rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
                       fontWeight: 300,
                     }}
                   >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <Link href="/tarot">
-                <button
-                  className="px-7 py-2.5 text-xs tracking-[0.25em] bg-[#D1BE9B] text-[#23263A] rounded-full shadow-[0_8px_28px_rgba(209,190,155,0.25)] hover:bg-[#E3D3AF] transition-all duration-500 active:scale-95"
-                  style={{
-                    fontFamily: "Noto Serif TC, serif",
-                    fontWeight: 300,
-                  }}
-                >
-                  開始占卜
-                </button>
-              </Link>
-            </div>
-
-            {/* Tarot cards visual – floating SVG cards */}
-            <div
-              className="mx-auto flex items-end justify-center animate-fade-in-up delay-200"
-              style={{ height: "240px", position: "relative", width: "260px" }}
-            >
-              {/* Constellation line-art behind the cards */}
-              <svg
-                className="absolute -inset-10 w-[calc(100%+5rem)] h-[calc(100%+5rem)] pointer-events-none opacity-30"
-                viewBox="0 0 340 320"
-                fill="none"
-                aria-hidden="true"
-              >
-                <polyline
-                  points="20,250 70,180 130,210 200,90 260,130 315,60"
-                  stroke="#D1BE9B"
-                  strokeWidth="0.6"
-                />
-                {[
-                  { x: 20, y: 250, r: 1.6 },
-                  { x: 70, y: 180, r: 2.2 },
-                  { x: 130, y: 210, r: 1.4 },
-                  { x: 200, y: 90, r: 2.6 },
-                  { x: 260, y: 130, r: 1.5 },
-                  { x: 315, y: 60, r: 2 },
-                ].map((s, i) => (
-                  <circle key={i} cx={s.x} cy={s.y} r={s.r} fill="#D1BE9B" />
-                ))}
-                <path
-                  d="M200 78 L202 88 L212 90 L202 92 L200 102 L198 92 L188 90 L198 88 Z"
-                  fill="#E8DCC0"
-                />
-              </svg>
-              {/* Card 1 – left, tilted – THE MOON RWS */}
-              <div
-                style={{
-                  position: "absolute",
-                  left: "0px",
-                  bottom: "0px",
-                  transform: "rotate(-12deg)",
-                  animation: "floatCard1 4s ease-in-out infinite",
-                  filter: "drop-shadow(0 14px 28px rgba(0,0,0,0.45))",
-                }}
-              >
-                <img
-                  src="/tarot/18.jpg"
-                  alt="THE MOON"
-                  style={{
-                    width: "80px",
-                    height: "130px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                    border: "1.5px solid rgba(209,190,155,0.65)",
-                  }}
-                />
-              </div>
-              {/* Card 2 – center, upright – THE STAR RWS */}
-              <div
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  bottom: "10px",
-                  transform: "translateX(-50%)",
-                  animation: "floatCard2 4.5s ease-in-out infinite",
-                  filter:
-                    "drop-shadow(0 18px 36px rgba(0,0,0,0.55)) drop-shadow(0 0 18px rgba(209,190,155,0.22))",
-                  zIndex: 2,
-                }}
-              >
-                <img
-                  src="/tarot/17.jpg"
-                  alt="THE STAR"
-                  style={{
-                    width: "90px",
-                    height: "148px",
-                    objectFit: "cover",
-                    borderRadius: "9px",
-                    border: "1.5px solid rgba(209,190,155,0.8)",
-                  }}
-                />
-              </div>
-              {/* Card 3 – right, tilted – THE SUN RWS */}
-              <div
-                style={{
-                  position: "absolute",
-                  right: "0px",
-                  bottom: "0px",
-                  transform: "rotate(10deg)",
-                  animation: "floatCard3 5s ease-in-out infinite",
-                  filter: "drop-shadow(0 14px 28px rgba(0,0,0,0.45))",
-                }}
-              >
-                <img
-                  src="/tarot/19.jpg"
-                  alt="THE SUN"
-                  style={{
-                    width: "80px",
-                    height: "130px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                    border: "1.5px solid rgba(209,190,155,0.65)",
-                  }}
-                />
+                    排出我的命盤
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* ── TAROT PREVIEW · Night Sky ─────────────────────────────────────── */}
+        <section className="night-sky-section order-1 relative overflow-hidden py-24 px-6 md:px-10">
+          {/* Stardust + moonlight */}
+          <div className="night-stardust" aria-hidden="true" />
+          <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#D1BE9B]/[0.08] blur-3xl pointer-events-none" />
+          {/* Twinkling stars */}
+          <span
+            className="night-star text-[10px]"
+            style={{ top: "14%", left: "8%" }}
+          >
+            ✦
+          </span>
+          <span
+            className="night-star text-[8px]"
+            style={{ top: "70%", left: "14%", animationDelay: "-2s" }}
+          >
+            ✦
+          </span>
+          <span
+            className="night-star text-[9px]"
+            style={{ top: "22%", right: "10%", animationDelay: "-3.5s" }}
+          >
+            ✦
+          </span>
+          <span
+            className="night-star text-[8px]"
+            style={{ bottom: "16%", right: "20%", animationDelay: "-1.2s" }}
+          >
+            ✦
+          </span>
+
+          <div className="max-w-6xl mx-auto relative">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Tarot */}
+              <div className="animate-fade-in-up">
+                <span
+                  className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
+                  style={{
+                    fontFamily: "Cormorant Garamond, serif",
+                    fontWeight: 400,
+                  }}
+                >
+                  Tarot Reading
+                </span>
+                <h2
+                  className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#F2EDE6] mt-2 mb-4"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 200,
+                  }}
+                >
+                  塔羅牌占卜
+                </h2>
+                <p
+                  className="text-[12px] leading-[2.1] text-[#F2EDE6]/64 tracking-wider mb-6 max-w-sm"
+                  style={{
+                    fontFamily: "Noto Sans TC, sans-serif",
+                    fontWeight: 300,
+                    fontSize: "12px",
+                  }}
+                >
+                  採用凱爾特十字完整牌陣，十張牌從不同維度解析你的問題——
+                  過去的根源、現在的阻礙、潛意識的渴望，以及最終的可能結果。
+                </p>
+                <div className="flex gap-3 mb-8">
+                  {["過去", "現在", "未來", "潛意識", "建議"].map(tag => (
+                    <span
+                      key={tag}
+                      className="text-[11px] tracking-[0.15em] px-2.5 py-1 rounded-full bg-white/[0.06] text-[#EFE9DC]/75 border border-[#D1BE9B]/30 backdrop-blur-sm"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <Link href="/tarot">
+                  <button
+                    className="px-7 py-2.5 text-xs tracking-[0.25em] bg-[#D1BE9B] text-[#23263A] rounded-full shadow-[0_8px_28px_rgba(209,190,155,0.25)] hover:bg-[#E3D3AF] transition-all duration-500 active:scale-95"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    開始占卜
+                  </button>
+                </Link>
+              </div>
+
+              {/* Tarot cards visual – floating SVG cards */}
+              <div
+                className="mx-auto flex items-end justify-center animate-fade-in-up delay-200"
+                style={{
+                  height: "240px",
+                  position: "relative",
+                  width: "260px",
+                }}
+              >
+                {/* Constellation line-art behind the cards */}
+                <svg
+                  className="absolute -inset-10 w-[calc(100%+5rem)] h-[calc(100%+5rem)] pointer-events-none opacity-30"
+                  viewBox="0 0 340 320"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <polyline
+                    points="20,250 70,180 130,210 200,90 260,130 315,60"
+                    stroke="#D1BE9B"
+                    strokeWidth="0.6"
+                  />
+                  {[
+                    { x: 20, y: 250, r: 1.6 },
+                    { x: 70, y: 180, r: 2.2 },
+                    { x: 130, y: 210, r: 1.4 },
+                    { x: 200, y: 90, r: 2.6 },
+                    { x: 260, y: 130, r: 1.5 },
+                    { x: 315, y: 60, r: 2 },
+                  ].map((s, i) => (
+                    <circle key={i} cx={s.x} cy={s.y} r={s.r} fill="#D1BE9B" />
+                  ))}
+                  <path
+                    d="M200 78 L202 88 L212 90 L202 92 L200 102 L198 92 L188 90 L198 88 Z"
+                    fill="#E8DCC0"
+                  />
+                </svg>
+                {/* Card 1 – left, tilted – THE MOON RWS */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "0px",
+                    bottom: "0px",
+                    transform: "rotate(-12deg)",
+                    animation: "floatCard1 4s ease-in-out infinite",
+                    filter: "drop-shadow(0 14px 28px rgba(0,0,0,0.45))",
+                  }}
+                >
+                  <img
+                    src="/tarot/18.jpg"
+                    alt="THE MOON"
+                    style={{
+                      width: "80px",
+                      height: "130px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                      border: "1.5px solid rgba(209,190,155,0.65)",
+                    }}
+                  />
+                </div>
+                {/* Card 2 – center, upright – THE STAR RWS */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    bottom: "10px",
+                    transform: "translateX(-50%)",
+                    animation: "floatCard2 4.5s ease-in-out infinite",
+                    filter:
+                      "drop-shadow(0 18px 36px rgba(0,0,0,0.55)) drop-shadow(0 0 18px rgba(209,190,155,0.22))",
+                    zIndex: 2,
+                  }}
+                >
+                  <img
+                    src="/tarot/17.jpg"
+                    alt="THE STAR"
+                    style={{
+                      width: "90px",
+                      height: "148px",
+                      objectFit: "cover",
+                      borderRadius: "9px",
+                      border: "1.5px solid rgba(209,190,155,0.8)",
+                    }}
+                  />
+                </div>
+                {/* Card 3 – right, tilted – THE SUN RWS */}
+                <div
+                  style={{
+                    position: "absolute",
+                    right: "0px",
+                    bottom: "0px",
+                    transform: "rotate(10deg)",
+                    animation: "floatCard3 5s ease-in-out infinite",
+                    filter: "drop-shadow(0 14px 28px rgba(0,0,0,0.45))",
+                  }}
+                >
+                  <img
+                    src="/tarot/19.jpg"
+                    alt="THE SUN"
+                    style={{
+                      width: "80px",
+                      height: "130px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                      border: "1.5px solid rgba(209,190,155,0.65)",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
       {/* ── SHOP PREVIEW ──────────────────────────────────────────────────── */}
       <section className="py-20 px-6 md:px-10 bg-[#F2EDE8]/40">
