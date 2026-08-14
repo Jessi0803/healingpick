@@ -140,20 +140,20 @@ const features = [
     color: "#D8CEEA", // 薰衣草紫，比背景深一階
   },
   {
-    icon: "✧",
-    title: "Mochi 靈感解讀",
-    subtitle: "Daily · Zi Wei · Dream",
-    desc: "每日運勢、紫微命盤、夢境訊息，讓 Mochi 依照你的狀態陪你看一看。",
-    options: mochiReadingOptions,
-    color: "#E8E4EE",
-  },
-  {
     icon: "✦",
     title: "客製化能量手鍊",
     subtitle: "Custom Healing Bracelet",
     desc: "依照你的願望、狀態與喜歡的色系，搭配一條專屬能量手鍊。",
     href: "/shop/custom-bracelet",
     color: "#E6DDD2",
+  },
+  {
+    icon: "✧",
+    title: "Mochi 靈感解讀",
+    subtitle: "Daily · Zi Wei · Dream",
+    desc: "每日運勢、紫微命盤、夢境訊息，讓 Mochi 依照你的狀態陪你看一看。",
+    options: mochiReadingOptions,
+    color: "#E8E4EE",
   },
 ];
 
@@ -593,6 +593,14 @@ export default function Home() {
                 </span>
               </button>
             </Link>
+            <Link href="/shop/custom-bracelet">
+              <button
+                className="flex min-h-[3.5rem] w-full items-center justify-center rounded-full bg-[#D1BE9B] px-4 py-3 text-xs tracking-[0.14em] text-[#31353A] transition-all duration-500 hover:bg-[#3D4144] hover:text-[#FAF7F4] active:scale-95"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                客製化能量手鍊
+              </button>
+            </Link>
             <button
               type="button"
               aria-expanded={isMochiMenuOpen}
@@ -610,14 +618,6 @@ export default function Home() {
                 aria-hidden="true"
               />
             </button>
-            <Link href="/shop/custom-bracelet">
-              <button
-                className="flex min-h-[3.5rem] w-full items-center justify-center rounded-full bg-[#D1BE9B] px-4 py-3 text-xs tracking-[0.14em] text-[#31353A] transition-all duration-500 hover:bg-[#3D4144] hover:text-[#FAF7F4] active:scale-95"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                客製化能量手鍊
-              </button>
-            </Link>
           </div>
 
           {isMochiMenuOpen && (
