@@ -1993,6 +1993,49 @@ export default function TarotPage() {
               font-weight: 300;
               letter-spacing: 0.08em;
             }
+            .tarot-entry-partner {
+              display: flex;
+              width: min(100%, 560px);
+              align-items: center;
+              justify-content: center;
+              gap: 13px;
+              margin: 24px auto 0;
+              border-radius: 18px;
+              border: 1px solid rgba(112, 138, 106, 0.3);
+              background: linear-gradient(135deg, rgba(255,253,248,0.94), rgba(236,245,232,0.8));
+              padding: 13px 17px;
+              box-shadow: 0 16px 38px rgba(80, 72, 45, 0.1), inset 0 1px 0 rgba(255,255,255,0.82);
+            }
+            .tarot-entry-partner-logo {
+              width: 46px;
+              height: 46px;
+              flex: 0 0 46px;
+              border-radius: 999px;
+              object-fit: cover;
+              box-shadow: 0 8px 18px rgba(80, 72, 45, 0.12);
+            }
+            .tarot-entry-partner-text {
+              display: grid;
+              gap: 2px;
+              min-width: 0;
+              text-align: left;
+            }
+            .tarot-entry-partner-text span:first-child {
+              color: #42663f;
+              font-family: 'Noto Serif TC', serif;
+              font-size: 12px;
+              font-weight: 400;
+              letter-spacing: 0.18em;
+              line-height: 1.55;
+            }
+            .tarot-entry-partner-text span:last-child {
+              color: rgba(52, 50, 45, 0.62);
+              font-family: 'Noto Sans TC', sans-serif;
+              font-size: 11px;
+              font-weight: 300;
+              letter-spacing: 0.08em;
+              line-height: 1.65;
+            }
             .tarot-entry-options {
               display: grid;
               gap: 14px;
@@ -2022,7 +2065,9 @@ export default function TarotPage() {
             }
             .tarot-entry-card--human {
               border-color: rgba(112, 138, 106, 0.28);
-              background: linear-gradient(145deg, rgba(255,253,248,0.94), rgba(235,245,232,0.78));
+              background:
+                linear-gradient(90deg, rgba(112, 138, 106, 0.13), transparent 58%),
+                linear-gradient(145deg, rgba(255,253,248,0.96), rgba(235,245,232,0.82));
             }
             .tarot-entry-card--ai {
               border-color: rgba(184, 145, 79, 0.28);
@@ -2045,6 +2090,10 @@ export default function TarotPage() {
             .tarot-entry-card--human .tarot-entry-card-arrow {
               color: var(--entry-sage);
             }
+            .tarot-entry-card--human .tarot-entry-card-label {
+              background: rgba(255, 253, 248, 0.82);
+              opacity: 1;
+            }
             .tarot-entry-card--ai .tarot-entry-card-label,
             .tarot-entry-card--ai .tarot-entry-card-arrow {
               color: var(--entry-gold);
@@ -2066,6 +2115,16 @@ export default function TarotPage() {
               font-weight: 300;
               letter-spacing: 0.08em;
               line-height: 1.8;
+            }
+            .tarot-entry-card-partner {
+              display: block;
+              margin-top: 10px;
+              color: #42663f;
+              font-family: 'Noto Serif TC', serif;
+              font-size: 11px;
+              font-weight: 400;
+              letter-spacing: 0.12em;
+              line-height: 1.75;
             }
             .tarot-entry-card-media {
               display: grid;
@@ -2121,6 +2180,17 @@ export default function TarotPage() {
               .tarot-entry-page {
                 padding-top: 66px;
               }
+              .tarot-entry-partner {
+                align-items: flex-start;
+                justify-content: flex-start;
+                border-radius: 16px;
+                padding: 12px 14px;
+              }
+              .tarot-entry-partner-logo {
+                width: 40px;
+                height: 40px;
+                flex-basis: 40px;
+              }
               .tarot-entry-card {
                 min-height: 152px;
                 padding: 19px;
@@ -2153,16 +2223,30 @@ export default function TarotPage() {
               <p className="tarot-entry-copy mx-auto mt-3 max-w-[28rem] text-[13px] leading-[2]">
                 真人深入聊，AI 快速看方向。
               </p>
+              <div className="tarot-entry-partner" aria-label="真人塔羅合作品牌">
+                <img
+                  src="/gooday-logo.png"
+                  alt="Gooday 日日好日"
+                  className="tarot-entry-partner-logo"
+                />
+                <span className="tarot-entry-partner-text">
+                  <span>HealingPick × Gooday 日日好日</span>
+                  <span>真人塔羅由日日好日合作占卜師一對一解讀</span>
+                </span>
+              </div>
             </div>
 
             <div className="tarot-entry-options" aria-label="塔羅占卜方式">
               <Link href="/tarot/human" className="tarot-entry-card tarot-entry-card--human">
                 <div>
-                  <span className="tarot-entry-card-label">日日好日合作</span>
+                  <span className="tarot-entry-card-label">HealingPick × Gooday 日日好日</span>
                   <h2 className="tarot-entry-card-title">真人占卜</h2>
                   <p className="tarot-entry-card-note">
                     真人老師一對一解讀，適合感情、事業與人生選擇想深入聊。
                   </p>
+                  <span className="tarot-entry-card-partner">
+                    日日好日合作占卜師服務
+                  </span>
                 </div>
                 <div className="tarot-entry-card-media tarot-entry-card-media--human">
                   <img src="/gooday-logo.png" alt="Gooday 日日好日" />
@@ -2459,7 +2543,9 @@ export default function TarotPage() {
                 }
                 .tarot-choice-shortcut--human {
                   border-color: rgba(184, 205, 178, 0.58);
-                  background: linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(234, 243, 231, 0.72));
+                  background:
+                    linear-gradient(90deg, rgba(112, 138, 106, 0.13), transparent 68%),
+                    linear-gradient(180deg, rgba(255, 253, 248, 0.94), rgba(234, 243, 231, 0.76));
                   color: #42663f;
                 }
                 .tarot-choice-shortcut--ai {
@@ -2631,24 +2717,25 @@ export default function TarotPage() {
                   line-height: 1.35;
                 }
                 .tarot-choice-collab {
-                  display: inline-flex;
-                  width: fit-content;
+                  display: flex;
+                  width: 100%;
                   max-width: 100%;
                   align-items: center;
-                  gap: 10px;
-                  margin: -10px 0 20px;
-                  border-radius: 999px;
-                  border: 1px solid rgba(184, 205, 178, 0.56);
-                  background: rgba(255, 253, 248, 0.84);
-                  padding: 7px 14px 7px 8px;
+                  gap: 13px;
+                  margin: -8px 0 22px;
+                  border-radius: 18px;
+                  border: 1px solid rgba(184, 205, 178, 0.68);
+                  background:
+                    linear-gradient(135deg, rgba(255, 253, 248, 0.92), rgba(233, 244, 230, 0.78));
+                  padding: 12px 15px 12px 12px;
                   color: #5f7d5a;
-                  box-shadow: 0 10px 24px rgba(111, 138, 106, 0.12);
+                  box-shadow: 0 14px 30px rgba(111, 138, 106, 0.14), inset 0 1px 0 rgba(255,255,255,0.8);
                   backdrop-filter: blur(8px);
                 }
                 .tarot-choice-collab-logo {
-                  width: 34px;
-                  height: 34px;
-                  flex: 0 0 34px;
+                  width: 48px;
+                  height: 48px;
+                  flex: 0 0 48px;
                   border-radius: 999px;
                   object-fit: cover;
                   box-shadow: 0 6px 16px rgba(80, 72, 45, 0.12);
@@ -2662,14 +2749,15 @@ export default function TarotPage() {
                   line-height: 1.45;
                 }
                 .tarot-choice-collab-text span:first-child {
-                  color: #7f6a49;
-                  font-size: 10px;
-                  letter-spacing: 0.2em;
+                  color: #42663f;
+                  font-size: 13px;
+                  font-weight: 400;
+                  letter-spacing: 0.14em;
                   text-transform: uppercase;
                 }
                 .tarot-choice-collab-text span:last-child {
-                  color: #42663f;
-                  font-size: 12px;
+                  color: rgba(49, 53, 58, 0.62);
+                  font-size: 11px;
                 }
                 .tarot-choice-desc {
                   color: rgba(49, 53, 58, 0.68);
@@ -3085,15 +3173,19 @@ export default function TarotPage() {
                   }
                   .tarot-choice-collab {
                     margin-top: -8px;
-                    padding-right: 12px;
+                    border-radius: 16px;
+                    padding: 11px 12px;
                   }
                   .tarot-choice-collab-logo {
-                    width: 30px;
-                    height: 30px;
-                    flex-basis: 30px;
+                    width: 40px;
+                    height: 40px;
+                    flex-basis: 40px;
+                  }
+                  .tarot-choice-collab-text span:first-child {
+                    font-size: 11px;
                   }
                   .tarot-choice-collab-text span:last-child {
-                    font-size: 11px;
+                    font-size: 10.5px;
                   }
                   .tarot-choice-card {
                     padding: 30px 20px 24px;
