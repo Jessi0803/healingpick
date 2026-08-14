@@ -69,6 +69,8 @@ const ZIWEI_FOLLOW_UP_WAITING_MESSAGES = [
   "Mochi 正在慢慢靠近重點，像靠近一個紙箱。",
 ];
 
+const OFFICIAL_LINE_URL = "https://lin.ee/6PBHLFX";
+
 // ─── Product Card ─────────────────────────────────────────────────────────────
 function ProductCard({
   product,
@@ -1341,6 +1343,47 @@ export default function ZiweiPage() {
       </div>
     );
   };
+
+  const renderHumanConsultationSection = () => {
+    if (!llmInterpretation) return null;
+
+    return (
+      <div className="glass-panel rounded-2xl border border-[#D1BE9B]/20 bg-[#FFFDF9]/68 p-6 shadow-[0_18px_50px_rgba(163,141,107,0.1)]">
+        <div className="flex flex-col gap-3">
+          <p
+            className="text-[13px] tracking-[0.22em] text-[#8A7250]"
+            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
+          >
+            ◎ 想請真人老師再看一次嗎
+          </p>
+          <p
+            className="text-[12px] leading-[2] tracking-[0.08em] text-[#31353A]/66"
+            style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+          >
+            Mochi 先幫你把命盤重點整理出來；如果你想把感情、工作、人際或近期選擇看得更細，也可以預約 Gooday 日日好日真人老師一對一延伸解讀。
+          </p>
+          <div className="rounded-2xl border border-[#D1BE9B]/18 bg-white/48 px-4 py-3">
+            <p
+              className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+              style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+            >
+              適合想確認「這個盤現在最該注意哪裡」、或想針對某段關係、事業方向、下一步行動深入聊的人。
+            </p>
+          </div>
+          <a
+            href={OFFICIAL_LINE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#06C755] px-6 py-2.5 text-center text-[11px] tracking-[0.18em] text-white no-underline transition-all duration-300 hover:bg-[#05B84F] active:scale-95 sm:self-start"
+            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+          >
+            LINE 預約真人延伸解讀
+          </a>
+        </div>
+      </div>
+    );
+  };
+
   const renderInterpretationSection = (className = "") => (
     <div className={className}>
       <div className="flex items-center gap-3 mb-2 px-1">
@@ -2048,6 +2091,7 @@ export default function ZiweiPage() {
             <div className="animate-fade-in-up">
               <div className="flex flex-col gap-8">
                 {renderInterpretationSection()}
+                {renderHumanConsultationSection()}
                 {renderFollowUpSection()}
                 {renderFeedbackSection()}
 

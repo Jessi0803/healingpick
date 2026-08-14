@@ -52,6 +52,7 @@ const DREAM_FOLLOW_UP_WAITING_MESSAGES = [
   "Mochi 正在補上剛剛沒說完的那一塊。",
 ];
 
+const OFFICIAL_LINE_URL = "https://lin.ee/6PBHLFX";
 const DREAM_PENDING_FOLLOW_UP_KEY = "healingpick:dream-pending-follow-up";
 const FOLLOW_UP_LOGIN_PROMPT = {
   title: "登入後繼續追問夢境",
@@ -718,6 +719,57 @@ export default function DreamPage() {
                     <Streamdown>{interpretation}</Streamdown>
                   </div>
                 )}
+              </section>
+            )}
+
+            {!interpretMutation.isPending && interpretation && (
+              <section className="mt-6 rounded-2xl border border-[#D1BE9B]/22 bg-[#FFFDF9]/68 p-5 shadow-[0_18px_50px_rgba(163,141,107,0.1)] backdrop-blur-xl md:p-7">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 text-[#8A7250]">
+                    <Sparkles className="h-4 w-4" />
+                    <h2
+                      className="text-[13px] tracking-[0.22em]"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      想請真人老師陪你看這個夢嗎
+                    </h2>
+                  </div>
+                  <p
+                    className="text-[12px] leading-[2] tracking-[0.08em] text-[#31353A]/66"
+                    style={{
+                      fontFamily: "Noto Sans TC, sans-serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    Mochi 先幫你整理夢裡的情緒和訊號；如果這個夢牽動到感情、人際、工作壓力，或你想知道它是不是在提醒某件事，也可以預約 Gooday 日日好日真人老師一對一聊得更深入。
+                  </p>
+                  <div className="rounded-2xl border border-[#D1BE9B]/18 bg-white/48 px-4 py-3">
+                    <p
+                      className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+                      style={{
+                        fontFamily: "Noto Sans TC, sans-serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      適合夢境一直重複、醒來後情緒很強，或想把夢和現實狀況一起釐清的人。
+                    </p>
+                  </div>
+                  <a
+                    href={OFFICIAL_LINE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#06C755] px-6 py-2.5 text-center text-[11px] tracking-[0.18em] text-white no-underline transition-all duration-300 hover:bg-[#05B84F] active:scale-95 sm:self-start"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    LINE 預約真人延伸解讀
+                  </a>
+                </div>
               </section>
             )}
 

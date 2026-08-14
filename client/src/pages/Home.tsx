@@ -576,10 +576,29 @@ export default function Home() {
             </Link>
             <Link href="/tarot">
               <button
-                className="w-full px-4 py-3 text-xs tracking-[0.25em] border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
+                className="group flex w-full items-center justify-center gap-2.5 rounded-full border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 px-4 py-2.5 text-[#6F6688] transition-all duration-500 hover:border-[#3D4144] hover:bg-[#3D4144] hover:text-white active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                塔羅占卜（日日好日合作）
+                <span
+                  className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-[#D1BE9B]/45 bg-white/55 text-[13px] leading-none text-[#A38D6B] shadow-[0_5px_18px_rgba(209,190,155,0.14)] transition-colors duration-500 group-hover:border-white/25 group-hover:bg-white/12 group-hover:text-[#E3D3AF]"
+                  aria-hidden="true"
+                >
+                  日
+                </span>
+                <span className="flex min-w-0 flex-col items-start leading-none">
+                  <span className="text-[11px] tracking-[0.14em] sm:text-xs">
+                    日日好日
+                    <span
+                      className="ml-1.5 text-[12px] italic tracking-[0.08em] sm:text-[13px]"
+                      style={{ fontFamily: "Cormorant Garamond, serif" }}
+                    >
+                      gooday
+                    </span>
+                  </span>
+                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6F6688]/68 transition-colors duration-500 group-hover:text-white/62 sm:tracking-[0.14em]">
+                    塔羅占卜（日日好日合作）
+                  </span>
+                </span>
               </button>
             </Link>
             <Link href="/dream">
