@@ -4,7 +4,7 @@
  * Sections:
  *   1. Hero + 3D Book (星夢之書)
  *   2. Crystal Altar (水晶祭壇)
- *   3. Features Overview (五大功能入口)
+ *   3. Features Overview (三大功能入口)
  *   4. Divination Previews (塔羅 / 紫微)
  *   5. Shop Preview (療癒水晶)
  */
@@ -19,7 +19,7 @@ import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
 import { PRODUCTS } from "@/data/products";
 import ContactDialog from "@/components/ContactDialog";
-import { ExternalLink, Instagram } from "lucide-react";
+import { ChevronDown, ExternalLink, Instagram, Sparkles } from "lucide-react";
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
@@ -112,46 +112,48 @@ const CrystalCitrine = () => (
 );
 
 // ─── Feature Card ─────────────────────────────────────────────────────────────
-const features = [
+const mochiReadingOptions = [
   {
-    icon: "✦",
-    title: "客製化能量水晶",
-    subtitle: "Custom Healing Crystals",
-    desc: "依照你的狀態與願望，挑選適合的水晶能量，陪你走過當下的課題。",
-    href: "/shop",
-    color: "#E6DDD2",
+    title: "看今日運勢",
+    desc: "想知道今天怎麼走比較順",
+    href: "/fortune/daily",
   },
+  {
+    title: "排紫微命盤",
+    desc: "想看自己的命盤與人生節奏",
+    href: "/ziwei",
+  },
+  {
+    title: "解一個夢",
+    desc: "想理解夢裡反覆出現的訊號",
+    href: "/dream",
+  },
+];
+
+const features = [
   {
     icon: "🔮",
     title: "塔羅牌占卜",
     subtitle: "Tarot Reading",
-    desc: "凱爾特十字完整牌陣，深度解析過去、現在與未來的能量流動。",
+    desc: "抽一組牌，看清現在的關係、選擇與心裡真正卡住的地方。",
     href: "/tarot",
     color: "#D8CEEA", // 薰衣草紫，比背景深一階
   },
   {
-    icon: "☯",
-    title: "紫微斗數",
-    subtitle: "Zi Wei Dou Shu",
-    desc: "輸入生辰八字，排出專屬命盤，洞悉人生格局與流年運勢。",
-    href: "/ziwei",
-    color: "#DDD5C8", // 暖米棕，比背景深一階
-  },
-  {
-    icon: "🌙",
-    title: "Mochi 解夢",
-    subtitle: "Dream Reading",
-    desc: "寫下夢境與醒來後的感覺，讓 Mochi 幫你看見夢裡真正想說的訊號。",
-    href: "/dream",
+    icon: "✧",
+    title: "Mochi 靈感解讀",
+    subtitle: "Daily · Zi Wei · Dream",
+    desc: "每日運勢、紫微命盤、夢境訊息，讓 Mochi 依照你的狀態陪你看一看。",
+    options: mochiReadingOptions,
     color: "#E8E4EE",
   },
   {
-    icon: "☀",
-    title: "每日運勢",
-    subtitle: "Daily Fortune",
-    desc: "結合星象與塔羅能量，為你解析今日的機遇、挑戰與行動指引。",
-    href: "/fortune/daily",
-    color: "#EAD9B0", // 金黃奶茶，比背景深一階
+    icon: "✦",
+    title: "客製化能量手鍊",
+    subtitle: "Custom Healing Bracelet",
+    desc: "依照你的願望、狀態與喜歡的色系，搭配一條專屬能量手鍊。",
+    href: "/shop/custom-bracelet",
+    color: "#E6DDD2",
   },
 ];
 
@@ -267,6 +269,7 @@ export default function Home() {
     undefined
   );
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isMochiMenuOpen, setIsMochiMenuOpen] = useState(false);
 
   const handleBuyProduct = (productName: string) => {
     setSelectedProduct(productName);
@@ -558,18 +561,10 @@ export default function Home() {
             今日有 {dailyMochiVisitorCount} 人來找 Mochi 占卜
           </p>
 
-          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-[32rem] sm:grid-cols-2 lg:max-w-4xl lg:grid-cols-5">
-            <Link href="/shop">
-              <button
-                className="w-full px-4 py-3 text-xs tracking-[0.16em] bg-[#D1BE9B] text-[#31353A] rounded-full hover:bg-[#3D4144] hover:text-[#FAF7F4] transition-all duration-500 active:scale-95"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                客製化能量水晶
-              </button>
-            </Link>
+          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-3xl sm:grid-cols-3">
             <Link href="/tarot">
               <button
-                className="group flex w-full items-center justify-center gap-2.5 rounded-full border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 px-4 py-2.5 text-[#6F6688] transition-all duration-500 hover:border-[#3D4144] hover:bg-[#3D4144] hover:text-white active:scale-95"
+                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 px-4 py-2.5 text-[#6F6688] transition-all duration-500 hover:border-[#3D4144] hover:bg-[#3D4144] hover:text-white active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <span
@@ -598,31 +593,66 @@ export default function Home() {
                 </span>
               </button>
             </Link>
-            <Link href="/ziwei">
+            <button
+              type="button"
+              aria-expanded={isMochiMenuOpen}
+              aria-controls="mochi-reading-menu"
+              onClick={() => setIsMochiMenuOpen((open) => !open)}
+              className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full bg-[#3D4144] px-4 py-3 text-xs tracking-[0.14em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>Mochi 靈感解讀</span>
+              <ChevronDown
+                className={`h-4 w-4 shrink-0 transition-transform duration-300 ${
+                  isMochiMenuOpen ? "rotate-180" : ""
+                }`}
+                aria-hidden="true"
+              />
+            </button>
+            <Link href="/shop/custom-bracelet">
               <button
-                className="w-full px-4 py-3 text-xs tracking-[0.25em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
+                className="flex min-h-[3.5rem] w-full items-center justify-center rounded-full bg-[#D1BE9B] px-4 py-3 text-xs tracking-[0.14em] text-[#31353A] transition-all duration-500 hover:bg-[#3D4144] hover:text-[#FAF7F4] active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                紫微斗數
-              </button>
-            </Link>
-            <Link href="/dream">
-              <button
-                className="w-full px-4 py-3 text-xs tracking-[0.25em] border border-[#B7A8CF]/25 bg-[#F0ECF6]/34 text-[#6F6688] rounded-full hover:bg-[#3D4144] hover:text-white hover:border-[#3D4144] transition-all duration-500 active:scale-95"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                Mochi 解夢
-              </button>
-            </Link>
-            <Link href="/fortune">
-              <button
-                className="w-full px-4 py-3 text-xs tracking-[0.25em] border border-[#D1BE9B]/40 bg-[#D1BE9B]/18 text-[#8A7250] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-500 active:scale-95"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                每日運勢
+                客製化能量手鍊
               </button>
             </Link>
           </div>
+
+          {isMochiMenuOpen && (
+            <div
+              id="mochi-reading-menu"
+              className="mx-auto mt-3 grid w-full max-w-[17rem] grid-cols-1 gap-2 rounded-2xl border border-[#D1BE9B]/22 bg-white/48 p-3 shadow-[0_16px_38px_rgba(209,190,155,0.14)] backdrop-blur-sm animate-fade-in-up sm:max-w-3xl sm:grid-cols-3"
+            >
+              {mochiReadingOptions.map((option) => (
+                <Link
+                  key={option.href}
+                  href={option.href}
+                  className="group rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/62 px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45 hover:bg-white"
+                >
+                  <span
+                    className="block text-[12px] tracking-[0.14em] text-[#31353A]/86"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    {option.title}
+                  </span>
+                  <span
+                    className="mt-1 block text-[11px] leading-[1.7] tracking-[0.08em] text-[#31353A]/56"
+                    style={{
+                      fontFamily: "Noto Sans TC, sans-serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    {option.desc}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
 
           <button
             onClick={scrollToTestimonials}
@@ -735,7 +765,7 @@ export default function Home() {
               className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
               style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
             >
-              靈性療癒的五種方式
+              靈性療癒的三種方式
             </h2>
             <div className="divider-gold mt-4 max-w-xs mx-auto">
               <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none">
@@ -747,16 +777,15 @@ export default function Home() {
             </div>
           </Reveal>
 
-          <Reveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+          <Reveal className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {features.map((f, i) => (
-              <Link
-                key={f.href}
-                href={f.href}
-                className="reveal-child block"
+              <div
+                key={f.title}
+                className="reveal-child"
                 style={{ transitionDelay: `${i * 70}ms` }}
               >
                 <div
-                  className="group relative h-full p-6 rounded-xl border border-[#D1BE9B]/20 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)]"
+                  className="group relative flex h-full flex-col rounded-xl border border-[#D1BE9B]/20 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)]"
                   style={{
                     background: `linear-gradient(145deg, ${f.color}, #FAF7F4)`,
                   }}
@@ -786,28 +815,49 @@ export default function Home() {
                   >
                     {f.desc}
                   </p>
-                  <div className="mt-4 flex items-center gap-1 text-[#D1BE9B] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span
-                      className="text-[11px] tracking-[0.2em]"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
+                  {f.options?.length ? (
+                    <div className="mt-5 grid gap-2">
+                      {f.options.map((option) => (
+                        <Link
+                          key={option.href}
+                          href={option.href}
+                          className="rounded-full border border-white/48 bg-white/44 px-4 py-2.5 text-[11px] tracking-[0.13em] text-[#6F6688] transition-all duration-300 hover:bg-[#3D4144] hover:text-white"
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 300,
+                          }}
+                        >
+                          {option.title}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <Link
+                      href={f.href!}
+                      className="mt-auto inline-flex items-center gap-1 pt-5 text-[#A38D6B] transition-colors duration-300 hover:text-[#31353A]"
                     >
-                      前往
-                    </span>
-                    <svg
-                      className="w-3 h-3"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </div>
+                      <span
+                        className="text-[11px] tracking-[0.2em]"
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 300,
+                        }}
+                      >
+                        前往
+                      </span>
+                      <svg
+                        className="w-3 h-3"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      >
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  )}
                 </div>
-              </Link>
+              </div>
             ))}
           </Reveal>
         </div>
