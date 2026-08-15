@@ -55,6 +55,12 @@ import {
 import { useRotatingText } from "@/hooks/useRotatingText";
 
 const OFFICIAL_LINE_URL = "https://lin.ee/6PBHLFX";
+const HUMAN_TAROT_REVIEW_PREVIEWS = [
+  "/gooday-tarot-reviews/review-1.jpg",
+  "/gooday-tarot-reviews/review-10.jpg",
+  "/gooday-tarot-reviews/review-31.jpg",
+  "/gooday-tarot-reviews/review-52.jpg",
+];
 
 const HUMAN_TAROT_MENU_PLANS = [
   {
@@ -3272,6 +3278,29 @@ export default function TarotPage() {
                   letter-spacing: 0.08em;
                   line-height: 1.7;
                 }
+                .tarot-choice-review-thumbs {
+                  display: grid;
+                  grid-template-columns: repeat(4, minmax(0, 1fr));
+                  gap: 6px;
+                  min-width: min(42%, 190px);
+                }
+                .tarot-choice-review-thumb {
+                  aspect-ratio: 3 / 4;
+                  overflow: hidden;
+                  border-radius: 10px;
+                  border: 1px solid rgba(209, 190, 155, 0.26);
+                  background: rgba(250, 247, 244, 0.74);
+                  box-shadow: 0 8px 18px rgba(80, 72, 45, 0.1);
+                }
+                .tarot-choice-review-thumb img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                  transition: transform 300ms ease;
+                }
+                .tarot-choice-reviews:hover .tarot-choice-review-thumb img {
+                  transform: scale(1.05);
+                }
                 .tarot-choice-review-cta {
                   display: inline-flex;
                   flex: 0 0 auto;
@@ -3446,6 +3475,10 @@ export default function TarotPage() {
                   .tarot-choice-reviews {
                     align-items: stretch;
                     flex-direction: column;
+                  }
+                  .tarot-choice-review-thumbs {
+                    width: 100%;
+                    min-width: 0;
                   }
                   .tarot-choice-review-cta {
                     width: 100%;
@@ -3905,6 +3938,38 @@ export default function TarotPage() {
                     >
                       LINE 諮詢真人塔羅
                     </a>
+
+                    <Link
+                      href="/tarot/reviews"
+                      className="tarot-choice-reviews tarot-choice-layer"
+                      style={{ "--choice-z": "20px" } as CSSProperties}
+                    >
+                      <span>
+                        <span className="tarot-choice-review-title">
+                          顧客真實好評
+                        </span>
+                        <span className="tarot-choice-review-subtitle">
+                          先看客人回傳的占卜後續截圖，再依需求選擇方案。
+                        </span>
+                      </span>
+                      <span className="tarot-choice-review-thumbs" aria-hidden="true">
+                        {HUMAN_TAROT_REVIEW_PREVIEWS.map((src) => (
+                          <span key={src} className="tarot-choice-review-thumb">
+                            <img
+                              src={src}
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                              width={96}
+                              height={128}
+                            />
+                          </span>
+                        ))}
+                      </span>
+                      <span className="tarot-choice-review-cta">
+                        查看好評 →
+                      </span>
+                    </Link>
 
                     <ul
                       className="tarot-choice-list tarot-choice-layer"
