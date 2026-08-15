@@ -1,5 +1,6 @@
 import PageLayout from '@/components/PageLayout';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 const TAROT_REVIEW_PROOFS = Array.from({ length: 63 }, (_, index) => {
@@ -26,13 +27,19 @@ export default function TarotReviews() {
 
   useEffect(() => {
     if (selectedIndex === null) return;
+    const originalBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') closeLightbox();
       if (event.key === 'ArrowRight') stepLightbox(1);
       if (event.key === 'ArrowLeft') stepLightbox(-1);
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
   }, [selectedIndex]);
 
   const onTouchStart = (event: React.TouchEvent) => {
@@ -105,7 +112,7 @@ export default function TarotReviews() {
         </div>
       </div>
 
-      {selectedReview && selectedIndex !== null && (
+      {selectedReview && selectedIndex !== null && typeof document !== 'undefined' && createPortal(
         <div
           className="lightbox-backdrop fixed inset-0 z-[70] flex h-[100dvh] max-h-[100dvh] flex-col overflow-hidden bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
           role="dialog"
@@ -174,7 +181,8 @@ export default function TarotReviews() {
           >
             左右滑動或按方向鍵切換
           </button>
-        </div>
+        </div>,
+        document.body,
       )}
     </PageLayout>
   );
