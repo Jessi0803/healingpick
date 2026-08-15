@@ -2522,7 +2522,7 @@ export default function TarotPage() {
               </div>
 
               <p className="tarot-human-copy mt-6 text-[14px] leading-[2.1]">
-                依據你的個人需求選擇適合的塔羅方案，由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。
+                日日好日不只可以算塔羅，也能帶你探索前世課題、守護神訊息與流年運勢
               </p>
 
               <section className="mt-5 rounded-lg border border-[#D8C38B]/28 bg-[#FFFDF8]/64 p-4 shadow-[0_12px_30px_rgba(80,72,45,0.08)] md:p-5">
