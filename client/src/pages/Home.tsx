@@ -725,6 +725,15 @@ export default function Home() {
               HealingPick
               與「日日好日塔羅牌占卜」合作，提供真人塔羅師一對一諮詢，陪你看懂感情、事業、財運與人生方向。
             </p>
+            <p
+              className="mt-3 max-w-2xl text-[12px] leading-[2] tracking-[0.08em] text-[#8A7250]/82"
+              style={{
+                fontFamily: "Noto Sans TC, sans-serif",
+                fontWeight: 300,
+              }}
+            >
+              多則顧客後續回饋，保留真實對話截圖感，讓你先看見解讀後如何被驗證。
+            </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link href="/tarot">
                 <button
@@ -735,6 +744,17 @@ export default function Home() {
                   }}
                 >
                   立即預約占卜
+                </button>
+              </Link>
+              <Link href="/tarot/reviews">
+                <button
+                  className="inline-flex w-full items-center justify-center rounded-full border border-[#D1BE9B]/45 bg-white/42 px-6 py-3 text-xs tracking-[0.18em] text-[#8A7250] transition-all duration-500 hover:border-[#A38D6B]/55 hover:bg-white/70 hover:text-[#31353A] active:scale-95 sm:w-auto"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
+                >
+                  查看顧客真實回饋
                 </button>
               </Link>
               <a
