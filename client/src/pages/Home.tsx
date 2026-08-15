@@ -9,7 +9,7 @@
  *   5. Shop Preview (療癒水晶)
  */
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import PageLayout from "@/components/PageLayout";
 import Reveal from "@/components/Reveal";
@@ -18,8 +18,23 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
 import { PRODUCTS } from "@/data/products";
+import { CUSTOMER_FEEDBACK_PHOTO_ITEMS } from "@/data/customerFeedbackPhotos";
 import ContactDialog from "@/components/ContactDialog";
-import { ChevronDown, ExternalLink, Heart, Instagram, Sparkles } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Instagram,
+  Sparkles,
+  X,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
@@ -157,6 +172,62 @@ const features = [
   },
 ];
 
+type HomeFeedbackCategoryId = "tarot" | "bracelet" | "ritual";
+
+type HomeFeedbackItem = {
+  src: string;
+  thumb?: string;
+  alt: string;
+};
+
+const HUMAN_TAROT_FEEDBACK_IDS = [
+  1, 2, 3, 4, 5, 8, 10, 14, 19, 22, 25, 31, 37, 40, 46, 52, 58, 63,
+];
+
+const homeFeedbackCategories: Array<{
+  id: HomeFeedbackCategoryId;
+  label: string;
+  eyebrow: string;
+  title: string;
+  note: string;
+  items: HomeFeedbackItem[];
+}> = [
+  {
+    id: "tarot",
+    label: "真人占卜回饋",
+    eyebrow: "Human Tarot",
+    title: "真人占卜回饋",
+    note: "客人後續回傳的占卜截圖，適合先感受真人老師的解讀方式與驗證感。",
+    items: HUMAN_TAROT_FEEDBACK_IDS.map((id) => ({
+      src: `/gooday-tarot-reviews/review-${id}.jpg`,
+      alt: `真人占卜顧客回饋，第 ${id} 張`,
+    })),
+  },
+  {
+    id: "bracelet",
+    label: "手鍊回饋",
+    eyebrow: "Crystal Bracelet",
+    title: "手鍊回饋",
+    note: "包含水晶手鍊顧客回饋與客製化實拍，點開可以看更完整的作品與回饋細節。",
+    items: CUSTOMER_FEEDBACK_PHOTO_ITEMS.map((photo, index) => ({
+      src: photo.full,
+      thumb: photo.thumb,
+      alt: `手鍊顧客回饋，第 ${index + 1} 張`,
+    })),
+  },
+  {
+    id: "ritual",
+    label: "魔法儀式回饋",
+    eyebrow: "Wish Ritual",
+    title: "魔法儀式回饋",
+    note: "許願魔法儀式相關的真實回饋截圖，讓你先看看大家完成儀式後的感受。",
+    items: Array.from({ length: 56 }, (_, i) => ({
+      src: `/gooday-ritual-reviews/review-${i + 1}.jpg`,
+      alt: `魔法儀式顧客回饋，第 ${i + 1} 張`,
+    })),
+  },
+];
+
 const altarData: Record<
   string,
   {
@@ -270,6 +341,12 @@ export default function Home() {
   );
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isMochiMenuOpen, setIsMochiMenuOpen] = useState(false);
+  const [isTestimonialsOpen, setIsTestimonialsOpen] = useState(false);
+  const [activeFeedbackCategory, setActiveFeedbackCategory] =
+    useState<HomeFeedbackCategoryId>("tarot");
+  const [selectedFeedbackIndex, setSelectedFeedbackIndex] = useState<
+    number | null
+  >(null);
 
   const handleBuyProduct = (productName: string) => {
     setSelectedProduct(productName);
@@ -330,13 +407,47 @@ export default function Home() {
 
   const activeData = activeCrystal ? altarData[activeCrystal] : null;
 
-  function scrollToTestimonials() {
-    document
-      .getElementById("testimonials-section")
-      ?.scrollIntoView({ behavior: "smooth" });
+  const dailyMochiVisitorCount = getDailyMochiVisitorCount();
+  const activeFeedback =
+    homeFeedbackCategories.find(
+      (category) => category.id === activeFeedbackCategory
+    ) ?? homeFeedbackCategories[0];
+  const selectedFeedback =
+    selectedFeedbackIndex === null
+      ? null
+      : activeFeedback.items[selectedFeedbackIndex];
+
+  function openTestimonials() {
+    setIsTestimonialsOpen(true);
+    setSelectedFeedbackIndex(null);
   }
 
-  const dailyMochiVisitorCount = getDailyMochiVisitorCount();
+  function chooseFeedbackCategory(categoryId: HomeFeedbackCategoryId) {
+    setActiveFeedbackCategory(categoryId);
+    setSelectedFeedbackIndex(null);
+  }
+
+  function stepSelectedFeedback(direction: number) {
+    setSelectedFeedbackIndex((current) => {
+      if (current === null) return current;
+      return (
+        (current + direction + activeFeedback.items.length) %
+        activeFeedback.items.length
+      );
+    });
+  }
+
+  useEffect(() => {
+    if (!isTestimonialsOpen || selectedFeedbackIndex === null) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowRight") stepSelectedFeedback(1);
+      if (event.key === "ArrowLeft") stepSelectedFeedback(-1);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [activeFeedback.items.length, isTestimonialsOpen, selectedFeedbackIndex]);
 
   return (
     <PageLayout>
@@ -541,21 +652,21 @@ export default function Home() {
 
           {/* Main title */}
           <h1
-            className="text-xl md:text-3xl leading-[1.6] md:leading-[1.8] mb-5 tracking-[0.2em] font-extralight text-[#31353A]"
+            className="text-xl md:text-3xl leading-[1.6] md:leading-[1.8] mb-3 tracking-[0.2em] font-extralight text-[#31353A]"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
           >
             Mochi 小宇宙
           </h1>
 
           <p
-            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-8"
+            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-3"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
             免費占卜完，自動推薦適合你的專屬手鍊 𓆩♡𓆪
           </p>
 
           <p
-            className="mx-auto mb-8 inline-flex items-center justify-center rounded-full border border-[#D1BE9B]/28 bg-white/34 px-5 py-2 text-[11px] leading-[1.8] tracking-[0.18em] text-[#8A7250] shadow-[0_8px_28px_rgba(209,190,155,0.12)] backdrop-blur-sm"
+            className="mx-auto mb-6 inline-flex items-center justify-center rounded-full border border-[#D1BE9B]/28 bg-white/34 px-5 py-2 text-[11px] leading-[1.8] tracking-[0.18em] text-[#8A7250] shadow-[0_8px_28px_rgba(209,190,155,0.12)] backdrop-blur-sm"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
             今日有 {dailyMochiVisitorCount} 人來找 Mochi 占卜
@@ -610,23 +721,70 @@ export default function Home() {
                 <span>許願魔法儀式</span>
               </button>
             </Link>
-            <button
-              type="button"
-              aria-expanded={isMochiMenuOpen}
-              aria-controls="mochi-reading-menu"
-              onClick={() => setIsMochiMenuOpen((open) => !open)}
-              className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full bg-[#3D4144] px-4 py-3 text-xs tracking-[0.14em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-            >
-              <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span>Mochi 靈感解讀</span>
-              <ChevronDown
-                className={`h-4 w-4 shrink-0 transition-transform duration-300 ${
-                  isMochiMenuOpen ? "rotate-180" : ""
-                }`}
-                aria-hidden="true"
-              />
-            </button>
+            <div className="flex flex-col items-center">
+              <button
+                type="button"
+                aria-expanded={isMochiMenuOpen}
+                aria-controls="mochi-reading-menu"
+                onClick={() => setIsMochiMenuOpen((open) => !open)}
+                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full bg-[#3D4144] px-4 py-3 text-xs tracking-[0.14em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>Mochi 靈感解讀</span>
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 transition-transform duration-300 ${
+                    isMochiMenuOpen ? "rotate-180" : ""
+                  }`}
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                type="button"
+                onClick={openTestimonials}
+                className="home-testimonial-heart-button group mt-3"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                aria-label="看看大家怎麼被療癒"
+              >
+                <svg
+                  className="home-testimonial-heart-shape"
+                  viewBox="0 0 160 145"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <linearGradient
+                      id="home-testimonial-heart-gradient"
+                      x1="35"
+                      y1="16"
+                      x2="124"
+                      y2="132"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stopColor="#FFFDFB" />
+                      <stop offset="0.48" stopColor="#F7D5DB" />
+                      <stop offset="1" stopColor="#E8AEB8" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M80 130C69 117 45 101 29 83C13 65 10 40 25 25C39 11 61 14 72 31C75 35 78 41 80 45C82 41 85 35 88 31C99 14 121 11 135 25C150 40 147 65 131 83C115 101 91 117 80 130Z"
+                    fill="url(#home-testimonial-heart-gradient)"
+                    stroke="rgba(201, 137, 144, 0.38)"
+                    strokeWidth="1.4"
+                  />
+                  <path
+                    d="M40 31C50 24 62 27 69 39"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.62)"
+                    strokeLinecap="round"
+                    strokeWidth="5"
+                  />
+                </svg>
+                <span className="home-testimonial-heart-text">
+                  <span>看看大家</span>
+                  <span>怎麼被療癒</span>
+                </span>
+              </button>
+            </div>
           </div>
 
           {isMochiMenuOpen && (
@@ -662,20 +820,6 @@ export default function Home() {
               ))}
             </div>
           )}
-
-          <button
-            onClick={scrollToTestimonials}
-            className="group mt-6 inline-flex min-h-[3.75rem] items-center justify-center gap-3 rounded-full border border-[#D1BE9B]/45 bg-white/68 py-2.5 pl-2.5 pr-6 text-[12px] tracking-[0.16em] text-[#8A7250] shadow-[0_18px_46px_rgba(163,141,107,0.18)] backdrop-blur-md transition-all duration-500 hover:-translate-y-0.5 hover:border-[#A38D6B]/60 hover:bg-white/88 hover:text-[#31353A] hover:shadow-[0_22px_56px_rgba(163,141,107,0.24)] active:scale-95 sm:text-[13px] sm:tracking-[0.18em]"
-            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-          >
-            <span
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#F8ECEE] text-[#C98990] shadow-[inset_0_0_0_1px_rgba(201,137,144,0.18),0_8px_20px_rgba(201,137,144,0.16)] transition-all duration-500 group-hover:bg-[#F4DCE0] group-hover:text-[#B8747C]"
-              aria-hidden="true"
-            >
-              <Heart className="h-5 w-5 fill-current" strokeWidth={1.5} />
-            </span>
-            <span>看看大家怎麼被療癒</span>
-          </button>
         </div>
 
         {/* Scroll indicator */}
@@ -1522,6 +1666,212 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Dialog
+        open={isTestimonialsOpen}
+        onOpenChange={(open) => {
+          setIsTestimonialsOpen(open);
+          if (!open) setSelectedFeedbackIndex(null);
+        }}
+      >
+        <DialogContent
+          className="max-h-[88vh] max-w-[min(58rem,calc(100vw-1.5rem))] overflow-hidden border-[#D1BE9B]/28 bg-[#FAF7F4]/96 p-0 shadow-[0_28px_80px_rgba(49,53,58,0.22)] backdrop-blur-xl sm:rounded-2xl"
+          aria-describedby="home-feedback-description"
+        >
+          <div className="grid min-h-0 grid-rows-[auto_auto_1fr]">
+            <div className="border-b border-[#D1BE9B]/18 px-5 pb-4 pt-6 md:px-7">
+              <span
+                className="text-[12px] italic tracking-[0.08em] text-[#A38D6B]"
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
+              >
+                Gentle Echoes
+              </span>
+              <DialogTitle
+                className="mt-2 text-lg font-extralight tracking-[0.18em] text-[#31353A] md:text-xl"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
+              >
+                看看大家怎麼被療癒
+              </DialogTitle>
+              <DialogDescription
+                id="home-feedback-description"
+                className="mt-2 max-w-2xl text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
+                style={{
+                  fontFamily: "Noto Sans TC, sans-serif",
+                  fontWeight: 300,
+                }}
+              >
+                選擇想看的服務，下面會同步呈現該分類的真實回饋。
+              </DialogDescription>
+            </div>
+
+            <div className="border-b border-[#D1BE9B]/14 px-5 py-3 md:px-7">
+              <div
+                className="grid grid-cols-1 gap-2 sm:grid-cols-3"
+                aria-label="選擇回饋分類"
+              >
+                {homeFeedbackCategories.map((category) => {
+                  const isActive = activeFeedbackCategory === category.id;
+
+                  return (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => chooseFeedbackCategory(category.id)}
+                      aria-pressed={isActive}
+                      className={`rounded-full border px-4 py-2.5 text-[11px] tracking-[0.13em] transition-all duration-300 active:scale-[0.98] ${
+                        isActive
+                          ? "border-[#3D4144] bg-[#3D4144] text-[#FAF7F4] shadow-[0_10px_24px_rgba(49,53,58,0.16)]"
+                          : "border-[#D1BE9B]/28 bg-white/52 text-[#8A7250] hover:border-[#A38D6B]/55 hover:bg-white"
+                      }`}
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      {category.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="min-h-0 overflow-y-auto px-5 py-5 md:px-7">
+              <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <span
+                    className="text-[12px] italic tracking-[0.08em] text-[#A38D6B]"
+                    style={{
+                      fontFamily: "Cormorant Garamond, serif",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {activeFeedback.eyebrow}
+                  </span>
+                  <h3
+                    className="mt-1 text-sm font-extralight tracking-[0.16em] text-[#31353A]"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 200,
+                    }}
+                  >
+                    {activeFeedback.title}
+                  </h3>
+                </div>
+                <p
+                  className="max-w-lg text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/52 md:text-right"
+                  style={{
+                    fontFamily: "Noto Sans TC, sans-serif",
+                    fontWeight: 300,
+                  }}
+                >
+                  {activeFeedback.note}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {activeFeedback.items.map((item, index) => (
+                  <button
+                    key={`${activeFeedback.id}-${item.src}`}
+                    type="button"
+                    onClick={() => setSelectedFeedbackIndex(index)}
+                    aria-label={`放大${activeFeedback.title}第 ${index + 1} 張`}
+                    className="group aspect-[3/4] overflow-hidden rounded-xl border border-[#D1BE9B]/18 bg-white/56 shadow-[0_10px_24px_rgba(180,160,130,0.1)] transition-[border-color,opacity,transform] duration-200 hover:border-[#A38D6B]/55 active:scale-[0.98]"
+                  >
+                    <img
+                      src={item.thumb ?? item.src}
+                      alt={item.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {selectedFeedback && selectedFeedbackIndex !== null && (
+            <div
+              className="absolute inset-0 z-20 grid grid-rows-[auto_1fr_auto] bg-[#171513]/88 p-4 text-[#FAF7F4] backdrop-blur-md md:p-6"
+              onClick={() => setSelectedFeedbackIndex(null)}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p
+                    className="text-[12px] tracking-[0.18em]"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    {activeFeedback.title}
+                  </p>
+                  <p className="mt-1 text-[10px] tracking-[0.12em] text-white/50">
+                    {selectedFeedbackIndex + 1} / {activeFeedback.items.length}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSelectedFeedbackIndex(null);
+                  }}
+                  aria-label="關閉圖片"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
+                >
+                  <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+                </button>
+              </div>
+
+              <div className="relative flex min-h-0 items-center justify-center px-11 py-4">
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    stepSelectedFeedback(-1);
+                  }}
+                  aria-label="上一張"
+                  className="absolute left-0 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
+                >
+                  <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
+                </button>
+                <img
+                  key={selectedFeedback.src}
+                  src={selectedFeedback.src}
+                  alt={selectedFeedback.alt}
+                  decoding="async"
+                  className="max-h-[calc(88vh-9rem)] max-w-full rounded-2xl object-contain shadow-2xl"
+                  onClick={(event) => event.stopPropagation()}
+                />
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    stepSelectedFeedback(1);
+                  }}
+                  aria-label="下一張"
+                  className="absolute right-0 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
+                >
+                  <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
+                </button>
+              </div>
+
+              <p
+                className="text-center text-[10px] tracking-[0.14em] text-white/52"
+                style={{
+                  fontFamily: "Noto Serif TC, serif",
+                  fontWeight: 300,
+                }}
+              >
+                點擊空白處關閉 · 可用左右鍵切換
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <ContactDialog
         isOpen={isContactOpen}
