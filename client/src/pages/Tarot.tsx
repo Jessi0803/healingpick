@@ -2459,7 +2459,7 @@ export default function TarotPage() {
   if (location === "/tarot/human") {
     return (
       <PageLayout>
-        <div className="tarot-human-page min-h-screen px-4 py-20 md:px-8">
+        <div className="tarot-human-page min-h-screen px-4 pb-20 pt-0 md:px-8">
           <style>{`
             .tarot-human-page {
               --human-ink: #34322d;
@@ -2582,9 +2582,6 @@ export default function TarotPage() {
               color: var(--human-sage);
             }
             @media (max-width: 420px) {
-              .tarot-human-page {
-                padding-top: 58px;
-              }
               .tarot-human-logo {
                 width: 76px;
                 height: 76px;
