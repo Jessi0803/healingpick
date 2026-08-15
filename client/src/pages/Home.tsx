@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import PageLayout from "@/components/PageLayout";
 import Reveal from "@/components/Reveal";
-import { CatPeeking } from "@/components/CatElements";
 import { useAuth } from "@/_core/hooks/useAuth";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
@@ -731,72 +730,6 @@ export default function Home() {
       </section>
 
       <div className="flex flex-col">
-        {/* ── ZIWEI PREVIEW ─────────────────────────────────────────────────── */}
-        <section className="order-2 py-20 px-6 md:px-10 bg-[#F2EDE8]/60">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Ziwei image */}
-              <div className="order-2 lg:order-1 flex justify-center animate-fade-in-up delay-100">
-                <div className="relative w-64 h-64 md:w-72 md:h-72">
-                  {/* Peeking cat at top-right corner of chart */}
-                  <div className="absolute -top-8 -right-6 z-10">
-                    <CatPeeking className="w-14 h-16" side="left" />
-                  </div>
-                  <img
-                    src="https://d2xsxph8kpxj0f.cloudfront.net/310519663525376407/gAsTZ8KCRUAuJ8Jah3ZYFq/ziwei-chart-jyKEJJhPyoHRbNoBt5L4ZH.webp"
-                    alt="紫微斗數命盤"
-                    className="w-full h-full object-cover rounded-xl shadow-[0_8px_32px_rgba(61,65,68,0.12)] border border-[#D1BE9B]/20"
-                  />
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#D1BE9B]/10 to-transparent pointer-events-none" />
-                </div>
-              </div>
-              {/* Ziwei text */}
-              <div className="order-1 lg:order-2 animate-fade-in-up delay-200">
-                <span
-                  className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-                  style={{
-                    fontFamily: "Cormorant Garamond, serif",
-                    fontWeight: 400,
-                  }}
-                >
-                  Zi Wei Dou Shu
-                </span>
-                <h2
-                  className="text-lg md:text-xl tracking-[0.18em] font-extralight text-[#31353A] mt-2 mb-4"
-                  style={{
-                    fontFamily: "Noto Serif TC, serif",
-                    fontWeight: 200,
-                  }}
-                >
-                  紫微斗數命盤
-                </h2>
-                <p
-                  className="text-[12px] leading-[2.1] text-[#31353A]/68 tracking-wider mb-6 max-w-sm"
-                  style={{
-                    fontFamily: "Noto Sans TC, sans-serif",
-                    fontWeight: 300,
-                  }}
-                >
-                  輸入出生年月日時，系統自動排出傳統十二宮位命盤。
-                  從命宮、財帛宮到夫妻宮，全面解析你的人生格局、
-                  個性特質與流年運勢。
-                </p>
-                <Link href="/ziwei">
-                  <button
-                    className="px-7 py-2.5 text-xs tracking-[0.25em] border border-[#3D4144]/15 bg-transparent rounded-full hover:bg-[#3D4144] hover:text-white transition-all duration-500 active:scale-95"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    排出我的命盤
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* ── TAROT PREVIEW · Night Sky ─────────────────────────────────────── */}
         <section className="night-sky-section order-1 relative overflow-hidden py-24 px-6 md:px-10">
           {/* Stardust + moonlight */}

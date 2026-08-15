@@ -27,6 +27,8 @@ import {
 import { toast } from 'sonner';
 import PageLayout from '@/components/PageLayout';
 import ContactDialog from '@/components/ContactDialog';
+import FeedbackCompanion from '@/components/FeedbackCompanion';
+import FeedbackGalleryDialog from '@/components/FeedbackGalleryDialog';
 import ProductCareNotice from '@/components/ProductCareNotice';
 import SalePrice from '@/components/SalePrice';
 import { useCart } from '@/contexts/CartContext';
@@ -261,6 +263,7 @@ export default function CustomBraceletPage() {
   const [form, setForm] = useState<CustomForm>(FORM_INITIAL);
   const [showContactModal, setShowContactModal] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [isFeedbackGalleryOpen, setIsFeedbackGalleryOpen] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [referenceImage, setReferenceImage] = useState<File | null>(null);
   const [referenceImagePreview, setReferenceImagePreview] = useState('');
@@ -1156,8 +1159,32 @@ export default function CustomBraceletPage() {
       </div>
 
       {/* 燈箱 */}
+      {lightboxIndex === null && !isFeedbackGalleryOpen && (
+        <FeedbackCompanion
+          controlsId="custom-bracelet-feedback-dialog"
+          onOpen={() => setIsFeedbackGalleryOpen(true)}
+        />
+      )}
+
+      <FeedbackGalleryDialog
+        id="custom-bracelet-feedback-dialog"
+        open={isFeedbackGalleryOpen}
+        onOpenChange={setIsFeedbackGalleryOpen}
+        eyebrow="Real Feedback"
+        title="顧客回饋＆客製化實拍"
+        description="一次看全部顧客回饋與客製化商品實拍，點開任一張可置中放大瀏覽。"
+        lightboxTitle="客製化手鍊顧客真實回饋"
+        itemAltPrefix="客製化手鍊顧客回饋"
+        items={CUSTOMER_FEEDBACK_PHOTO_ITEMS.map((photo, index) => ({
+          id: index + 1,
+          image: photo.full,
+          thumb: photo.thumb,
+        }))}
+      />
+
       {lightboxIndex !== null && typeof document !== 'undefined' && createPortal(
         <div
+          id="custom-bracelet-feedback-lightbox"
           className="lightbox-backdrop fixed inset-0 z-[60] flex items-center justify-center bg-[#1c1a18]/80 p-4 backdrop-blur-sm"
           onClick={closeLightbox}
         >

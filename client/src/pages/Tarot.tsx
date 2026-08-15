@@ -23,6 +23,8 @@ import {
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import PageLayout from "@/components/PageLayout";
+import FeedbackCompanion from "@/components/FeedbackCompanion";
+import FeedbackGalleryDialog from "@/components/FeedbackGalleryDialog";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Streamdown } from "streamdown";
@@ -42,6 +44,7 @@ import {
   type MoodPlushie,
 } from "@/components/MoodClawMachine";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
+import TarotPreviewSection from "@/components/TarotPreviewSection";
 import { ExternalLink, Mail, MessageCircle } from "lucide-react";
 import {
   recommendForCategory,
@@ -61,6 +64,14 @@ const HUMAN_TAROT_REVIEW_PREVIEWS = [
   "/gooday-tarot-reviews/review-31.jpg",
   "/gooday-tarot-reviews/review-52.jpg",
 ];
+const HUMAN_TAROT_REVIEW_PROOFS = Array.from({ length: 63 }, (_, index) => {
+  const id = index + 1;
+
+  return {
+    id,
+    image: `/gooday-tarot-reviews/review-${id}.jpg`,
+  };
+});
 
 const HUMAN_TAROT_MENU_PLANS = [
   {
@@ -1391,6 +1402,7 @@ export default function TarotPage() {
   const [pendingStartAfterLogin, setPendingStartAfterLogin] = useState(false);
   const [pendingFollowUpAfterLogin, setPendingFollowUpAfterLogin] =
     useState(false);
+  const [isHumanTarotReviewsOpen, setIsHumanTarotReviewsOpen] = useState(false);
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const readingResultRef = useRef<HTMLDivElement | null>(null);
@@ -2795,6 +2807,25 @@ export default function TarotPage() {
               </div>
             </section>
           </div>
+
+          {!isHumanTarotReviewsOpen && (
+            <FeedbackCompanion
+              controlsId="human-tarot-feedback-dialog"
+              onOpen={() => setIsHumanTarotReviewsOpen(true)}
+            />
+          )}
+
+          <FeedbackGalleryDialog
+            id="human-tarot-feedback-dialog"
+            open={isHumanTarotReviewsOpen}
+            onOpenChange={setIsHumanTarotReviewsOpen}
+            eyebrow="Human Tarot Proof"
+            title="真人塔羅顧客回饋"
+            description="一次看全部真人塔羅真實回饋，點開任一張可置中放大瀏覽。"
+            lightboxTitle="塔羅顧客真實回饋"
+            itemAltPrefix="塔羅顧客回饋"
+            items={HUMAN_TAROT_REVIEW_PROOFS}
+          />
         </div>
       </PageLayout>
     );
@@ -5430,6 +5461,7 @@ export default function TarotPage() {
           )}
         </div>
       </div>
+      <TarotPreviewSection ctaHref="/tarot/ai" />
     </PageLayout>
   );
 }
