@@ -2825,6 +2825,7 @@ export default function TarotPage() {
             lightboxTitle="塔羅顧客真實回饋"
             itemAltPrefix="塔羅顧客回饋"
             items={HUMAN_TAROT_REVIEW_PROOFS}
+            itemAspect="868 / 1543"
           />
         </div>
       </PageLayout>

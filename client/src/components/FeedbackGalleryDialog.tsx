@@ -24,6 +24,8 @@ type FeedbackGalleryDialogProps = {
   lightboxTitle: string;
   itemAltPrefix: string;
   items: FeedbackGalleryItem[];
+  /** Thumbnail shape. Match the source photos so the grid stops cropping them. */
+  itemAspect?: string;
 };
 
 export default function FeedbackGalleryDialog({
@@ -36,10 +38,11 @@ export default function FeedbackGalleryDialog({
   lightboxTitle,
   itemAltPrefix,
   items,
+  itemAspect = "3 / 4",
 }: FeedbackGalleryDialogProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  // The photos are tall phone screenshots (868x1886), so height-fitting them
-  // shrinks the text past readable. Zoomed shows them at native width instead.
+  // The photos are tall phone screenshots, so height-fitting them shrinks the
+  // text past readable. Zoomed shows them at native width instead.
   const [isZoomed, setIsZoomed] = useState(false);
   const touchX = useRef<number | null>(null);
   const selectedItem = selectedIndex === null ? null : items[selectedIndex];
@@ -149,14 +152,15 @@ export default function FeedbackGalleryDialog({
           </div>
 
           <div className="min-h-0 overflow-y-auto px-5 py-5 md:px-7">
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {items.map((item, index) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => setSelectedIndex(index)}
                   aria-label={`放大第 ${index + 1} 張${itemAltPrefix}`}
-                  className="group aspect-[3/4] overflow-hidden rounded-xl border border-[#C9D5E8]/40 bg-white/60 shadow-[0_10px_24px_rgba(36,88,121,0.1)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#245879]/44 active:scale-[0.98]"
+                  style={{ aspectRatio: itemAspect }}
+                  className="group overflow-hidden rounded-xl border border-[#C9D5E8]/40 bg-white/60 shadow-[0_10px_24px_rgba(36,88,121,0.1)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#245879]/44 active:scale-[0.98]"
                 >
                   <img
                     src={item.thumb ?? item.image}
@@ -165,7 +169,7 @@ export default function FeedbackGalleryDialog({
                     decoding="async"
                     width={360}
                     height={480}
-                    sizes="(min-width: 1024px) 11rem, (min-width: 640px) 33vw, 50vw"
+                    sizes="(min-width: 1024px) 14rem, (min-width: 640px) 45vw, 50vw"
                     className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
                   />
                 </button>
@@ -221,8 +225,8 @@ export default function FeedbackGalleryDialog({
             <div
               className={
                 isZoomed
-                  ? "h-full overflow-y-auto overscroll-contain px-4 py-16 md:px-6 md:py-14"
-                  : "flex h-full items-center justify-center px-3 py-16 md:px-24 md:py-14"
+                  ? "h-full overflow-y-auto overscroll-contain px-4 py-14 md:px-6 md:py-12"
+                  : "flex h-full items-center justify-center px-3 py-14 md:px-24 md:py-12"
               }
             >
               <img

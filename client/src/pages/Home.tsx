@@ -1236,7 +1236,11 @@ export default function Home() {
                     type="button"
                     onClick={() => setSelectedFeedbackIndex(index)}
                     aria-label={`放大${activeFeedback.title}第 ${index + 1} 張`}
-                    className="group aspect-[3/4] overflow-hidden rounded-xl border border-[#D1BE9B]/18 bg-white/56 shadow-[0_10px_24px_rgba(180,160,130,0.1)] transition-[border-color,opacity,transform] duration-200 hover:border-[#A38D6B]/55 active:scale-[0.98]"
+                    style={{
+                      aspectRatio:
+                        activeFeedback.id === "bracelet" ? "3 / 4" : "868 / 1543",
+                    }}
+                    className="group overflow-hidden rounded-xl border border-[#D1BE9B]/18 bg-white/56 shadow-[0_10px_24px_rgba(180,160,130,0.1)] transition-[border-color,opacity,transform] duration-200 hover:border-[#A38D6B]/55 active:scale-[0.98]"
                   >
                     <img
                       src={item.thumb ?? item.src}

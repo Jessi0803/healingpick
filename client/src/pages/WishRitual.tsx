@@ -356,6 +356,7 @@ export default function WishRitual() {
         lightboxTitle="魔法儀式顧客真實回饋"
         itemAltPrefix="魔法儀式顧客回饋"
         items={RITUAL_REVIEW_PROOFS}
+        itemAspect="868 / 1543"
       />
     </PageLayout>
   );

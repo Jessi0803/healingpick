@@ -80,7 +80,8 @@ export default function TarotReviews() {
                   type="button"
                   onClick={() => setSelectedIndex(index)}
                   aria-label={`放大第 ${index + 1} 張塔羅顧客回饋`}
-                  className="group aspect-[3/4] overflow-hidden rounded-2xl border border-[#D1BE9B]/18 bg-white/45 shadow-[0_12px_26px_rgba(180,160,130,0.12)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#D1BE9B]/70 active:scale-[0.98]"
+                  style={{ aspectRatio: "868 / 1543" }}
+                  className="group overflow-hidden rounded-2xl border border-[#D1BE9B]/18 bg-white/45 shadow-[0_12px_26px_rgba(180,160,130,0.12)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#D1BE9B]/70 active:scale-[0.98]"
                 >
                   <img
                     src={review.image}
