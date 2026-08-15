@@ -90,6 +90,29 @@ export default function WishRitual() {
               >
                 依照願望主題搭配許願蠟燭與儀式祝福，陪你重整能量、聚焦意念，讓願望以更適合你的方式被接住。
               </p>
+              <div className="mx-auto mt-6 flex max-w-md flex-col items-center gap-3 rounded-lg border border-white/48 bg-white/34 px-4 py-4 shadow-[0_12px_34px_rgba(255,255,255,0.2)] backdrop-blur-md sm:flex-row sm:text-left">
+                <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/38 bg-white/76 shadow-[0_10px_26px_rgba(36,88,121,0.12)]">
+                  <img
+                    src="/gooday-logo.png"
+                    alt="日日好日塔羅"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div>
+                  <p
+                    className="text-[12px] tracking-[0.18em] text-[#245879]"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
+                  >
+                    日日好日 Gooday Tarot
+                  </p>
+                  <p
+                    className="mt-1 text-[11px] leading-[1.8] tracking-[0.08em] text-[#245879]/74"
+                    style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
+                  >
+                    讓日日好日替你的願望點亮儀式火光。
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="mt-9 rounded-xl border border-white/45 bg-white/36 p-5 shadow-[0_16px_46px_rgba(255,255,255,0.24)] backdrop-blur-md md:p-7">
