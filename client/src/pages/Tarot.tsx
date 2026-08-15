@@ -2294,7 +2294,8 @@ export default function TarotPage() {
                 gap: 0;
               }
               .tarot-entry-partner-text span:first-child {
-                font-size: 11px;
+                font-size: 13px;
+                letter-spacing: 0.08em;
                 line-height: 1.42;
               }
               .tarot-entry-partner-text span:last-child {
@@ -2364,6 +2365,10 @@ export default function TarotPage() {
                 width: 32px;
                 height: 32px;
                 flex-basis: 32px;
+              }
+              .tarot-entry-partner-text span:first-child {
+                font-size: 12px;
+                letter-spacing: 0.06em;
               }
               .tarot-entry-options {
                 gap: 10px;
@@ -2697,7 +2702,7 @@ export default function TarotPage() {
                           className="mt-4 inline-flex text-[11px] tracking-[0.14em] text-[#267345]"
                           style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                         >
-                          查看細項
+                          點開查看細相
                         </span>
                       </button>
                     </DialogTrigger>
