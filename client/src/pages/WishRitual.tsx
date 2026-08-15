@@ -103,7 +103,7 @@ export default function WishRitual() {
 
   return (
     <PageLayout>
-      <main className="min-h-screen px-5 pb-20 pt-32 md:px-10">
+      <main className="min-h-screen px-5 pb-20 md:px-10">
         <section className="relative mx-auto max-w-6xl overflow-hidden rounded-xl border border-[#C9D5E8]/55 bg-[linear-gradient(135deg,#dce6f6_0%,#e8e1f0_44%,#f3dfd2_100%)] px-5 py-12 text-[#245879] shadow-[0_24px_70px_rgba(36,88,121,0.16)] md:px-10 md:py-16">
           <div className="absolute left-8 top-8 text-3xl text-white/90" aria-hidden="true">
             ✦
