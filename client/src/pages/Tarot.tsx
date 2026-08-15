@@ -2260,33 +2260,84 @@ export default function TarotPage() {
             }
             @media (max-width: 420px) {
               .tarot-entry-page {
-                padding-top: 66px;
+                padding: 54px 12px 18px;
+              }
+              .tarot-entry-shell > .text-center > span {
+                display: none;
+              }
+              .tarot-entry-heading {
+                margin-top: 0 !important;
+                font-size: 20px !important;
+                line-height: 1.25 !important;
+              }
+              .tarot-entry-copy {
+                margin-top: 5px !important;
+                font-size: 11px !important;
+                line-height: 1.4 !important;
               }
               .tarot-entry-partner {
                 align-items: flex-start;
                 justify-content: flex-start;
-                border-radius: 16px;
-                padding: 12px 14px;
+                gap: 9px;
+                margin-top: 8px;
+                border-radius: 14px;
+                padding: 7px 10px;
               }
               .tarot-entry-partner-logo {
-                width: 40px;
-                height: 40px;
-                flex-basis: 40px;
+                width: 32px;
+                height: 32px;
+                flex-basis: 32px;
+              }
+              .tarot-entry-partner-text {
+                gap: 0;
+              }
+              .tarot-entry-partner-text span:first-child {
+                font-size: 10px;
+                line-height: 1.35;
+              }
+              .tarot-entry-partner-text span:last-child {
+                display: none;
+              }
+              .tarot-entry-options {
+                gap: 10px;
+                margin-top: 10px;
               }
               .tarot-entry-card {
-                min-height: 152px;
-                padding: 19px;
+                min-height: 106px;
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 10px 12px;
+                border-radius: 17px;
+                padding: 12px 13px;
+              }
+              .tarot-entry-card-label {
+                padding: 4px 8px;
+                font-size: 9px;
+                line-height: 1.1;
               }
               .tarot-entry-card-title {
-                font-size: 21px;
+                margin-top: 7px;
+                font-size: 19px;
+                line-height: 1.25;
+              }
+              .tarot-entry-card-note {
+                margin-top: 5px;
+                font-size: 10px;
+                line-height: 1.48;
+              }
+              .tarot-entry-card-partner {
+                display: none;
               }
               .tarot-entry-card-media {
-                width: 68px;
-                height: 68px;
+                width: 54px;
+                height: 54px;
               }
               .tarot-entry-card-media--human {
-                width: 88px;
-                height: 88px;
+                width: 62px;
+                height: 62px;
+              }
+              .tarot-entry-card-arrow {
+                font-size: 10px;
+                line-height: 1.2;
               }
             }
           `}</style>
@@ -2321,7 +2372,7 @@ export default function TarotPage() {
             <div className="tarot-entry-options" aria-label="塔羅占卜方式">
               <Link href="/tarot/human" className="tarot-entry-card tarot-entry-card--human">
                 <div>
-                  <span className="tarot-entry-card-label">HealingPick × Gooday 日日好日</span>
+                  <span className="tarot-entry-card-label">Gooday 真人合作</span>
                   <h2 className="tarot-entry-card-title">真人占卜</h2>
                   <p className="tarot-entry-card-note">
                     真人老師一對一解讀，適合感情、事業與人生選擇想深入聊。
