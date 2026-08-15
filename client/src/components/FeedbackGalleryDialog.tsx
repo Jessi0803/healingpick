@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import {
   Dialog,
@@ -37,6 +38,9 @@ export default function FeedbackGalleryDialog({
   items,
 }: FeedbackGalleryDialogProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  // The photos are tall phone screenshots (868x1886), so height-fitting them
+  // shrinks the text past readable. Zoomed shows them at native width instead.
+  const [isZoomed, setIsZoomed] = useState(false);
   const touchX = useRef<number | null>(null);
   const selectedItem = selectedIndex === null ? null : items[selectedIndex];
 
@@ -49,6 +53,10 @@ export default function FeedbackGalleryDialog({
   useEffect(() => {
     if (!open) setSelectedIndex(null);
   }, [open]);
+
+  useEffect(() => {
+    setIsZoomed(false);
+  }, [selectedIndex]);
 
   useEffect(() => {
     if (selectedIndex === null) return;
@@ -99,6 +107,11 @@ export default function FeedbackGalleryDialog({
       <DialogContent
         id={id}
         showCloseButton={false}
+        onInteractOutside={(event) => {
+          // The lightbox renders outside this layer, so Radix reads clicks in it
+          // as "outside". Keep the gallery mounted underneath it.
+          if (selectedIndex !== null) event.preventDefault();
+        }}
         className="h-[min(88vh,46rem)] max-w-[min(58rem,calc(100vw-1.5rem))] overflow-hidden border-white/55 bg-[#F8FBFF]/96 p-0 text-[#245879] shadow-[0_28px_80px_rgba(36,88,121,0.22)] backdrop-blur-xl sm:rounded-2xl"
         aria-describedby={`${id}-description`}
       >
@@ -160,18 +173,26 @@ export default function FeedbackGalleryDialog({
             </div>
           </div>
         </div>
+      </DialogContent>
 
-        {/* Lives inside DialogContent on purpose: Radix sets `pointer-events: none`
-            on <body> while a modal dialog is open, so a portalled sibling would
-            inherit it and every click in here would be dead. */}
-        {selectedItem && selectedIndex !== null && (
+      {/* Portalled to <body> so the photo can use the whole viewport instead of
+          being boxed into the dialog. Radix sets `pointer-events: none` on
+          <body> while a modal dialog is open and that inherits down here, so the
+          root explicitly takes it back — without it every click below is dead. */}
+      {selectedItem &&
+        selectedIndex !== null &&
+        typeof document !== "undefined" &&
+        createPortal(
           <div
-            className="absolute inset-0 z-20 grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] bg-[#171513]/88 p-4 text-[#FAF7F4] backdrop-blur-md md:p-6"
+            className="lightbox-backdrop pointer-events-auto fixed inset-0 z-[70] bg-[#171513]/92 text-[#FAF7F4] backdrop-blur-md"
+            role="dialog"
+            aria-modal="true"
+            aria-label={lightboxTitle}
             onClick={closeLightbox}
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            <div className="flex items-start justify-between gap-4">
+            <div className="absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-4 p-4 md:p-5">
               <div>
                 <p
                   className="text-[12px] tracking-[0.18em]"
@@ -190,53 +211,68 @@ export default function FeedbackGalleryDialog({
                   closeLightbox();
                 }}
                 aria-label="關閉"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
               >
                 <X className="h-4.5 w-4.5" strokeWidth={1.7} />
               </button>
             </div>
 
-            <div className="relative flex min-h-0 items-center justify-center px-11 py-4">
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  stepLightbox(-1);
-                }}
-                aria-label="上一張"
-                className="absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
-              >
-                <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
-              </button>
+            {/* Horizontal padding clears the arrow buttons so they stay clickable. */}
+            <div
+              className={
+                isZoomed
+                  ? "h-full overflow-y-auto overscroll-contain px-4 py-16 md:px-6 md:py-14"
+                  : "flex h-full items-center justify-center px-3 py-16 md:px-24 md:py-14"
+              }
+            >
               <img
                 src={selectedItem.image}
                 alt={`${itemAltPrefix}，第 ${selectedIndex + 1} 張`}
                 decoding="async"
-                className="max-h-full max-w-full rounded-2xl object-contain shadow-2xl"
-                onClick={(event) => event.stopPropagation()}
-              />
-              <button
-                type="button"
+                className={
+                  isZoomed
+                    ? "mx-auto w-[min(868px,100%)] max-w-none cursor-zoom-out rounded-xl shadow-2xl"
+                    : "max-h-full max-w-full cursor-zoom-in rounded-xl object-contain shadow-2xl"
+                }
                 onClick={(event) => {
                   event.stopPropagation();
-                  stepLightbox(1);
+                  setIsZoomed((current) => !current);
                 }}
-                aria-label="下一張"
-                className="absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
-              >
-                <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
-              </button>
+              />
             </div>
 
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                stepLightbox(-1);
+              }}
+              aria-label="上一張"
+              className="absolute left-2 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:left-6"
+            >
+              <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
+            </button>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                stepLightbox(1);
+              }}
+              aria-label="下一張"
+              className="absolute right-2 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:right-6"
+            >
+              <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
+            </button>
+
             <p
-              className="mx-auto rounded-full border border-white/12 bg-white/10 px-4 py-2 text-[10px] tracking-[0.14em] text-white/68"
+              className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/12 bg-white/10 px-4 py-2 text-[10px] tracking-[0.14em] text-white/68"
               onClick={(event) => event.stopPropagation()}
             >
-              左右滑動或按方向鍵切換
+              {isZoomed ? "再點一次縮小 · 上下捲動看內容" : "點圖片看原尺寸 · 左右鍵切換"}
             </p>
-          </div>
+          </div>,
+          document.body,
         )}
-      </DialogContent>
     </Dialog>
   );
 }
