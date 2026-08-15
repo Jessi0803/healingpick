@@ -36,6 +36,13 @@ import { CUSTOMER_FEEDBACK_PHOTO_ITEMS } from '@/data/customerFeedbackPhotos';
 import { getDiscountedPrice } from '@shared/productPricing';
 
 const GALLERY_PHOTOS = CUSTOMER_FEEDBACK_PHOTO_ITEMS;
+const FEEDBACK_GALLERY_ITEMS = CUSTOMER_FEEDBACK_PHOTO_ITEMS.map(
+  (photo, index) => ({
+    id: index + 1,
+    image: photo.full,
+    thumb: photo.thumb,
+  }),
+);
 const GALLERY_IMAGES = GALLERY_PHOTOS.map(photo => photo.full);
 
 // 主視覺使用商品照示範客製風格，圖片以完整顯示避免裁切到手鍊。
@@ -1175,11 +1182,7 @@ export default function CustomBraceletPage() {
         description="一次看全部顧客回饋與客製化商品實拍，點開任一張可置中放大瀏覽。"
         lightboxTitle="客製化手鍊顧客真實回饋"
         itemAltPrefix="客製化手鍊顧客回饋"
-        items={CUSTOMER_FEEDBACK_PHOTO_ITEMS.map((photo, index) => ({
-          id: index + 1,
-          image: photo.full,
-          thumb: photo.thumb,
-        }))}
+        items={FEEDBACK_GALLERY_ITEMS}
       />
 
       {lightboxIndex !== null && typeof document !== 'undefined' && createPortal(
