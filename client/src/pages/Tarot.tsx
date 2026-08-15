@@ -3856,16 +3856,17 @@ export default function TarotPage() {
                           塔羅師資歷 →
                         </Link>
                       </li>
-                      <li>一對一視訊深度解析</li>
+                      <li>一對一視訊或訊息深度解析，可從 1 題開始</li>
                       <li>
-                        以靈性感知，感受牌的能量流動，讀出更貼近個人處境的訊息
+                        多則客人後續回饋，能看到當時提醒如何和真實發展對上
                         <Link
                           href="/tarot/reviews"
                           className="tarot-choice-inline-link"
                         >
-                          顧客好評 →
+                          真實案例 →
                         </Link>
                       </li>
+                      <li>占卜不保證結果，而是陪你看清關係狀態與下一步選擇</li>
                     </ul>
                     </article>
                   )}
