@@ -2258,7 +2258,7 @@ export default function TarotPage() {
                 max-width: 210px;
               }
             }
-            @media (max-width: 420px) {
+            @media (max-width: 640px) {
               .tarot-entry-page {
                 padding: 54px 12px 18px;
               }
