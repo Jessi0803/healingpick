@@ -744,7 +744,7 @@ export default function Home() {
                 onClick={openTestimonials}
                 className="home-testimonial-heart-button group mt-3"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                aria-label="看看大家怎麼被療癒"
+                aria-label="客人寶寶們回饋"
               >
                 <svg
                   className="home-testimonial-heart-shape"
@@ -780,8 +780,8 @@ export default function Home() {
                   />
                 </svg>
                 <span className="home-testimonial-heart-text">
-                  <span>看看大家</span>
-                  <span>怎麼被療癒</span>
+                  <span>客人寶寶們</span>
+                  <span>回饋</span>
                 </span>
               </button>
             </div>
@@ -1675,10 +1675,10 @@ export default function Home() {
         }}
       >
         <DialogContent
-          className="max-h-[88vh] max-w-[min(58rem,calc(100vw-1.5rem))] overflow-hidden border-[#D1BE9B]/28 bg-[#FAF7F4]/96 p-0 shadow-[0_28px_80px_rgba(49,53,58,0.22)] backdrop-blur-xl sm:rounded-2xl"
+          className="h-[min(88vh,46rem)] max-w-[min(58rem,calc(100vw-1.5rem))] overflow-hidden border-[#D1BE9B]/28 bg-[#FAF7F4]/96 p-0 shadow-[0_28px_80px_rgba(49,53,58,0.22)] backdrop-blur-xl sm:rounded-2xl"
           aria-describedby="home-feedback-description"
         >
-          <div className="grid min-h-0 grid-rows-[auto_auto_1fr]">
+          <div className="grid h-full min-h-0 grid-rows-[auto_auto_1fr]">
             <div className="border-b border-[#D1BE9B]/18 px-5 pb-4 pt-6 md:px-7">
               <span
                 className="text-[12px] italic tracking-[0.08em] text-[#A38D6B]"
@@ -1693,7 +1693,7 @@ export default function Home() {
                 className="mt-2 text-lg font-extralight tracking-[0.18em] text-[#31353A] md:text-xl"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
               >
-                看看大家怎麼被療癒
+                客人寶寶們回饋
               </DialogTitle>
               <DialogDescription
                 id="home-feedback-description"
@@ -1795,7 +1795,7 @@ export default function Home() {
 
           {selectedFeedback && selectedFeedbackIndex !== null && (
             <div
-              className="absolute inset-0 z-20 grid grid-rows-[auto_1fr_auto] bg-[#171513]/88 p-4 text-[#FAF7F4] backdrop-blur-md md:p-6"
+              className="absolute inset-0 z-20 grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] bg-[#171513]/88 p-4 text-[#FAF7F4] backdrop-blur-md md:p-6"
               onClick={() => setSelectedFeedbackIndex(null)}
             >
               <div className="flex items-start justify-between gap-4">
@@ -1826,7 +1826,7 @@ export default function Home() {
                 </button>
               </div>
 
-              <div className="relative flex min-h-0 items-center justify-center px-11 py-4">
+              <div className="relative min-h-0 overflow-y-auto px-11 py-4">
                 <button
                   type="button"
                   onClick={(event) => {
@@ -1843,7 +1843,7 @@ export default function Home() {
                   src={selectedFeedback.src}
                   alt={selectedFeedback.alt}
                   decoding="async"
-                  className="max-h-[calc(88vh-9rem)] max-w-full rounded-2xl object-contain shadow-2xl"
+                  className="mx-auto h-auto max-w-full rounded-2xl object-contain shadow-2xl"
                   onClick={(event) => event.stopPropagation()}
                 />
                 <button
