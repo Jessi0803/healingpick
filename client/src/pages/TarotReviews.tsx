@@ -70,12 +70,6 @@ export default function TarotReviews() {
             >
               真人塔羅顧客回饋
             </h1>
-            <p
-              className="mx-auto mt-4 max-w-2xl text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/64"
-              style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-            >
-              這裡收錄的是客人後來回傳的真實截圖：有人說老師講中的狀態太像自己，也有人過一陣子才發現，當時提醒的事情真的發生了。
-            </p>
           </div>
 
           <section>
