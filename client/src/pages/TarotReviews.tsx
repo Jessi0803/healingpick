@@ -1,6 +1,7 @@
 import PageLayout from '@/components/PageLayout';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'wouter';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 const TAROT_REVIEW_PROOFS = [
   {
@@ -131,11 +132,40 @@ const TAROT_REVIEW_PROOFS = [
   },
 ];
 
-const MARQUEE_ROW_1 = TAROT_REVIEW_PROOFS.slice(0, 9);
-const MARQUEE_ROW_2 = TAROT_REVIEW_PROOFS.slice(9);
-
 export default function TarotReviews() {
-  const [selectedReview, setSelectedReview] = useState<(typeof TAROT_REVIEW_PROOFS)[number] | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const touchX = useRef<number | null>(null);
+
+  const selectedReview = selectedIndex === null ? null : TAROT_REVIEW_PROOFS[selectedIndex];
+  const closeLightbox = () => setSelectedIndex(null);
+  const stepLightbox = (dir: number) =>
+    setSelectedIndex((current) =>
+      current === null
+        ? current
+        : (current + dir + TAROT_REVIEW_PROOFS.length) % TAROT_REVIEW_PROOFS.length,
+    );
+
+  useEffect(() => {
+    if (selectedIndex === null) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowRight') stepLightbox(1);
+      if (event.key === 'ArrowLeft') stepLightbox(-1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedIndex]);
+
+  const onTouchStart = (event: React.TouchEvent) => {
+    touchX.current = event.touches[0].clientX;
+  };
+
+  const onTouchEnd = (event: React.TouchEvent) => {
+    if (touchX.current === null) return;
+    const dx = event.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 44) stepLightbox(dx < 0 ? 1 : -1);
+    touchX.current = null;
+  };
 
   return (
     <PageLayout>
@@ -162,47 +192,34 @@ export default function TarotReviews() {
             </p>
           </div>
 
-          <section className="space-y-3">
-            {[
-              { reviews: MARQUEE_ROW_1, dir: 'left' as const },
-              { reviews: MARQUEE_ROW_2, dir: 'right' as const },
-            ].map((row) => (
-              <div key={row.dir} className="gallery-marquee overflow-hidden">
-                <div className={`gallery-row ${row.dir === 'left' ? 'gallery-row-left' : 'gallery-row-right'}`}>
-                  {[...row.reviews, ...row.reviews].map((review, index) => (
-                    <button
-                      key={`${review.id}-${index}`}
-                      type="button"
-                      aria-label={`放大查看${review.title}`}
-                      onClick={() => setSelectedReview(review)}
-                      className="group relative mr-3 aspect-[868/1886] w-36 flex-shrink-0 overflow-hidden rounded-2xl border border-[#D1BE9B]/20 bg-white/40 shadow-[0_12px_32px_rgba(180,160,130,0.12)] md:w-44 lg:w-52"
-                    >
-                      <img
-                        src={review.image}
-                        alt={review.title}
-                        loading="lazy"
-                        decoding="async"
-                        width={260}
-                        height={565}
-                        sizes="(min-width: 1024px) 13rem, (min-width: 768px) 11rem, 9rem"
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <span
-                        className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-[#2b2622]/76 to-transparent px-3 pb-2 pt-10 text-[10px] tracking-[0.14em] text-white/90 transition-transform duration-300 group-hover:translate-y-0"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                      >
-                        {review.category}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+          <section>
+            <div className="mx-auto grid max-w-5xl grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+              {TAROT_REVIEW_PROOFS.map((review, index) => (
+                <button
+                  key={review.id}
+                  type="button"
+                  onClick={() => setSelectedIndex(index)}
+                  aria-label={`放大第 ${index + 1} 張塔羅顧客回饋`}
+                  className="group aspect-[3/4] overflow-hidden rounded-2xl border border-[#D1BE9B]/18 bg-white/45 shadow-[0_12px_26px_rgba(180,160,130,0.12)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#D1BE9B]/70 active:scale-[0.98]"
+                >
+                  <img
+                    src={review.image}
+                    alt={`塔羅顧客回饋，第 ${index + 1} 張`}
+                    loading="lazy"
+                    decoding="async"
+                    width={360}
+                    height={480}
+                    sizes="(min-width: 1024px) 10rem, (min-width: 640px) 33vw, 50vw"
+                    className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+                  />
+                </button>
+              ))}
+            </div>
             <p
-              className="pt-2 text-center text-[10px] tracking-[0.18em] text-[#31353A]/42"
+              className="mt-4 text-center text-[10px] tracking-[0.18em] text-[#31353A]/42"
               style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
             >
-              滑過暫停 · 點擊任一張放大瀏覽
+              點擊任一張放大瀏覽 · 可用左右鍵切換
             </p>
           </section>
 
@@ -243,33 +260,75 @@ export default function TarotReviews() {
         </div>
       </div>
 
-      {selectedReview && (
+      {selectedReview && selectedIndex !== null && (
         <div
-          className="fixed inset-0 z-50 grid place-items-center bg-[#1F2224]/76 p-4 backdrop-blur-sm"
+          className="lightbox-backdrop fixed inset-0 z-[70] flex flex-col bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
           role="dialog"
           aria-modal="true"
-          onClick={() => setSelectedReview(null)}
+          onClick={closeLightbox}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
         >
+          <div className="flex shrink-0 items-start justify-between gap-4 pb-4 text-[#FAF7F4] md:pb-5">
+            <div>
+              <p
+                className="text-[12px] tracking-[0.18em]"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+              >
+                塔羅顧客真實回饋
+              </p>
+              <p className="mt-1 text-[10px] tracking-[0.12em] text-white/48">
+                {selectedIndex + 1} / {TAROT_REVIEW_PROOFS.length}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={closeLightbox}
+              aria-label="關閉"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
+            >
+              <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+            </button>
+          </div>
           <button
             type="button"
-            className="absolute right-4 top-4 rounded-full border border-white/20 bg-white/12 px-4 py-2 text-[11px] tracking-[0.18em] text-white transition hover:bg-white/20"
-            onClick={() => setSelectedReview(null)}
-            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+            onClick={(event) => {
+              event.stopPropagation();
+              stepLightbox(-1);
+            }}
+            aria-label="上一張"
+            className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:left-8"
           >
-            關閉
+            <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
           </button>
-          <figure
-            className="max-h-[88vh] w-full max-w-[28rem] overflow-auto rounded-lg bg-[#F7F1EA] shadow-[0_24px_80px_rgba(0,0,0,0.35)]"
+          <div className="flex min-h-0 flex-1 items-center justify-center">
+            <img
+              key={selectedReview.id}
+              src={selectedReview.image}
+              alt={`塔羅顧客回饋，第 ${selectedIndex + 1} 張`}
+              decoding="async"
+              className="lightbox-image max-h-[calc(100vh-13.5rem)] max-w-full rounded-2xl object-contain shadow-2xl md:max-h-[calc(100vh-11rem)]"
+              onClick={(event) => event.stopPropagation()}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              stepLightbox(1);
+            }}
+            aria-label="下一張"
+            className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:right-8"
+          >
+            <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
+          </button>
+          <button
+            type="button"
+            className="mx-auto mt-4 rounded-full border border-white/12 bg-white/10 px-4 py-2 text-[10px] tracking-[0.14em] text-white/68 transition-colors hover:bg-white/16"
             onClick={(event) => event.stopPropagation()}
           >
-            <img src={selectedReview.image} alt={selectedReview.title} className="w-full" />
-            <figcaption
-              className="border-t border-[#D1BE9B]/22 bg-white px-5 py-4 text-[13px] leading-[1.8] tracking-[0.08em] text-[#31353A]"
-              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-            >
-              {selectedReview.title}
-            </figcaption>
-          </figure>
+            左右滑動或按方向鍵切換
+          </button>
         </div>
       )}
     </PageLayout>
