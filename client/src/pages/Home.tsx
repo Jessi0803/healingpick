@@ -332,7 +332,7 @@ export default function Home() {
   const [isMochiMenuOpen, setIsMochiMenuOpen] = useState(false);
   const [isTestimonialsOpen, setIsTestimonialsOpen] = useState(false);
   const [activeFeedbackCategory, setActiveFeedbackCategory] =
-    useState<HomeFeedbackCategoryId>("bracelet");
+    useState<HomeFeedbackCategoryId | null>(null);
   const [selectedFeedbackIndex, setSelectedFeedbackIndex] = useState<
     number | null
   >(null);
@@ -397,17 +397,18 @@ export default function Home() {
   const activeData = activeCrystal ? altarData[activeCrystal] : null;
 
   const activeFeedback =
-    homeFeedbackCategories.find(
-      category => category.id === activeFeedbackCategory
-    ) ?? homeFeedbackCategories[0];
+    activeFeedbackCategory === null
+      ? null
+      : (homeFeedbackCategories.find(
+          category => category.id === activeFeedbackCategory
+        ) ?? homeFeedbackCategories[0]);
+  const activeFeedbackCount = activeFeedback?.items.length ?? 0;
   const selectedFeedback =
-    selectedFeedbackIndex === null
+    activeFeedback === null || selectedFeedbackIndex === null
       ? null
       : activeFeedback.items[selectedFeedbackIndex];
 
-  function openTestimonials(
-    categoryId: HomeFeedbackCategoryId = activeFeedbackCategory
-  ) {
+  function openTestimonials(categoryId: HomeFeedbackCategoryId | null = null) {
     setActiveFeedbackCategory(categoryId);
     setIsTestimonialsOpen(true);
     setSelectedFeedbackIndex(null);
@@ -419,12 +420,11 @@ export default function Home() {
   }
 
   function stepSelectedFeedback(direction: number) {
+    if (!activeFeedbackCount) return;
+
     setSelectedFeedbackIndex(current => {
       if (current === null) return current;
-      return (
-        (current + direction + activeFeedback.items.length) %
-        activeFeedback.items.length
-      );
+      return (current + direction + activeFeedbackCount) % activeFeedbackCount;
     });
   }
 
@@ -438,7 +438,7 @@ export default function Home() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeFeedback.items.length, isTestimonialsOpen, selectedFeedbackIndex]);
+  }, [activeFeedbackCount, isTestimonialsOpen, selectedFeedbackIndex]);
 
   return (
     <PageLayout>
@@ -1732,7 +1732,13 @@ export default function Home() {
           className="h-[min(88vh,46rem)] max-w-[min(58rem,calc(100vw-1.5rem))] overflow-hidden border-[#D1BE9B]/28 bg-[#FAF7F4]/96 p-0 shadow-[0_28px_80px_rgba(49,53,58,0.22)] backdrop-blur-xl sm:rounded-2xl"
           aria-describedby="home-feedback-description"
         >
-          <div className="grid h-full min-h-0 grid-rows-[auto_auto_1fr]">
+          <div
+            className={`grid h-full min-h-0 ${
+              activeFeedback === null
+                ? "grid-rows-[auto_1fr]"
+                : "grid-rows-[auto_auto_1fr]"
+            }`}
+          >
             <div className="border-b border-[#D1BE9B]/18 px-5 pb-4 pt-6 md:px-7">
               <span
                 className="text-[12px] italic tracking-[0.08em] text-[#A38D6B]"
@@ -1761,169 +1767,264 @@ export default function Home() {
               </DialogDescription>
             </div>
 
-            <div className="border-b border-[#D1BE9B]/14 px-5 py-3 md:px-7">
-              <div
-                className="grid grid-cols-1 gap-2 sm:grid-cols-3"
-                aria-label="選擇回饋分類"
-              >
-                {homeFeedbackCategories.map(category => {
-                  const isActive = activeFeedbackCategory === category.id;
+            {activeFeedback !== null && (
+              <div className="border-b border-[#D1BE9B]/14 px-5 py-3 md:px-7">
+                <div
+                  className="grid grid-cols-1 gap-2 sm:grid-cols-3"
+                  aria-label="選擇回饋分類"
+                >
+                  {homeFeedbackCategories.map(category => {
+                    const isActive = activeFeedbackCategory === category.id;
 
-                  return (
+                    return (
+                      <button
+                        key={category.id}
+                        type="button"
+                        onClick={() => chooseFeedbackCategory(category.id)}
+                        aria-pressed={isActive}
+                        className={`rounded-full border px-4 py-2.5 text-[11px] tracking-[0.13em] transition-all duration-300 active:scale-[0.98] ${
+                          isActive
+                            ? "border-[#3D4144] bg-[#3D4144] text-[#FAF7F4] shadow-[0_10px_24px_rgba(49,53,58,0.16)]"
+                            : "border-[#D1BE9B]/28 bg-white/52 text-[#8A7250] hover:border-[#A38D6B]/55 hover:bg-white"
+                        }`}
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 300,
+                        }}
+                      >
+                        {category.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="min-h-0 overflow-y-auto px-5 py-5 md:px-7">
+              {activeFeedback === null ? (
+                <div className="grid min-h-full grid-cols-1 content-center gap-4 md:grid-cols-3">
+                  {homeFeedbackCategories.map(category => (
                     <button
                       key={category.id}
                       type="button"
                       onClick={() => chooseFeedbackCategory(category.id)}
-                      aria-pressed={isActive}
-                      className={`rounded-full border px-4 py-2.5 text-[11px] tracking-[0.13em] transition-all duration-300 active:scale-[0.98] ${
-                        isActive
-                          ? "border-[#3D4144] bg-[#3D4144] text-[#FAF7F4] shadow-[0_10px_24px_rgba(49,53,58,0.16)]"
-                          : "border-[#D1BE9B]/28 bg-white/52 text-[#8A7250] hover:border-[#A38D6B]/55 hover:bg-white"
-                      }`}
+                      className="group overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-white/54 p-4 text-left shadow-[0_16px_40px_rgba(163,141,107,0.08)] transition-[border-color,background-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-[#A38D6B]/45 hover:bg-white/78 hover:shadow-[0_18px_46px_rgba(163,141,107,0.12)] active:scale-[0.985]"
+                      aria-label={`開啟${category.title}`}
+                    >
+                      <div className="grid grid-cols-3 gap-2">
+                        {category.items.slice(0, 3).map((item, index) => (
+                          <span
+                            key={`${category.id}-modal-preview-${item.src}`}
+                            className={`block aspect-[3/4] overflow-hidden rounded-xl border border-[#D1BE9B]/14 bg-[#FAF7F4]/70 ${
+                              index === 1 ? "translate-y-3" : ""
+                            }`}
+                          >
+                            <img
+                              src={item.thumb ?? item.src}
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                            />
+                          </span>
+                        ))}
+                      </div>
+                      <div className="mt-6 flex items-end justify-between gap-4">
+                        <div className="min-w-0">
+                          <span
+                            className="text-[12px] italic tracking-[0.08em] text-[#A38D6B]"
+                            style={{
+                              fontFamily: "Cormorant Garamond, serif",
+                              fontWeight: 400,
+                            }}
+                          >
+                            {category.eyebrow}
+                          </span>
+                          <h3
+                            className="mt-1 text-sm font-extralight tracking-[0.16em] text-[#31353A]"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 200,
+                            }}
+                          >
+                            {category.title}
+                          </h3>
+                        </div>
+                        <span
+                          className="shrink-0 rounded-full border border-[#D1BE9B]/28 bg-[#FAF7F4]/72 px-3 py-1.5 text-[10px] tracking-[0.12em] text-[#8A7250]"
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 300,
+                          }}
+                        >
+                          {category.items.length} 則
+                        </span>
+                      </div>
+                      <p
+                        className="mt-3 line-clamp-2 text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/52"
+                        style={{
+                          fontFamily: "Noto Sans TC, sans-serif",
+                          fontWeight: 300,
+                        }}
+                      >
+                        {category.note}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveFeedbackCategory(null);
+                          setSelectedFeedbackIndex(null);
+                        }}
+                        className="mb-3 inline-flex items-center gap-1.5 text-[10px] tracking-[0.12em] text-[#8A7250] transition-colors hover:text-[#31353A]"
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 300,
+                        }}
+                      >
+                        <ChevronLeft className="h-3.5 w-3.5" />
+                        回到分類
+                      </button>
+                      <span
+                        className="block text-[12px] italic tracking-[0.08em] text-[#A38D6B]"
+                        style={{
+                          fontFamily: "Cormorant Garamond, serif",
+                          fontWeight: 400,
+                        }}
+                      >
+                        {activeFeedback.eyebrow}
+                      </span>
+                      <h3
+                        className="mt-1 text-sm font-extralight tracking-[0.16em] text-[#31353A]"
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 200,
+                        }}
+                      >
+                        {activeFeedback.title}
+                      </h3>
+                    </div>
+                    <p
+                      className="max-w-lg text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/52 md:text-right"
+                      style={{
+                        fontFamily: "Noto Sans TC, sans-serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      {activeFeedback.note}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                    {activeFeedback.items.map((item, index) => (
+                      <button
+                        key={`${activeFeedback.id}-${item.src}`}
+                        type="button"
+                        onClick={() => setSelectedFeedbackIndex(index)}
+                        aria-label={`放大${activeFeedback.title}第 ${index + 1} 張`}
+                        className="group aspect-[3/4] overflow-hidden rounded-xl border border-[#D1BE9B]/18 bg-white/56 shadow-[0_10px_24px_rgba(180,160,130,0.1)] transition-[border-color,opacity,transform] duration-200 hover:border-[#A38D6B]/55 active:scale-[0.98]"
+                      >
+                        <img
+                          src={item.thumb ?? item.src}
+                          alt={item.alt}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {activeFeedback &&
+            selectedFeedback &&
+            selectedFeedbackIndex !== null && (
+              <div
+                className="absolute inset-0 z-20 grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] bg-[#171513]/88 p-4 text-[#FAF7F4] backdrop-blur-md md:p-6"
+                onClick={() => setSelectedFeedbackIndex(null)}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p
+                      className="text-[12px] tracking-[0.18em]"
                       style={{
                         fontFamily: "Noto Serif TC, serif",
                         fontWeight: 300,
                       }}
                     >
-                      {category.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="min-h-0 overflow-y-auto px-5 py-5 md:px-7">
-              <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <span
-                    className="text-[12px] italic tracking-[0.08em] text-[#A38D6B]"
-                    style={{
-                      fontFamily: "Cormorant Garamond, serif",
-                      fontWeight: 400,
+                      {activeFeedback.title}
+                    </p>
+                    <p className="mt-1 text-[10px] tracking-[0.12em] text-white/50">
+                      {selectedFeedbackIndex + 1} /{" "}
+                      {activeFeedback.items.length}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={event => {
+                      event.stopPropagation();
+                      setSelectedFeedbackIndex(null);
                     }}
+                    aria-label="關閉圖片"
+                    className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
                   >
-                    {activeFeedback.eyebrow}
-                  </span>
-                  <h3
-                    className="mt-1 text-sm font-extralight tracking-[0.16em] text-[#31353A]"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 200,
-                    }}
-                  >
-                    {activeFeedback.title}
-                  </h3>
+                    <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+                  </button>
                 </div>
+
+                <div className="relative flex min-h-0 items-center justify-center px-11 py-4">
+                  <button
+                    type="button"
+                    onClick={event => {
+                      event.stopPropagation();
+                      stepSelectedFeedback(-1);
+                    }}
+                    aria-label="上一張"
+                    className="absolute left-0 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
+                  >
+                    <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
+                  </button>
+                  <img
+                    key={selectedFeedback.src}
+                    src={selectedFeedback.src}
+                    alt={selectedFeedback.alt}
+                    decoding="async"
+                    className="lightbox-image max-h-full max-w-full rounded-2xl object-contain shadow-2xl"
+                    onClick={event => event.stopPropagation()}
+                  />
+                  <button
+                    type="button"
+                    onClick={event => {
+                      event.stopPropagation();
+                      stepSelectedFeedback(1);
+                    }}
+                    aria-label="下一張"
+                    className="absolute right-0 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
+                  >
+                    <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
+                  </button>
+                </div>
+
                 <p
-                  className="max-w-lg text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/52 md:text-right"
+                  className="text-center text-[10px] tracking-[0.14em] text-white/52"
                   style={{
-                    fontFamily: "Noto Sans TC, sans-serif",
+                    fontFamily: "Noto Serif TC, serif",
                     fontWeight: 300,
                   }}
                 >
-                  {activeFeedback.note}
+                  點擊空白處關閉 · 可用左右鍵切換
                 </p>
               </div>
-
-              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                {activeFeedback.items.map((item, index) => (
-                  <button
-                    key={`${activeFeedback.id}-${item.src}`}
-                    type="button"
-                    onClick={() => setSelectedFeedbackIndex(index)}
-                    aria-label={`放大${activeFeedback.title}第 ${index + 1} 張`}
-                    className="group aspect-[3/4] overflow-hidden rounded-xl border border-[#D1BE9B]/18 bg-white/56 shadow-[0_10px_24px_rgba(180,160,130,0.1)] transition-[border-color,opacity,transform] duration-200 hover:border-[#A38D6B]/55 active:scale-[0.98]"
-                  >
-                    <img
-                      src={item.thumb ?? item.src}
-                      alt={item.alt}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {selectedFeedback && selectedFeedbackIndex !== null && (
-            <div
-              className="absolute inset-0 z-20 grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] bg-[#171513]/88 p-4 text-[#FAF7F4] backdrop-blur-md md:p-6"
-              onClick={() => setSelectedFeedbackIndex(null)}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p
-                    className="text-[12px] tracking-[0.18em]"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    {activeFeedback.title}
-                  </p>
-                  <p className="mt-1 text-[10px] tracking-[0.12em] text-white/50">
-                    {selectedFeedbackIndex + 1} / {activeFeedback.items.length}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={event => {
-                    event.stopPropagation();
-                    setSelectedFeedbackIndex(null);
-                  }}
-                  aria-label="關閉圖片"
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
-                >
-                  <X className="h-4.5 w-4.5" strokeWidth={1.7} />
-                </button>
-              </div>
-
-              <div className="relative flex min-h-0 items-center justify-center px-11 py-4">
-                <button
-                  type="button"
-                  onClick={event => {
-                    event.stopPropagation();
-                    stepSelectedFeedback(-1);
-                  }}
-                  aria-label="上一張"
-                  className="absolute left-0 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
-                >
-                  <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
-                </button>
-                <img
-                  key={selectedFeedback.src}
-                  src={selectedFeedback.src}
-                  alt={selectedFeedback.alt}
-                  decoding="async"
-                  className="lightbox-image max-h-full max-w-full rounded-2xl object-contain shadow-2xl"
-                  onClick={event => event.stopPropagation()}
-                />
-                <button
-                  type="button"
-                  onClick={event => {
-                    event.stopPropagation();
-                    stepSelectedFeedback(1);
-                  }}
-                  aria-label="下一張"
-                  className="absolute right-0 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
-                >
-                  <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
-                </button>
-              </div>
-
-              <p
-                className="text-center text-[10px] tracking-[0.14em] text-white/52"
-                style={{
-                  fontFamily: "Noto Serif TC, serif",
-                  fontWeight: 300,
-                }}
-              >
-                點擊空白處關閉 · 可用左右鍵切換
-              </p>
-            </div>
-          )}
+            )}
         </DialogContent>
       </Dialog>
 
