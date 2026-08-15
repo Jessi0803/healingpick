@@ -304,7 +304,7 @@ export default function WishRitual() {
                     className="mt-1 text-lg tracking-[0.18em] text-[#245879]"
                     style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
                   >
-                    1 day 免費贈送
+                    free
                   </p>
                 </div>
               </div>

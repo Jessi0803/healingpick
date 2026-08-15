@@ -2609,7 +2609,7 @@ export default function TarotPage() {
                       className="mt-1 text-[16px] tracking-[0.16em] text-[#9d7b3f]"
                       style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
                     >
-                      1 day 免費贈送
+                      free
                     </p>
                   </div>
                 </div>
