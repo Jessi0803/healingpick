@@ -1653,12 +1653,6 @@ export default function Home() {
             >
               大家看完的感覺
             </h2>
-            <p
-              className="mt-3 text-[12px] leading-[1.9] tracking-[0.14em] text-[#31353A]/52 max-w-xl mx-auto"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
-            >
-              不一定會立刻有答案，但有時候光是看清楚一點，心情就差很多。
-            </p>
             <div
               className="mx-auto mt-7 flex max-w-2xl flex-col gap-2 sm:flex-row sm:justify-center"
               aria-label="快速前往回饋分類"
