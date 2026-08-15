@@ -332,7 +332,7 @@ export default function Home() {
   const [isMochiMenuOpen, setIsMochiMenuOpen] = useState(false);
   const [isTestimonialsOpen, setIsTestimonialsOpen] = useState(false);
   const [activeFeedbackCategory, setActiveFeedbackCategory] =
-    useState<HomeFeedbackCategoryId>("tarot");
+    useState<HomeFeedbackCategoryId>("bracelet");
   const [selectedFeedbackIndex, setSelectedFeedbackIndex] = useState<
     number | null
   >(null);
