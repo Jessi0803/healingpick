@@ -60,12 +60,17 @@ const RITUAL_REVIEW_PROOFS = Array.from({ length: 56 }, (_, index) => ({
   id: index + 1,
   image: `/gooday-ritual-reviews/review-${index + 1}.jpg`,
 }));
+const INITIAL_REVIEW_COUNT = 4;
+const REVIEW_LOAD_STEP = 12;
 
 export default function WishRitual() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [visibleReviewCount, setVisibleReviewCount] = useState(INITIAL_REVIEW_COUNT);
   const touchX = useRef<number | null>(null);
 
   const selectedReview = selectedIndex === null ? null : RITUAL_REVIEW_PROOFS[selectedIndex];
+  const visibleReviews = RITUAL_REVIEW_PROOFS.slice(0, visibleReviewCount);
+  const hasMoreReviews = visibleReviewCount < RITUAL_REVIEW_PROOFS.length;
   const closeLightbox = () => setSelectedIndex(null);
   const stepLightbox = (dir: number) =>
     setSelectedIndex((current) =>
@@ -127,7 +132,7 @@ export default function WishRitual() {
                 className="mx-auto mt-5 max-w-2xl text-[13px] leading-[2] tracking-[0.1em] text-[#245879]/76"
                 style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
               >
-                依照願望主題搭配許願蠟燭與儀式祝福，陪你重整能量、聚焦意念，讓願望以更適合你的方式被接住。
+                告訴我們你的願望，日日好日會依照感情、財運、事業或療癒等需求，替你安排適合的許願儀式。
               </p>
               <div className="mx-auto mt-6 flex max-w-md flex-col items-center gap-3 rounded-lg border border-white/48 bg-white/34 px-4 py-4 shadow-[0_12px_34px_rgba(255,255,255,0.2)] backdrop-blur-md sm:flex-row sm:text-left">
                 <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/38 bg-white/76 shadow-[0_10px_26px_rgba(36,88,121,0.12)]">
@@ -159,7 +164,7 @@ export default function WishRitual() {
                 className="text-center text-[15px] tracking-[0.2em] text-[#245879] md:text-base"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                日好日儀式
+                日日好日儀式
               </h2>
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {ritualOptions.map((ritual, index) => (
@@ -266,6 +271,45 @@ export default function WishRitual() {
               </div>
             </div>
 
+            <section className="mt-5 rounded-xl border border-white/45 bg-white/36 p-5 shadow-[0_16px_46px_rgba(255,255,255,0.2)] backdrop-blur-md md:p-7">
+              <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+                <div>
+                  <p
+                    className="text-[11px] uppercase tracking-[0.34em] text-[#246188]/68"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    Gift Blessing
+                  </p>
+                  <h2
+                    className="mt-3 text-[15px] leading-[1.8] tracking-[0.2em] text-[#245879] md:text-base"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    購買真人塔羅或魔法儀式，贈送神輿卡祝福
+                  </h2>
+                  <p
+                    className="mt-3 max-w-2xl text-[12px] leading-[2] tracking-[0.08em] text-[#245879]/72"
+                    style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
+                  >
+                    願迷惘的你，能獲得穩定的力量；願內心痛楚的你，能開始療癒。
+                  </p>
+                </div>
+                <div className="rounded-lg border border-white/55 bg-[#F8FBFF]/46 px-5 py-4 text-center shadow-[0_10px_24px_rgba(36,88,121,0.08)]">
+                  <p
+                    className="text-[11px] tracking-[0.2em] text-[#245879]/62 line-through"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    市價 $200
+                  </p>
+                  <p
+                    className="mt-1 text-lg tracking-[0.18em] text-[#245879]"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
+                  >
+                    1 day 免費贈送
+                  </p>
+                </div>
+              </div>
+            </section>
+
             <section className="mt-9 rounded-xl border border-white/45 bg-white/36 p-5 shadow-[0_16px_46px_rgba(255,255,255,0.2)] backdrop-blur-md md:p-7">
               <div className="text-center">
                 <p
@@ -289,7 +333,7 @@ export default function WishRitual() {
               </div>
 
               <div className="mx-auto mt-6 grid max-w-5xl grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {RITUAL_REVIEW_PROOFS.map((review, index) => (
+                {visibleReviews.map((review, index) => (
                   <button
                     key={review.id}
                     type="button"
@@ -310,6 +354,22 @@ export default function WishRitual() {
                   </button>
                 ))}
               </div>
+              {hasMoreReviews && (
+                <div className="mt-6 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setVisibleReviewCount((count) =>
+                        Math.min(count + REVIEW_LOAD_STEP, RITUAL_REVIEW_PROOFS.length),
+                      )
+                    }
+                    className="inline-flex items-center justify-center rounded-full border border-white/55 bg-white/36 px-6 py-3 text-xs tracking-[0.18em] text-[#245879] shadow-[0_10px_24px_rgba(36,88,121,0.1)] transition-all duration-300 hover:bg-white/62 active:scale-95"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    查看更多回饋（{visibleReviewCount} / {RITUAL_REVIEW_PROOFS.length}）
+                  </button>
+                </div>
+              )}
               <p
                 className="mt-4 text-center text-[10px] tracking-[0.18em] text-[#245879]/48"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
