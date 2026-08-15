@@ -107,7 +107,7 @@ export default function TarotReviews() {
 
       {selectedReview && selectedIndex !== null && (
         <div
-          className="lightbox-backdrop fixed inset-0 z-[70] flex flex-col bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
+          className="lightbox-backdrop fixed inset-0 z-[70] flex h-[100dvh] max-h-[100dvh] flex-col overflow-hidden bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
           role="dialog"
           aria-modal="true"
           onClick={closeLightbox}
@@ -152,7 +152,7 @@ export default function TarotReviews() {
               src={selectedReview.image}
               alt={`塔羅顧客回饋，第 ${selectedIndex + 1} 張`}
               decoding="async"
-              className="lightbox-image max-h-[calc(100vh-13.5rem)] max-w-full rounded-2xl object-contain shadow-2xl md:max-h-[calc(100vh-11rem)]"
+              className="lightbox-image max-h-full max-w-full rounded-2xl object-contain shadow-2xl"
               onClick={(event) => event.stopPropagation()}
             />
           </div>
