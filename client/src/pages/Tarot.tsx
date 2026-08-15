@@ -2525,6 +2525,45 @@ export default function TarotPage() {
                 依據你的個人需求選擇適合的塔羅方案，由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。
               </p>
 
+              <section className="mt-5 rounded-lg border border-[#D8C38B]/28 bg-[#FFFDF8]/64 p-4 shadow-[0_12px_30px_rgba(80,72,45,0.08)] md:p-5">
+                <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
+                  <div>
+                    <p
+                      className="text-[11px] uppercase tracking-[0.28em] text-[#557255]/72"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      Gift Blessing
+                    </p>
+                    <h2
+                      className="mt-2 text-[14px] leading-[1.8] tracking-[0.16em] text-[#34322d]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      購買真人塔羅或魔法儀式，贈送神輿卡祝福
+                    </h2>
+                    <p
+                      className="mt-2 text-[12px] leading-[1.9] tracking-[0.07em] text-[#31353A]/64"
+                      style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                    >
+                      願迷惘的你，能獲得穩定的力量；願內心痛楚的你，能開始療癒。
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-[#D8C38B]/26 bg-white/58 px-5 py-4 text-center">
+                    <p
+                      className="text-[11px] tracking-[0.18em] text-[#31353A]/45 line-through"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      市價 $200
+                    </p>
+                    <p
+                      className="mt-1 text-[16px] tracking-[0.16em] text-[#9d7b3f]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
+                    >
+                      1 day 免費贈送
+                    </p>
+                  </div>
+                </div>
+              </section>
+
               <div className="mt-6 grid gap-3">
                 {HUMAN_TAROT_MENU_PLANS.map((menu, index) => (
                   <Dialog key={menu.title}>
