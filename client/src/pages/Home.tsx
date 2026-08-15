@@ -25,6 +25,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Home as HomeIcon,
   Instagram,
   Sparkles,
   X,
@@ -418,6 +419,12 @@ export default function Home() {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  function scrollToHomeChoices() {
+    document
+      .getElementById("home-main-choices")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   function scrollToFeedbackCategory(categoryId: HomeFeedbackCategoryId) {
     const target = document.getElementById(`home-feedback-card-${categoryId}`);
     target?.scrollIntoView({
@@ -633,7 +640,10 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="max-w-3xl z-10 animate-fade-in-up -mt-16 md:-mt-24">
+        <div
+          id="home-main-choices"
+          className="max-w-3xl z-10 animate-fade-in-up -mt-16 scroll-mt-24 md:-mt-24"
+        >
           {/* Mochi portrait */}
           <div className="mb-4 flex translate-y-4 justify-center">
             <div className="mochi-portrait-wrap relative inline-flex">
@@ -1744,6 +1754,18 @@ export default function Home() {
                 </p>
               </button>
             ))}
+          </div>
+
+          <div className="mt-10 flex justify-center">
+            <button
+              type="button"
+              onClick={scrollToHomeChoices}
+              className="group inline-flex min-h-[3.5rem] items-center justify-center gap-2.5 rounded-full border border-[#D1BE9B]/34 bg-white/54 px-6 py-3 text-xs tracking-[0.14em] text-[#8A7250] shadow-[0_12px_30px_rgba(163,141,107,0.1)] backdrop-blur-sm transition-all duration-500 hover:-translate-y-0.5 hover:border-[#3D4144]/25 hover:bg-[#3D4144] hover:text-[#FAF7F4] active:scale-95"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              <HomeIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>回到主頁</span>
+            </button>
           </div>
         </div>
       </section>
