@@ -3,13 +3,11 @@
  * Design: Wabi-Sabi Luxe × Morandi Oat Milk
  * Sections:
  *   1. Hero + 3D Book (星夢之書)
- *   2. Crystal Altar (水晶祭壇)
- *   3. Features Overview (三大功能入口)
- *   4. Divination Previews (塔羅 / 紫微)
- *   5. Shop Preview (療癒水晶)
+ *   2. Divination Previews (塔羅 / 紫微)
+ *   3. Shop Preview (療癒水晶)
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import PageLayout from "@/components/PageLayout";
 import Reveal from "@/components/Reveal";
@@ -71,31 +69,6 @@ const CrystalPurple = () => (
   </svg>
 );
 
-const CrystalRose = () => (
-  <svg
-    viewBox="0 0 80 100"
-    fill="none"
-    className="w-full h-full drop-shadow-[0_4px_16px_rgba(234,168,172,0.5)]"
-  >
-    <path
-      d="M40 8 L62 28 L68 72 L40 92 L12 72 L18 28 Z"
-      fill="url(#roseGrad)"
-      stroke="#EAA8AC"
-      strokeWidth="0.8"
-    />
-    <path d="M40 8 L62 28 L40 38 L18 28 Z" fill="rgba(255,235,235,0.6)" />
-    <path d="M40 38 L62 28 L68 72 L40 92 Z" fill="rgba(234,168,172,0.3)" />
-    <path d="M40 38 L18 28 L12 72 L40 92 Z" fill="rgba(244,188,192,0.4)" />
-    <defs>
-      <linearGradient id="roseGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#FDEAEA" />
-        <stop offset="50%" stopColor="#F0C0C4" />
-        <stop offset="100%" stopColor="#D89098" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
 const CrystalCitrine = () => (
   <svg
     viewBox="0 0 80 100"
@@ -143,33 +116,6 @@ const mochiReadingOptions = [
     title: "解一個夢",
     desc: "想理解夢裡反覆出現的訊號",
     href: "/dream",
-  },
-];
-
-const features = [
-  {
-    icon: "🔮",
-    title: "塔羅牌占卜",
-    subtitle: "Tarot Reading",
-    desc: "抽一組牌，看清現在的關係、選擇與心裡真正卡住的地方。",
-    href: "/tarot",
-    color: "#D8CEEA", // 薰衣草紫，比背景深一階
-  },
-  {
-    icon: "✦",
-    title: "客製化能量手鍊",
-    subtitle: "Custom Healing Bracelet",
-    desc: "依照你的願望、狀態與喜歡的色系，搭配一條專屬能量手鍊。",
-    href: "/shop/custom-bracelet",
-    color: "#E6DDD2",
-  },
-  {
-    icon: "✧",
-    title: "Mochi 靈感解讀",
-    subtitle: "Daily · Zi Wei · Dream",
-    desc: "每日運勢、紫微命盤、夢境訊息，讓 Mochi 依照你的狀態陪你看一看。",
-    options: mochiReadingOptions,
-    color: "#E8E4EE",
   },
 ];
 
@@ -230,92 +176,8 @@ const homeFeedbackCategories: Array<{
   },
 ];
 
-const altarData: Record<
-  string,
-  {
-    tag: string;
-    hz: string;
-    title: string;
-    description: string;
-    bgGradient: string;
-    glowColor: string;
-  }
-> = {
-  purple: {
-    tag: "薰衣草紫水晶簇",
-    hz: "432Hz ｜ 思緒留白",
-    title: "靜心小角落：整理思緒與安放心緒",
-    description:
-      "紫水晶常被視為智慧與專注的代表晶石，帶來理性與清晰的能量，陪伴整理思緒與專注內在。若你近期覺得腦中聲音太多，這份紫色光芒會像一個安靜界線，提醒你把注意力慢慢收回自己身上。",
-    bgGradient:
-      "linear-gradient(135deg, #F2EDE8 0%, #EDE8E2 45%, #E6E0ED 100%)",
-    glowColor: "rgba(160, 142, 195, 0.45)",
-  },
-  rose: {
-    tag: "馬達加斯加粉晶",
-    hz: "528Hz ｜ 溫柔連結",
-    title: "溫柔的擁抱：招桃花與好人緣",
-    description:
-      "粉晶常被視為招桃花、人緣與溫柔魅力的代表晶石。它不是要你討好誰，而是提醒你把自己的柔軟與吸引力自然展現出來，讓關係互動多一點親和與舒服的距離。",
-    bgGradient:
-      "linear-gradient(135deg, #F2EDE8 0%, #EDE0D8 42%, #EDE8E2 100%)",
-    glowColor: "rgba(234, 168, 172, 0.5)",
-  },
-  citrine: {
-    tag: "天然黃水晶原礦",
-    hz: "396Hz ｜ 太陽神經叢能量",
-    title: "豐盛顯化：招財與自信光芒",
-    description:
-      "黃水晶常被視為招財、聚財與自我價值的代表晶石。如果你正在累積工作成果、整理金錢目標或需要行動亮度，它會提醒你相信自己的努力值得被看見，也值得被好好累積。",
-    bgGradient:
-      "linear-gradient(135deg, #F2EDE8 0%, #EDE5D4 40%, #EDE8E2 100%)",
-    glowColor: "rgba(222, 193, 128, 0.45)",
-  },
-};
-
 // ─── Products Preview ─────────────────────────────────────────────────────────
 // Real products are loaded dynamically from PRODUCTS data.
-
-// ─── Daily Energy Data ───────────────────────────────────────────────────────
-const dailyEnergyPool = [
-  {
-    moon: "盈凸月",
-    crystal: "紫水晶",
-    keyword: "靜心･釋放",
-    color: "#C4B8DC",
-    quote: "深呼吸一口，今天也會沒事的！",
-  },
-  {
-    moon: "滿月",
-    crystal: "白水晶",
-    keyword: "顯化･豐盛",
-    color: "#D1BE9B",
-    quote: "你想要的，宇宙正在幫你準備中！",
-  },
-  {
-    moon: "眉月",
-    crystal: "粉晶",
-    keyword: "開始･愛",
-    color: "#F0C0C4",
-    quote: "新的開始就是現在，勇敢踏出第一步！",
-  },
-  {
-    moon: "殘月",
-    crystal: "黑碧璧",
-    keyword: "清理･防護",
-    color: "#8E8E8E",
-    quote: "放下包裱，輕裝上陣，你可以的！",
-  },
-  {
-    moon: "上弦月",
-    crystal: "黃水晶",
-    keyword: "行動･自信",
-    color: "#EDD080",
-    quote: "朝著目標前進吧！今天是你的日子！",
-  },
-];
-const todayEnergy =
-  dailyEnergyPool[new Date().getDay() % dailyEnergyPool.length];
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -325,8 +187,6 @@ export default function Home() {
   // To implement login/logout functionality, simply call login() or logout().
   let { user, loading, error, isAuthenticated, logout } = useAuth();
 
-  const [activeCrystal, setActiveCrystal] = useState<string | null>(null);
-  const [bodyBg, setBodyBg] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(
     undefined
   );
@@ -343,60 +203,6 @@ export default function Home() {
     setSelectedProduct(productName);
     setIsContactOpen(true);
   };
-
-  const audioCtxRef = useRef<AudioContext | null>(null);
-
-  const crystalFrequencies: Record<
-    string,
-    { f1: number; f2: number; label: string }
-  > = {
-    purple: { f1: 432, f2: 648, label: "432Hz · 思緒留白" },
-    rose: { f1: 528, f2: 792, label: "528Hz · 溫柔連結" },
-    citrine: { f1: 396, f2: 594, label: "396Hz · 豐盛顯化" },
-  };
-
-  function playHarmonicBowl(type: string) {
-    try {
-      if (!audioCtxRef.current)
-        audioCtxRef.current = new (window.AudioContext ||
-          (window as any).webkitAudioContext)();
-      const ctx = audioCtxRef.current;
-      if (ctx.state === "suspended") ctx.resume();
-      const freq = crystalFrequencies[type] || { f1: 432, f2: 648 };
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc1.type = "sine";
-      osc1.frequency.setValueAtTime(freq.f1, ctx.currentTime);
-      osc2.type = "sine";
-      osc2.frequency.setValueAtTime(freq.f2, ctx.currentTime);
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.2);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 5.5);
-      osc1.connect(gain);
-      osc2.connect(gain);
-      gain.connect(ctx.destination);
-      osc1.start();
-      osc2.start();
-      setTimeout(() => {
-        osc1.stop();
-        osc2.stop();
-      }, 5600);
-    } catch {}
-  }
-
-  function handleCrystalClick(type: string) {
-    if (activeCrystal === type) {
-      setActiveCrystal(null);
-      setBodyBg("");
-      return;
-    }
-    setActiveCrystal(type);
-    setBodyBg(altarData[type].bgGradient);
-    playHarmonicBowl(type);
-  }
-
-  const activeData = activeCrystal ? altarData[activeCrystal] : null;
 
   const activeFeedback =
     homeFeedbackCategories.find(
@@ -462,14 +268,6 @@ export default function Home() {
 
   return (
     <PageLayout>
-      {/* Dynamic background overlay */}
-      {bodyBg && (
-        <div
-          className="fixed inset-0 z-[1] pointer-events-none transition-all duration-1000"
-          style={{ background: bodyBg, opacity: 0.6 }}
-        />
-      )}
-
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <section className="min-h-[100vh] flex flex-col justify-center items-center text-center px-6 relative pt-10 pb-16 overflow-hidden">
         {/* ── Large watermark text ── */}
@@ -930,342 +728,6 @@ export default function Home() {
             </div>
           </div>
         </Reveal>
-      </section>
-
-      {/* ── FEATURES GRID ─────────────────────────────────────────────────── */}
-      <section className="py-20 px-6 md:px-10">
-        <div className="max-w-6xl mx-auto">
-          {/* Section header */}
-          <Reveal className="text-center mb-14">
-            <span
-              className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-              style={{
-                fontFamily: "Cormorant Garamond, serif",
-                fontWeight: 400,
-              }}
-            >
-              Our Services
-            </span>
-            <h2
-              className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
-            >
-              靈性療癒的三種方式
-            </h2>
-            <div className="divider-gold mt-4 max-w-xs mx-auto">
-              <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none">
-                <path
-                  d="M50 10 L53 43 L86 46 L53 49 L50 82 L47 49 L14 46 L47 43 Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
-          </Reveal>
-
-          <Reveal className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {features.map((f, i) => (
-              <div
-                key={f.title}
-                className="reveal-child"
-                style={{ transitionDelay: `${i * 70}ms` }}
-              >
-                <div
-                  className="group relative flex h-full flex-col rounded-xl border border-[#D1BE9B]/20 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(209,190,155,0.18)]"
-                  style={{
-                    background: `linear-gradient(145deg, ${f.color}, #FAF7F4)`,
-                  }}
-                >
-                  <div className="text-3xl mb-4 opacity-80">{f.icon}</div>
-                  <h3
-                    className="text-sm tracking-[0.15em] text-[#31353A]/90 mb-1"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    {f.title}
-                  </h3>
-                  <p
-                    className="text-[11px] tracking-[0.1em] text-[#D1BE9B] mb-3 italic"
-                    style={{ fontFamily: "Cormorant Garamond, serif" }}
-                  >
-                    {f.subtitle}
-                  </p>
-                  <p
-                    className="text-[12px] leading-[1.8] text-[#31353A]/68 tracking-wider"
-                    style={{
-                      fontFamily: "Noto Sans TC, sans-serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    {f.desc}
-                  </p>
-                  {f.options?.length ? (
-                    <div className="mt-5 grid gap-2">
-                      {f.options.map(option => (
-                        <Link
-                          key={option.href}
-                          href={option.href}
-                          className="rounded-full border border-white/48 bg-white/44 px-4 py-2.5 text-[11px] tracking-[0.13em] text-[#6F6688] transition-all duration-300 hover:bg-[#3D4144] hover:text-white"
-                          style={{
-                            fontFamily: "Noto Serif TC, serif",
-                            fontWeight: 300,
-                          }}
-                        >
-                          {option.title}
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <Link
-                      href={f.href!}
-                      className="mt-auto inline-flex items-center gap-1 pt-5 text-[#A38D6B] transition-colors duration-300 hover:text-[#31353A]"
-                    >
-                      <span
-                        className="text-[11px] tracking-[0.2em]"
-                        style={{
-                          fontFamily: "Noto Serif TC, serif",
-                          fontWeight: 300,
-                        }}
-                      >
-                        前往
-                      </span>
-                      <svg
-                        className="w-3 h-3"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                      >
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ))}
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── CRYSTAL ALTAR ─────────────────────────────────────────────────── */}
-      <section
-        id="altar-section"
-        className="py-20 px-6 md:px-10 relative overflow-hidden"
-      >
-        {/* Mandala background */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <svg
-            className="w-[min(90vw,600px)] h-[min(90vw,600px)] opacity-[0.035]"
-            viewBox="0 0 500 500"
-            fill="none"
-          >
-            {[180, 150, 120, 90, 60, 30].map((r, i) => (
-              <circle
-                key={i}
-                cx="250"
-                cy="250"
-                r={r}
-                stroke="#D1BE9B"
-                strokeWidth="0.5"
-                strokeDasharray={i % 2 === 0 ? "6 4" : undefined}
-              />
-            ))}
-            {[0, 30, 60, 90, 120, 150].map((deg, i) => {
-              const rad = (deg * Math.PI) / 180;
-              return (
-                <line
-                  key={i}
-                  x1={250 + 30 * Math.cos(rad)}
-                  y1={250 + 30 * Math.sin(rad)}
-                  x2={250 + 185 * Math.cos(rad)}
-                  y2={250 + 185 * Math.sin(rad)}
-                  stroke="#D1BE9B"
-                  strokeWidth="0.4"
-                />
-              );
-            })}
-            {[0, 45, 90, 135].map((deg, i) => (
-              <ellipse
-                key={i}
-                cx="250"
-                cy="250"
-                rx="80"
-                ry="30"
-                stroke="#D1BE9B"
-                strokeWidth="0.35"
-                fill="none"
-                transform={`rotate(${deg} 250 250)`}
-              />
-            ))}
-            <circle
-              cx="250"
-              cy="250"
-              r="8"
-              stroke="#D1BE9B"
-              strokeWidth="0.6"
-              fill="none"
-            />
-            <circle cx="250" cy="250" r="3" fill="#D1BE9B" fillOpacity="0.4" />
-          </svg>
-        </div>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <span
-              className="text-[15px] tracking-[0.06em] text-[#A38D6B] italic"
-              style={{
-                fontFamily: "Cormorant Garamond, serif",
-                fontWeight: 400,
-              }}
-            >
-              Crystal Altar
-            </span>
-            <h2
-              className="text-xl md:text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-3"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
-            >
-              能量水晶
-            </h2>
-            <p
-              className="mt-3 text-xs tracking-[0.15em] text-[#31353A]/58 max-w-sm mx-auto leading-[1.9]"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
-            >
-              點擊水晶，感受它的頻率與能量
-            </p>
-            <div className="divider-gold mt-4 max-w-xs mx-auto">
-              <svg className="w-3 h-3" viewBox="0 0 100 100" fill="none">
-                <path
-                  d="M50 10 L53 43 L86 46 L53 49 L50 82 L47 49 L14 46 L47 43 Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <div className="flex flex-col lg:flex-row gap-10 items-center">
-            {/* Crystals */}
-            <div className="flex gap-8 md:gap-12 justify-center">
-              {[
-                { id: "purple", label: "紫水晶", Component: CrystalPurple },
-                { id: "rose", label: "粉晶", Component: CrystalRose },
-                { id: "citrine", label: "黃水晶", Component: CrystalCitrine },
-              ].map(({ id, label, Component }) => (
-                <div
-                  key={id}
-                  className={`flex flex-col items-center gap-2 cursor-pointer transition-all duration-500 ${
-                    activeCrystal === id ? "scale-125" : "hover:scale-110"
-                  } ${activeCrystal === id ? "animate-float-1" : ""}`}
-                  onClick={() => handleCrystalClick(id)}
-                >
-                  <div className="relative">
-                    <div className="w-14 h-[72px] md:w-16 md:h-20">
-                      <Component />
-                    </div>
-                    {/* Glow shadow reflection */}
-                    <div
-                      className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-2 rounded-full blur-md transition-all duration-500"
-                      style={{
-                        width: activeCrystal === id ? "3rem" : "2rem",
-                        background:
-                          id === "purple"
-                            ? "rgba(160,142,195,0.5)"
-                            : id === "rose"
-                              ? "rgba(234,168,172,0.5)"
-                              : "rgba(222,193,128,0.5)",
-                        opacity: activeCrystal === id ? 0.8 : 0.3,
-                      }}
-                    />
-                  </div>
-                  <span
-                    className={`text-[11px] tracking-[0.2em] transition-colors duration-300 mt-1 ${
-                      activeCrystal === id
-                        ? "text-[#D1BE9B]"
-                        : "text-[#31353A]/62"
-                    }`}
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 200,
-                    }}
-                  >
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Info panel */}
-            <div className="flex-1 min-h-[160px]">
-              {activeData ? (
-                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/25 animate-fade-in-up">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span
-                      className="text-[11px] tracking-[0.25em] px-2.5 py-1 rounded-full border border-[#D1BE9B]/40 text-[#A38D6B]"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      {activeData.tag}
-                    </span>
-                    <span
-                      className="text-[11px] tracking-[0.2em] text-[#D1BE9B]"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      {activeData.hz}
-                    </span>
-                  </div>
-                  <h3
-                    className="text-sm tracking-[0.15em] text-[#31353A]/90 mb-3"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    {activeData.title}
-                  </h3>
-                  <p
-                    className="text-[12px] leading-[2] text-[#31353A]/72 tracking-wider"
-                    style={{
-                      fontFamily: "Noto Sans TC, sans-serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    {activeData.description}
-                  </p>
-                  <Link href="/shop">
-                    <button
-                      className="mt-4 text-[11px] tracking-[0.2em] text-[#D1BE9B] hover:text-[#A38D6B] transition-colors border-b border-[#D1BE9B]/40 pb-0.5"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      查看相關商品 →
-                    </button>
-                  </Link>
-                </div>
-              ) : (
-                <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 flex flex-col items-center justify-center min-h-[160px]">
-                  <div className="text-2xl mb-3 opacity-30">✦</div>
-                  <p
-                    className="text-xs tracking-[0.2em] text-[#31353A]/50 text-center"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 200,
-                    }}
-                  >
-                    點擊水晶
-                    <br />
-                    感受它的能量頻率
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       </section>
 
       <div className="flex flex-col">
