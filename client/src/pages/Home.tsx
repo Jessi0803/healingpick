@@ -198,7 +198,7 @@ const homeFeedbackCategories: Array<{
     eyebrow: "Human Tarot",
     title: "真人占卜回饋",
     note: "客人後續回傳的占卜截圖，適合先感受真人老師的解讀方式與驗證感。",
-    items: HUMAN_TAROT_FEEDBACK_IDS.map((id) => ({
+    items: HUMAN_TAROT_FEEDBACK_IDS.map(id => ({
       src: `/gooday-tarot-reviews/review-${id}.jpg`,
       alt: `真人占卜顧客回饋，第 ${id} 張`,
     })),
@@ -398,14 +398,17 @@ export default function Home() {
 
   const activeFeedback =
     homeFeedbackCategories.find(
-      (category) => category.id === activeFeedbackCategory
+      category => category.id === activeFeedbackCategory
     ) ?? homeFeedbackCategories[0];
   const selectedFeedback =
     selectedFeedbackIndex === null
       ? null
       : activeFeedback.items[selectedFeedbackIndex];
 
-  function openTestimonials() {
+  function openTestimonials(
+    categoryId: HomeFeedbackCategoryId = activeFeedbackCategory
+  ) {
+    setActiveFeedbackCategory(categoryId);
     setIsTestimonialsOpen(true);
     setSelectedFeedbackIndex(null);
   }
@@ -416,7 +419,7 @@ export default function Home() {
   }
 
   function stepSelectedFeedback(direction: number) {
-    setSelectedFeedbackIndex((current) => {
+    setSelectedFeedbackIndex(current => {
       if (current === null) return current;
       return (
         (current + direction + activeFeedback.items.length) %
@@ -707,7 +710,7 @@ export default function Home() {
                 type="button"
                 aria-expanded={isMochiMenuOpen}
                 aria-controls="mochi-reading-menu"
-                onClick={() => setIsMochiMenuOpen((open) => !open)}
+                onClick={() => setIsMochiMenuOpen(open => !open)}
                 className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full bg-[#3D4144] px-4 py-3 text-xs tracking-[0.14em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
@@ -725,7 +728,7 @@ export default function Home() {
                   id="mochi-reading-menu"
                   className="mx-auto mt-3 grid w-full max-w-[17rem] grid-cols-1 gap-2 rounded-2xl border border-[#D1BE9B]/22 bg-white/48 p-3 shadow-[0_16px_38px_rgba(209,190,155,0.14)] backdrop-blur-sm animate-fade-in-up sm:max-w-3xl sm:grid-cols-3"
                 >
-                  {mochiReadingOptions.map((option) => (
+                  {mochiReadingOptions.map(option => (
                     <Link
                       key={option.href}
                       href={option.href}
@@ -755,7 +758,7 @@ export default function Home() {
               )}
               <button
                 type="button"
-                onClick={openTestimonials}
+                onClick={() => openTestimonials()}
                 className="home-testimonial-heart-button group mt-3"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                 aria-label="客人寶寶們回饋"
@@ -976,7 +979,7 @@ export default function Home() {
                   </p>
                   {f.options?.length ? (
                     <div className="mt-5 grid gap-2">
-                      {f.options.map((option) => (
+                      {f.options.map(option => (
                         <Link
                           key={option.href}
                           href={option.href}
@@ -1644,12 +1647,83 @@ export default function Home() {
               不一定會立刻有答案，但有時候光是看清楚一點，心情就差很多。
             </p>
           </div>
+
+          <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+            {homeFeedbackCategories.map(category => (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => openTestimonials(category.id)}
+                className="group overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-white/48 p-4 text-left shadow-[0_16px_40px_rgba(163,141,107,0.08)] backdrop-blur-sm transition-[border-color,background-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-[#A38D6B]/45 hover:bg-white/70 hover:shadow-[0_18px_46px_rgba(163,141,107,0.12)] active:scale-[0.985]"
+                aria-label={`開啟${category.title}`}
+              >
+                <div className="grid grid-cols-3 gap-2">
+                  {category.items.slice(0, 3).map((item, index) => (
+                    <span
+                      key={`${category.id}-preview-${item.src}`}
+                      className={`block aspect-[3/4] overflow-hidden rounded-xl border border-[#D1BE9B]/14 bg-[#FAF7F4]/70 ${
+                        index === 1 ? "translate-y-3" : ""
+                      }`}
+                    >
+                      <img
+                        src={item.thumb ?? item.src}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                      />
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-6 flex items-end justify-between gap-4">
+                  <div className="min-w-0">
+                    <span
+                      className="text-[12px] italic tracking-[0.08em] text-[#A38D6B]"
+                      style={{
+                        fontFamily: "Cormorant Garamond, serif",
+                        fontWeight: 400,
+                      }}
+                    >
+                      {category.eyebrow}
+                    </span>
+                    <h3
+                      className="mt-1 text-sm font-extralight tracking-[0.16em] text-[#31353A]"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 200,
+                      }}
+                    >
+                      {category.title}
+                    </h3>
+                  </div>
+                  <span
+                    className="shrink-0 rounded-full border border-[#D1BE9B]/28 bg-[#FAF7F4]/72 px-3 py-1.5 text-[10px] tracking-[0.12em] text-[#8A7250] transition-colors duration-300 group-hover:border-[#3D4144]/18 group-hover:bg-[#3D4144] group-hover:text-[#FAF7F4]"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    {category.items.length} 則
+                  </span>
+                </div>
+                <p
+                  className="mt-3 line-clamp-2 text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/52"
+                  style={{
+                    fontFamily: "Noto Sans TC, sans-serif",
+                    fontWeight: 300,
+                  }}
+                >
+                  {category.note}
+                </p>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
       <Dialog
         open={isTestimonialsOpen}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           setIsTestimonialsOpen(open);
           if (!open) setSelectedFeedbackIndex(null);
         }}
@@ -1692,7 +1766,7 @@ export default function Home() {
                 className="grid grid-cols-1 gap-2 sm:grid-cols-3"
                 aria-label="選擇回饋分類"
               >
-                {homeFeedbackCategories.map((category) => {
+                {homeFeedbackCategories.map(category => {
                   const isActive = activeFeedbackCategory === category.id;
 
                   return (
@@ -1795,7 +1869,7 @@ export default function Home() {
                 </div>
                 <button
                   type="button"
-                  onClick={(event) => {
+                  onClick={event => {
                     event.stopPropagation();
                     setSelectedFeedbackIndex(null);
                   }}
@@ -1809,7 +1883,7 @@ export default function Home() {
               <div className="relative flex min-h-0 items-center justify-center px-11 py-4">
                 <button
                   type="button"
-                  onClick={(event) => {
+                  onClick={event => {
                     event.stopPropagation();
                     stepSelectedFeedback(-1);
                   }}
@@ -1824,11 +1898,11 @@ export default function Home() {
                   alt={selectedFeedback.alt}
                   decoding="async"
                   className="lightbox-image max-h-full max-w-full rounded-2xl object-contain shadow-2xl"
-                  onClick={(event) => event.stopPropagation()}
+                  onClick={event => event.stopPropagation()}
                 />
                 <button
                   type="button"
-                  onClick={(event) => {
+                  onClick={event => {
                     event.stopPropagation();
                     stepSelectedFeedback(1);
                   }}
