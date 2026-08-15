@@ -542,7 +542,7 @@ export default function WishRitual() {
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className="lightbox-backdrop fixed inset-0 z-[80] bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
+            className="lightbox-backdrop fixed inset-0 z-[1000] bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
             role="dialog"
             aria-modal="true"
             onClick={closeLightbox}
@@ -595,7 +595,7 @@ export default function WishRitual() {
               src={selectedReview.image}
               alt={`魔法儀式顧客回饋，第 ${selectedIndex + 1} 張`}
               decoding="async"
-              className="lightbox-image fixed left-1/2 top-1/2 max-h-[calc(100vh-8rem)] max-w-[calc(100vw-6rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl object-contain shadow-2xl sm:max-w-[calc(100vw-8rem)]"
+              className="lightbox-image fixed left-1/2 top-1/2 z-[1001] max-h-[calc(100vh-8rem)] max-w-[calc(100vw-6rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl object-contain shadow-2xl sm:max-w-[calc(100vw-8rem)]"
               onClick={(event) => event.stopPropagation()}
             />
             <button
