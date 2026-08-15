@@ -2516,7 +2516,7 @@ export default function TarotPage() {
               </div>
 
               <p className="tarot-human-copy mt-6 text-[14px] leading-[2.1]">
-                由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。先選想看的方案，點開就能查看細項。
+                依據你的個人需求選擇適合的塔羅方案，由 Gooday 日日好日真人老師一對一解讀，陪你整理感情、事業、人際關係與人生選擇。
               </p>
 
               <div className="mt-6 grid gap-3">
