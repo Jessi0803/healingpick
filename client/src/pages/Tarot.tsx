@@ -2294,8 +2294,8 @@ export default function TarotPage() {
                 gap: 0;
               }
               .tarot-entry-partner-text span:first-child {
-                font-size: 13px;
-                letter-spacing: 0.08em;
+                font-size: 15px;
+                letter-spacing: 0.04em;
                 line-height: 1.42;
               }
               .tarot-entry-partner-text span:last-child {
@@ -2367,8 +2367,8 @@ export default function TarotPage() {
                 flex-basis: 32px;
               }
               .tarot-entry-partner-text span:first-child {
-                font-size: 12px;
-                letter-spacing: 0.06em;
+                font-size: 14px;
+                letter-spacing: 0.03em;
               }
               .tarot-entry-options {
                 gap: 10px;
