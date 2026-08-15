@@ -532,6 +532,24 @@ body::after {
   color: #31353A;
 }
 
+@media (max-width: 639px) {
+  .home-testimonial-heart-button {
+    width: 8.35rem;
+    height: 6.8rem;
+  }
+
+  .home-testimonial-heart-shape {
+    width: 6.7rem;
+  }
+
+  .home-testimonial-heart-text {
+    gap: 0.18rem;
+    max-width: 5.9rem;
+    font-size: 0.72rem;
+    line-height: 1.24;
+  }
+}
+
 @keyframes mochiPortraitFloat {
   0%, 100% { transform: translate3d(0, 0, 0); }
   50%      { transform: translate3d(0, -7px, 0); }
