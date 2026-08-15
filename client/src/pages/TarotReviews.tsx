@@ -1,8 +1,6 @@
 import PageLayout from '@/components/PageLayout';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'wouter';
-
-const REVIEW_CATEGORIES = ['全部', '感情關係', '後續驗證', '升學考試', '人生方向'] as const;
 
 const TAROT_REVIEW_PROOFS = [
   {
@@ -133,14 +131,31 @@ const TAROT_REVIEW_PROOFS = [
   },
 ];
 
-export default function TarotReviews() {
-  const [activeCategory, setActiveCategory] = useState<(typeof REVIEW_CATEGORIES)[number]>('全部');
-  const [selectedReview, setSelectedReview] = useState<(typeof TAROT_REVIEW_PROOFS)[number] | null>(null);
+const REVIEW_STORY_GROUPS = [
+  {
+    title: '後來回來說真的很準',
+    copy: '不是只有當下覺得被安慰，而是過一陣子再回頭看，發現老師當時提到的狀態、時間點或提醒，真的和後續發展對上。',
+    reviewIds: [1, 5, 10, 25, 37, 52, 63],
+  },
+  {
+    title: '感情裡說不出口的拉扯被說中',
+    copy: '曖昧、分開、復合、對方想法，很多回饋都不是只問結果，而是覺得「老師有講到我心裡卡住的地方」。',
+    reviewIds: [2, 3, 8, 19, 31, 46, 58],
+  },
+  {
+    title: '迷惘的時候，把下一步看清楚',
+    copy: '考試、工作或人生方向卡住時，客人回饋最多的是：聽完之後比較知道自己現在該先面對什麼。',
+    reviewIds: [4, 14, 22, 40],
+  },
+].map((group) => ({
+  ...group,
+  reviews: group.reviewIds
+    .map((id) => TAROT_REVIEW_PROOFS.find((review) => review.id === id))
+    .filter((review): review is (typeof TAROT_REVIEW_PROOFS)[number] => Boolean(review)),
+}));
 
-  const filteredReviews = useMemo(() => {
-    if (activeCategory === '全部') return TAROT_REVIEW_PROOFS;
-    return TAROT_REVIEW_PROOFS.filter((review) => review.category === activeCategory);
-  }, [activeCategory]);
+export default function TarotReviews() {
+  const [selectedReview, setSelectedReview] = useState<(typeof TAROT_REVIEW_PROOFS)[number] | null>(null);
 
   return (
     <PageLayout>
@@ -163,93 +178,67 @@ export default function TarotReviews() {
               className="mx-auto mt-4 max-w-2xl text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/64"
               style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
             >
-              不是只聽完就結束，很多人後來都回來告訴我們：當時的提醒，真的和後續發展對上了。
+              這裡收錄的是客人後來回傳的真實截圖：有人說老師講中的狀態太像自己，也有人過一陣子才發現，當時提醒的事情真的發生了。
             </p>
           </div>
 
-          <section className="mb-10 grid grid-cols-1 gap-4 border-y border-[#D1BE9B]/22 py-6 md:grid-cols-3">
-            {[
-              ['18', '精選真實截圖'],
-              ['5', '回饋主題分類'],
-              ['1 對 1', '真人老師解讀'],
-            ].map(([value, label]) => (
-              <div key={label} className="text-center">
-                <div
-                  className="text-2xl tracking-[0.08em] text-[#8A7250]"
-                  style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
-                >
-                  {value}
+          <div className="space-y-10">
+            {REVIEW_STORY_GROUPS.map((group) => (
+              <section key={group.title} className="border-t border-[#D1BE9B]/20 pt-7 first:border-t-0 first:pt-0">
+                <div className="mb-5 max-w-3xl">
+                  <h2
+                    className="text-lg font-extralight leading-[1.8] tracking-[0.16em] text-[#31353A] md:text-xl"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
+                  >
+                    {group.title}
+                  </h2>
+                  <p
+                    className="mt-2 text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/64"
+                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                  >
+                    {group.copy}
+                  </p>
                 </div>
-                <div
-                  className="mt-1 text-[11px] tracking-[0.2em] text-[#31353A]/58"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  {label}
+
+                <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+                  {group.reviews.map((review) => (
+                    <article
+                      key={review.id}
+                      className="mb-4 break-inside-avoid overflow-hidden rounded-lg border border-[#D1BE9B]/20 bg-white/58 shadow-[0_16px_44px_rgba(180,160,130,0.12)] backdrop-blur-sm"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setSelectedReview(review)}
+                        className="group block w-full text-left"
+                        aria-label={`放大查看${review.title}`}
+                      >
+                        <div className="overflow-hidden bg-[#F7F1EA]">
+                          <img
+                            src={review.image}
+                            alt={review.title}
+                            className="w-full object-cover transition duration-500 group-hover:scale-[1.015]"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h3
+                            className="text-[14px] leading-[1.8] tracking-[0.1em] text-[#31353A]"
+                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                          >
+                            {review.title}
+                          </h3>
+                          <p
+                            className="mt-2 text-[12px] leading-[1.9] tracking-[0.07em] text-[#31353A]/62"
+                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
+                          >
+                            {review.note}
+                          </p>
+                        </div>
+                      </button>
+                    </article>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </section>
-
-          <div className="mb-7 flex flex-wrap justify-center gap-2">
-            {REVIEW_CATEGORIES.map((category) => (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setActiveCategory(category)}
-                className={`rounded-full border px-4 py-2 text-[11px] tracking-[0.14em] transition-all duration-300 active:scale-95 ${
-                  activeCategory === category
-                    ? 'border-[#3D4144] bg-[#3D4144] text-[#FAF7F4]'
-                    : 'border-[#D1BE9B]/32 bg-white/48 text-[#8A7250] hover:border-[#A38D6B]/50 hover:bg-white/76'
-                }`}
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-            {filteredReviews.map((review) => (
-              <article
-                key={review.id}
-                className="mb-4 break-inside-avoid overflow-hidden rounded-lg border border-[#D1BE9B]/20 bg-white/58 shadow-[0_16px_44px_rgba(180,160,130,0.12)] backdrop-blur-sm"
-              >
-                <button
-                  type="button"
-                  onClick={() => setSelectedReview(review)}
-                  className="group block w-full text-left"
-                  aria-label={`放大查看${review.title}`}
-                >
-                  <div className="relative bg-[#F7F1EA]">
-                    <img
-                      src={review.image}
-                      alt={review.title}
-                      className="w-full object-cover transition duration-500 group-hover:scale-[1.015]"
-                      loading="lazy"
-                    />
-                    <span
-                      className="absolute left-3 top-3 rounded-full border border-white/55 bg-white/78 px-3 py-1 text-[10px] tracking-[0.16em] text-[#8A7250] shadow-[0_8px_20px_rgba(49,53,58,0.12)] backdrop-blur-sm"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {review.category}
-                    </span>
-                  </div>
-                  <div className="p-4">
-                    <h2
-                      className="text-[14px] leading-[1.8] tracking-[0.1em] text-[#31353A]"
-                      style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                    >
-                      {review.title}
-                    </h2>
-                    <p
-                      className="mt-2 text-[12px] leading-[1.9] tracking-[0.07em] text-[#31353A]/62"
-                      style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                    >
-                      {review.note}
-                    </p>
-                  </div>
-                </button>
-              </article>
+              </section>
             ))}
           </div>
 
