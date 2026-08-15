@@ -1,5 +1,12 @@
 import PageLayout from "@/components/PageLayout";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, MessageCircle, Sparkles, X } from "lucide-react";
 import { Link } from "wouter";
 
@@ -60,17 +67,13 @@ const RITUAL_REVIEW_PROOFS = Array.from({ length: 56 }, (_, index) => ({
   id: index + 1,
   image: `/gooday-ritual-reviews/review-${index + 1}.jpg`,
 }));
-const INITIAL_REVIEW_COUNT = 4;
-const REVIEW_LOAD_STEP = 12;
 
 export default function WishRitual() {
+  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [visibleReviewCount, setVisibleReviewCount] = useState(INITIAL_REVIEW_COUNT);
   const touchX = useRef<number | null>(null);
 
   const selectedReview = selectedIndex === null ? null : RITUAL_REVIEW_PROOFS[selectedIndex];
-  const visibleReviews = RITUAL_REVIEW_PROOFS.slice(0, visibleReviewCount);
-  const hasMoreReviews = visibleReviewCount < RITUAL_REVIEW_PROOFS.length;
   const closeLightbox = () => setSelectedIndex(null);
   const stepLightbox = (dir: number) =>
     setSelectedIndex((current) =>
@@ -311,71 +314,37 @@ export default function WishRitual() {
             </section>
 
             <section className="mt-9 rounded-xl border border-white/45 bg-white/36 p-5 shadow-[0_16px_46px_rgba(255,255,255,0.2)] backdrop-blur-md md:p-7">
-              <div className="text-center">
-                <p
-                  className="text-[11px] uppercase tracking-[0.34em] text-[#246188]/68"
-                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                >
-                  Ritual Proof
-                </p>
-                <h2
-                  className="mt-3 text-[15px] tracking-[0.2em] text-[#245879] md:text-base"
-                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                >
-                  魔法儀式顧客回饋
-                </h2>
-                <p
-                  className="mx-auto mt-3 max-w-2xl text-[12px] leading-[2] tracking-[0.08em] text-[#245879]/70"
-                  style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
-                >
-                  收錄客人儀式後回傳的真實截圖，點開可以放大查看每一則回饋。
-                </p>
-              </div>
-
-              <div className="mx-auto mt-6 grid max-w-5xl grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {visibleReviews.map((review, index) => (
-                  <button
-                    key={review.id}
-                    type="button"
-                    onClick={() => setSelectedIndex(index)}
-                    aria-label={`放大第 ${index + 1} 張魔法儀式顧客回饋`}
-                    className="group aspect-[3/4] overflow-hidden rounded-2xl border border-white/50 bg-white/45 shadow-[0_12px_26px_rgba(36,88,121,0.12)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#245879]/44 active:scale-[0.98]"
-                  >
-                    <img
-                      src={review.image}
-                      alt={`魔法儀式顧客回饋，第 ${index + 1} 張`}
-                      loading="lazy"
-                      decoding="async"
-                      width={360}
-                      height={480}
-                      sizes="(min-width: 1024px) 10rem, (min-width: 640px) 33vw, 50vw"
-                      className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
-                    />
-                  </button>
-                ))}
-              </div>
-              {hasMoreReviews && (
-                <div className="mt-6 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setVisibleReviewCount((count) =>
-                        Math.min(count + REVIEW_LOAD_STEP, RITUAL_REVIEW_PROOFS.length),
-                      )
-                    }
-                    className="inline-flex items-center justify-center rounded-full border border-white/55 bg-white/36 px-6 py-3 text-xs tracking-[0.18em] text-[#245879] shadow-[0_10px_24px_rgba(36,88,121,0.1)] transition-all duration-300 hover:bg-white/62 active:scale-95"
+              <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+                <div>
+                  <p
+                    className="text-[11px] uppercase tracking-[0.34em] text-[#246188]/68"
                     style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                   >
-                    查看更多回饋（{visibleReviewCount} / {RITUAL_REVIEW_PROOFS.length}）
-                  </button>
+                    Ritual Proof
+                  </p>
+                  <h2
+                    className="mt-3 text-[15px] tracking-[0.2em] text-[#245879] md:text-base"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    魔法儀式顧客回饋
+                  </h2>
+                  <p
+                    className="mt-3 max-w-2xl text-[12px] leading-[2] tracking-[0.08em] text-[#245879]/70"
+                    style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
+                  >
+                    收錄客人儀式後回傳的真實截圖，可一次瀏覽全部回饋。
+                  </p>
                 </div>
-              )}
-              <p
-                className="mt-4 text-center text-[10px] tracking-[0.18em] text-[#245879]/48"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-              >
-                點擊任一張放大瀏覽 · 可用左右鍵切換
-              </p>
+                <button
+                  type="button"
+                  onClick={() => setIsReviewsOpen(true)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/55 bg-white/42 px-6 py-3 text-xs tracking-[0.18em] text-[#245879] shadow-[0_10px_24px_rgba(36,88,121,0.1)] transition-[background-color,border-color,box-shadow,transform] duration-200 ease-out hover:border-[#245879]/28 hover:bg-white/70 hover:shadow-[0_14px_30px_rgba(36,88,121,0.13)] active:scale-[0.97] md:w-auto"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  查看全部回饋（{RITUAL_REVIEW_PROOFS.length}）
+                </button>
+              </div>
             </section>
 
             <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -408,77 +377,152 @@ export default function WishRitual() {
         </section>
       </main>
 
-      {selectedReview && selectedIndex !== null && (
-        <div
-          className="lightbox-backdrop fixed inset-0 z-[70] flex flex-col bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
-          role="dialog"
-          aria-modal="true"
-          onClick={closeLightbox}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
+      <Dialog
+        open={isReviewsOpen}
+        onOpenChange={(open) => {
+          setIsReviewsOpen(open);
+          if (!open) setSelectedIndex(null);
+        }}
+      >
+        <DialogContent
+          showCloseButton={false}
+          className="h-[min(88vh,46rem)] max-w-[min(58rem,calc(100vw-1.5rem))] overflow-hidden border-white/55 bg-[#F8FBFF]/96 p-0 text-[#245879] shadow-[0_28px_80px_rgba(36,88,121,0.22)] backdrop-blur-xl sm:rounded-2xl"
+          aria-describedby="ritual-feedback-description"
         >
-          <div className="flex shrink-0 items-start justify-between gap-4 pb-4 text-[#FAF7F4] md:pb-5">
-            <div>
-              <p
-                className="text-[12px] tracking-[0.18em]"
-                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+          <div className="grid h-full min-h-0 grid-rows-[auto_1fr]">
+            <div className="flex items-start justify-between gap-4 border-b border-[#C9D5E8]/40 px-5 pb-4 pt-6 md:px-7">
+              <div>
+                <p
+                  className="text-[11px] uppercase tracking-[0.34em] text-[#246188]/68"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  Ritual Proof
+                </p>
+                <DialogTitle
+                  className="mt-2 text-lg font-light tracking-[0.18em] text-[#245879] md:text-xl"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  魔法儀式顧客回饋
+                </DialogTitle>
+                <DialogDescription
+                  id="ritual-feedback-description"
+                  className="mt-2 max-w-2xl text-[12px] leading-[1.9] tracking-[0.08em] text-[#245879]/62"
+                  style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 400 }}
+                >
+                  一次看全部真實回饋，點開任一張可置中放大瀏覽。
+                </DialogDescription>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsReviewsOpen(false)}
+                aria-label="關閉回饋視窗"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#C9D5E8]/48 bg-white/64 text-[#245879] shadow-[0_8px_20px_rgba(36,88,121,0.1)] transition-colors hover:bg-white active:scale-95"
               >
-                魔法儀式顧客真實回饋
-              </p>
-              <p className="mt-1 text-[10px] tracking-[0.12em] text-white/48">
-                {selectedIndex + 1} / {RITUAL_REVIEW_PROOFS.length}
-              </p>
+                <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+              </button>
+            </div>
+
+            <div className="min-h-0 overflow-y-auto px-5 py-5 md:px-7">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {RITUAL_REVIEW_PROOFS.map((review, index) => (
+                  <button
+                    key={review.id}
+                    type="button"
+                    onClick={() => setSelectedIndex(index)}
+                    aria-label={`放大第 ${index + 1} 張魔法儀式顧客回饋`}
+                    className="group aspect-[3/4] overflow-hidden rounded-xl border border-[#C9D5E8]/40 bg-white/60 shadow-[0_10px_24px_rgba(36,88,121,0.1)] transition-[border-color,opacity,transform] duration-200 ease-out hover:border-[#245879]/44 active:scale-[0.98]"
+                  >
+                    <img
+                      src={review.image}
+                      alt={`魔法儀式顧客回饋，第 ${index + 1} 張`}
+                      loading="lazy"
+                      decoding="async"
+                      width={360}
+                      height={480}
+                      sizes="(min-width: 1024px) 11rem, (min-width: 640px) 33vw, 50vw"
+                      className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {selectedReview &&
+        selectedIndex !== null &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="lightbox-backdrop fixed inset-0 z-[80] bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
+            role="dialog"
+            aria-modal="true"
+            onClick={closeLightbox}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
+            <div className="relative z-10 flex items-start justify-between gap-4 text-[#FAF7F4]">
+              <div>
+                <p
+                  className="text-[12px] tracking-[0.18em]"
+                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                >
+                  魔法儀式顧客真實回饋
+                </p>
+                <p className="mt-1 text-[10px] tracking-[0.12em] text-white/48">
+                  {selectedIndex + 1} / {RITUAL_REVIEW_PROOFS.length}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeLightbox}
+                aria-label="關閉"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
+              >
+                <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+              </button>
             </div>
             <button
               type="button"
-              onClick={closeLightbox}
-              aria-label="關閉"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
+              onClick={(event) => {
+                event.stopPropagation();
+                stepLightbox(-1);
+              }}
+              aria-label="上一張"
+              className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:left-8"
             >
-              <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+              <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
             </button>
-          </div>
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              stepLightbox(-1);
-            }}
-            aria-label="上一張"
-            className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:left-8"
-          >
-            <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
-          </button>
-          <div className="flex min-h-0 flex-1 items-center justify-center">
             <img
               key={selectedReview.id}
               src={selectedReview.image}
               alt={`魔法儀式顧客回饋，第 ${selectedIndex + 1} 張`}
               decoding="async"
-              className="lightbox-image max-h-[calc(100vh-13.5rem)] max-w-full rounded-2xl object-contain shadow-2xl md:max-h-[calc(100vh-11rem)]"
+              className="lightbox-image fixed left-1/2 top-1/2 max-h-[calc(100vh-8rem)] max-w-[calc(100vw-6rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl object-contain shadow-2xl sm:max-w-[calc(100vw-8rem)]"
               onClick={(event) => event.stopPropagation()}
             />
-          </div>
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              stepLightbox(1);
-            }}
-            aria-label="下一張"
-            className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:right-8"
-          >
-            <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
-          </button>
-          <button
-            type="button"
-            className="mx-auto mt-4 rounded-full border border-white/12 bg-white/10 px-4 py-2 text-[10px] tracking-[0.14em] text-white/68 transition-colors hover:bg-white/16"
-            onClick={(event) => event.stopPropagation()}
-          >
-            左右滑動或按方向鍵切換
-          </button>
-        </div>
-      )}
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                stepLightbox(1);
+              }}
+              aria-label="下一張"
+              className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:right-8"
+            >
+              <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
+            </button>
+            <button
+              type="button"
+              className="fixed bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-white/12 bg-white/10 px-4 py-2 text-[10px] tracking-[0.14em] text-white/68 transition-colors hover:bg-white/16"
+              onClick={(event) => event.stopPropagation()}
+            >
+              左右滑動或按方向鍵切換
+            </button>
+          </div>,
+          document.body,
+        )}
     </PageLayout>
   );
 }
