@@ -61,6 +61,7 @@ const HUMAN_TAROT_MENU_PLANS = [
     title: "個人訊息占卜",
     price: "NT$250 起",
     summary: "心裡已經有那個卡住的問題？從 1 題到 5 題，陪你把答案慢慢整理清楚。",
+    details: ["1 question：NT$250", "3 questions：NT$700", "5 questions：NT$1100"],
     images: [
       { src: "/gooday-tarot-pricing/question-pricing.jpg", alt: "Gooday 個人訊息占卜價格" },
     ],
@@ -69,6 +70,11 @@ const HUMAN_TAROT_MENU_PLANS = [
     title: "塔羅超值套裝",
     price: "NT$999",
     summary: "戀愛、復合、財富、職涯、人生進化等主題。",
+    details: [
+      "感情關係：戀愛指南、感情復合、緣來暗戀、旺桃花運",
+      "事業財富：財富密碼、創業衝衝、職涯探索、面試勝經",
+      "人生整理：進化人生、雙向之路、友情可貴、心靈療癒",
+    ],
     images: [
       { src: "/gooday-tarot-pricing/value-pack-1.jpg", alt: "Gooday 塔羅超值套裝戀愛與感情題組" },
       { src: "/gooday-tarot-pricing/value-pack-2.jpg", alt: "Gooday 塔羅超值套裝財富與工作題組" },
@@ -79,6 +85,10 @@ const HUMAN_TAROT_MENU_PLANS = [
     title: "守護神",
     price: "NT$1088",
     summary: "認識守護星、守護神與想提醒你的事。",
+    details: [
+      "看你的守護星、守護神，以及守護神和你之間的連結。",
+      "也會整理守護神想提醒你的事，和你可以如何更深刻地感應這份能量。",
+    ],
     images: [
       { src: "/gooday-tarot-pricing/guardian.jpg", alt: "Gooday 守護神占卜題組" },
     ],
@@ -87,6 +97,11 @@ const HUMAN_TAROT_MENU_PLANS = [
     title: "前世今生",
     price: "NT$800 起",
     summary: "從前世故事、靈魂課題看今生連結。",
+    details: [
+      "前世今生 1：NT$1288，看自己的前世印象、內在世界與今生課題。",
+      "前世今生 2：NT$999，看你和某個人的前世連結與今生關係課題。",
+      "前世今生 3：NT$800，以故事方式整理前世的一生，約 500-1000 字。",
+    ],
     images: [
       { src: "/gooday-tarot-pricing/past-life-1.jpg", alt: "Gooday 前世今生占卜題組一" },
       { src: "/gooday-tarot-pricing/past-life-2.jpg", alt: "Gooday 前世今生占卜題組二" },
@@ -96,6 +111,11 @@ const HUMAN_TAROT_MENU_PLANS = [
     title: "流年運勢",
     price: "NT$1088 起",
     summary: "未來一年狀態、月份或季節重點提醒。",
+    details: [
+      "流年運勢 1：NT$1288，以黃道十二宮看未來一年各領域運勢。",
+      "流年運勢 2：NT$1588，看未來一年每個月會遇到的事、阻礙與建議。",
+      "流年運勢 3：NT$1088，看未來一年每個季節的狀態、提醒與祝福。",
+    ],
     images: [
       { src: "/gooday-tarot-pricing/year-fortune-1.jpg", alt: "Gooday 流年運勢占卜題組一" },
       { src: "/gooday-tarot-pricing/year-fortune-2.jpg", alt: "Gooday 流年運勢占卜題組二" },
@@ -2391,6 +2411,23 @@ export default function TarotPage() {
             .tarot-human-plan-card--primary strong {
               color: #267345;
             }
+            .tarot-human-dialog-summary {
+              border: 1px solid rgba(112, 138, 106, 0.16);
+              border-radius: 8px;
+              background: rgba(255,253,248,0.58);
+              padding: 14px;
+            }
+            .tarot-human-dialog-detail-list {
+              display: grid;
+              gap: 10px;
+              margin-top: 12px;
+            }
+            .tarot-human-dialog-detail-list li {
+              border: 1px solid rgba(157, 123, 63, 0.14);
+              border-radius: 8px;
+              background: rgba(255,253,248,0.62);
+              padding: 10px 12px;
+            }
             .tarot-human-reference-strip {
               display: grid;
               grid-auto-flow: column;
@@ -2531,6 +2568,23 @@ export default function TarotPage() {
                           </strong>
                         </DialogTitle>
                       </DialogHeader>
+
+                      <section className="tarot-human-dialog-summary mt-5">
+                        <p
+                          className="text-[13px] leading-[1.9] tracking-[0.06em] text-[#31353A]/66"
+                          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                        >
+                          {menu.summary}
+                        </p>
+                        <ul
+                          className="tarot-human-dialog-detail-list text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/74"
+                          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                        >
+                          {menu.details.map((detail) => (
+                            <li key={detail}>{detail}</li>
+                          ))}
+                        </ul>
+                      </section>
 
                       <div className="mt-6">
                         <div
