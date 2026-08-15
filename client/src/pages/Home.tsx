@@ -418,6 +418,19 @@ export default function Home() {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  function scrollToFeedbackCategory(categoryId: HomeFeedbackCategoryId) {
+    const target = document.getElementById(`home-feedback-card-${categoryId}`);
+    target?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "nearest",
+    });
+
+    if (target instanceof HTMLElement) {
+      window.setTimeout(() => target.focus({ preventScroll: true }), 360);
+    }
+  }
+
   function stepSelectedFeedback(direction: number) {
     setSelectedFeedbackIndex(current => {
       if (current === null) return current;
@@ -1646,15 +1659,35 @@ export default function Home() {
             >
               不一定會立刻有答案，但有時候光是看清楚一點，心情就差很多。
             </p>
+            <div
+              className="mx-auto mt-7 flex max-w-2xl flex-col gap-2 sm:flex-row sm:justify-center"
+              aria-label="快速前往回饋分類"
+            >
+              {homeFeedbackCategories.map(category => (
+                <button
+                  key={`jump-${category.id}`}
+                  type="button"
+                  onClick={() => scrollToFeedbackCategory(category.id)}
+                  className="rounded-full border border-[#D1BE9B]/28 bg-white/48 px-4 py-2.5 text-[11px] tracking-[0.13em] text-[#8A7250] shadow-[0_8px_20px_rgba(163,141,107,0.06)] transition-[border-color,background-color,color,transform] duration-300 hover:-translate-y-0.5 hover:border-[#A38D6B]/45 hover:bg-white/72 hover:text-[#31353A] active:scale-[0.98]"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
+                >
+                  {category.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
             {homeFeedbackCategories.map(category => (
               <button
                 key={category.id}
+                id={`home-feedback-card-${category.id}`}
                 type="button"
                 onClick={() => openTestimonials(category.id)}
-                className="group overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-white/48 p-4 text-left shadow-[0_16px_40px_rgba(163,141,107,0.08)] backdrop-blur-sm transition-[border-color,background-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-[#A38D6B]/45 hover:bg-white/70 hover:shadow-[0_18px_46px_rgba(163,141,107,0.12)] active:scale-[0.985]"
+                className="group scroll-mt-32 overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-white/48 p-4 text-left shadow-[0_16px_40px_rgba(163,141,107,0.08)] backdrop-blur-sm transition-[border-color,background-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-[#A38D6B]/45 hover:bg-white/70 hover:shadow-[0_18px_46px_rgba(163,141,107,0.12)] focus-visible:border-[#3D4144]/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/45 active:scale-[0.985]"
                 aria-label={`開啟${category.title}`}
               >
                 <div className="grid grid-cols-3 gap-2">
