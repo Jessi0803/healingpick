@@ -180,9 +180,10 @@ type HomeFeedbackItem = {
   alt: string;
 };
 
-const HUMAN_TAROT_FEEDBACK_IDS = [
-  1, 2, 3, 4, 5, 8, 10, 14, 19, 22, 25, 31, 37, 40, 46, 52, 58, 63,
-];
+const HUMAN_TAROT_FEEDBACK_IDS = Array.from(
+  { length: 63 },
+  (_, index) => index + 1
+);
 
 const homeFeedbackCategories: Array<{
   id: HomeFeedbackCategoryId;
