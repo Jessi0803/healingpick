@@ -1,6 +1,5 @@
 import PageLayout from '@/components/PageLayout';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'wouter';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 const TAROT_REVIEW_PROOFS = [
@@ -223,40 +222,6 @@ export default function TarotReviews() {
             </p>
           </section>
 
-          <section className="mt-10 grid grid-cols-1 gap-4 border-t border-[#D1BE9B]/22 pt-8 md:grid-cols-[1.1fr_0.9fr] md:items-center">
-            <div>
-              <h2
-                className="text-lg font-extralight leading-[1.8] tracking-[0.16em] text-[#31353A] md:text-xl"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
-              >
-                想問自己的狀況，也可以先從一題開始
-              </h2>
-              <p
-                className="mt-3 max-w-2xl text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/64"
-                style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-              >
-                占卜不是替你保證結果，而是幫你看清目前的能量、關係狀態與可以選擇的方向。
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row md:justify-end">
-              <Link href="/tarot">
-                <button
-                  className="inline-flex w-full items-center justify-center rounded-full bg-[#3D4144] px-7 py-3 text-xs tracking-[0.2em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 sm:w-auto"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  查看真人塔羅方案
-                </button>
-              </Link>
-              <Link href="/tarot/teacher">
-                <button
-                  className="inline-flex w-full items-center justify-center rounded-full border border-[#3D4144]/16 bg-white/52 px-7 py-3 text-xs tracking-[0.18em] text-[#31353A] transition-all duration-500 hover:bg-white active:scale-95 sm:w-auto"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  看塔羅師資歷
-                </button>
-              </Link>
-            </div>
-          </section>
         </div>
       </div>
 
