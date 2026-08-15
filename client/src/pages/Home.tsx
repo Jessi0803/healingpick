@@ -720,6 +720,39 @@ export default function Home() {
                   aria-hidden="true"
                 />
               </button>
+              {isMochiMenuOpen && (
+                <div
+                  id="mochi-reading-menu"
+                  className="mx-auto mt-3 grid w-full max-w-[17rem] grid-cols-1 gap-2 rounded-2xl border border-[#D1BE9B]/22 bg-white/48 p-3 shadow-[0_16px_38px_rgba(209,190,155,0.14)] backdrop-blur-sm animate-fade-in-up sm:max-w-3xl sm:grid-cols-3"
+                >
+                  {mochiReadingOptions.map((option) => (
+                    <Link
+                      key={option.href}
+                      href={option.href}
+                      className="group rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/62 px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45 hover:bg-white"
+                    >
+                      <span
+                        className="block text-[12px] tracking-[0.14em] text-[#31353A]/86"
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 300,
+                        }}
+                      >
+                        {option.title}
+                      </span>
+                      <span
+                        className="mt-1 block text-[11px] leading-[1.7] tracking-[0.08em] text-[#31353A]/56"
+                        style={{
+                          fontFamily: "Noto Sans TC, sans-serif",
+                          fontWeight: 300,
+                        }}
+                      >
+                        {option.desc}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
               <button
                 type="button"
                 onClick={openTestimonials}
@@ -767,40 +800,6 @@ export default function Home() {
               </button>
             </div>
           </div>
-
-          {isMochiMenuOpen && (
-            <div
-              id="mochi-reading-menu"
-              className="mx-auto mt-3 grid w-full max-w-[17rem] grid-cols-1 gap-2 rounded-2xl border border-[#D1BE9B]/22 bg-white/48 p-3 shadow-[0_16px_38px_rgba(209,190,155,0.14)] backdrop-blur-sm animate-fade-in-up sm:max-w-3xl sm:grid-cols-3"
-            >
-              {mochiReadingOptions.map((option) => (
-                <Link
-                  key={option.href}
-                  href={option.href}
-                  className="group rounded-xl border border-[#D1BE9B]/18 bg-[#FAF7F4]/62 px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45 hover:bg-white"
-                >
-                  <span
-                    className="block text-[12px] tracking-[0.14em] text-[#31353A]/86"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    {option.title}
-                  </span>
-                  <span
-                    className="mt-1 block text-[11px] leading-[1.7] tracking-[0.08em] text-[#31353A]/56"
-                    style={{
-                      fontFamily: "Noto Sans TC, sans-serif",
-                      fontWeight: 300,
-                    }}
-                  >
-                    {option.desc}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Scroll indicator */}
