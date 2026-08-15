@@ -131,28 +131,8 @@ const TAROT_REVIEW_PROOFS = [
   },
 ];
 
-const REVIEW_STORY_GROUPS = [
-  {
-    title: '後來回來說真的很準',
-    copy: '不是只有當下覺得被安慰，而是過一陣子再回頭看，發現老師當時提到的狀態、時間點或提醒，真的和後續發展對上。',
-    reviewIds: [1, 5, 10, 25, 37, 52, 63],
-  },
-  {
-    title: '感情裡說不出口的拉扯被說中',
-    copy: '曖昧、分開、復合、對方想法，很多回饋都不是只問結果，而是覺得「老師有講到我心裡卡住的地方」。',
-    reviewIds: [2, 3, 8, 19, 31, 46, 58],
-  },
-  {
-    title: '迷惘的時候，把下一步看清楚',
-    copy: '考試、工作或人生方向卡住時，客人回饋最多的是：聽完之後比較知道自己現在該先面對什麼。',
-    reviewIds: [4, 14, 22, 40],
-  },
-].map((group) => ({
-  ...group,
-  reviews: group.reviewIds
-    .map((id) => TAROT_REVIEW_PROOFS.find((review) => review.id === id))
-    .filter((review): review is (typeof TAROT_REVIEW_PROOFS)[number] => Boolean(review)),
-}));
+const MARQUEE_ROW_1 = TAROT_REVIEW_PROOFS.slice(0, 9);
+const MARQUEE_ROW_2 = TAROT_REVIEW_PROOFS.slice(9);
 
 export default function TarotReviews() {
   const [selectedReview, setSelectedReview] = useState<(typeof TAROT_REVIEW_PROOFS)[number] | null>(null);
@@ -182,65 +162,49 @@ export default function TarotReviews() {
             </p>
           </div>
 
-          <div className="space-y-10">
-            {REVIEW_STORY_GROUPS.map((group) => (
-              <section key={group.title} className="border-t border-[#D1BE9B]/20 pt-7 first:border-t-0 first:pt-0">
-                <div className="mb-5 max-w-3xl">
-                  <h2
-                    className="text-lg font-extralight leading-[1.8] tracking-[0.16em] text-[#31353A] md:text-xl"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 200 }}
-                  >
-                    {group.title}
-                  </h2>
-                  <p
-                    className="mt-2 text-[13px] leading-[2] tracking-[0.08em] text-[#31353A]/64"
-                    style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                  >
-                    {group.copy}
-                  </p>
-                </div>
-
-                <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-                  {group.reviews.map((review) => (
-                    <article
-                      key={review.id}
-                      className="mb-4 break-inside-avoid overflow-hidden rounded-lg border border-[#D1BE9B]/20 bg-white/58 shadow-[0_16px_44px_rgba(180,160,130,0.12)] backdrop-blur-sm"
+          <section className="space-y-3">
+            {[
+              { reviews: MARQUEE_ROW_1, dir: 'left' as const },
+              { reviews: MARQUEE_ROW_2, dir: 'right' as const },
+            ].map((row) => (
+              <div key={row.dir} className="gallery-marquee overflow-hidden">
+                <div className={`gallery-row ${row.dir === 'left' ? 'gallery-row-left' : 'gallery-row-right'}`}>
+                  {[...row.reviews, ...row.reviews].map((review, index) => (
+                    <button
+                      key={`${review.id}-${index}`}
+                      type="button"
+                      aria-label={`放大查看${review.title}`}
+                      onClick={() => setSelectedReview(review)}
+                      className="group relative mr-3 aspect-[868/1886] w-36 flex-shrink-0 overflow-hidden rounded-2xl border border-[#D1BE9B]/20 bg-white/40 shadow-[0_12px_32px_rgba(180,160,130,0.12)] md:w-44 lg:w-52"
                     >
-                      <button
-                        type="button"
-                        onClick={() => setSelectedReview(review)}
-                        className="group block w-full text-left"
-                        aria-label={`放大查看${review.title}`}
+                      <img
+                        src={review.image}
+                        alt={review.title}
+                        loading="lazy"
+                        decoding="async"
+                        width={260}
+                        height={565}
+                        sizes="(min-width: 1024px) 13rem, (min-width: 768px) 11rem, 9rem"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <span
+                        className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-[#2b2622]/76 to-transparent px-3 pb-2 pt-10 text-[10px] tracking-[0.14em] text-white/90 transition-transform duration-300 group-hover:translate-y-0"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
                       >
-                        <div className="overflow-hidden bg-[#F7F1EA]">
-                          <img
-                            src={review.image}
-                            alt={review.title}
-                            className="w-full object-cover transition duration-500 group-hover:scale-[1.015]"
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <h3
-                            className="text-[14px] leading-[1.8] tracking-[0.1em] text-[#31353A]"
-                            style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                          >
-                            {review.title}
-                          </h3>
-                          <p
-                            className="mt-2 text-[12px] leading-[1.9] tracking-[0.07em] text-[#31353A]/62"
-                            style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                          >
-                            {review.note}
-                          </p>
-                        </div>
-                      </button>
-                    </article>
+                        {review.category}
+                      </span>
+                    </button>
                   ))}
                 </div>
-              </section>
+              </div>
             ))}
-          </div>
+            <p
+              className="pt-2 text-center text-[10px] tracking-[0.18em] text-[#31353A]/42"
+              style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+            >
+              滑過暫停 · 點擊任一張放大瀏覽
+            </p>
+          </section>
 
           <section className="mt-10 grid grid-cols-1 gap-4 border-t border-[#D1BE9B]/22 pt-8 md:grid-cols-[1.1fr_0.9fr] md:items-center">
             <div>
