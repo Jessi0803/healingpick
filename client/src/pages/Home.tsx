@@ -647,10 +647,10 @@ export default function Home() {
           </h1>
 
           <p
-            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-3"
+            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-1"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
-            免費占卜完，自動推薦適合你的專屬手鍊 𓆩♡𓆪
+            免費占卜完，自動推薦適合你的專屬手鍊
           </p>
 
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
