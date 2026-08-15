@@ -2260,27 +2260,104 @@ export default function TarotPage() {
             }
             @media (max-width: 640px) {
               .tarot-entry-page {
-                padding: 54px 12px 18px;
+                padding: 50px 12px 18px;
+              }
+              .tarot-entry-shell > .text-center > span {
+                font-size: 9px !important;
+                line-height: 1.2;
+                letter-spacing: 0.36em !important;
+              }
+              .tarot-entry-heading {
+                margin-top: 9px !important;
+                font-size: 24px !important;
+                line-height: 1.28 !important;
+              }
+              .tarot-entry-copy {
+                margin-top: 6px !important;
+                font-size: 12px !important;
+                line-height: 1.5 !important;
+              }
+              .tarot-entry-partner {
+                align-items: flex-start;
+                justify-content: flex-start;
+                gap: 9px;
+                margin-top: 11px;
+                border-radius: 14px;
+                padding: 8px 11px;
+              }
+              .tarot-entry-partner-logo {
+                width: 36px;
+                height: 36px;
+                flex-basis: 36px;
+              }
+              .tarot-entry-partner-text {
+                gap: 0;
+              }
+              .tarot-entry-partner-text span:first-child {
+                font-size: 11px;
+                line-height: 1.42;
+              }
+              .tarot-entry-partner-text span:last-child {
+                display: none;
+              }
+              .tarot-entry-options {
+                gap: 12px;
+                margin-top: 14px;
+              }
+              .tarot-entry-card {
+                min-height: 138px;
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 11px 13px;
+                border-radius: 18px;
+                padding: 15px 16px;
+              }
+              .tarot-entry-card-label {
+                padding: 5px 9px;
+                font-size: 10px;
+                line-height: 1.15;
+              }
+              .tarot-entry-card-title {
+                margin-top: 9px;
+                font-size: 22px;
+                line-height: 1.28;
+              }
+              .tarot-entry-card-note {
+                margin-top: 6px;
+                font-size: 12px;
+                line-height: 1.58;
+              }
+              .tarot-entry-card-partner {
+                display: none;
+              }
+              .tarot-entry-card-media {
+                width: 64px;
+                height: 64px;
+              }
+              .tarot-entry-card-media--human {
+                width: 76px;
+                height: 76px;
+              }
+              .tarot-entry-card-arrow {
+                font-size: 11px;
+                line-height: 1.25;
+              }
+            }
+            @media (max-width: 390px) {
+              .tarot-entry-page {
+                padding-top: 44px;
               }
               .tarot-entry-shell > .text-center > span {
                 display: none;
               }
               .tarot-entry-heading {
                 margin-top: 0 !important;
-                font-size: 20px !important;
-                line-height: 1.25 !important;
+                font-size: 22px !important;
               }
               .tarot-entry-copy {
                 margin-top: 5px !important;
-                font-size: 11px !important;
-                line-height: 1.4 !important;
               }
               .tarot-entry-partner {
-                align-items: flex-start;
-                justify-content: flex-start;
-                gap: 9px;
-                margin-top: 8px;
-                border-radius: 14px;
+                margin-top: 9px;
                 padding: 7px 10px;
               }
               .tarot-entry-partner-logo {
@@ -2288,56 +2365,28 @@ export default function TarotPage() {
                 height: 32px;
                 flex-basis: 32px;
               }
-              .tarot-entry-partner-text {
-                gap: 0;
-              }
-              .tarot-entry-partner-text span:first-child {
-                font-size: 10px;
-                line-height: 1.35;
-              }
-              .tarot-entry-partner-text span:last-child {
-                display: none;
-              }
               .tarot-entry-options {
                 gap: 10px;
-                margin-top: 10px;
+                margin-top: 11px;
               }
               .tarot-entry-card {
-                min-height: 106px;
-                grid-template-columns: minmax(0, 1fr) auto;
-                gap: 10px 12px;
-                border-radius: 17px;
-                padding: 12px 13px;
-              }
-              .tarot-entry-card-label {
-                padding: 4px 8px;
-                font-size: 9px;
-                line-height: 1.1;
+                min-height: 128px;
+                padding: 13px 14px;
               }
               .tarot-entry-card-title {
-                margin-top: 7px;
-                font-size: 19px;
-                line-height: 1.25;
+                font-size: 21px;
               }
               .tarot-entry-card-note {
-                margin-top: 5px;
-                font-size: 10px;
-                line-height: 1.48;
-              }
-              .tarot-entry-card-partner {
-                display: none;
+                font-size: 11px;
+                line-height: 1.52;
               }
               .tarot-entry-card-media {
-                width: 54px;
-                height: 54px;
+                width: 58px;
+                height: 58px;
               }
               .tarot-entry-card-media--human {
-                width: 62px;
-                height: 62px;
-              }
-              .tarot-entry-card-arrow {
-                font-size: 10px;
-                line-height: 1.2;
+                width: 68px;
+                height: 68px;
               }
             }
           `}</style>
