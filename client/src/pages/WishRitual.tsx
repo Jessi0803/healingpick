@@ -136,27 +136,6 @@ export default function WishRitual() {
     return () => window.removeEventListener("keydown", onKey);
   }, [selectedIndex]);
 
-  useEffect(() => {
-    if (selectedIndex === null) return;
-
-    const onPointerDownCapture = (event: PointerEvent) => {
-      const target = event.target;
-      if (
-        target instanceof Element &&
-        target.closest('[data-ritual-lightbox-close="true"]')
-      ) {
-        event.preventDefault();
-        event.stopPropagation();
-        setSelectedIndex(null);
-      }
-    };
-
-    document.addEventListener("pointerdown", onPointerDownCapture, true);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDownCapture, true);
-    };
-  }, [selectedIndex]);
-
   const onTouchStart = (event: React.TouchEvent) => {
     touchX.current = event.touches[0].clientX;
   };
@@ -448,7 +427,10 @@ export default function WishRitual() {
       <Dialog
         open={isReviewsOpen}
         onOpenChange={(open) => {
-          if (!open && selectedIndex !== null) return;
+          if (!open && selectedIndex !== null) {
+            setSelectedIndex(null);
+            return;
+          }
           setIsReviewsOpen(open);
           if (!open) setSelectedIndex(null);
         }}
@@ -457,21 +439,10 @@ export default function WishRitual() {
           id="ritual-feedback-dialog"
           showCloseButton={false}
           onInteractOutside={(event) => {
-            if (selectedIndex === null) return;
-
-            const originalEvent = (
-              event as CustomEvent<{ originalEvent?: Event }>
-            ).detail?.originalEvent;
-            const target = originalEvent?.target;
-
-            if (
-              target instanceof Element &&
-              target.closest('[data-ritual-lightbox-close="true"]')
-            ) {
+            if (selectedIndex !== null) {
               closeLightbox();
+              event.preventDefault();
             }
-
-            event.preventDefault();
           }}
           className="h-[min(88vh,46rem)] max-w-[min(58rem,calc(100vw-1.5rem))] overflow-hidden border-white/55 bg-[#F8FBFF]/96 p-0 text-[#245879] shadow-[0_28px_80px_rgba(36,88,121,0.22)] backdrop-blur-xl sm:rounded-2xl"
           aria-describedby="ritual-feedback-description"
@@ -534,91 +505,83 @@ export default function WishRitual() {
               </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
 
-      {selectedReview &&
-        selectedIndex !== null &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div
-            className="lightbox-backdrop fixed inset-0 z-[1000] bg-[#171513]/88 px-3 py-5 backdrop-blur-md md:px-8"
-            role="dialog"
-            aria-modal="true"
-            onClick={closeLightbox}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          >
-            <div className="relative z-10 flex items-start justify-between gap-4 text-[#FAF7F4]">
-              <div>
-                <p
-                  className="text-[12px] tracking-[0.18em]"
-                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+          {selectedReview && selectedIndex !== null && (
+            <div
+              className="absolute inset-0 z-20 grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] bg-[#171513]/88 p-4 text-[#FAF7F4] backdrop-blur-md md:p-6"
+              onClick={closeLightbox}
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p
+                    className="text-[12px] tracking-[0.18em]"
+                    style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                  >
+                    魔法儀式顧客真實回饋
+                  </p>
+                  <p className="mt-1 text-[10px] tracking-[0.12em] text-white/48">
+                    {selectedIndex + 1} / {RITUAL_REVIEW_PROOFS.length}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    closeLightbox();
+                  }}
+                  aria-label="關閉"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
                 >
-                  魔法儀式顧客真實回饋
-                </p>
-                <p className="mt-1 text-[10px] tracking-[0.12em] text-white/48">
-                  {selectedIndex + 1} / {RITUAL_REVIEW_PROOFS.length}
-                </p>
+                  <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+                </button>
               </div>
+
+              <div className="relative flex min-h-0 items-center justify-center px-11 py-4">
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    stepLightbox(-1);
+                  }}
+                  aria-label="上一張"
+                  className="absolute left-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
+                >
+                  <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
+                </button>
+                <img
+                  key={selectedReview.id}
+                  src={selectedReview.image}
+                  alt={`魔法儀式顧客回饋，第 ${selectedIndex + 1} 張`}
+                  decoding="async"
+                  className="lightbox-image max-h-full max-w-full rounded-2xl object-contain shadow-2xl"
+                  onClick={(event) => event.stopPropagation()}
+                />
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    stepLightbox(1);
+                  }}
+                  aria-label="下一張"
+                  className="absolute right-0 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95"
+                >
+                  <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
+                </button>
+              </div>
+
               <button
                 type="button"
-                data-ritual-lightbox-close="true"
-                onPointerDown={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  closeLightbox();
-                }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  closeLightbox();
-                }}
-                aria-label="關閉"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
+                className="mx-auto rounded-full border border-white/12 bg-white/10 px-4 py-2 text-[10px] tracking-[0.14em] text-white/68 transition-colors hover:bg-white/16"
+                onClick={(event) => event.stopPropagation()}
               >
-                <X className="h-4.5 w-4.5" strokeWidth={1.7} />
+                左右滑動或按方向鍵切換
               </button>
             </div>
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                stepLightbox(-1);
-              }}
-              aria-label="上一張"
-              className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:left-8"
-            >
-              <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
-            </button>
-            <img
-              key={selectedReview.id}
-              src={selectedReview.image}
-              alt={`魔法儀式顧客回饋，第 ${selectedIndex + 1} 張`}
-              decoding="async"
-              className="lightbox-image fixed left-1/2 top-1/2 z-[1001] max-h-[calc(100vh-8rem)] max-w-[calc(100vw-6rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl object-contain shadow-2xl sm:max-w-[calc(100vw-8rem)]"
-              onClick={(event) => event.stopPropagation()}
-            />
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                stepLightbox(1);
-              }}
-              aria-label="下一張"
-              className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/90 shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 active:scale-95 md:right-8"
-            >
-              <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
-            </button>
-            <button
-              type="button"
-              className="fixed bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-white/12 bg-white/10 px-4 py-2 text-[10px] tracking-[0.14em] text-white/68 transition-colors hover:bg-white/16"
-              onClick={(event) => event.stopPropagation()}
-            >
-              左右滑動或按方向鍵切換
-            </button>
-          </div>,
-          document.body,
-        )}
+          )}
+        </DialogContent>
+      </Dialog>
     </PageLayout>
   );
 }
