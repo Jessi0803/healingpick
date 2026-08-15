@@ -2,134 +2,14 @@ import PageLayout from '@/components/PageLayout';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
-const TAROT_REVIEW_PROOFS = [
-  {
-    id: 1,
-    category: '後續驗證',
-    title: '後來真的有考上，也跟當時解讀講的一樣',
-    note: '適合想看「事情後續有沒有對上」的人先感受老師的解讀方式。',
-    image: '/gooday-tarot-reviews/review-1.jpg',
-  },
-  {
-    id: 2,
-    category: '感情關係',
-    title: '不是只問會不會復合，而是把關係狀態拆開看',
-    note: '對方想法、彼此互動、自己真正卡住的點，會一起整理。',
-    image: '/gooday-tarot-reviews/review-2.jpg',
-  },
-  {
-    id: 3,
-    category: '感情關係',
-    title: '曖昧、分開、等待回應，都能看得更清楚',
-    note: '不是替你做決定，而是讓你知道下一步可以怎麼看。',
-    image: '/gooday-tarot-reviews/review-3.jpg',
-  },
-  {
-    id: 4,
-    category: '人生方向',
-    title: '問完之後，心裡比較不會一直懸著',
-    note: '適合最近迷惘、想有人陪你把混亂感整理成重點。',
-    image: '/gooday-tarot-reviews/review-4.jpg',
-  },
-  {
-    id: 5,
-    category: '後續驗證',
-    title: '當時聽起來只是提醒，後來才發現真的有對上',
-    note: '保留真實對話感，讓你看到諮詢後的回饋脈絡。',
-    image: '/gooday-tarot-reviews/review-5.jpg',
-  },
-  {
-    id: 8,
-    category: '感情關係',
-    title: '關係裡說不出口的感覺，被講得很貼近',
-    note: '適合想問對方想法、關係走向、自己該不該主動的人。',
-    image: '/gooday-tarot-reviews/review-8.jpg',
-  },
-  {
-    id: 10,
-    category: '後續驗證',
-    title: '回來補充後續，才知道牌面提醒有多準',
-    note: '不是單一句「很準」，而是有事件發展後的回饋。',
-    image: '/gooday-tarot-reviews/review-10.jpg',
-  },
-  {
-    id: 14,
-    category: '升學考試',
-    title: '面對重要考試時，先把擔心和可能走向看清楚',
-    note: '占卜不取代努力，但可以幫你整理焦慮和準備方向。',
-    image: '/gooday-tarot-reviews/review-14.jpg',
-  },
-  {
-    id: 19,
-    category: '感情關係',
-    title: '感情問題不只看結果，也看自己在消耗什麼',
-    note: '有些答案不是追問對方，而是先看見自己真正不安的地方。',
-    image: '/gooday-tarot-reviews/review-19.jpg',
-  },
-  {
-    id: 22,
-    category: '人生方向',
-    title: '把很散的狀態，整理成比較能往前的提醒',
-    note: '適合卡在選擇、工作、人際或人生節點的人。',
-    image: '/gooday-tarot-reviews/review-22.jpg',
-  },
-  {
-    id: 25,
-    category: '後續驗證',
-    title: '後續發展回來對照，會更知道當時牌面在說什麼',
-    note: '保留匿名截圖證據，比漂亮文案更有說服力。',
-    image: '/gooday-tarot-reviews/review-25.jpg',
-  },
-  {
-    id: 31,
-    category: '感情關係',
-    title: '看見對方，也看見自己在關係裡的位置',
-    note: '適合想問曖昧、復合、冷淡、已讀不回與關係未來的人。',
-    image: '/gooday-tarot-reviews/review-31.jpg',
-  },
-  {
-    id: 37,
-    category: '後續驗證',
-    title: '真實客人回傳的後續，是最有力量的信任感',
-    note: '頁面保留原始 IG / LINE 截圖感，個資已由原素材處理。',
-    image: '/gooday-tarot-reviews/review-37.jpg',
-  },
-  {
-    id: 40,
-    category: '人生方向',
-    title: '不是叫你立刻改變，而是先知道自己在哪裡',
-    note: '老師會用比較白話的方式，把牌面變成你聽得懂的提醒。',
-    image: '/gooday-tarot-reviews/review-40.jpg',
-  },
-  {
-    id: 46,
-    category: '感情關係',
-    title: '關係裡的猶豫、拉扯和期待，都可以被好好攤開',
-    note: '如果你一直想問同一件事，可能是心裡還沒被接住。',
-    image: '/gooday-tarot-reviews/review-46.jpg',
-  },
-  {
-    id: 52,
-    category: '後續驗證',
-    title: '從當下解讀，到後來事件發生，有完整回饋脈絡',
-    note: '這類案例比單純五星評價更能看出服務的穩定度。',
-    image: '/gooday-tarot-reviews/review-52.jpg',
-  },
-  {
-    id: 58,
-    category: '感情關係',
-    title: '想知道對方怎麼想，也想知道自己該怎麼穩住',
-    note: '感情占卜最重要的不是催答案，而是先看清楚互動模式。',
-    image: '/gooday-tarot-reviews/review-58.jpg',
-  },
-  {
-    id: 63,
-    category: '後續驗證',
-    title: '聊完不是結束，很多人會回來說後來真的對上',
-    note: '真人塔羅的價值，在於把當下狀態和後續提醒連起來。',
-    image: '/gooday-tarot-reviews/review-63.jpg',
-  },
-];
+const TAROT_REVIEW_PROOFS = Array.from({ length: 63 }, (_, index) => {
+  const id = index + 1;
+
+  return {
+    id,
+    image: `/gooday-tarot-reviews/review-${id}.jpg`,
+  };
+});
 
 export default function TarotReviews() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
