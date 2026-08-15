@@ -19,7 +19,7 @@ import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
 import { PRODUCTS } from "@/data/products";
 import ContactDialog from "@/components/ContactDialog";
-import { ChevronDown, ExternalLink, Instagram, Sparkles } from "lucide-react";
+import { ChevronDown, ExternalLink, Heart, Instagram, Sparkles } from "lucide-react";
 
 // ─── Crystal SVG Components ──────────────────────────────────────────────────
 const CrystalPurple = () => (
@@ -665,10 +665,16 @@ export default function Home() {
 
           <button
             onClick={scrollToTestimonials}
-            className="mt-5 inline-flex items-center justify-center rounded-full border border-[#D1BE9B]/28 bg-white/30 px-5 py-2 text-[11px] tracking-[0.18em] text-[#A38D6B] backdrop-blur-sm transition-all duration-300 hover:border-[#D1BE9B]/55 hover:bg-white/55 hover:text-[#31353A] active:scale-95"
+            className="group mt-6 inline-flex min-h-[3.75rem] items-center justify-center gap-3 rounded-full border border-[#D1BE9B]/45 bg-white/68 py-2.5 pl-2.5 pr-6 text-[12px] tracking-[0.16em] text-[#8A7250] shadow-[0_18px_46px_rgba(163,141,107,0.18)] backdrop-blur-md transition-all duration-500 hover:-translate-y-0.5 hover:border-[#A38D6B]/60 hover:bg-white/88 hover:text-[#31353A] hover:shadow-[0_22px_56px_rgba(163,141,107,0.24)] active:scale-95 sm:text-[13px] sm:tracking-[0.18em]"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
-            ♡ 看看大家怎麼被療癒
+            <span
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#F8ECEE] text-[#C98990] shadow-[inset_0_0_0_1px_rgba(201,137,144,0.18),0_8px_20px_rgba(201,137,144,0.16)] transition-all duration-500 group-hover:bg-[#F4DCE0] group-hover:text-[#B8747C]"
+              aria-hidden="true"
+            >
+              <Heart className="h-5 w-5 fill-current" strokeWidth={1.5} />
+            </span>
+            <span>看看大家怎麼被療癒</span>
           </button>
         </div>
 
