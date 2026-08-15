@@ -617,9 +617,9 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="max-w-3xl z-10 animate-fade-in-up -mt-28 md:-mt-24">
+        <div className="max-w-3xl z-10 animate-fade-in-up -mt-16 md:-mt-24">
           {/* Mochi portrait */}
-          <div className="mb-4 hidden translate-y-4 justify-center md:flex">
+          <div className="mb-4 flex translate-y-4 justify-center">
             <div className="mochi-portrait-wrap relative inline-flex">
               <span className="mochi-star mochi-star--one" aria-hidden="true">
                 ✦
@@ -633,34 +633,34 @@ export default function Home() {
               <img
                 src="/cat.png"
                 alt="Mochi"
-                className="mochi-portrait-float h-36 w-auto object-contain drop-shadow-[0_14px_28px_rgba(163,141,107,0.22)]"
+                className="mochi-portrait-float h-32 w-auto object-contain drop-shadow-[0_14px_28px_rgba(163,141,107,0.22)] md:h-36"
               />
             </div>
           </div>
 
           {/* Main title */}
           <h1
-            className="mb-2 text-xl font-extralight leading-[1.45] tracking-[0.2em] text-[#31353A] md:mb-3 md:text-3xl md:leading-[1.8]"
+            className="text-xl md:text-3xl leading-[1.6] md:leading-[1.8] mb-3 tracking-[0.2em] font-extralight text-[#31353A]"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
           >
             Mochi 小宇宙
           </h1>
 
           <p
-            className="mx-auto mb-3 max-w-lg text-xs tracking-[0.12em] text-[#31353A]/54 md:text-sm md:tracking-[0.15em]"
+            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-3"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
             免費占卜完，自動推薦適合你的專屬手鍊 𓆩♡𓆪
           </p>
 
-          <div className="mx-auto grid w-full max-w-[22rem] grid-cols-2 gap-x-3 gap-y-2.5 sm:max-w-4xl sm:gap-3 lg:grid-cols-4">
+          <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
             <Link href="/tarot">
               <button
-                className="group flex min-h-[3.25rem] w-full items-center justify-center gap-2 rounded-full border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 px-3 py-2.5 text-[#6F6688] transition-all duration-500 hover:border-[#3D4144] hover:bg-[#3D4144] hover:text-white active:scale-95 sm:min-h-[3.5rem] sm:gap-2.5 sm:px-4"
+                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 px-4 py-2.5 text-[#6F6688] transition-all duration-500 hover:border-[#3D4144] hover:bg-[#3D4144] hover:text-white active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <span
-                  className="grid h-7 w-7 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/45 bg-white/75 shadow-[0_5px_18px_rgba(209,190,155,0.14)] transition-colors duration-500 group-hover:border-white/25 group-hover:bg-white/90 sm:h-8 sm:w-8"
+                  className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/45 bg-white/75 shadow-[0_5px_18px_rgba(209,190,155,0.14)] transition-colors duration-500 group-hover:border-white/25 group-hover:bg-white/90"
                   aria-hidden="true"
                 >
                   <img
@@ -670,13 +670,13 @@ export default function Home() {
                   />
                 </span>
                 <span className="flex min-w-0 flex-col items-start leading-none">
-                  <span className="text-[10px] tracking-[0.1em] sm:text-xs sm:tracking-[0.14em]">
+                  <span className="text-[11px] tracking-[0.14em] sm:text-xs">
                     塔羅占卜
                   </span>
-                  <span className="mt-1 text-[9px] tracking-[0.04em] text-[#6F6688]/68 transition-colors duration-500 group-hover:text-white/62 sm:text-[10px] sm:tracking-[0.14em]">
+                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6F6688]/68 transition-colors duration-500 group-hover:text-white/62 sm:tracking-[0.14em]">
                     日日好日
                     <span
-                      className="ml-1 text-[11px] italic tracking-[0.04em] sm:ml-1.5 sm:text-[13px] sm:tracking-[0.08em]"
+                      className="ml-1.5 text-[12px] italic tracking-[0.08em] sm:text-[13px]"
                       style={{ fontFamily: "Cormorant Garamond, serif" }}
                     >
                       gooday
@@ -687,7 +687,7 @@ export default function Home() {
             </Link>
             <Link href="/shop/custom-bracelet">
               <button
-                className="flex min-h-[3.25rem] w-full items-center justify-center rounded-full bg-[#D1BE9B] px-3 py-2.5 text-[11px] tracking-[0.1em] text-[#31353A] transition-all duration-500 hover:bg-[#3D4144] hover:text-[#FAF7F4] active:scale-95 sm:min-h-[3.5rem] sm:px-4 sm:py-3 sm:text-xs sm:tracking-[0.14em]"
+                className="flex min-h-[3.5rem] w-full items-center justify-center rounded-full bg-[#D1BE9B] px-4 py-3 text-xs tracking-[0.14em] text-[#31353A] transition-all duration-500 hover:bg-[#3D4144] hover:text-[#FAF7F4] active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 客製化能量手鍊
@@ -695,7 +695,7 @@ export default function Home() {
             </Link>
             <Link href="/wish-ritual">
               <button
-                className="group flex min-h-[3.25rem] w-full items-center justify-center gap-2 rounded-full border border-[#D1BE9B]/34 bg-white/38 px-3 py-2.5 text-[11px] tracking-[0.1em] text-[#8A7250] shadow-[0_10px_28px_rgba(209,190,155,0.12)] backdrop-blur-sm transition-all duration-500 hover:border-[#A38D6B]/55 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 sm:min-h-[3.5rem] sm:gap-2.5 sm:px-4 sm:py-3 sm:text-xs sm:tracking-[0.14em]"
+                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#D1BE9B]/34 bg-white/38 px-4 py-3 text-xs tracking-[0.14em] text-[#8A7250] shadow-[0_10px_28px_rgba(209,190,155,0.12)] backdrop-blur-sm transition-all duration-500 hover:border-[#A38D6B]/55 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -708,7 +708,7 @@ export default function Home() {
                 aria-expanded={isMochiMenuOpen}
                 aria-controls="mochi-reading-menu"
                 onClick={() => setIsMochiMenuOpen((open) => !open)}
-                className="group flex min-h-[3.25rem] w-full items-center justify-center gap-2 rounded-full bg-[#3D4144] px-3 py-2.5 text-[11px] tracking-[0.1em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95 sm:min-h-[3.5rem] sm:gap-2.5 sm:px-4 sm:py-3 sm:text-xs sm:tracking-[0.14em]"
+                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full bg-[#3D4144] px-4 py-3 text-xs tracking-[0.14em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -723,7 +723,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={openTestimonials}
-                className="home-testimonial-heart-button group mt-1 md:mt-3"
+                className="home-testimonial-heart-button group mt-3"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                 aria-label="客人寶寶們回饋"
               >
