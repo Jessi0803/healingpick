@@ -1543,6 +1543,7 @@ export default function TarotPage() {
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [readingCarouselApi, setReadingCarouselApi] = useState<CarouselApi>();
+  const [readingSwipeHintSeen, setReadingSwipeHintSeen] = useState(false);
   const [shuffling, setShuffling] = useState(false);
   const [isShufflingActive, setIsShufflingActive] = useState(false);
   const [shuffledDeck, setShuffledDeck] = useState<TarotCard[]>([]);
@@ -1784,9 +1785,12 @@ export default function TarotPage() {
     if (!readingCarouselApi) return;
     const syncFromCarousel = () =>
       setSelectedCard(readingCarouselApi.selectedScrollSnap());
+    const hideSwipeHint = () => setReadingSwipeHintSeen(true);
     readingCarouselApi.on("select", syncFromCarousel);
+    readingCarouselApi.on("pointerDown", hideSwipeHint);
     return () => {
       readingCarouselApi.off("select", syncFromCarousel);
+      readingCarouselApi.off("pointerDown", hideSwipeHint);
     };
   }, [readingCarouselApi]);
 
@@ -1799,6 +1803,7 @@ export default function TarotPage() {
   const startReading = (cards = drawnCards) => {
     setStep("reading");
     setSelectedCard(cards.length > 0 ? 0 : null);
+    setReadingSwipeHintSeen(false);
     setLlmInterpretation("");
     setReadingRecommendation(null);
     setFollowUpQuestion("");
@@ -3822,7 +3827,20 @@ export default function TarotPage() {
                   </CarouselContent>
                 </Carousel>
 
-                <div className="mt-3 flex items-center justify-center gap-2 md:hidden">
+                <p
+                  className={`mt-3 text-center text-[11px] tracking-[0.18em] text-[#31353A]/46 transition-opacity duration-500 md:hidden ${
+                    readingSwipeHintSeen ? "opacity-0" : "opacity-100"
+                  }`}
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 200,
+                  }}
+                  aria-hidden={readingSwipeHintSeen}
+                >
+                  ← 左右滑動看每張牌的解讀 →
+                </p>
+
+                <div className="mt-2 flex items-center justify-center gap-2 md:hidden">
                   {drawnCards.map((_, idx) => (
                     <button
                       key={idx}
