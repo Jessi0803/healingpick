@@ -479,11 +479,11 @@ export default function Home() {
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
             <Link href="/tarot">
               <button
-                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#9B8DC0]/32 bg-gradient-to-br from-[#F3EFF9] to-[#E4DDF0] px-4 py-2.5 text-[#6A6084] shadow-[0_8px_22px_rgba(155,141,192,0.14)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#9B8DC0]/60 hover:from-[#E0D7F1] hover:to-[#CCBFE5] hover:text-[#463D5F] hover:shadow-[0_14px_30px_rgba(155,141,192,0.24)] active:scale-95 active:translate-y-0"
+                className="group hero-pill hero-pill--lavender flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-2.5"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <span
-                  className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#9B8DC0]/35 bg-white/80 shadow-[0_5px_18px_rgba(155,141,192,0.16)] transition-colors duration-500 group-hover:border-[#9B8DC0]/55 group-hover:bg-white"
+                  className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full border border-white/70 bg-white/85 shadow-[0_4px_14px_rgba(155,141,192,0.22)] transition-colors duration-500 group-hover:bg-white"
                   aria-hidden="true"
                 >
                   <img
@@ -496,7 +496,7 @@ export default function Home() {
                   <span className="text-[11px] tracking-[0.14em] sm:text-xs">
                     塔羅占卜
                   </span>
-                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6A6084]/70 transition-colors duration-500 group-hover:text-[#463D5F]/75 sm:tracking-[0.14em]">
+                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6A6084]/72 sm:tracking-[0.14em]">
                     日日好日
                     <span
                       className="ml-1.5 text-[12px] italic tracking-[0.08em] sm:text-[13px]"
@@ -510,7 +510,7 @@ export default function Home() {
             </Link>
             <Link href="/shop/custom-bracelet">
               <button
-                className="flex min-h-[3.5rem] w-full items-center justify-center rounded-full border border-[#A38D6B]/38 bg-gradient-to-br from-[#EFDEC2] to-[#D7C097] px-4 py-3 text-xs tracking-[0.14em] text-[#67542F] shadow-[0_8px_22px_rgba(163,141,107,0.20)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#A38D6B]/65 hover:from-[#E3CDA3] hover:to-[#C7AC7C] hover:text-[#3A2F1C] hover:shadow-[0_14px_30px_rgba(163,141,107,0.28)] active:scale-95 active:translate-y-0"
+                className="hero-pill hero-pill--gold flex min-h-[3.5rem] w-full items-center justify-center rounded-full px-4 py-3 text-xs tracking-[0.14em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 客製化能量手鍊
@@ -518,7 +518,7 @@ export default function Home() {
             </Link>
             <Link href="/wish-ritual">
               <button
-                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#D6A9A6]/42 bg-gradient-to-br from-[#FBEDEB] to-[#F2DBD8] px-4 py-3 text-xs tracking-[0.14em] text-[#94665E] shadow-[0_8px_22px_rgba(214,169,166,0.18)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#C98F8A]/62 hover:from-[#F3D8D5] hover:to-[#E6BCB7] hover:text-[#5C3A35] hover:shadow-[0_14px_30px_rgba(214,169,166,0.28)] active:scale-95 active:translate-y-0"
+                className="group hero-pill hero-pill--rose flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-xs tracking-[0.14em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -531,7 +531,7 @@ export default function Home() {
                 aria-expanded={isMochiMenuOpen}
                 aria-controls="mochi-reading-menu"
                 onClick={() => setIsMochiMenuOpen(open => !open)}
-                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#8D99A6]/38 bg-gradient-to-br from-[#EEF0F3] to-[#DCE1E7] px-4 py-3 text-xs tracking-[0.14em] text-[#586372] shadow-[0_8px_22px_rgba(93,105,120,0.16)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#8D99A6]/65 hover:from-[#D9DFE6] hover:to-[#C3CBD5] hover:text-[#333B47] hover:shadow-[0_14px_30px_rgba(93,105,120,0.24)] active:scale-95 active:translate-y-0"
+                className="group hero-pill hero-pill--mist flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-xs tracking-[0.14em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
