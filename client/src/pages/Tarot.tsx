@@ -2420,7 +2420,7 @@ export default function TarotPage() {
                 選擇占卜方式
               </h1>
               <p className="tarot-entry-copy mx-auto mt-3 max-w-[28rem] text-[13px] leading-[2]">
-                兩種占卜方式，慢慢挑一個喜歡的 ᓚᘏᗢ
+                兩種占卜方式，慢慢挑一個喜歡的 🐈
               </p>
               <div className="tarot-entry-partner" aria-label="真人塔羅合作品牌">
                 <img
