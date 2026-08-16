@@ -3136,20 +3136,20 @@ export default function TarotPage() {
                 </button>
 
                 {/* Popular questions — collapsed by default */}
-                <div className="mt-4 border-t border-[#D1BE9B]/14 pt-4">
+                <div className="mt-4 pt-4">
                   <button
                     type="button"
                     onClick={() => setIsPopularQuestionsOpen(open => !open)}
                     aria-expanded={isPopularQuestionsOpen}
-                    className="mx-auto flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#D1BE9B]/28 bg-white/55 px-4 py-2.5 text-[11px] tracking-[0.1em] text-[#8A7250] transition-all duration-300 hover:border-[#D1BE9B]/55 hover:bg-white active:scale-[0.98] sm:px-5 sm:text-[11.5px] sm:tracking-[0.16em]"
+                    className="flex w-full min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#D1BE9B]/70 bg-[#D1BE9B]/20 px-4 py-2.5 text-[12px] tracking-[0.1em] text-[#6B5324] shadow-[0_1px_10px_rgba(209,190,155,0.3)] transition-[background-color,border-color,box-shadow,transform] duration-200 ease-out hover:border-[#D1BE9B] hover:bg-[#D1BE9B]/32 active:scale-[0.98] sm:text-[12.5px] sm:tracking-[0.16em]"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                     }}
                   >
                     不知道問什麼嗎？看看大家都在問
                     <span
-                      className={`text-[10px] leading-none text-[#A38D6B] transition-transform duration-300 ${
+                      className={`text-[10px] leading-none text-[#6B5324] transition-transform duration-200 ease-out ${
                         isPopularQuestionsOpen ? "rotate-180" : ""
                       }`}
                       aria-hidden="true"
