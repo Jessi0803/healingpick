@@ -2932,7 +2932,7 @@ export default function TarotPage() {
                       className="mt-2 text-[14px] leading-[1.8] tracking-[0.16em] text-[#34322d]"
                       style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                     >
-                      購買真人塔羅或魔法儀式，贈送神輿卡祝福
+                      購買即贈送神輿卡祝福
                     </h2>
                     <p
                       className="mt-2 text-[12px] leading-[1.9] tracking-[0.07em] text-[#31353A]/64"

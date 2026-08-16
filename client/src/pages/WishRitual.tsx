@@ -249,7 +249,7 @@ export default function WishRitual() {
                     className="mt-3 text-[15px] leading-[1.8] tracking-[0.2em] text-[#245879] md:text-base"
                     style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
                   >
-                    購買真人塔羅或魔法儀式，贈送神輿卡祝福
+                    購買即贈送神輿卡祝福
                   </h2>
                   <p
                     className="mt-3 max-w-2xl text-[12px] leading-[2] tracking-[0.08em] text-[#245879]/72"
