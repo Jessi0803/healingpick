@@ -4037,18 +4037,24 @@ export default function TarotPage() {
 
               {llmInterpretation && (
                 <div className="mb-8">
-                  <div className="mb-4">
-                    <h3
-                      className="text-[18px] leading-[1.7] tracking-[0.14em] text-[#31353A]"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      針對結果還有問題嗎？
-                    </h3>
+                  <div className="mb-5 text-center">
+                    <div className="flex items-center justify-center gap-2.5">
+                      <span className="hidden h-px flex-1 bg-gradient-to-r from-transparent to-[#D1BE9B]/45 sm:block" />
+                      <span className="text-[12px] text-[#D1BE9B]">✦</span>
+                      <h3
+                        className="text-[19px] leading-[1.6] tracking-[0.14em] text-[#31353A] sm:text-[21px]"
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 500,
+                        }}
+                      >
+                        針對結果還有問題嗎？
+                      </h3>
+                      <span className="text-[12px] text-[#D1BE9B]">✦</span>
+                      <span className="hidden h-px flex-1 bg-gradient-to-l from-transparent to-[#D1BE9B]/45 sm:block" />
+                    </div>
                     <p
-                      className="mt-2 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
+                      className="mt-2.5 text-[12px] leading-[1.9] tracking-[0.1em] text-[#31353A]/62"
                       style={{
                         fontFamily: "Noto Sans TC, sans-serif",
                         fontWeight: 300,
