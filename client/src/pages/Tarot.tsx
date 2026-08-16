@@ -3037,12 +3037,12 @@ export default function TarotPage() {
 
   return (
     <PageLayout>
-      <div className="min-h-screen py-12 px-4 md:px-8">
+      <div className="min-h-screen pt-4 pb-12 px-4 md:py-12 md:px-8">
         <div className="max-w-5xl mx-auto">
           {/* ── QUESTION ───────────────────────────────────────────────────── */}
           {step === "question" && (
             <div className="max-w-3xl mx-auto animate-fade-in-up">
-              <div className="text-center mb-10">
+              <div className="text-center mb-4 md:mb-10">
                 <span
                   className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
                   style={{
@@ -3053,7 +3053,7 @@ export default function TarotPage() {
                   Step 1
                 </span>
                 <h2
-                  className="text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-2"
+                  className="text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-1 md:mt-2"
                   style={{
                     fontFamily: "Noto Serif TC, serif",
                     fontWeight: 200,
@@ -3062,7 +3062,7 @@ export default function TarotPage() {
                   設定你的問題
                 </h2>
                 <p
-                  className="mt-2 text-[12px] text-[#31353A]/58 tracking-wider leading-[1.9]"
+                  className="mt-1 md:mt-2 text-[12px] text-[#31353A]/58 tracking-wider leading-[1.75]"
                   style={{
                     fontFamily: "Noto Serif TC, serif",
                     fontWeight: 200,
@@ -3072,11 +3072,11 @@ export default function TarotPage() {
                 </p>
               </div>
 
-              <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20">
+              <div className="glass-panel rounded-2xl p-5 md:p-8 border border-[#D1BE9B]/20">
                 {/* Question input */}
-                <div className="mb-6">
+                <div className="mb-4">
                   <label
-                    className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-3"
+                    className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
                       fontWeight: 300,
@@ -3090,27 +3090,29 @@ export default function TarotPage() {
                     onChange={e => setQuestion(e.target.value.slice(0, 300))}
                     maxLength={300}
                     placeholder="例如：我跟他還有機會嗎？&#10;例如：我現在適合換工作嗎？"
-                    rows={3}
+                    rows={2}
                     className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-3 text-xs text-[#31353A]/80 tracking-wider leading-[1.9] resize-none focus:outline-none focus:border-[#D1BE9B]/50 placeholder:text-[#31353A]/46"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
                       fontWeight: 300,
                     }}
                   />
-                  <div
-                    className="mt-1 text-right text-[10px] tracking-wider"
-                    style={{
-                      fontFamily: "Cormorant Garamond, serif",
-                      color:
-                        question.length >= 300
-                          ? "#C9837A"
-                          : question.length >= 250
-                            ? "#A38D6B"
-                            : "#31353A66",
-                    }}
-                  >
-                    {question.length} / 300
-                  </div>
+                  {question.length >= 200 && (
+                    <div
+                      className="mt-1 text-right text-[10px] tracking-wider"
+                      style={{
+                        fontFamily: "Cormorant Garamond, serif",
+                        color:
+                          question.length >= 300
+                            ? "#C9837A"
+                            : question.length >= 250
+                              ? "#A38D6B"
+                              : "#31353A66",
+                      }}
+                    >
+                      {question.length} / 300
+                    </div>
+                  )}
                   <p
                     className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{
@@ -3134,12 +3136,12 @@ export default function TarotPage() {
                 </button>
 
                 {/* Popular questions — collapsed by default */}
-                <div className="mt-6 border-t border-[#D1BE9B]/14 pt-5">
+                <div className="mt-4 border-t border-[#D1BE9B]/14 pt-4">
                   <button
                     type="button"
                     onClick={() => setIsPopularQuestionsOpen(open => !open)}
                     aria-expanded={isPopularQuestionsOpen}
-                    className="mx-auto flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#D1BE9B]/28 bg-white/55 px-5 py-2.5 text-[11.5px] tracking-[0.16em] text-[#8A7250] transition-all duration-300 hover:border-[#D1BE9B]/55 hover:bg-white active:scale-[0.98]"
+                    className="mx-auto flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#D1BE9B]/28 bg-white/55 px-4 py-2.5 text-[11px] tracking-[0.1em] text-[#8A7250] transition-all duration-300 hover:border-[#D1BE9B]/55 hover:bg-white active:scale-[0.98] sm:px-5 sm:text-[11.5px] sm:tracking-[0.16em]"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
                       fontWeight: 300,
