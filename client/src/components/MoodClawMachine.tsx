@@ -790,18 +790,18 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
       className="relative w-full max-w-[500px] overflow-hidden rounded-[28px] border border-[#D1BE9B]/35 bg-[#FFFDF8]/82 text-[#31353A] shadow-[0_18px_46px_rgba(122,99,72,0.13)] backdrop-blur-sm"
       style={{ contentVisibility: "auto", containIntrinsicSize: "560px", contain: "layout paint style" }}
     >
-      <div className="relative flex items-center justify-between gap-3 border-b border-[#D1BE9B]/20 bg-[linear-gradient(180deg,rgba(255,253,248,0.98),rgba(243,235,221,0.82))] px-5 py-4">
+      <div className="relative flex flex-col gap-2 border-b border-[#D1BE9B]/20 bg-[linear-gradient(180deg,rgba(255,253,248,0.98),rgba(243,235,221,0.82))] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#D1BE9B]/70 to-transparent" />
         <div className="min-w-0">
-          <p className="truncate text-[15px] font-medium tracking-[0.12em] text-[#6F5A3A]"
+          <p className="text-[15px] font-medium tracking-[0.12em] text-[#6F5A3A]"
             style={{ fontFamily: "Noto Serif TC, serif" }}>
-            心情抓娃娃機
+            等解讀的時候，先夾一隻陪你
           </p>
-          <p className="truncate text-[12px] leading-relaxed tracking-[0.08em] text-[#31353A]/52">
-            先夾隻娃娃等待吧
+          <p className="mt-0.5 text-[12px] leading-relaxed tracking-[0.08em] text-[#31353A]/52">
+            夾到的娃娃，會陪你一起看接下來的解讀
           </p>
         </div>
-        <div className="flex items-center gap-1.5 rounded-full border border-[#D1BE9B]/35 bg-white/70 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] shadow-[0_8px_18px_rgba(209,190,155,0.16)]">
+        <div className="flex shrink-0 items-center gap-1.5 self-start whitespace-nowrap rounded-full border border-[#D1BE9B]/35 bg-white/70 px-3 py-1.5 text-[11px] tracking-[0.12em] text-[#A38D6B] shadow-[0_8px_18px_rgba(209,190,155,0.16)] sm:self-auto">
           <Sparkles className="size-3.5 fill-[#F3D88D]/40" />
           <span>解析生成中</span>
         </div>
@@ -961,7 +961,7 @@ export function MoodClawMachine({ onPrizeCaught }: MoodClawMachineProps) {
                     拖曳爪子找位置
                   </p>
                   <p className="mt-1 text-[12px] leading-relaxed tracking-[0.04em] text-[#31353A]/62">
-                    移到想抓的位置後，再按下降抓取。
+                    移到想抓的位置後，再按下降抓取。每隻陪你的方式不一樣，抓到誰都可以。
                   </p>
                 </>
               )}
