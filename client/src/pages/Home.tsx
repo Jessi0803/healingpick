@@ -442,7 +442,7 @@ export default function Home() {
           className="max-w-3xl z-10 animate-fade-in-up -mt-16 scroll-mt-24 md:-mt-24"
         >
           {/* Mochi portrait */}
-          <div className="mb-4 flex translate-y-4 justify-center">
+          <div className="mb-1 flex justify-center">
             <div className="mochi-portrait-wrap relative inline-flex">
               <span className="mochi-star mochi-star--one" aria-hidden="true">
                 ✦
@@ -463,17 +463,17 @@ export default function Home() {
 
           {/* Main title */}
           <h1
-            className="text-xl md:text-3xl leading-[1.6] md:leading-[1.8] mb-3 tracking-[0.2em] font-extralight text-[#31353A]"
+            className="text-xl md:text-3xl leading-[1.6] md:leading-[1.8] mb-1 tracking-[0.2em] font-extralight text-[#31353A]"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 200 }}
           >
             Mochi 小宇宙
           </h1>
 
           <p
-            className="text-xs md:text-sm text-[#31353A]/54 tracking-[0.15em] max-w-lg mx-auto mb-1"
+            className="mb-3 whitespace-nowrap text-[10px] leading-none tracking-[0.1em] text-[#31353A]/42 sm:text-[11px] sm:tracking-[0.15em]"
             style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
           >
-            免費占卜完，自動推薦適合你的專屬手鍊
+            ✦ 免費占卜完，自動推薦適合你的專屬手鍊 ✦
           </p>
 
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
