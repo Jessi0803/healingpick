@@ -2821,7 +2821,7 @@ export default function TarotPage() {
             onOpenChange={setIsHumanTarotReviewsOpen}
             eyebrow="Human Tarot Proof"
             title="真人塔羅顧客回饋"
-            description="每一則都是占卜結束後親手寫下的真實感受，看看這場塔羅有多打中人心。"
+            description="他該不該等？這份工作要不要走？那些難以決定的事，他們在這裡找到了答案。"
             lightboxTitle="塔羅顧客真實回饋"
             itemAltPrefix="塔羅顧客回饋"
             items={HUMAN_TAROT_REVIEW_PROOFS}

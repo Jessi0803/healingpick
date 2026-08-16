@@ -352,7 +352,7 @@ export default function WishRitual() {
         onOpenChange={setIsReviewsOpen}
         eyebrow="Ritual Proof"
         title="魔法儀式顧客回饋"
-        description="一次看全部真實回饋，點開任一張可置中放大瀏覽。"
+        description="等了好久的訊息、遲遲沒動靜的緣分——看看儀式之後，他們的生活起了什麼變化。"
         lightboxTitle="魔法儀式顧客真實回饋"
         itemAltPrefix="魔法儀式顧客回饋"
         items={RITUAL_REVIEW_PROOFS}

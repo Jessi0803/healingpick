@@ -50,7 +50,7 @@ export default function FeedbackCompanion({
         className="order-1 mb-5 max-w-[9.4rem] rounded-[1.05rem] rounded-br-sm border border-white/65 bg-white/86 px-3 py-2 text-left text-[12px] leading-[1.55] tracking-[0.08em] text-[#245879] shadow-[0_12px_30px_rgba(36,88,121,0.16)] backdrop-blur-md transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-white active:scale-[0.98] sm:max-w-[10.8rem] sm:px-4"
         style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
       >
-        想看看顧客回饋嗎 🦋
+        想看看顧客回饋嗎 🕊️
       </button>
     </div>,
     document.body,

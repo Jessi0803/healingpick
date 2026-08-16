@@ -1179,7 +1179,7 @@ export default function CustomBraceletPage() {
         onOpenChange={setIsFeedbackGalleryOpen}
         eyebrow="Real Feedback"
         title="顧客回饋＆客製化實拍"
-        description="一次看全部顧客回饋與客製化商品實拍，點開任一張可置中放大瀏覽。"
+        description="想招財、想安定心神、想留住一段緣分——看看他們戴上專屬手鍊之後的真實感受。"
         lightboxTitle="客製化手鍊顧客真實回饋"
         itemAltPrefix="客製化手鍊顧客回饋"
         items={FEEDBACK_GALLERY_ITEMS}
