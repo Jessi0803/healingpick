@@ -608,57 +608,30 @@ body::after {
   border: 1px solid rgba(209, 190, 155, 0.18);
 }
 
-/* Hero choice pills — frosted glass that only lets its color bloom at the lower edge */
+/* Hero choice pills — frosted glass lit from above, color pooling at the top edge */
 .hero-pill {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background:
-    linear-gradient(
-      158deg,
-      rgba(255, 255, 255, 0.94) 0%,
-      rgba(255, 255, 255, 0.66) 44%,
-      var(--pill-tint) 100%
-    );
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.62);
+  background: linear-gradient(
+    180deg,
+    var(--pill-tint) 0%,
+    rgba(255, 255, 255, 0.8) 62%,
+    rgba(255, 255, 255, 0.62) 100%
+  );
+  backdrop-filter: blur(10px) saturate(125%);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  border: 1px solid var(--pill-line);
   color: var(--pill-ink);
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    inset 0 -14px 24px -16px var(--pill-glow),
-    0 12px 30px -14px var(--pill-glow),
-    0 2px 6px -4px rgba(49, 53, 58, 0.12);
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 14px 26px -22px var(--pill-glow),
+    0 1px 2px rgba(49, 53, 58, 0.03);
   transition:
     transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.5s ease,
-    background 0.5s ease;
-}
-
-/* Hue hairline drawn over the white rim, so the edge reads as light, not ink */
-.hero-pill::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(
-    150deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    var(--pill-line) 58%,
-    rgba(255, 255, 255, 0.55) 100%
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  opacity: 0.72;
-  pointer-events: none;
+    background 0.5s ease,
+    border-color 0.5s ease;
 }
 
 /* Light sweeps across once on hover */
@@ -669,9 +642,9 @@ body::after {
   border-radius: inherit;
   background: linear-gradient(
     105deg,
-    transparent 32%,
-    rgba(255, 255, 255, 0.58) 48%,
-    transparent 64%
+    transparent 34%,
+    rgba(255, 255, 255, 0.42) 48%,
+    transparent 62%
   );
   opacity: 0;
   transform: translateX(-120%);
@@ -679,16 +652,22 @@ body::after {
 }
 
 .hero-pill:hover {
+  background: linear-gradient(
+    180deg,
+    var(--pill-tint-hover) 0%,
+    rgba(255, 255, 255, 0.82) 66%,
+    rgba(255, 255, 255, 0.66) 100%
+  );
+  border-color: var(--pill-line-hover);
   transform: translateY(-2px);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -18px 28px -16px var(--pill-glow),
-    0 18px 38px -14px var(--pill-glow),
-    0 3px 10px -5px rgba(49, 53, 58, 0.14);
+    0 18px 30px -20px var(--pill-glow),
+    0 2px 4px rgba(49, 53, 58, 0.05);
 }
 
 .hero-pill:hover::after {
-  animation: pillSheen 1.15s ease-out;
+  animation: pillSheen 1.05s ease-out;
 }
 
 .hero-pill:active {
@@ -710,31 +689,39 @@ body::after {
 }
 
 .hero-pill--lavender {
-  --pill-tint: rgba(211, 200, 235, 0.58);
-  --pill-glow: rgba(155, 141, 192, 0.42);
-  --pill-line: rgba(163, 149, 202, 0.58);
-  --pill-ink: #6a6084;
+  --pill-tint: rgba(196, 184, 220, 0.34);
+  --pill-tint-hover: rgba(190, 176, 220, 0.52);
+  --pill-line: rgba(155, 141, 192, 0.4);
+  --pill-line-hover: rgba(155, 141, 192, 0.62);
+  --pill-glow: rgba(120, 105, 160, 0.55);
+  --pill-ink: #5a5175;
 }
 
 .hero-pill--gold {
-  --pill-tint: rgba(225, 205, 165, 0.72);
-  --pill-glow: rgba(178, 150, 101, 0.46);
-  --pill-line: rgba(188, 162, 115, 0.62);
-  --pill-ink: #6b5734;
+  --pill-tint: rgba(209, 190, 155, 0.72);
+  --pill-tint-hover: rgba(203, 181, 140, 0.88);
+  --pill-line: rgba(163, 141, 107, 0.52);
+  --pill-line-hover: rgba(163, 141, 107, 0.72);
+  --pill-glow: rgba(150, 124, 80, 0.55);
+  --pill-ink: #57451f;
 }
 
 .hero-pill--rose {
-  --pill-tint: rgba(240, 212, 209, 0.62);
-  --pill-glow: rgba(206, 158, 153, 0.4);
-  --pill-line: rgba(212, 164, 159, 0.56);
-  --pill-ink: #93655d;
+  --pill-tint: rgba(232, 174, 184, 0.32);
+  --pill-tint-hover: rgba(230, 163, 175, 0.48);
+  --pill-line: rgba(205, 157, 155, 0.44);
+  --pill-line-hover: rgba(205, 157, 155, 0.66);
+  --pill-glow: rgba(180, 125, 122, 0.5);
+  --pill-ink: #875550;
 }
 
 .hero-pill--mist {
-  --pill-tint: rgba(210, 220, 230, 0.6);
-  --pill-glow: rgba(120, 138, 158, 0.38);
-  --pill-line: rgba(142, 160, 178, 0.52);
-  --pill-ink: #5a6472;
+  --pill-tint: rgba(180, 196, 212, 0.32);
+  --pill-tint-hover: rgba(168, 188, 208, 0.5);
+  --pill-line: rgba(135, 155, 175, 0.4);
+  --pill-line-hover: rgba(135, 155, 175, 0.62);
+  --pill-glow: rgba(95, 115, 138, 0.5);
+  --pill-ink: #4b5664;
 }
 
 @media (prefers-reduced-motion: reduce) {

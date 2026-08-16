@@ -493,7 +493,7 @@ export default function Home() {
                   />
                 </span>
                 <span className="flex min-w-0 flex-col items-start leading-none">
-                  <span className="text-[11px] tracking-[0.14em] sm:text-xs">
+                  <span className="text-[11.5px] tracking-[0.18em] sm:text-[12.5px]">
                     塔羅占卜
                   </span>
                   <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6A6084]/72 sm:tracking-[0.14em]">
@@ -510,7 +510,7 @@ export default function Home() {
             </Link>
             <Link href="/shop/custom-bracelet">
               <button
-                className="hero-pill hero-pill--gold flex min-h-[3.5rem] w-full items-center justify-center rounded-full px-4 py-3 text-xs tracking-[0.14em]"
+                className="hero-pill hero-pill--gold flex min-h-[3.5rem] w-full items-center justify-center rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 客製化能量手鍊
@@ -518,7 +518,7 @@ export default function Home() {
             </Link>
             <Link href="/wish-ritual">
               <button
-                className="group hero-pill hero-pill--rose flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-xs tracking-[0.14em]"
+                className="group hero-pill hero-pill--rose flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -531,7 +531,7 @@ export default function Home() {
                 aria-expanded={isMochiMenuOpen}
                 aria-controls="mochi-reading-menu"
                 onClick={() => setIsMochiMenuOpen(open => !open)}
-                className="group hero-pill hero-pill--mist flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-xs tracking-[0.14em]"
+                className="group hero-pill hero-pill--mist flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
