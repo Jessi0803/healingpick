@@ -3101,18 +3101,6 @@ export default function TarotPage() {
                   帶著這個問題抽牌
                 </button>
 
-                {creditsQuery.data?.enabled && (
-                  <p
-                    className="mt-4 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 200,
-                    }}
-                  >
-                    每天免費 2 次，00:00 重置；用完後完整解讀消耗 1 點。
-                  </p>
-                )}
-
                 {/* Popular questions — collapsed by default */}
                 <div className="mt-6 border-t border-[#D1BE9B]/14 pt-5">
                   <button
@@ -3138,6 +3126,18 @@ export default function TarotPage() {
 
                   {isPopularQuestionsOpen && renderPopularQuestions()}
                 </div>
+
+                {creditsQuery.data?.enabled && (
+                  <p
+                    className="mt-4 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 200,
+                    }}
+                  >
+                    每天免費 2 次，00:00 重置；用完後完整解讀消耗 1 點。
+                  </p>
+                )}
               </div>
             </div>
           )}
