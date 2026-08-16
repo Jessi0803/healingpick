@@ -2982,6 +2982,7 @@ export default function TarotPage() {
           {!isHumanTarotReviewsOpen && (
             <FeedbackCompanion
               controlsId="human-tarot-feedback-dialog"
+              messages={["想看看顧客回饋嗎 🕊️", "購買即贈送神輿卡祝福 ✨"]}
               onOpen={() => setIsHumanTarotReviewsOpen(true)}
             />
           )}

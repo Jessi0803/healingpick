@@ -342,6 +342,7 @@ export default function WishRitual() {
       {!isReviewsOpen && (
         <FeedbackCompanion
           controlsId="ritual-feedback-dialog"
+          messages={["想看看顧客回饋嗎 🕊️", "購買即贈送神輿卡祝福 ✨"]}
           onOpen={() => setIsReviewsOpen(true)}
         />
       )}

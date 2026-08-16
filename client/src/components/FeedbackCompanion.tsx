@@ -1,14 +1,37 @@
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+
+const DEFAULT_MESSAGES = ["想看看顧客回饋嗎 🕊️"];
+const ROTATE_MS = 4600;
 
 type FeedbackCompanionProps = {
   onOpen: () => void;
   controlsId?: string;
+  /** 泡泡輪播的句子，超過一句就會每隔幾秒淡入淡出換一句。 */
+  messages?: string[];
 };
 
 export default function FeedbackCompanion({
   onOpen,
   controlsId,
+  messages,
 }: FeedbackCompanionProps) {
+  const bubbleMessages =
+    messages && messages.length > 0 ? messages : DEFAULT_MESSAGES;
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (bubbleMessages.length < 2) return;
+    const timer = window.setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % bubbleMessages.length);
+    }, ROTATE_MS);
+    return () => window.clearInterval(timer);
+  }, [bubbleMessages.length]);
+
+  useEffect(() => {
+    setActiveIndex((prev) => (prev < bubbleMessages.length ? prev : 0));
+  }, [bubbleMessages.length]);
+
   if (typeof document === "undefined") return null;
 
   const ariaProps = controlsId
@@ -46,11 +69,22 @@ export default function FeedbackCompanion({
         type="button"
         onClick={onOpen}
         aria-haspopup="dialog"
+        aria-label="想看看顧客回饋嗎"
         {...ariaProps}
-        className="order-1 mb-5 max-w-[9.4rem] rounded-[1.05rem] rounded-br-sm border border-white/65 bg-white/86 px-3 py-2 text-left text-[12px] leading-[1.55] tracking-[0.08em] text-[#245879] shadow-[0_12px_30px_rgba(36,88,121,0.16)] backdrop-blur-md transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-white active:scale-[0.98] sm:max-w-[10.8rem] sm:px-4"
+        className="order-1 mb-5 grid max-w-[9.4rem] rounded-[1.05rem] rounded-br-sm border border-white/65 bg-white/86 px-3 py-2 text-left text-[12px] leading-[1.55] tracking-[0.08em] text-[#245879] shadow-[0_12px_30px_rgba(36,88,121,0.16)] backdrop-blur-md transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-white active:scale-[0.98] sm:max-w-[10.8rem] sm:px-4"
         style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 500 }}
       >
-        想看看顧客回饋嗎 🕊️
+        {bubbleMessages.map((message, index) => (
+          <span
+            key={message}
+            aria-hidden={index === activeIndex ? undefined : "true"}
+            className={`col-start-1 row-start-1 transition-opacity duration-500 ease-out motion-reduce:transition-none ${
+              index === activeIndex ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {message}
+          </span>
+        ))}
       </button>
     </div>,
     document.body,
