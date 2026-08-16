@@ -101,47 +101,6 @@ export function getProductCategories(product: Product): string[] {
 }
 
 export const PRODUCTS: Product[] = [
-  // ── 測試商品 30 元 ───────────────────────────────────────────────────────
-  {
-    slug: 'test-product-1-twd',
-    name: '測試商品 30 元',
-    subtitle: 'Checkout Test Item',
-    tagline: '這是一個測試用商品。\n用來確認購物車、結帳與訂單流程是否正常。',
-    category: 'healing',
-    categories: ['healing'],
-    material: '測試用商品',
-    price: 30,
-    priceLabel: 'NT$ 30',
-    originalPrice: null,
-    tag: '測試用',
-    fitSummary: '測試購物車與結帳流程使用',
-    gentleRecommendation:
-      '這是測試用商品,適合用來確認購物車、結帳與訂單流程是否能順利完成。',
-    pairingReason:
-      '這是測試用商品,可協助確認商品加入購物車與結帳流程。',
-    imageZoom: 1.2,
-    imagePosition: 'center center',
-    images: ['/products/glimmer-fox/1.jpg'],
-    img: '/products/glimmer-fox/1.jpg',
-    features: [
-      { emoji: '🧪', title: '流程測試', desc: '用來測試商品頁、購物車與結帳流程。' },
-      { emoji: '💳', title: '低金額付款', desc: '價格設定為 30 元,方便進行付款與訂單測試。' },
-    ],
-    meanings: [
-      { emoji: '🧪', title: '測試商品', desc: '此品項僅供測試,不代表實際出貨商品。' },
-      { emoji: '✨', title: '流程確認', desc: '協助確認購買流程是否順暢。' },
-    ],
-    suitedFor: [
-      '需要測試購物車加入商品',
-      '需要測試結帳與訂單建立',
-      '需要確認 30 元付款流程',
-    ],
-    story:
-      '這是一個專門為測試準備的小商品。\n\n它不代表實際出貨品項,主要用來確認從商品頁、購物車到結帳送出訂單的流程。',
-    closing:
-      '測試完成後,可以安心把流程交給正式商品。 ✨',
-  },
-
   // ── 微光守護狐 (茶晶琉璃) ─────────────────────────────────────────────────
   {
     slug: 'glimmer-fox',
@@ -1443,7 +1402,6 @@ export function getProductFeatureSummary(product: Product, limit = 2): string {
 
 const PRODUCT_CARD_SUMMARIES: Record<string, string> = {
   'custom-bracelet-general': '依需求客製招財、桃花、守護或勇氣。',
-  'test-product-1-twd': '測試購物車與結帳流程使用。',
   'glimmer-fox': '守護界線，遠離消耗型人事物。',
   'wish-fox': '招桃花、好人緣，也招來新機會。',
   'courage-cat': '增添勇氣、自信與行動力。',
