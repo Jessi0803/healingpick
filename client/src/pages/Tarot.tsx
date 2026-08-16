@@ -72,7 +72,22 @@ const HUMAN_TAROT_REVIEW_PROOFS = Array.from({ length: 63 }, (_, index) => {
   };
 });
 
-const HUMAN_TAROT_MENU_PLANS = [
+type HumanTarotPack = {
+  name: string;
+  forWho: string;
+  questions: string[];
+};
+
+type HumanTarotMenuPlan = {
+  title: string;
+  price: string;
+  summary: string;
+  details?: string[];
+  groups?: { theme: string; packs: HumanTarotPack[] }[];
+  images: { src: string; alt: string }[];
+};
+
+const HUMAN_TAROT_MENU_PLANS: HumanTarotMenuPlan[] = [
   {
     title: "個人訊息占卜",
     price: "NT$250 起",
@@ -85,20 +100,155 @@ const HUMAN_TAROT_MENU_PLANS = [
   {
     title: "塔羅超值套裝",
     price: "NT$999",
-    summary: "可選擇感情關係、事業財富、人生整理等套組，依照你目前最想了解的主題深入解讀。",
-    details: [
-      "戀愛指南：適合感情不順、曖昧卡住，想看清彼此狀態與下一步的人。",
-      "感情復合：適合分開後還放不下，想知道對方想法、復合機會與相處建議的人。",
-      "緣來暗戀：適合心裡有喜歡的人，想知道對方感受、關係可能性與該不該主動的人。",
-      "旺桃花運：適合想提升桃花、認識新對象，或想知道近期感情機會在哪裡的人。",
-      "財富密碼：適合想整理金錢狀態、收入機會、花費盲點與理財方向的人。",
-      "創業衝衝：適合正在創業、接案，或想開始副業但不確定時機與方向的人。",
-      "職涯探索：適合工作卡關、想換跑道，或想知道目前職涯下一步怎麼走的人。",
-      "面試勝經：適合準備面試、投履歷，想知道表現重點與錄取機會的人。",
-      "進化人生：適合覺得自己卡住，想看人生課題、成長方向與近期提醒的人。",
-      "雙向之路：適合面臨兩個選擇，不知道該往哪邊走、想比較利弊的人。",
-      "友情可貴：適合在人際或朋友關係裡受傷、疏遠，想看清互動狀態的人。",
-      "心靈療癒：適合最近情緒低落、壓力大，想整理內在狀態與自我照顧方向的人。",
+    summary: "每套固定 5 題，一次 NT$999。可選擇感情關係、事業財富、人生整理等主題，依照你現在最想了解的方向深入解讀。",
+    groups: [
+      {
+        theme: "感情 · 關係",
+        packs: [
+          {
+            name: "戀愛指南",
+            forWho: "感情不順、曖昧卡住，想看清彼此狀態與下一步",
+            questions: [
+              "他對你的想法",
+              "你們適合嗎",
+              "相處上的建議",
+              "未來三個月你和他的感情運勢",
+              "如何突破過往在愛情中的盲點",
+            ],
+          },
+          {
+            name: "感情復合",
+            forWho: "分開後還放不下，想知道對方想法、復合機會與相處建議",
+            questions: [
+              "他對復合的態度",
+              "他對你的想法",
+              "未來三個月有機會復合嗎",
+              "你需要改善的點",
+              "若要復合，你們的阻礙是什麼",
+            ],
+          },
+          {
+            name: "緣來暗戀",
+            forWho: "心裡有喜歡的人，想知道對方感受與該不該主動",
+            questions: [
+              "他喜歡你嗎",
+              "他是我的正緣嗎",
+              "他理想中的愛情是怎麼樣的",
+              "他現在是否有喜歡的人",
+              "是否要展開追求",
+            ],
+          },
+          {
+            name: "旺桃花運",
+            forWho: "想提升桃花、認識新對象，或想知道近期感情機會在哪裡",
+            questions: [
+              "未來三個月的感情運勢",
+              "如何提升感情運",
+              "怎樣的人適合你",
+              "你需要改善的點",
+              "如何突破過往在愛情中的盲點",
+            ],
+          },
+        ],
+      },
+      {
+        theme: "事業 · 財富",
+        packs: [
+          {
+            name: "財富密碼",
+            forWho: "想整理金錢狀態、收入機會、花費盲點與理財方向",
+            questions: [
+              "求財面對的阻礙",
+              "支出風險",
+              "有利於增加財富的條件",
+              "暗示生活中帶來財富的機遇",
+              "影響財運的原因",
+            ],
+          },
+          {
+            name: "創業衝衝",
+            forWho: "正在創業、接案，或想開始副業但不確定時機與方向",
+            questions: [
+              "現在的你是適合創業的嗎",
+              "創業會成功嗎",
+              "創業需注意的事",
+              "如何解決困難",
+              "創業會對你的生活帶來的影響",
+            ],
+          },
+          {
+            name: "職涯探索",
+            forWho: "工作卡關、想換跑道，或想知道職涯下一步怎麼走",
+            questions: [
+              "你適合什麼工作",
+              "如何提升自己的工作能力",
+              "你的優勢是什麼",
+              "未來三個月的工作運勢",
+              "如何獲得他人支持或幫助",
+            ],
+          },
+          {
+            name: "面試勝經",
+            forWho: "準備面試、投履歷，想知道表現重點與錄取機會",
+            questions: [
+              "內心糾結的問題",
+              "眼前的工作機會適合自己嗎",
+              "有機率成功嗎",
+              "目前的阻礙",
+              "這份工作機會最終的結果",
+            ],
+          },
+        ],
+      },
+      {
+        theme: "人生 · 療癒",
+        packs: [
+          {
+            name: "進化人生",
+            forWho: "覺得自己卡住，想看人生課題、成長方向與近期提醒",
+            questions: [
+              "如何提升自信",
+              "你的優勢與缺點",
+              "你的人生使命",
+              "未來三個月的整體運勢",
+              "與他人相處上的建議或提醒",
+            ],
+          },
+          {
+            name: "雙向之路",
+            forWho: "面臨兩個選擇，不知道該往哪邊走、想比較利弊",
+            questions: [
+              "你當前的狀態",
+              "選擇 A 的未來三個月發展",
+              "選擇 B 的未來三個月發展",
+              "選擇 A 的結果",
+              "選擇 B 的結果",
+            ],
+          },
+          {
+            name: "友情可貴",
+            forWho: "在人際或朋友關係裡受傷、疏遠，想看清互動狀態",
+            questions: [
+              "他對你的想法",
+              "你們之間產生的問題",
+              "問題如何解決",
+              "對方隱藏的心結",
+              "未來三個月的友情運勢",
+            ],
+          },
+          {
+            name: "心靈療癒",
+            forWho: "最近情緒低落、壓力大，想整理內在狀態與自我照顧方向",
+            questions: [
+              "痛苦真正的根源",
+              "這件事帶給生活的影響",
+              "如何讓自己平靜",
+              "為了療癒自己，你要採取的行動",
+              "療癒完能獲得的成長與改變",
+            ],
+          },
+        ],
+      },
     ],
     images: [
       { src: "/gooday-tarot-pricing/value-pack-1.jpg", alt: "Gooday 塔羅超值套裝戀愛與感情題組" },
@@ -1380,6 +1530,7 @@ export default function TarotPage() {
   const [question, setQuestion] = useState("");
   const [questionType, setQuestionType] = useState("love");
   const [activeQuestionCategory, setActiveQuestionCategory] = useState("love");
+  const [isPopularQuestionsOpen, setIsPopularQuestionsOpen] = useState(false);
   const [drawnCards, setDrawnCards] = useState<ReturnType<typeof drawCards>>(
     []
   );
@@ -1830,6 +1981,7 @@ export default function TarotPage() {
     setQuestion(prompt.slice(0, 300));
     setQuestionType(type);
     setActiveQuestionCategory(type);
+    setIsPopularQuestionsOpen(false);
     if (nextStep) setStep(nextStep);
     if (typeof window === "undefined") return;
 
@@ -1852,21 +2004,13 @@ export default function TarotPage() {
       ) ?? QUESTION_CATEGORIES[0];
 
     return (
-      <div className="border-t border-[#D1BE9B]/14 pt-5 text-left">
-        <div className="mb-4 text-center">
-          <p
-            className="text-[11px] tracking-[0.34em] text-[#D1BE9B] uppercase"
-            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-          >
-            Popular Questions
-          </p>
-          <p
-            className="mt-2 text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/52"
-            style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-          >
-            可以先點選常見問題，也可以往下自己輸入想問的內容。
-          </p>
-        </div>
+      <div className="animate-fade-in-up mt-4 text-left">
+        <p
+          className="mb-4 text-center text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/52"
+          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+        >
+          點一題就會填進上方的輸入框，你也可以再改成自己的說法。
+        </p>
 
         <div className="mb-4 grid grid-cols-2 gap-1.5 rounded-2xl border border-[#D1BE9B]/12 bg-[#FAF7F4]/42 p-1.5 sm:grid-cols-3 lg:grid-cols-5">
           {QUESTION_CATEGORIES.map(category => {
@@ -2456,6 +2600,85 @@ export default function TarotPage() {
               background: rgba(255,253,248,0.62);
               padding: 10px 12px;
             }
+            .tarot-human-pack-groups {
+              display: grid;
+              gap: 18px;
+              margin-top: 14px;
+            }
+            .tarot-human-pack-theme {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              margin-bottom: 8px;
+              font-size: 11px;
+              letter-spacing: 0.22em;
+              color: rgba(85, 114, 85, 0.86);
+            }
+            .tarot-human-pack-theme::after {
+              content: "";
+              flex: 1;
+              height: 1px;
+              background: rgba(112, 138, 106, 0.2);
+            }
+            .tarot-human-pack-list {
+              display: grid;
+              gap: 8px;
+            }
+            .tarot-human-pack {
+              border: 1px solid rgba(157, 123, 63, 0.14);
+              border-radius: 8px;
+              background: rgba(255,253,248,0.62);
+            }
+            .tarot-human-pack[open] {
+              border-color: rgba(112, 138, 106, 0.28);
+              background: rgba(255,253,248,0.86);
+            }
+            .tarot-human-pack > summary {
+              display: flex;
+              align-items: flex-start;
+              justify-content: space-between;
+              gap: 12px;
+              padding: 12px;
+              cursor: pointer;
+              list-style: none;
+            }
+            .tarot-human-pack > summary::-webkit-details-marker {
+              display: none;
+            }
+            .tarot-human-pack > summary > span:first-child {
+              flex: 1;
+              min-width: 0;
+            }
+            .tarot-human-pack-caret {
+              flex-shrink: 0;
+              margin-top: 2px;
+              font-size: 11px;
+              color: rgba(38, 115, 69, 0.7);
+              transition: transform 0.2s ease;
+            }
+            .tarot-human-pack[open] .tarot-human-pack-caret {
+              transform: rotate(180deg);
+            }
+            .tarot-human-pack-questions {
+              display: grid;
+              gap: 7px;
+              margin: 0 12px 12px;
+              padding: 12px 0 0;
+              border-top: 1px solid rgba(157, 123, 63, 0.16);
+              counter-reset: pack-question;
+            }
+            .tarot-human-pack-questions li {
+              display: flex;
+              gap: 9px;
+              counter-increment: pack-question;
+            }
+            .tarot-human-pack-questions li::before {
+              content: counter(pack-question);
+              flex-shrink: 0;
+              width: 18px;
+              text-align: center;
+              color: rgba(157, 123, 63, 0.78);
+            }
             .tarot-human-reference-strip {
               display: grid;
               grid-auto-flow: column;
@@ -2575,7 +2798,7 @@ export default function TarotPage() {
                         </span>
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="max-h-[86vh] max-w-[760px] overflow-y-auto rounded-lg border-[#D1BE9B]/30 bg-[#FFFDF8] text-[#34322d]">
+                    <DialogContent className="max-h-[86vh] max-w-[760px] grid-cols-[minmax(0,1fr)] overflow-y-auto rounded-lg border-[#D1BE9B]/30 bg-[#FFFDF8] text-[#34322d]">
                       <DialogHeader>
                         <p
                           className="text-[11px] uppercase tracking-[0.24em] text-[#557255]"
@@ -2601,14 +2824,66 @@ export default function TarotPage() {
                         >
                           {menu.summary}
                         </p>
-                        <ul
-                          className="tarot-human-dialog-detail-list text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/74"
-                          style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-                        >
-                          {menu.details.map((detail) => (
-                            <li key={detail}>{detail}</li>
-                          ))}
-                        </ul>
+                        {menu.details ? (
+                          <ul
+                            className="tarot-human-dialog-detail-list text-[13px] leading-[1.8] tracking-[0.06em] text-[#31353A]/74"
+                            style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                          >
+                            {menu.details.map((detail) => (
+                              <li key={detail}>{detail}</li>
+                            ))}
+                          </ul>
+                        ) : null}
+
+                        {menu.groups ? (
+                          <div className="tarot-human-pack-groups">
+                            {menu.groups.map((group) => (
+                              <div key={group.theme}>
+                                <p
+                                  className="tarot-human-pack-theme"
+                                  style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                                >
+                                  {group.theme}
+                                </p>
+                                <div className="tarot-human-pack-list">
+                                  {group.packs.map((pack) => (
+                                    <details key={pack.name} className="tarot-human-pack">
+                                      <summary>
+                                        <span className="grid gap-1 text-left">
+                                          <span
+                                            className="text-[15px] leading-[1.5] tracking-[0.1em] text-[#34322d]"
+                                            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
+                                          >
+                                            {pack.name}
+                                          </span>
+                                          <span
+                                            className="text-[12px] leading-[1.8] tracking-[0.05em] text-[#31353A]/62"
+                                            style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                                          >
+                                            {pack.forWho}
+                                          </span>
+                                        </span>
+                                        <span className="tarot-human-pack-caret" aria-hidden="true">
+                                          ▾
+                                        </span>
+                                      </summary>
+                                      <ul
+                                        className="tarot-human-pack-questions text-[13px] leading-[1.8] tracking-[0.05em] text-[#31353A]/78"
+                                        style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                                      >
+                                        {pack.questions.map((question) => (
+                                          <li key={question}>
+                                            <span>{question}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </details>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
                       </section>
 
                       <div className="mt-6">
@@ -2761,50 +3036,13 @@ export default function TarotPage() {
                     fontWeight: 200,
                   }}
                 >
-                  先從常用題組開始，或直接寫下你自己的問題。
+                  先寫下你想問的，沒想法也可以看看大家都在問什麼。
                 </p>
               </div>
 
               <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20">
-                <div className="mb-5 rounded-2xl border border-[#D1BE9B]/18 bg-[#FFFDF8]/62 px-5 py-4">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p
-                        className="text-[12px] tracking-[0.22em] text-[#8A7250]"
-                        style={{
-                          fontFamily: "Noto Serif TC, serif",
-                          fontWeight: 500,
-                        }}
-                      >
-                        AI 免費塔羅占卜
-                      </p>
-                      <p
-                        className="mt-1 text-[11px] leading-[1.8] tracking-[0.08em] text-[#31353A]/55"
-                        style={{
-                          fontFamily: "Noto Sans TC, sans-serif",
-                          fontWeight: 300,
-                        }}
-                      >
-                        24 小時即時回覆，免費先看方向。
-                      </p>
-                    </div>
-                    <Link
-                      href="/tarot"
-                      className="self-start rounded-full border border-[#D1BE9B]/30 bg-white/60 px-4 py-2 text-[11px] tracking-[0.16em] text-[#8A7250] no-underline transition-all duration-300 hover:bg-white sm:self-center"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      重新選擇
-                    </Link>
-                  </div>
-                </div>
-
-                {renderPopularQuestions()}
-
                 {/* Question input */}
-                <div className="mb-6 mt-6">
+                <div className="mb-6">
                   <label
                     className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-3"
                     style={{
@@ -2874,6 +3112,32 @@ export default function TarotPage() {
                     每天免費 2 次，00:00 重置；用完後完整解讀消耗 1 點。
                   </p>
                 )}
+
+                {/* Popular questions — collapsed by default */}
+                <div className="mt-6 border-t border-[#D1BE9B]/14 pt-5">
+                  <button
+                    type="button"
+                    onClick={() => setIsPopularQuestionsOpen(open => !open)}
+                    aria-expanded={isPopularQuestionsOpen}
+                    className="mx-auto flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#D1BE9B]/28 bg-white/55 px-5 py-2.5 text-[11.5px] tracking-[0.16em] text-[#8A7250] transition-all duration-300 hover:border-[#D1BE9B]/55 hover:bg-white active:scale-[0.98]"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    不知道問什麼嗎？看看大家都在問
+                    <span
+                      className={`text-[10px] leading-none text-[#A38D6B] transition-transform duration-300 ${
+                        isPopularQuestionsOpen ? "rotate-180" : ""
+                      }`}
+                      aria-hidden="true"
+                    >
+                      ▾
+                    </span>
+                  </button>
+
+                  {isPopularQuestionsOpen && renderPopularQuestions()}
+                </div>
               </div>
             </div>
           )}
@@ -3616,17 +3880,56 @@ export default function TarotPage() {
                 {interpretMutation.isPending && (
                   <div
                     ref={moodClawSectionRef}
-                    className="flex flex-col items-center justify-center py-8 gap-4"
+                    className="flex flex-col items-center justify-center py-8 gap-5"
                   >
-                    <p
-                      className="text-xs tracking-[0.2em] text-[#31353A]/58"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="animate-reading-pending w-full max-w-[420px] rounded-2xl border border-[#D1BE9B]/45 bg-[#FFFDF8]/90 px-6 py-5 text-center"
                     >
-                      {tarotWaitingMessage}
-                    </p>
+                      <div className="flex items-center justify-center gap-2.5">
+                        <span
+                          className="flex items-end gap-1"
+                          aria-hidden="true"
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#D1BE9B] animate-bounce [animation-delay:-0.32s]" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#D1BE9B] animate-bounce [animation-delay:-0.16s]" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#D1BE9B] animate-bounce" />
+                        </span>
+                        <p
+                          className="text-[14px] tracking-[0.24em] text-[#6F5A3A]"
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 500,
+                          }}
+                        >
+                          Mochi 正在解讀中
+                        </p>
+                      </div>
+
+                      <div className="mx-auto mt-3 h-[2px] w-32 overflow-hidden rounded-full bg-[#D1BE9B]/20">
+                        <div className="animate-reading-pending-sweep h-full w-1/3 rounded-full bg-[#D1BE9B]/85" />
+                      </div>
+
+                      <p
+                        className="mt-3 text-[12.5px] leading-[1.9] tracking-[0.12em] text-[#31353A]/72"
+                        style={{
+                          fontFamily: "Noto Serif TC, serif",
+                          fontWeight: 300,
+                        }}
+                      >
+                        {tarotWaitingMessage}
+                      </p>
+                      <p
+                        className="mt-1.5 text-[11px] leading-[1.8] tracking-[0.1em] text-[#31353A]/52"
+                        style={{
+                          fontFamily: "Noto Sans TC, sans-serif",
+                          fontWeight: 300,
+                        }}
+                      >
+                        大約需要 20～40 秒，請先別關掉或重新整理這一頁。
+                      </p>
+                    </div>
                     <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
                   </div>
                 )}
@@ -3951,18 +4254,6 @@ export default function TarotPage() {
                             <ExternalLink className="h-3.5 w-3.5" />
                           </button>
                         </a>
-                        <Link href="/tarot/teacher">
-                          <button
-                            type="button"
-                            className="inline-flex w-full items-center justify-center rounded-full border border-[#267345]/25 bg-white/60 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] transition-all duration-300 hover:bg-white active:scale-95"
-                            style={{
-                              fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 300,
-                            }}
-                          >
-                            查看塔羅師資歷
-                          </button>
-                        </Link>
                       </div>
                     </div>
                   </div>

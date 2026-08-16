@@ -1499,14 +1499,47 @@ export default function ZiweiPage() {
         {interpretMutation.isPending && (
           <div
             ref={moodClawSectionRef}
-            className="flex flex-col items-center py-6 gap-4"
+            className="flex flex-col items-center py-6 gap-5"
           >
-            <p
-              className="text-[11px] tracking-[0.15em] text-[#31353A]/54"
-              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            <div
+              role="status"
+              aria-live="polite"
+              className="animate-reading-pending w-full max-w-[420px] rounded-2xl border border-[#D1BE9B]/45 bg-[#FFFDF8]/90 px-6 py-5 text-center"
             >
-              {ziweiWaitingMessage}
-            </p>
+              <div className="flex items-center justify-center gap-2.5">
+                <span className="flex items-end gap-1" aria-hidden="true">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#D1BE9B] animate-bounce [animation-delay:-0.32s]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#D1BE9B] animate-bounce [animation-delay:-0.16s]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#D1BE9B] animate-bounce" />
+                </span>
+                <p
+                  className="text-[14px] tracking-[0.24em] text-[#6F5A3A]"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 500,
+                  }}
+                >
+                  Mochi 正在解讀命盤
+                </p>
+              </div>
+
+              <div className="mx-auto mt-3 h-[2px] w-32 overflow-hidden rounded-full bg-[#D1BE9B]/20">
+                <div className="animate-reading-pending-sweep h-full w-1/3 rounded-full bg-[#D1BE9B]/85" />
+              </div>
+
+              <p
+                className="mt-3 text-[12.5px] leading-[1.9] tracking-[0.12em] text-[#31353A]/72"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+              >
+                {ziweiWaitingMessage}
+              </p>
+              <p
+                className="mt-1.5 text-[11px] leading-[1.8] tracking-[0.1em] text-[#31353A]/52"
+                style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+              >
+                大約需要 20～40 秒，請先別關掉或重新整理這一頁。
+              </p>
+            </div>
             <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
           </div>
         )}

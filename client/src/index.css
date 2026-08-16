@@ -718,6 +718,29 @@ body::after {
 }
 .animate-glow-pulse { animation: glowPulse 4s ease-in-out infinite; }
 
+/* Reading in progress (tarot / ziwei full reading) */
+@keyframes readingPendingGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(209, 190, 155, 0.24),
+      0 0 20px rgba(209, 190, 155, 0.24);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(209, 190, 155, 0.45),
+      0 0 40px rgba(209, 190, 155, 0.5);
+  }
+}
+.animate-reading-pending {
+  animation: readingPendingGlow 2.6s ease-in-out infinite;
+}
+
+@keyframes readingPendingSweep {
+  0% { transform: translateX(-60%); }
+  100% { transform: translateX(260%); }
+}
+.animate-reading-pending-sweep {
+  animation: readingPendingSweep 1.9s ease-in-out infinite;
+}
+
 /* Flame wobble */
 @keyframes flameWobble {
   0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.85; }
@@ -1047,7 +1070,9 @@ body::after {
   .animate-float-soft-delay-2,
   .animate-blob-drift,
   .animate-blob-drift-slow,
-  .animate-twinkle {
+  .animate-twinkle,
+  .animate-reading-pending,
+  .animate-reading-pending-sweep {
     animation: none;
   }
   .lightbox-image { animation: lightboxBackdropIn 0.2s ease both; }
