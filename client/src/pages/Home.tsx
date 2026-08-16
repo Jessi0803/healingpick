@@ -102,11 +102,6 @@ const CrystalCitrine = () => (
 // ─── Feature Card ─────────────────────────────────────────────────────────────
 const mochiReadingOptions = [
   {
-    title: "看今日運勢",
-    desc: "想知道今天怎麼走比較順",
-    href: "/fortune/daily",
-  },
-  {
     title: "排紫微命盤",
     desc: "想看自己的命盤與人生節奏",
     href: "/ziwei",
@@ -115,6 +110,11 @@ const mochiReadingOptions = [
     title: "解一個夢",
     desc: "想理解夢裡反覆出現的訊號",
     href: "/dream",
+  },
+  {
+    title: "看今日運勢",
+    desc: "想知道今天怎麼走比較順",
+    href: "/fortune/daily",
   },
 ];
 
