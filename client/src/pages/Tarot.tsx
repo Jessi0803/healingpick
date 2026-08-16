@@ -100,7 +100,7 @@ const HUMAN_TAROT_MENU_PLANS: HumanTarotMenuPlan[] = [
   {
     title: "塔羅超值套裝",
     price: "NT$999",
-    summary: "每套固定 5 題，一次 NT$999。可選擇感情關係、事業財富、人生整理等主題，依照你現在最想了解的方向深入解讀。",
+    summary: "每套固定 5 題，一次 NT$999。可選擇感情關係、事業財富、人生整理等主題。",
     groups: [
       {
         theme: "感情 · 關係",
@@ -2609,10 +2609,10 @@ export default function TarotPage() {
               display: flex;
               align-items: center;
               gap: 10px;
-              margin-bottom: 8px;
-              font-size: 11px;
-              letter-spacing: 0.22em;
-              color: rgba(85, 114, 85, 0.86);
+              margin-bottom: 10px;
+              font-size: 14px;
+              letter-spacing: 0.2em;
+              color: rgba(85, 114, 85, 0.92);
             }
             .tarot-human-pack-theme::after {
               content: "";
