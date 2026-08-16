@@ -1,5 +1,4 @@
 import PageLayout from '@/components/PageLayout';
-import { Link } from 'wouter';
 
 const OFFICIAL_LINE_URL = 'https://lin.ee/6PBHLFX';
 
@@ -131,14 +130,6 @@ export default function TarotKnowledge() {
               看完小百科後，想請真人塔羅師用這套系統為你解讀嗎？
             </p>
             <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/tarot/teacher">
-                <button
-                  className="w-full rounded-full border border-[#123F4A]/18 bg-white/60 px-7 py-3 text-xs tracking-[0.2em] text-[#123F4A] transition-all duration-500 hover:bg-white active:scale-95 sm:w-auto"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  回到塔羅師介紹
-                </button>
-              </Link>
               <a href={OFFICIAL_LINE_URL} target="_blank" rel="noreferrer">
                 <button
                   className="w-full rounded-full bg-[#06C755] px-7 py-3 text-xs tracking-[0.2em] text-white transition-all duration-500 hover:bg-[#05B84F] active:scale-95 sm:w-auto"
