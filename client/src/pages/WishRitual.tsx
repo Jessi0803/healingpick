@@ -302,7 +302,13 @@ export default function WishRitual() {
         {/* Six rituals — a vertical scroll of offerings, hairline-separated */}
         <Reveal as="section" className="mx-auto mt-24 max-w-3xl">
           <SectionHeading eyebrow="The Offerings" title="日日好日儀式" />
-          <div className="mt-12">
+          <p
+            className="mt-5 text-center text-[12px] tracking-[0.2em] text-[#4A3F35]/62"
+            style={{ ...SERIF, fontWeight: 300 }}
+          >
+            可依你的願望，選擇適合的套裝
+          </p>
+          <div className="mt-10">
             {ritualOptions.map((ritual, index) => (
               <div
                 key={ritual.title}
