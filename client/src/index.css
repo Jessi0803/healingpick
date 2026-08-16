@@ -1610,3 +1610,20 @@ body::after {
     transition-duration: 0ms;
   }
 }
+
+/* Wish ritual page — the candle, its halo and the turning wish ring all rest
+   for readers who ask for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .wish-ritual .animate-flame,
+  .wish-ritual .animate-glow-pulse,
+  .wish-ritual .rotate-slow {
+    animation: none;
+  }
+  .wish-ritual .animate-spark {
+    animation: none;
+    opacity: 0;
+  }
+  .wish-ritual .animate-glow-pulse {
+    opacity: 0.4;
+  }
+}
