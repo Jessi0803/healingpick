@@ -44,6 +44,12 @@ import {
 } from "@/components/MoodClawMachine";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import TarotPreviewSection from "@/components/TarotPreviewSection";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import { ExternalLink, Mail, MessageCircle } from "lucide-react";
 import {
   recommendForCategory,
@@ -1536,6 +1542,7 @@ export default function TarotPage() {
   );
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [readingCarouselApi, setReadingCarouselApi] = useState<CarouselApi>();
   const [shuffling, setShuffling] = useState(false);
   const [isShufflingActive, setIsShufflingActive] = useState(false);
   const [shuffledDeck, setShuffledDeck] = useState<TarotCard[]>([]);
@@ -1769,6 +1776,25 @@ export default function TarotPage() {
       questionType,
     ]
   );
+
+  // 完整解讀的牌：手機改成左右滑動，滑到哪張就選到哪張；
+  // 反過來點小圓點或點牌也會捲過去。桌機（md 以上）embla 設成 active: false，
+  // 五張仍舊並排，下面兩個 effect 等同沒作用。
+  useEffect(() => {
+    if (!readingCarouselApi) return;
+    const syncFromCarousel = () =>
+      setSelectedCard(readingCarouselApi.selectedScrollSnap());
+    readingCarouselApi.on("select", syncFromCarousel);
+    return () => {
+      readingCarouselApi.off("select", syncFromCarousel);
+    };
+  }, [readingCarouselApi]);
+
+  useEffect(() => {
+    if (!readingCarouselApi || selectedCard === null) return;
+    if (readingCarouselApi.selectedScrollSnap() === selectedCard) return;
+    readingCarouselApi.scrollTo(selectedCard);
+  }, [readingCarouselApi, selectedCard]);
 
   const startReading = (cards = drawnCards) => {
     setStep("reading");
@@ -3711,77 +3737,106 @@ export default function TarotPage() {
 
               {/* Cards summary */}
               <div className="mb-10">
-                <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-                  {drawnCards.map((drawn, idx) => {
-                    const isActive = selectedCard === idx;
+                <Carousel
+                  setApi={setReadingCarouselApi}
+                  opts={{
+                    align: "center",
+                    breakpoints: { "(min-width: 768px)": { active: false } },
+                  }}
+                >
+                  <CarouselContent className="-ml-3 px-1 py-2">
+                    {drawnCards.map((drawn, idx) => {
+                      const isActive = selectedCard === idx;
 
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setSelectedCard(idx)}
-                        aria-pressed={isActive}
-                        className={`group relative rounded-xl border p-3 text-center outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/60 ${
-                          isActive
-                            ? "border-[#D1BE9B]/70 bg-[#FFFDF8]/82 shadow-[0_0_0_1px_rgba(209,190,155,0.30),0_0_28px_rgba(209,190,155,0.44),0_14px_34px_rgba(138,114,80,0.12)]"
-                            : "glass-panel border-[#D1BE9B]/15 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45 hover:shadow-[0_12px_26px_rgba(209,190,155,0.18)]"
-                        }`}
-                      >
-                        <div
-                          className={`pointer-events-none absolute -inset-1 rounded-[15px] transition-opacity duration-300 ${
-                            isActive
-                              ? "opacity-100"
-                              : "opacity-0 group-hover:opacity-60"
-                          } bg-[radial-gradient(circle_at_50%_18%,rgba(255,248,220,0.92),rgba(209,190,155,0.24)_42%,transparent_72%)] blur-[2px]`}
-                        />
-                        <div className="relative">
-                          <div
-                            className="text-[9px] tracking-[0.14em] text-[#D1BE9B] mb-1"
-                            style={{
-                              fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 200,
-                            }}
-                          >
-                            {SPREAD_POSITIONS[idx].label}
-                          </div>
-                          <div
-                            className={`mx-auto mb-2 w-20 sm:w-24 aspect-[2/3] rounded-lg transition-all duration-300 ${
+                      return (
+                        <CarouselItem
+                          key={idx}
+                          className="basis-full pl-3 md:basis-1/5"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setSelectedCard(idx)}
+                            aria-pressed={isActive}
+                            className={`group relative h-full w-full rounded-xl border p-3 text-center outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/60 ${
                               isActive
-                                ? "scale-[1.03] drop-shadow-[0_0_18px_rgba(209,190,155,0.62)]"
-                                : "group-hover:drop-shadow-[0_8px_18px_rgba(209,190,155,0.30)]"
+                                ? "border-[#D1BE9B]/70 bg-[#FFFDF8]/82 shadow-[0_0_0_1px_rgba(209,190,155,0.30),0_0_28px_rgba(209,190,155,0.44),0_14px_34px_rgba(138,114,80,0.12)]"
+                                : "glass-panel border-[#D1BE9B]/15 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45 hover:shadow-[0_12px_26px_rgba(209,190,155,0.18)]"
                             }`}
                           >
-                            <CardFace
-                              card={drawn.card}
-                              reversed={drawn.reversed}
+                            <div
+                              className={`pointer-events-none absolute -inset-1 rounded-[15px] transition-opacity duration-300 ${
+                                isActive
+                                  ? "opacity-100"
+                                  : "opacity-0 group-hover:opacity-60"
+                              } bg-[radial-gradient(circle_at_50%_18%,rgba(255,248,220,0.92),rgba(209,190,155,0.24)_42%,transparent_72%)] blur-[2px]`}
                             />
-                          </div>
-                          <div
-                            className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
-                            style={{
-                              fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 300,
-                            }}
-                          >
-                            {drawn.card.name}
-                          </div>
-                          <div
-                            className={`mt-0.5 text-[10px] tracking-[0.08em] ${
-                              drawn.reversed
-                                ? "text-[#EAA8AC]"
-                                : "text-[#A38D6B]"
-                            }`}
-                            style={{
-                              fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 200,
-                            }}
-                          >
-                            {drawn.reversed ? "逆位" : "正位"}
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
+                            <div className="relative">
+                              <div
+                                className="text-[9px] tracking-[0.14em] text-[#D1BE9B] mb-1"
+                                style={{
+                                  fontFamily: "Noto Serif TC, serif",
+                                  fontWeight: 200,
+                                }}
+                              >
+                                {SPREAD_POSITIONS[idx].label}
+                              </div>
+                              <div
+                                className={`mx-auto mb-2 w-20 sm:w-24 aspect-[2/3] rounded-lg transition-all duration-300 ${
+                                  isActive
+                                    ? "scale-[1.03] drop-shadow-[0_0_18px_rgba(209,190,155,0.62)]"
+                                    : "group-hover:drop-shadow-[0_8px_18px_rgba(209,190,155,0.30)]"
+                                }`}
+                              >
+                                <CardFace
+                                  card={drawn.card}
+                                  reversed={drawn.reversed}
+                                />
+                              </div>
+                              <div
+                                className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
+                                style={{
+                                  fontFamily: "Noto Serif TC, serif",
+                                  fontWeight: 300,
+                                }}
+                              >
+                                {drawn.card.name}
+                              </div>
+                              <div
+                                className={`mt-0.5 text-[10px] tracking-[0.08em] ${
+                                  drawn.reversed
+                                    ? "text-[#EAA8AC]"
+                                    : "text-[#A38D6B]"
+                                }`}
+                                style={{
+                                  fontFamily: "Noto Serif TC, serif",
+                                  fontWeight: 200,
+                                }}
+                              >
+                                {drawn.reversed ? "逆位" : "正位"}
+                              </div>
+                            </div>
+                          </button>
+                        </CarouselItem>
+                      );
+                    })}
+                  </CarouselContent>
+                </Carousel>
+
+                <div className="mt-3 flex items-center justify-center gap-2 md:hidden">
+                  {drawnCards.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedCard(idx)}
+                      aria-label={`看第 ${idx + 1} 張・${SPREAD_POSITIONS[idx].readingLabel}`}
+                      aria-current={selectedCard === idx}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        selectedCard === idx
+                          ? "w-5 bg-[#D1BE9B]"
+                          : "w-1.5 bg-[#D1BE9B]/35"
+                      }`}
+                    />
+                  ))}
                 </div>
 
                 {selectedCard !== null && drawnCards[selectedCard] && (
