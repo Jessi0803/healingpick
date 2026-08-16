@@ -2420,7 +2420,7 @@ export default function TarotPage() {
                 選擇占卜方式
               </h1>
               <p className="tarot-entry-copy mx-auto mt-3 max-w-[28rem] text-[13px] leading-[2]">
-                真人深入聊，AI 快速看方向。
+                兩種占卜方式，慢慢挑一個喜歡的 ᓚᘏᗢ
               </p>
               <div className="tarot-entry-partner" aria-label="真人塔羅合作品牌">
                 <img
@@ -2639,45 +2639,6 @@ export default function TarotPage() {
                 日日好日不只可以算塔羅，也能帶你探索前世課題、守護神訊息與流年運勢
               </p>
 
-              <section className="mt-5 rounded-lg border border-[#D8C38B]/28 bg-[#FFFDF8]/64 p-4 shadow-[0_12px_30px_rgba(80,72,45,0.08)] md:p-5">
-                <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
-                  <div>
-                    <p
-                      className="text-[11px] uppercase tracking-[0.28em] text-[#557255]/72"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                    >
-                      Gift Blessing
-                    </p>
-                    <h2
-                      className="mt-2 text-[14px] leading-[1.8] tracking-[0.16em] text-[#34322d]"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                    >
-                      購買真人塔羅或魔法儀式，贈送神輿卡祝福
-                    </h2>
-                    <p
-                      className="mt-2 text-[12px] leading-[1.9] tracking-[0.07em] text-[#31353A]/64"
-                      style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
-                    >
-                      願迷惘的你，能獲得穩定的力量；願內心痛楚的你，能開始療癒。
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-[#D8C38B]/26 bg-white/58 px-5 py-4 text-center">
-                    <p
-                      className="text-[11px] tracking-[0.18em] text-[#31353A]/45 line-through"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-                    >
-                      市價 $200
-                    </p>
-                    <p
-                      className="mt-1 text-[16px] tracking-[0.16em] text-[#9d7b3f]"
-                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
-                    >
-                      free
-                    </p>
-                  </div>
-                </div>
-              </section>
-
               <div className="mt-6 grid gap-3">
                 {HUMAN_TAROT_MENU_PLANS.map((menu, index) => (
                   <Dialog key={menu.title}>
@@ -2787,6 +2748,45 @@ export default function TarotPage() {
                 ))}
               </div>
 
+              <section className="mt-5 rounded-lg border border-[#D8C38B]/28 bg-[#FFFDF8]/64 p-4 shadow-[0_12px_30px_rgba(80,72,45,0.08)] md:p-5">
+                <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
+                  <div>
+                    <p
+                      className="text-[11px] uppercase tracking-[0.28em] text-[#557255]/72"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      Gift Blessing
+                    </p>
+                    <h2
+                      className="mt-2 text-[14px] leading-[1.8] tracking-[0.16em] text-[#34322d]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      購買真人塔羅或魔法儀式，贈送神輿卡祝福
+                    </h2>
+                    <p
+                      className="mt-2 text-[12px] leading-[1.9] tracking-[0.07em] text-[#31353A]/64"
+                      style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+                    >
+                      願迷惘的你，能獲得穩定的力量；願內心痛楚的你，能開始療癒。
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-[#D8C38B]/26 bg-white/58 px-5 py-4 text-center">
+                    <p
+                      className="text-[11px] tracking-[0.18em] text-[#31353A]/45 line-through"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+                    >
+                      市價 $200
+                    </p>
+                    <p
+                      className="mt-1 text-[16px] tracking-[0.16em] text-[#9d7b3f]"
+                      style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 600 }}
+                    >
+                      free
+                    </p>
+                  </div>
+                </div>
+              </section>
+
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <a
                   href={OFFICIAL_LINE_URL}
@@ -2821,7 +2821,7 @@ export default function TarotPage() {
             onOpenChange={setIsHumanTarotReviewsOpen}
             eyebrow="Human Tarot Proof"
             title="真人塔羅顧客回饋"
-            description="一次看全部真人塔羅真實回饋，點開任一張可置中放大瀏覽。"
+            description="每一則都是占卜結束後親手寫下的真實感受，看看這場塔羅有多打中人心。"
             lightboxTitle="塔羅顧客真實回饋"
             itemAltPrefix="塔羅顧客回饋"
             items={HUMAN_TAROT_REVIEW_PROOFS}
