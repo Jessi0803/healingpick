@@ -122,7 +122,7 @@ function ProductCard({
   return (
     <Link href={productHref}>
       <div className="flex cursor-pointer flex-col gap-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/42 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/50 sm:flex-row">
-        <div className="h-52 w-full flex-shrink-0 overflow-hidden rounded-xl bg-[#F0EBE3]/40 sm:h-32 sm:w-32">
+        <div className="mx-auto aspect-square w-full max-w-[220px] flex-shrink-0 overflow-hidden rounded-xl bg-[#F0EBE3]/40 sm:mx-0 sm:w-32 sm:max-w-none">
           <ProductImageWatermark
             product={product}
             alt={product.name}
