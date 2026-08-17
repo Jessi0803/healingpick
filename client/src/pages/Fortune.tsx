@@ -33,6 +33,7 @@ import {
 import { CatListening } from "@/components/CatElements";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
+import CustomBraceletCta from "@/components/CustomBraceletCta";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { recommendForFortune } from "@/data/recommend";
@@ -1376,6 +1377,7 @@ export default function FortunePage() {
                                       </div>
                                     </>
                                   )}
+                                  <CustomBraceletCta />
                                 </div>
                               );
                             })()}

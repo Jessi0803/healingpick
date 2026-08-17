@@ -21,6 +21,7 @@ import CosmicMist from "@/components/CosmicMist";
 import { CatPeeking } from "@/components/CatElements";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
+import CustomBraceletCta from "@/components/CustomBraceletCta";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -954,6 +955,7 @@ export default function DreamPage() {
                         </div>
                       </>
                     )}
+                    <CustomBraceletCta />
                   </div>
                 </section>
               )}

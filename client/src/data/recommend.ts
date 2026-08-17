@@ -8,12 +8,7 @@
  *  - tie-break by stable order in PRODUCTS
  */
 
-import {
-  CUSTOM_BRACELET_RECOMMENDATION_PRODUCT,
-  PRODUCTS,
-  getProductCategories,
-  type Product,
-} from './products';
+import { PRODUCTS, getProductCategories, type Product } from './products';
 
 export type RecommendationCategory =
   | 'protect'
@@ -38,10 +33,9 @@ function isRecommendationEligibleProduct(product: Product): boolean {
   );
 }
 
-const RECOMMENDATION_PRODUCTS = [
-  ...PRODUCTS.filter(isRecommendationEligibleProduct),
-  CUSTOM_BRACELET_RECOMMENDATION_PRODUCT,
-];
+// 客製化手鍊刻意不參與排序：它不是第 N 名商品，而是「以上都不夠貼」的出口，
+// 由 <CustomBraceletCta /> 在推薦區塊底部固定曝光。
+const RECOMMENDATION_PRODUCTS = PRODUCTS.filter(isRecommendationEligibleProduct);
 
 function scoreProduct(p: Product, sig: Signal): number {
   let score = 0;
@@ -120,22 +114,7 @@ function pickTop(sig: Signal, limit: number, fallbackCategory?: string): Product
   }
 
   if (picks.length === 0) picks.push(PRODUCTS.find(isBracelet) ?? PRODUCTS[0]);
-  return includeCustomBraceletOption(picks, limit);
-}
-
-function includeCustomBraceletOption(picks: Product[], limit: number): Product[] {
-  if (limit <= 0 || picks.some((p) => p.slug === CUSTOM_BRACELET_RECOMMENDATION_PRODUCT.slug)) {
-    return picks;
-  }
-
-  if (picks.length < limit) {
-    return [...picks, CUSTOM_BRACELET_RECOMMENDATION_PRODUCT];
-  }
-
-  return [
-    ...picks.slice(0, Math.max(0, limit - 1)),
-    CUSTOM_BRACELET_RECOMMENDATION_PRODUCT,
-  ];
+  return picks;
 }
 
 

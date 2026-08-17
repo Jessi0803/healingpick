@@ -11,8 +11,9 @@ import {
 
 const customBraceletSlug = CUSTOM_BRACELET_RECOMMENDATION_PRODUCT.slug;
 
-function expectCustomBracelet(products: Array<{ slug: string }>) {
-  expect(products.map((product) => product.slug)).toContain(customBraceletSlug);
+// 客製化手鍊不再佔用推薦名額，改由 <CustomBraceletCta /> 在推薦區塊底部固定曝光。
+function expectNoCustomBracelet(products: Array<{ slug: string }>) {
+  expect(products.map((product) => product.slug)).not.toContain(customBraceletSlug);
 }
 
 function expectNoTestProducts(products: Array<{ slug: string; name?: string }>) {
@@ -20,31 +21,38 @@ function expectNoTestProducts(products: Array<{ slug: string; name?: string }>) 
 }
 
 describe("reading product recommendations", () => {
-  it("includes the custom bracelet option for tarot recommendations", () => {
-    expectCustomBracelet(recommendForTarot("love", "最近的感情發展"));
+  it("leaves the custom bracelet out of tarot recommendations", () => {
+    expectNoCustomBracelet(recommendForTarot("love", "最近的感情發展"));
   });
 
-  it("includes the custom bracelet option for AI category recommendations", () => {
-    expectCustomBracelet(recommendForCategory("wealth"));
+  it("leaves the custom bracelet out of AI category recommendations", () => {
+    expectNoCustomBracelet(recommendForCategory("wealth"));
   });
 
-  it("includes the custom bracelet option for ziwei recommendations", () => {
-    expectCustomBracelet(recommendForZiwei("夫妻宮", "女"));
+  it("leaves the custom bracelet out of ziwei recommendations", () => {
+    expectNoCustomBracelet(recommendForZiwei("夫妻宮", "女"));
   });
 
-  it("includes the custom bracelet option for fortune recommendations", () => {
-    expectCustomBracelet(recommendForFortune("火"));
+  it("leaves the custom bracelet out of fortune recommendations", () => {
+    expectNoCustomBracelet(recommendForFortune("火"));
   });
 
-  it("includes the custom bracelet option for dream recommendations", () => {
-    expectCustomBracelet(recommendForDream("夢到在走廊迷路", "近期正在整理方向感"));
+  it("leaves the custom bracelet out of dream recommendations", () => {
+    expectNoCustomBracelet(recommendForDream("夢到在走廊迷路", "近期正在整理方向感"));
   });
 
-  it("keeps the custom bracelet option even when the recommendation limit is tight", () => {
+  it("fills every slot with a real catalogue product", () => {
+    const products = recommendForTarot("love", "最近的感情發展");
+
+    expect(products).toHaveLength(5);
+    expectNoCustomBracelet(products);
+  });
+
+  it("honours a tight recommendation limit", () => {
     const products = recommendForCategory("love", 1);
 
     expect(products).toHaveLength(1);
-    expectCustomBracelet(products);
+    expectNoCustomBracelet(products);
   });
 
   it("does not recommend test products", () => {

@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/dialog";
 import ReadingFeedback from "@/components/ReadingFeedback";
 import SalePrice from "@/components/SalePrice";
+import CustomBraceletCta from "@/components/CustomBraceletCta";
 import {
   getMoodPlushieOpening,
   MoodClawMachine,
@@ -4170,6 +4171,7 @@ export default function TarotPage() {
                               </div>
                             </>
                           )}
+                          <CustomBraceletCta />
                         </div>
                       </div>
                     )}

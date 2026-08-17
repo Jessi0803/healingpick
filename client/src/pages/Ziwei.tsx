@@ -25,6 +25,7 @@ import { Streamdown } from "streamdown";
 import { toast } from "sonner";
 import { CatListening, CatPeeking } from "@/components/CatElements";
 import SalePrice from "@/components/SalePrice";
+import CustomBraceletCta from "@/components/CustomBraceletCta";
 import {
   Dialog,
   DialogContent,
@@ -1699,6 +1700,7 @@ export default function ZiweiPage() {
                       </div>
                     </>
                   )}
+                  <CustomBraceletCta />
                 </div>
               </div>
             )}
