@@ -671,6 +671,81 @@ body::after {
   pointer-events: none;
 }
 
+/* Every pill carries the same two-line block, so the row keeps one baseline */
+.hero-pill__label {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  line-height: 1;
+}
+
+.hero-pill__zh {
+  white-space: nowrap;
+  font-size: 12.5px;
+  letter-spacing: 0.18em;
+  /* letter-spacing also trails the last glyph; pull it back so the block optically centers */
+  margin-right: -0.18em;
+}
+
+.hero-pill__en {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+.hero-pill__glyph {
+  flex: none;
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0.62;
+}
+
+/* Two faint stars blink inside the glass, on the page's own twinkle vocabulary */
+.hero-pill__spark {
+  position: absolute;
+  font-size: 7px;
+  line-height: 1;
+  color: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  animation: pillSparkle 7s ease-in-out infinite;
+}
+
+.hero-pill__spark--a {
+  top: 24%;
+  left: 15%;
+  animation-delay: 0.6s;
+}
+
+.hero-pill__spark--b {
+  right: 18%;
+  bottom: 26%;
+  font-size: 6px;
+  animation-delay: 3.6s;
+}
+
+@keyframes pillSparkle {
+  0%,
+  78%,
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  8% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+  22% {
+    opacity: 0.16;
+    transform: scale(0.9);
+  }
+}
+
 .hero-pill:hover {
   background: var(--pill-tint-hover);
   border-color: var(--pill-line-hover);
@@ -739,15 +814,15 @@ body::after {
   --pill-ink: #875550;
 }
 
-.hero-pill--mist {
-  --pill-tint: rgba(193, 205, 218, 0.22);
-  --pill-tint-hover: rgba(183, 198, 214, 0.34);
-  --pill-line: rgba(140, 157, 175, 0.16);
-  --pill-line-hover: rgba(140, 157, 175, 0.3);
-  --pill-halo: rgba(135, 155, 175, 0.38);
-  --pill-halo-bright: rgba(135, 155, 175, 0.56);
+.hero-pill--champagne {
+  --pill-tint: rgba(226, 213, 186, 0.24);
+  --pill-tint-hover: rgba(221, 205, 172, 0.36);
+  --pill-line: rgba(176, 154, 118, 0.16);
+  --pill-line-hover: rgba(176, 154, 118, 0.3);
+  --pill-halo: rgba(198, 174, 130, 0.4);
+  --pill-halo-bright: rgba(198, 174, 130, 0.58);
   --pill-breathe-delay: 4.5s;
-  --pill-ink: #4b5664;
+  --pill-ink: #5f5238;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -763,6 +838,11 @@ body::after {
 
   .hero-pill:hover::after {
     animation: none;
+  }
+
+  .hero-pill__spark {
+    animation: none;
+    opacity: 0.22;
   }
 }
 

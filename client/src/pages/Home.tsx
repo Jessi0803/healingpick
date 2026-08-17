@@ -24,7 +24,6 @@ import {
   ExternalLink,
   Home as HomeIcon,
   Instagram,
-  Sparkles,
   X,
 } from "lucide-react";
 import {
@@ -479,7 +478,7 @@ export default function Home() {
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
             <Link href="/tarot">
               <button
-                className="group hero-pill hero-pill--lavender flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-2.5"
+                className="group hero-pill hero-pill--lavender flex min-h-[4.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-2.5"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <span
@@ -492,37 +491,74 @@ export default function Home() {
                     className="h-full w-full object-cover"
                   />
                 </span>
-                <span className="flex min-w-0 flex-col items-start leading-none">
-                  <span className="text-[11.5px] tracking-[0.18em] sm:text-[12.5px]">
-                    塔羅占卜
-                  </span>
-                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6A6084]/72 sm:tracking-[0.14em]">
-                    日日好日
-                    <span
-                      className="ml-1.5 text-[12px] italic tracking-[0.08em] sm:text-[13px]"
-                      style={{ fontFamily: "Cormorant Garamond, serif" }}
-                    >
-                      gooday
-                    </span>
-                  </span>
+                <span className="hero-pill__label">
+                  <span className="hero-pill__zh">塔羅占卜</span>
+                  <span className="hero-pill__en">日日好日 gooday</span>
+                </span>
+                <span
+                  className="hero-pill__spark hero-pill__spark--a"
+                  aria-hidden="true"
+                >
+                  ✦
+                </span>
+                <span
+                  className="hero-pill__spark hero-pill__spark--b"
+                  aria-hidden="true"
+                >
+                  ✦
                 </span>
               </button>
             </Link>
             <Link href="/shop/custom-bracelet">
               <button
-                className="hero-pill hero-pill--gold flex min-h-[3.5rem] w-full items-center justify-center rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
+                className="hero-pill hero-pill--gold flex min-h-[4.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                客製化能量手鍊
+                <span className="hero-pill__glyph" aria-hidden="true">
+                  ⟡
+                </span>
+                <span className="hero-pill__label">
+                  <span className="hero-pill__zh">客製化能量手鍊</span>
+                  <span className="hero-pill__en">Crystal Bracelet</span>
+                </span>
+                <span
+                  className="hero-pill__spark hero-pill__spark--a"
+                  aria-hidden="true"
+                >
+                  ✦
+                </span>
+                <span
+                  className="hero-pill__spark hero-pill__spark--b"
+                  aria-hidden="true"
+                >
+                  ✦
+                </span>
               </button>
             </Link>
             <Link href="/wish-ritual">
               <button
-                className="group hero-pill hero-pill--rose flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
+                className="group hero-pill hero-pill--rose flex min-h-[4.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span>許願魔法儀式</span>
+                <span className="hero-pill__glyph" aria-hidden="true">
+                  ✧
+                </span>
+                <span className="hero-pill__label">
+                  <span className="hero-pill__zh">許願魔法儀式</span>
+                  <span className="hero-pill__en">Wish Ritual</span>
+                </span>
+                <span
+                  className="hero-pill__spark hero-pill__spark--a"
+                  aria-hidden="true"
+                >
+                  ✦
+                </span>
+                <span
+                  className="hero-pill__spark hero-pill__spark--b"
+                  aria-hidden="true"
+                >
+                  ✦
+                </span>
               </button>
             </Link>
             <div className="flex flex-col items-center">
@@ -531,17 +567,34 @@ export default function Home() {
                 aria-expanded={isMochiMenuOpen}
                 aria-controls="mochi-reading-menu"
                 onClick={() => setIsMochiMenuOpen(open => !open)}
-                className="group hero-pill hero-pill--mist flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
+                className="group hero-pill hero-pill--champagne flex min-h-[4.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
-                <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span>Mochi 靈感解讀</span>
+                <span className="hero-pill__glyph" aria-hidden="true">
+                  ✦
+                </span>
+                <span className="hero-pill__label">
+                  <span className="hero-pill__zh">靈感解讀</span>
+                  <span className="hero-pill__en">Mochi Reading</span>
+                </span>
                 <ChevronDown
-                  className={`h-4 w-4 shrink-0 transition-transform duration-300 ${
+                  className={`h-3.5 w-3.5 shrink-0 opacity-50 transition-transform duration-300 ${
                     isMochiMenuOpen ? "rotate-180" : ""
                   }`}
                   aria-hidden="true"
                 />
+                <span
+                  className="hero-pill__spark hero-pill__spark--a"
+                  aria-hidden="true"
+                >
+                  ✦
+                </span>
+                <span
+                  className="hero-pill__spark hero-pill__spark--b"
+                  aria-hidden="true"
+                >
+                  ✦
+                </span>
               </button>
               {isMochiMenuOpen && (
                 <div
