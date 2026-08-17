@@ -613,12 +613,7 @@ body::after {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    var(--pill-tint) 0%,
-    rgba(255, 255, 255, 0.8) 62%,
-    rgba(255, 255, 255, 0.62) 100%
-  );
+  background: var(--pill-tint);
   backdrop-filter: blur(10px) saturate(125%);
   -webkit-backdrop-filter: blur(10px) saturate(125%);
   border: 1px solid var(--pill-line);
@@ -652,12 +647,7 @@ body::after {
 }
 
 .hero-pill:hover {
-  background: linear-gradient(
-    180deg,
-    var(--pill-tint-hover) 0%,
-    rgba(255, 255, 255, 0.82) 66%,
-    rgba(255, 255, 255, 0.66) 100%
-  );
+  background: var(--pill-tint-hover);
   border-color: var(--pill-line-hover);
   transform: translateY(-2px);
   box-shadow:
@@ -689,8 +679,8 @@ body::after {
 }
 
 .hero-pill--lavender {
-  --pill-tint: rgba(206, 197, 224, 0.26);
-  --pill-tint-hover: rgba(200, 190, 222, 0.4);
+  --pill-tint: rgba(206, 197, 224, 0.22);
+  --pill-tint-hover: rgba(200, 190, 222, 0.34);
   --pill-line: rgba(163, 151, 196, 0.16);
   --pill-line-hover: rgba(163, 151, 196, 0.3);
   --pill-glow: rgba(140, 125, 180, 0.38);
@@ -698,8 +688,8 @@ body::after {
 }
 
 .hero-pill--gold {
-  --pill-tint: rgba(213, 197, 167, 0.34);
-  --pill-tint-hover: rgba(207, 188, 152, 0.5);
+  --pill-tint: rgba(213, 197, 167, 0.3);
+  --pill-tint-hover: rgba(207, 188, 152, 0.44);
   --pill-line: rgba(163, 141, 107, 0.2);
   --pill-line-hover: rgba(163, 141, 107, 0.36);
   --pill-glow: rgba(150, 124, 80, 0.4);
@@ -707,8 +697,8 @@ body::after {
 }
 
 .hero-pill--rose {
-  --pill-tint: rgba(226, 195, 199, 0.26);
-  --pill-tint-hover: rgba(224, 183, 189, 0.4);
+  --pill-tint: rgba(226, 195, 199, 0.22);
+  --pill-tint-hover: rgba(224, 183, 189, 0.34);
   --pill-line: rgba(196, 157, 155, 0.16);
   --pill-line-hover: rgba(196, 157, 155, 0.3);
   --pill-glow: rgba(180, 125, 122, 0.36);
@@ -716,8 +706,8 @@ body::after {
 }
 
 .hero-pill--mist {
-  --pill-tint: rgba(193, 205, 218, 0.26);
-  --pill-tint-hover: rgba(183, 198, 214, 0.4);
+  --pill-tint: rgba(193, 205, 218, 0.22);
+  --pill-tint-hover: rgba(183, 198, 214, 0.34);
   --pill-line: rgba(140, 157, 175, 0.16);
   --pill-line-hover: rgba(140, 157, 175, 0.3);
   --pill-glow: rgba(95, 115, 138, 0.36);
