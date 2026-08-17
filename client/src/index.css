@@ -619,14 +619,39 @@ body::after {
   border: 1px solid var(--pill-line);
   color: var(--pill-ink);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 1px 3px rgba(49, 53, 58, 0.06),
-    0 10px 22px -16px var(--pill-glow);
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 0 10px rgba(255, 255, 255, 0.55),
+    0 0 14px -2px var(--pill-halo),
+    0 0 40px -10px var(--pill-halo),
+    0 2px 5px rgba(49, 53, 58, 0.045);
+  animation: pillBreathe 6s ease-in-out infinite;
+  animation-delay: var(--pill-breathe-delay);
   transition:
     transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.5s ease,
     background 0.5s ease,
     border-color 0.5s ease;
+}
+
+/* The halo swells and settles so the pills read as lit, not painted */
+@keyframes pillBreathe {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.98),
+      inset 0 0 10px rgba(255, 255, 255, 0.55),
+      0 0 14px -2px var(--pill-halo),
+      0 0 40px -10px var(--pill-halo),
+      0 2px 5px rgba(49, 53, 58, 0.045);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      inset 0 0 12px rgba(255, 255, 255, 0.7),
+      0 0 18px -2px var(--pill-halo-bright),
+      0 0 52px -8px var(--pill-halo-bright),
+      0 2px 5px rgba(49, 53, 58, 0.045);
+  }
 }
 
 /* Light sweeps across once on hover */
@@ -650,10 +675,13 @@ body::after {
   background: var(--pill-tint-hover);
   border-color: var(--pill-line-hover);
   transform: translateY(-2px);
+  animation: none;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 18px 30px -20px var(--pill-glow),
-    0 2px 4px rgba(49, 53, 58, 0.05);
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 0 14px rgba(255, 255, 255, 0.75),
+    0 0 22px -2px var(--pill-halo-bright),
+    0 0 60px -8px var(--pill-halo-bright),
+    0 3px 8px rgba(49, 53, 58, 0.06);
 }
 
 .hero-pill:hover::after {
@@ -683,7 +711,9 @@ body::after {
   --pill-tint-hover: rgba(200, 190, 222, 0.34);
   --pill-line: rgba(163, 151, 196, 0.16);
   --pill-line-hover: rgba(163, 151, 196, 0.3);
-  --pill-glow: rgba(140, 125, 180, 0.38);
+  --pill-halo: rgba(155, 141, 192, 0.4);
+  --pill-halo-bright: rgba(155, 141, 192, 0.58);
+  --pill-breathe-delay: 0s;
   --pill-ink: #5a5175;
 }
 
@@ -692,7 +722,9 @@ body::after {
   --pill-tint-hover: rgba(207, 188, 152, 0.44);
   --pill-line: rgba(163, 141, 107, 0.2);
   --pill-line-hover: rgba(163, 141, 107, 0.36);
-  --pill-glow: rgba(150, 124, 80, 0.4);
+  --pill-halo: rgba(190, 163, 116, 0.44);
+  --pill-halo-bright: rgba(190, 163, 116, 0.62);
+  --pill-breathe-delay: 1.5s;
   --pill-ink: #57451f;
 }
 
@@ -701,7 +733,9 @@ body::after {
   --pill-tint-hover: rgba(224, 183, 189, 0.34);
   --pill-line: rgba(196, 157, 155, 0.16);
   --pill-line-hover: rgba(196, 157, 155, 0.3);
-  --pill-glow: rgba(180, 125, 122, 0.36);
+  --pill-halo: rgba(205, 157, 155, 0.4);
+  --pill-halo-bright: rgba(205, 157, 155, 0.58);
+  --pill-breathe-delay: 3s;
   --pill-ink: #875550;
 }
 
@@ -710,7 +744,9 @@ body::after {
   --pill-tint-hover: rgba(183, 198, 214, 0.34);
   --pill-line: rgba(140, 157, 175, 0.16);
   --pill-line-hover: rgba(140, 157, 175, 0.3);
-  --pill-glow: rgba(95, 115, 138, 0.36);
+  --pill-halo: rgba(135, 155, 175, 0.38);
+  --pill-halo-bright: rgba(135, 155, 175, 0.56);
+  --pill-breathe-delay: 4.5s;
   --pill-ink: #4b5664;
 }
 
@@ -719,6 +755,10 @@ body::after {
   .hero-pill:hover,
   .hero-pill:active {
     transform: none;
+  }
+
+  .hero-pill {
+    animation: none;
   }
 
   .hero-pill:hover::after {
