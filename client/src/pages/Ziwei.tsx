@@ -28,6 +28,7 @@ import SalePrice from "@/components/SalePrice";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -50,6 +51,7 @@ import {
 } from "@/data/products";
 import { useRotatingText } from "@/hooks/useRotatingText";
 import { normalizeDateInput, toDateInputValue } from "@/lib/dateInput";
+import { revealElement } from "@/lib/revealElement";
 
 const ZIWEI_WAITING_MESSAGES = [
   "Mochi 正在整理線索，但看起來像在發呆。",
@@ -666,6 +668,8 @@ export default function ZiweiPage() {
   const [selectedPalaceName, setSelectedPalaceName] = useState<string | null>(
     null
   );
+  const [openedPalaceName, setOpenedPalaceName] = useState<string | null>(null);
+  const [isWideLayout, setIsWideLayout] = useState(false);
   const [llmInterpretation, setLlmInterpretation] = useState("");
   const [caughtMoodPlushie, setCaughtMoodPlushie] =
     useState<MoodPlushie | null>(null);
@@ -679,6 +683,7 @@ export default function ZiweiPage() {
     useState(false);
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const readingResultRef = useRef<HTMLDivElement | null>(null);
+  const palaceDetailRef = useRef<HTMLDivElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
   const appliedProfileDefaultsRef = useRef(false);
@@ -939,6 +944,19 @@ export default function ZiweiPage() {
     followUpMutation.isPending
   );
 
+  // 命盤旁邊放得下面板的斷點，對齊下面 chart row 的 xl:flex-row。
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1280px)");
+    const sync = () => {
+      setIsWideLayout(mql.matches);
+      // 轉寬之後側邊面板就接手了，別讓視窗還開著疊在上面。
+      if (mql.matches) setOpenedPalaceName(null);
+    };
+    sync();
+    mql.addEventListener("change", sync);
+    return () => mql.removeEventListener("change", sync);
+  }, []);
+
   useEffect(() => {
     if (interpretMutation.isPending) {
       setCaughtMoodPlushie(null);
@@ -1021,6 +1039,7 @@ export default function ZiweiPage() {
     setFollowUpExchanges([]);
     setPendingFollowUpAfterLogin(false);
     setSelectedPalaceName(null);
+    setOpenedPalaceName(null);
     interpretMutation.mutate({
       solarDate: normalizedBirthDate,
       timeIndex: parseInt(hourValue),
@@ -1160,6 +1179,7 @@ export default function ZiweiPage() {
       setFollowUpExchanges([]);
       setPendingFollowUpAfterLogin(false);
       setSelectedPalaceName(null);
+      setOpenedPalaceName(null);
 
       interpretMutation.mutate({
         solarDate: nextBirthDate,
@@ -1295,6 +1315,19 @@ export default function ZiweiPage() {
 
   const selectedPalace =
     astrolabe?.palaces.find(p => p.name === selectedPalaceName) ?? null;
+
+  // 桌機（xl 以上）側邊本來就放得下面板，捲進畫面就好；窄螢幕改成跳出視窗，
+  // 免得解讀被推到命盤下面要自己滑。
+  const togglePalace = (palaceName: string) => {
+    const isSelected = selectedPalaceName === palaceName;
+    setSelectedPalaceName(isSelected ? null : palaceName);
+    if (isSelected) return;
+    if (isWideLayout) revealElement(palaceDetailRef.current, "start");
+    else setOpenedPalaceName(palaceName);
+  };
+
+  const openedPalace =
+    astrolabe?.palaces.find(p => p.name === openedPalaceName) ?? null;
   const soulPalaceName =
     astrolabe?.palaces.find(p => p.name === "命宮")?.name ?? "命宮";
   const ziweiRecommendationMessage =
@@ -1422,29 +1455,59 @@ export default function ZiweiPage() {
           >
             ◎ 想請真人老師再看一次嗎
           </p>
+          <div className="flex items-center gap-3 rounded-2xl border border-[#D1BE9B]/22 bg-white/56 px-3 py-2.5">
+            <img
+              src="/gooday-logo.png"
+              alt="Gooday 日日好日"
+              className="h-11 w-11 shrink-0 rounded-full border border-[#D1BE9B]/35 bg-white object-cover"
+            />
+            <span className="flex flex-col gap-1">
+              <span
+                className="text-[11.5px] tracking-[0.12em] text-[#8A7250]"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
+              >
+                HealingPick × Gooday 日日好日
+              </span>
+              <span
+                className="text-[11px] leading-[1.7] tracking-[0.06em] text-[#31353A]/58"
+                style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+              >
+                真人老師一對一延伸解讀
+              </span>
+            </span>
+          </div>
           <p
             className="text-[12px] leading-[2] tracking-[0.08em] text-[#31353A]/66"
             style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
           >
-            Mochi 先幫你把命盤重點整理出來；如果你想把感情、工作、人際或近期選擇看得更細，也可以預約 Gooday 日日好日真人老師一對一延伸解讀。
+            還想再問得更深嗎？可以請 Gooday 日日好日真人老師一對一，把命盤和你現在的處境一起看。
           </p>
           <div className="rounded-2xl border border-[#D1BE9B]/18 bg-white/48 px-4 py-3">
             <p
               className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
               style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
             >
-              適合想確認「這個盤現在最該注意哪裡」、或想針對某段關係、事業方向、下一步行動深入聊的人。
+              適合想把某段關係、事業方向或下一步，問到有答案的人。
             </p>
           </div>
-          <a
-            href={OFFICIAL_LINE_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#06C755] px-6 py-2.5 text-center text-[11px] tracking-[0.18em] text-white no-underline transition-all duration-300 hover:bg-[#05B84F] active:scale-95 sm:self-start"
-            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-          >
-            LINE 預約真人延伸解讀
-          </a>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a
+              href={OFFICIAL_LINE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#06C755] px-6 py-2.5 text-center text-[11px] tracking-[0.18em] text-white no-underline transition-all duration-300 hover:bg-[#05B84F] active:scale-95"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              LINE 預約真人延伸解讀
+            </a>
+            <Link
+              href="/tarot/human"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#D1BE9B]/45 bg-white/60 px-6 py-2.5 text-center text-[11px] tracking-[0.18em] text-[#8A7250] no-underline transition-all duration-300 hover:border-[#A38D6B]/55 hover:bg-white/80 hover:text-[#31353A] active:scale-95"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              查看日日好日真人占卜服務
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -2240,13 +2303,22 @@ export default function ZiweiPage() {
                   {/* Chart grid */}
                   <div className="flex-1">
                     <p
-                      className="mb-3 text-center text-[13px] tracking-[0.24em] text-[#8A7250]"
+                      className="mb-2 text-center text-[13px] tracking-[0.24em] text-[#8A7250]"
                       style={{
                         fontFamily: "Noto Serif TC, serif",
                         fontWeight: 400,
                       }}
                     >
                       ◎ 你的命盤
+                    </p>
+                    <p
+                      className="mx-auto mb-3 w-fit rounded-full border border-[#D1BE9B]/35 bg-[#FFFDF8]/76 px-4 py-1.5 text-center text-[11px] tracking-[0.16em] text-[#8A7250]"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      ✦ 點任一個宮位，看那一宮的解讀
                     </p>
                     <div
                       className="grid gap-1.5"
@@ -2264,12 +2336,18 @@ export default function ZiweiPage() {
                         return (
                           <div
                             key={palace.name}
-                            onClick={() =>
-                              setSelectedPalaceName(
-                                isSelected ? null : palace.name
-                              )
-                            }
-                            className={`relative rounded-xl p-3 cursor-pointer border transition-all duration-300 ${
+                            role="button"
+                            tabIndex={0}
+                            aria-pressed={isSelected}
+                            aria-label={`看${palace.name}的解讀`}
+                            onClick={() => togglePalace(palace.name)}
+                            onKeyDown={event => {
+                              if (event.key !== "Enter" && event.key !== " ")
+                                return;
+                              event.preventDefault();
+                              togglePalace(palace.name);
+                            }}
+                            className={`relative rounded-xl p-3 cursor-pointer border outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/60 ${
                               isSelected
                                 ? "border-[#D1BE9B] shadow-[0_4px_20px_rgba(209,190,155,0.3)] scale-[1.02]"
                                 : "border-[#D1BE9B]/20 hover:border-[#D1BE9B]/40 hover:scale-[1.01]"
@@ -2437,187 +2515,71 @@ export default function ZiweiPage() {
                   </div>
 
                   {/* Palace detail */}
-                  <div className="xl:w-72">
-                    {selectedPalace ? (
-                      <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 animate-fade-in-up">
-                        <div className="flex items-center gap-2 mb-4">
-                          <div
-                            className="w-8 h-8 rounded-full flex items-center justify-center"
+                  <div ref={palaceDetailRef} className="xl:w-72 scroll-mt-28">
+                    {/* 桌機：面板就在命盤旁邊。窄螢幕改用彈出視窗，見下方 Dialog。 */}
+                    <div className="hidden xl:block">
+                      {selectedPalace ? (
+                        <PalaceDetailCard
+                          palace={selectedPalace}
+                          accentColor={
+                            PALACE_COLORS[
+                              astrolabe.palaces.findIndex(
+                                p => p.name === selectedPalace.name
+                              )
+                            ] ?? "#EDE8E2"
+                          }
+                        />
+                      ) : (
+                        <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 text-center">
+                          <div className="text-2xl mb-3 opacity-30">☯</div>
+                          <p
+                            className="text-xs leading-[2] tracking-[0.15em] text-[#31353A]/50"
                             style={{
-                              background:
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 200,
+                            }}
+                          >
+                            點命盤上任一個宮位
+                            <br />
+                            看那一宮的解讀
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 窄螢幕：宮位解讀跳出來，不塞在命盤下面 */}
+                    <Dialog
+                      open={openedPalaceName !== null}
+                      onOpenChange={open => {
+                        if (!open) setOpenedPalaceName(null);
+                      }}
+                    >
+                      <DialogContent className="max-h-[85vh] max-w-[min(28rem,calc(100vw-2rem))] overflow-y-auto border-[#D1BE9B]/30 bg-[#FFFDF8]/97 p-0 shadow-[0_28px_70px_rgba(138,114,80,0.22)] backdrop-blur-xl sm:rounded-2xl">
+                        {openedPalace && (
+                          <>
+                            <DialogHeader className="sr-only">
+                              <DialogTitle>
+                                {openedPalace.name}的解讀
+                              </DialogTitle>
+                              <DialogDescription>
+                                {PALACE_DESCS[openedPalace.name]?.desc ?? ""}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <PalaceDetailCard
+                              palace={openedPalace}
+                              accentColor={
                                 PALACE_COLORS[
                                   astrolabe.palaces.findIndex(
-                                    p => p.name === selectedPalace.name
+                                    p => p.name === openedPalace.name
                                   )
-                                ] ?? "#EDE8E2",
-                            }}
-                          >
-                            <span
-                              className="text-[11px] text-[#31353A]/80"
-                              style={{
-                                fontFamily: "Noto Serif TC, serif",
-                                fontWeight: 300,
-                              }}
-                            >
-                              {selectedPalace.name.slice(0, 1)}
-                            </span>
-                          </div>
-                          <div>
-                            <p
-                              className="text-sm tracking-[0.15em] text-[#31353A]/86"
-                              style={{
-                                fontFamily: "Noto Serif TC, serif",
-                                fontWeight: 300,
-                              }}
-                            >
-                              {selectedPalace.name}
-                            </p>
-                          </div>
-                        </div>
-
-                        <p
-                          className="text-[12px] leading-[1.9] text-[#31353A]/68 tracking-wider mb-4"
-                          style={{
-                            fontFamily: "Noto Sans TC, sans-serif",
-                            fontWeight: 300,
-                          }}
-                        >
-                          {PALACE_DESCS[selectedPalace.name]?.desc ?? ""}
-                        </p>
-
-                        {/* Stem/Branch + Stage */}
-                        <div className="flex gap-2 mb-3">
-                          <span
-                            className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
-                            style={{
-                              fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 300,
-                            }}
-                          >
-                            {selectedPalace.heavenlyStem}
-                            {selectedPalace.earthlyBranch}
-                          </span>
-                          <span
-                            className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
-                            style={{
-                              fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 300,
-                            }}
-                          >
-                            大限 {selectedPalace.stage?.range?.[0]}–
-                            {selectedPalace.stage?.range?.[1]}
-                          </span>
-                          {selectedPalace.changsheng12 && (
-                            <span
-                              className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
-                              style={{
-                                fontFamily: "Noto Serif TC, serif",
-                                fontWeight: 300,
-                              }}
-                            >
-                              {selectedPalace.changsheng12}
-                            </span>
-                          )}
-                        </div>
-
-                        {selectedPalace.majorStars.length > 0 && (
-                          <div className="border-t border-[#D1BE9B]/15 pt-4">
-                            <p
-                              className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-3"
-                              style={{
-                                fontFamily: "Noto Serif TC, serif",
-                                fontWeight: 300,
-                              }}
-                            >
-                              本宮主星
-                            </p>
-                            <div className="space-y-2">
-                              {selectedPalace.majorStars.map(star => {
-                                const color =
-                                  STAR_COLORS[star.name] ?? "#D1BE9B";
-                                return (
-                                  <div
-                                    key={star.name}
-                                    className="flex items-center gap-2"
-                                  >
-                                    <span
-                                      className="text-[11px] px-2 py-0.5 rounded-full"
-                                      style={{
-                                        background: color + "25",
-                                        color,
-                                        border: `1px solid ${color}50`,
-                                        fontFamily: "Noto Serif TC, serif",
-                                        fontWeight: 300,
-                                      }}
-                                    >
-                                      {star.name}
-                                    </span>
-                                    {star.brightness && (
-                                      <span
-                                        className="text-[11px]"
-                                        style={{
-                                          color:
-                                            BRIGHTNESS_STYLE[star.brightness]
-                                              ?.color ?? "#888",
-                                          fontWeight:
-                                            BRIGHTNESS_STYLE[star.brightness]
-                                              ?.weight ?? "300",
-                                        }}
-                                      >
-                                        {star.brightness}
-                                      </span>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
+                                ] ?? "#EDE8E2"
+                              }
+                              className="p-6"
+                            />
+                          </>
                         )}
-
-                        {selectedPalace.minorStars.length > 0 && (
-                          <div className="border-t border-[#D1BE9B]/15 pt-3 mt-3">
-                            <p
-                              className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-2"
-                              style={{
-                                fontFamily: "Noto Serif TC, serif",
-                                fontWeight: 300,
-                              }}
-                            >
-                              輔星
-                            </p>
-                            <div className="flex flex-wrap gap-1">
-                              {selectedPalace.minorStars.map(s => (
-                                <span
-                                  key={s.name}
-                                  className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/10 text-[#31353A]/62 border border-[#D1BE9B]/20"
-                                  style={{
-                                    fontFamily: "Noto Serif TC, serif",
-                                    fontWeight: 200,
-                                  }}
-                                >
-                                  {s.name}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {selectedPalace.majorStars.length === 0 && (
-                          <div className="border-t border-[#D1BE9B]/15 pt-4">
-                            <p
-                              className="text-[12px] leading-[1.9] text-[#31353A]/58 tracking-wider italic"
-                              style={{
-                                fontFamily: "Noto Serif TC, serif",
-                                fontWeight: 200,
-                              }}
-                            >
-                              此宮為空宮，代表此方面的事務較為自由，
-                              不受特定星曜的強烈影響，走向較為中性平和。
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ) : null}
+                      </DialogContent>
+                    </Dialog>
 
                     {/* Actions */}
                     <div className="mt-4 flex flex-col gap-2">
@@ -2625,6 +2587,7 @@ export default function ZiweiPage() {
                         onClick={() => {
                           setAstrolabe(null);
                           setSelectedPalaceName(null);
+                          setOpenedPalaceName(null);
                           setLlmInterpretation("");
                           setReadingRecommendation(null);
                         }}
@@ -2657,5 +2620,191 @@ export default function ZiweiPage() {
         </div>
       </div>
     </PageLayout>
+  );
+}
+
+function PalaceDetailCard({
+  palace,
+  accentColor,
+  className = "glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 animate-fade-in-up",
+}: {
+  palace: Palace;
+  accentColor: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <div className="flex items-center gap-2 mb-4">
+        <div
+          className="w-8 h-8 rounded-full flex items-center justify-center"
+          style={{
+            background: accentColor,
+          }}
+        >
+          <span
+            className="text-[11px] text-[#31353A]/80"
+            style={{
+              fontFamily: "Noto Serif TC, serif",
+              fontWeight: 300,
+            }}
+          >
+            {palace.name.slice(0, 1)}
+          </span>
+        </div>
+        <div>
+          <p
+            className="text-sm tracking-[0.15em] text-[#31353A]/86"
+            style={{
+              fontFamily: "Noto Serif TC, serif",
+              fontWeight: 300,
+            }}
+          >
+            {palace.name}
+          </p>
+        </div>
+      </div>
+
+      <p
+        className="text-[12px] leading-[1.9] text-[#31353A]/68 tracking-wider mb-4"
+        style={{
+          fontFamily: "Noto Sans TC, sans-serif",
+          fontWeight: 300,
+        }}
+      >
+        {PALACE_DESCS[palace.name]?.desc ?? ""}
+      </p>
+
+      {/* Stem/Branch + Stage */}
+      <div className="flex gap-2 mb-3">
+        <span
+          className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
+          style={{
+            fontFamily: "Noto Serif TC, serif",
+            fontWeight: 300,
+          }}
+        >
+          {palace.heavenlyStem}
+          {palace.earthlyBranch}
+        </span>
+        <span
+          className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
+          style={{
+            fontFamily: "Noto Serif TC, serif",
+            fontWeight: 300,
+          }}
+        >
+          大限 {palace.stage?.range?.[0]}–
+          {palace.stage?.range?.[1]}
+        </span>
+        {palace.changsheng12 && (
+          <span
+            className="text-[11px] px-2 py-0.5 rounded-full bg-[#D1BE9B]/15 text-[#A38D6B]"
+            style={{
+              fontFamily: "Noto Serif TC, serif",
+              fontWeight: 300,
+            }}
+          >
+            {palace.changsheng12}
+          </span>
+        )}
+      </div>
+
+      {palace.majorStars.length > 0 && (
+        <div className="border-t border-[#D1BE9B]/15 pt-4">
+          <p
+            className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-3"
+            style={{
+              fontFamily: "Noto Serif TC, serif",
+              fontWeight: 300,
+            }}
+          >
+            本宮主星
+          </p>
+          <div className="space-y-2">
+            {palace.majorStars.map(star => {
+              const color =
+                STAR_COLORS[star.name] ?? "#D1BE9B";
+              return (
+                <div
+                  key={star.name}
+                  className="flex items-center gap-2"
+                >
+                  <span
+                    className="text-[11px] px-2 py-0.5 rounded-full"
+                    style={{
+                      background: color + "25",
+                      color,
+                      border: `1px solid ${color}50`,
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 300,
+                    }}
+                  >
+                    {star.name}
+                  </span>
+                  {star.brightness && (
+                    <span
+                      className="text-[11px]"
+                      style={{
+                        color:
+                          BRIGHTNESS_STYLE[star.brightness]
+                            ?.color ?? "#888",
+                        fontWeight:
+                          BRIGHTNESS_STYLE[star.brightness]
+                            ?.weight ?? "300",
+                      }}
+                    >
+                      {star.brightness}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {palace.minorStars.length > 0 && (
+        <div className="border-t border-[#D1BE9B]/15 pt-3 mt-3">
+          <p
+            className="text-[11px] tracking-[0.2em] text-[#D1BE9B] mb-2"
+            style={{
+              fontFamily: "Noto Serif TC, serif",
+              fontWeight: 300,
+            }}
+          >
+            輔星
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {palace.minorStars.map(s => (
+              <span
+                key={s.name}
+                className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#D1BE9B]/10 text-[#31353A]/62 border border-[#D1BE9B]/20"
+                style={{
+                  fontFamily: "Noto Serif TC, serif",
+                  fontWeight: 200,
+                }}
+              >
+                {s.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {palace.majorStars.length === 0 && (
+        <div className="border-t border-[#D1BE9B]/15 pt-4">
+          <p
+            className="text-[12px] leading-[1.9] text-[#31353A]/58 tracking-wider italic"
+            style={{
+              fontFamily: "Noto Serif TC, serif",
+              fontWeight: 200,
+            }}
+          >
+            此宮為空宮，代表此方面的事務較為自由，
+            不受特定星曜的強烈影響，走向較為中性平和。
+          </p>
+        </div>
+      )}
+    </div>
   );
 }

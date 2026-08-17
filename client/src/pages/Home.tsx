@@ -479,11 +479,11 @@ export default function Home() {
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
             <Link href="/tarot">
               <button
-                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#9B8DC0]/25 bg-[#E5DFEE]/28 px-4 py-2.5 text-[#6F6688] transition-all duration-500 hover:border-[#3D4144] hover:bg-[#3D4144] hover:text-white active:scale-95"
+                className="group hero-pill hero-pill--lavender flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-2.5"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <span
-                  className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/45 bg-white/75 shadow-[0_5px_18px_rgba(209,190,155,0.14)] transition-colors duration-500 group-hover:border-white/25 group-hover:bg-white/90"
+                  className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full border border-white/70 bg-white/85 shadow-[0_4px_14px_rgba(155,141,192,0.22)] transition-colors duration-500 group-hover:bg-white"
                   aria-hidden="true"
                 >
                   <img
@@ -493,10 +493,10 @@ export default function Home() {
                   />
                 </span>
                 <span className="flex min-w-0 flex-col items-start leading-none">
-                  <span className="text-[11px] tracking-[0.14em] sm:text-xs">
+                  <span className="text-[11.5px] tracking-[0.18em] sm:text-[12.5px]">
                     塔羅占卜
                   </span>
-                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6F6688]/68 transition-colors duration-500 group-hover:text-white/62 sm:tracking-[0.14em]">
+                  <span className="mt-1 text-[10px] tracking-[0.08em] text-[#6A6084]/72 sm:tracking-[0.14em]">
                     日日好日
                     <span
                       className="ml-1.5 text-[12px] italic tracking-[0.08em] sm:text-[13px]"
@@ -510,7 +510,7 @@ export default function Home() {
             </Link>
             <Link href="/shop/custom-bracelet">
               <button
-                className="flex min-h-[3.5rem] w-full items-center justify-center rounded-full bg-[#D1BE9B] px-4 py-3 text-xs tracking-[0.14em] text-[#31353A] transition-all duration-500 hover:bg-[#3D4144] hover:text-[#FAF7F4] active:scale-95"
+                className="hero-pill hero-pill--gold flex min-h-[3.5rem] w-full items-center justify-center rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 客製化能量手鍊
@@ -518,7 +518,7 @@ export default function Home() {
             </Link>
             <Link href="/wish-ritual">
               <button
-                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full border border-[#D1BE9B]/34 bg-white/38 px-4 py-3 text-xs tracking-[0.14em] text-[#8A7250] shadow-[0_10px_28px_rgba(209,190,155,0.12)] backdrop-blur-sm transition-all duration-500 hover:border-[#A38D6B]/55 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                className="group hero-pill hero-pill--rose flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -531,7 +531,7 @@ export default function Home() {
                 aria-expanded={isMochiMenuOpen}
                 aria-controls="mochi-reading-menu"
                 onClick={() => setIsMochiMenuOpen(open => !open)}
-                className="group flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full bg-[#3D4144] px-4 py-3 text-xs tracking-[0.14em] text-[#FAF7F4] transition-all duration-500 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                className="group hero-pill hero-pill--mist flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-[12.5px] tracking-[0.18em]"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />

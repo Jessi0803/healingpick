@@ -31,6 +31,7 @@ import { CatWaving, CatListening } from "@/components/CatElements";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -44,6 +45,12 @@ import {
 } from "@/components/MoodClawMachine";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import TarotPreviewSection from "@/components/TarotPreviewSection";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import { ExternalLink, Mail, MessageCircle } from "lucide-react";
 import {
   recommendForCategory,
@@ -1536,6 +1543,9 @@ export default function TarotPage() {
   );
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [openedCard, setOpenedCard] = useState<number | null>(null);
+  const [readingCarouselApi, setReadingCarouselApi] = useState<CarouselApi>();
+  const [readingSwipeHintSeen, setReadingSwipeHintSeen] = useState(false);
   const [shuffling, setShuffling] = useState(false);
   const [isShufflingActive, setIsShufflingActive] = useState(false);
   const [shuffledDeck, setShuffledDeck] = useState<TarotCard[]>([]);
@@ -1556,6 +1566,7 @@ export default function TarotPage() {
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const readingResultRef = useRef<HTMLDivElement | null>(null);
+  const readingSectionRef = useRef<HTMLDivElement | null>(null);
   const tarotStardustCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
@@ -1689,6 +1700,12 @@ export default function TarotPage() {
     }
   }, [interpretMutation.isPending, llmInterpretation, scrollToSection]);
 
+  // 一切到解讀頁就把牌陣＋當下那張牌的解讀帶到畫面上，不用再自己往下滑。
+  useEffect(() => {
+    if (step !== "reading") return;
+    scrollToSection(readingSectionRef, "start");
+  }, [step, scrollToSection]);
+
   const getReadingCardsPayload = (cards = drawnCards) =>
     cards.map((d, i) => ({
       name: d.card.name,
@@ -1770,9 +1787,39 @@ export default function TarotPage() {
     ]
   );
 
+  // 完整解讀的牌：手機改成左右滑動，滑到哪張就選到哪張；
+  // 反過來點小圓點或點牌也會捲過去。桌機（md 以上）embla 設成 active: false，
+  // 五張仍舊並排，下面兩個 effect 等同沒作用。
+  useEffect(() => {
+    if (!readingCarouselApi) return;
+    const syncFromCarousel = () =>
+      setSelectedCard(readingCarouselApi.selectedScrollSnap());
+    const hideSwipeHint = () => setReadingSwipeHintSeen(true);
+    readingCarouselApi.on("select", syncFromCarousel);
+    readingCarouselApi.on("pointerDown", hideSwipeHint);
+    return () => {
+      readingCarouselApi.off("select", syncFromCarousel);
+      readingCarouselApi.off("pointerDown", hideSwipeHint);
+    };
+  }, [readingCarouselApi]);
+
+  useEffect(() => {
+    if (!readingCarouselApi || selectedCard === null) return;
+    if (readingCarouselApi.selectedScrollSnap() === selectedCard) return;
+    readingCarouselApi.scrollTo(selectedCard);
+  }, [readingCarouselApi, selectedCard]);
+
+  // 點牌就跳出那張牌的牌義，不用捲到下面找。滑動輪播只換選取的牌，不開視窗。
+  const selectCard = useCallback((idx: number) => {
+    setSelectedCard(idx);
+    setOpenedCard(idx);
+  }, []);
+
   const startReading = (cards = drawnCards) => {
     setStep("reading");
     setSelectedCard(cards.length > 0 ? 0 : null);
+    setOpenedCard(null);
+    setReadingSwipeHintSeen(false);
     setLlmInterpretation("");
     setReadingRecommendation(null);
     setFollowUpQuestion("");
@@ -3006,12 +3053,12 @@ export default function TarotPage() {
 
   return (
     <PageLayout>
-      <div className="min-h-screen py-12 px-4 md:px-8">
+      <div className="min-h-screen pt-4 pb-12 px-4 md:py-12 md:px-8">
         <div className="max-w-5xl mx-auto">
           {/* ── QUESTION ───────────────────────────────────────────────────── */}
           {step === "question" && (
             <div className="max-w-3xl mx-auto animate-fade-in-up">
-              <div className="text-center mb-10">
+              <div className="text-center mb-4 md:mb-10">
                 <span
                   className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
                   style={{
@@ -3022,7 +3069,7 @@ export default function TarotPage() {
                   Step 1
                 </span>
                 <h2
-                  className="text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-2"
+                  className="text-2xl tracking-[0.2em] font-extralight text-[#31353A] mt-1 md:mt-2"
                   style={{
                     fontFamily: "Noto Serif TC, serif",
                     fontWeight: 200,
@@ -3031,7 +3078,7 @@ export default function TarotPage() {
                   設定你的問題
                 </h2>
                 <p
-                  className="mt-2 text-[12px] text-[#31353A]/58 tracking-wider leading-[1.9]"
+                  className="mt-1 md:mt-2 text-[12px] text-[#31353A]/58 tracking-wider leading-[1.75]"
                   style={{
                     fontFamily: "Noto Serif TC, serif",
                     fontWeight: 200,
@@ -3041,11 +3088,11 @@ export default function TarotPage() {
                 </p>
               </div>
 
-              <div className="glass-panel rounded-2xl p-8 border border-[#D1BE9B]/20">
+              <div className="glass-panel rounded-2xl p-5 md:p-8 border border-[#D1BE9B]/20">
                 {/* Question input */}
-                <div className="mb-6">
+                <div className="mb-4">
                   <label
-                    className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-3"
+                    className="block text-[11px] tracking-[0.25em] text-[#D1BE9B] mb-2"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
                       fontWeight: 300,
@@ -3059,27 +3106,29 @@ export default function TarotPage() {
                     onChange={e => setQuestion(e.target.value.slice(0, 300))}
                     maxLength={300}
                     placeholder="例如：我跟他還有機會嗎？&#10;例如：我現在適合換工作嗎？"
-                    rows={3}
+                    rows={2}
                     className="w-full bg-white/50 border border-[#D1BE9B]/25 rounded-xl px-4 py-3 text-xs text-[#31353A]/80 tracking-wider leading-[1.9] resize-none focus:outline-none focus:border-[#D1BE9B]/50 placeholder:text-[#31353A]/46"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
                       fontWeight: 300,
                     }}
                   />
-                  <div
-                    className="mt-1 text-right text-[10px] tracking-wider"
-                    style={{
-                      fontFamily: "Cormorant Garamond, serif",
-                      color:
-                        question.length >= 300
-                          ? "#C9837A"
-                          : question.length >= 250
-                            ? "#A38D6B"
-                            : "#31353A66",
-                    }}
-                  >
-                    {question.length} / 300
-                  </div>
+                  {question.length >= 200 && (
+                    <div
+                      className="mt-1 text-right text-[10px] tracking-wider"
+                      style={{
+                        fontFamily: "Cormorant Garamond, serif",
+                        color:
+                          question.length >= 300
+                            ? "#C9837A"
+                            : question.length >= 250
+                              ? "#A38D6B"
+                              : "#31353A66",
+                      }}
+                    >
+                      {question.length} / 300
+                    </div>
+                  )}
                   <p
                     className="mt-2 text-[11px] text-[#31353A]/50 tracking-wider"
                     style={{
@@ -3103,20 +3152,20 @@ export default function TarotPage() {
                 </button>
 
                 {/* Popular questions — collapsed by default */}
-                <div className="mt-6 border-t border-[#D1BE9B]/14 pt-5">
+                <div className="mt-4 pt-4">
                   <button
                     type="button"
                     onClick={() => setIsPopularQuestionsOpen(open => !open)}
                     aria-expanded={isPopularQuestionsOpen}
-                    className="mx-auto flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#D1BE9B]/28 bg-white/55 px-5 py-2.5 text-[11.5px] tracking-[0.16em] text-[#8A7250] transition-all duration-300 hover:border-[#D1BE9B]/55 hover:bg-white active:scale-[0.98]"
+                    className="flex w-full min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#D1BE9B]/70 bg-[#D1BE9B]/20 px-4 py-2.5 text-[12px] tracking-[0.1em] text-[#6B5324] shadow-[0_1px_10px_rgba(209,190,155,0.3)] transition-[background-color,border-color,box-shadow,transform] duration-200 ease-out hover:border-[#D1BE9B] hover:bg-[#D1BE9B]/32 active:scale-[0.98] sm:text-[12.5px] sm:tracking-[0.16em]"
                     style={{
                       fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                     }}
                   >
                     不知道問什麼嗎？看看大家都在問
                     <span
-                      className={`text-[10px] leading-none text-[#A38D6B] transition-transform duration-300 ${
+                      className={`text-[10px] leading-none text-[#6B5324] transition-transform duration-200 ease-out ${
                         isPopularQuestionsOpen ? "rotate-180" : ""
                       }`}
                       aria-hidden="true"
@@ -3687,8 +3736,11 @@ export default function TarotPage() {
 
           {/* ── READING ────────────────────────────────────────────────────── */}
           {step === "reading" && (
-            <div className="animate-fade-in-up">
-              <div className="text-center mb-10">
+            <div
+              ref={readingSectionRef}
+              className="animate-fade-in-up scroll-mt-28"
+            >
+              <div className="text-center mb-6">
                 <span
                   className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
                   style={{
@@ -3711,135 +3763,224 @@ export default function TarotPage() {
 
               {/* Cards summary */}
               <div className="mb-10">
-                <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-                  {drawnCards.map((drawn, idx) => {
-                    const isActive = selectedCard === idx;
+                <p
+                  className="mx-auto mb-4 w-fit rounded-full border border-[#D1BE9B]/35 bg-[#FFFDF8]/76 px-4 py-1.5 text-center text-[11px] tracking-[0.16em] text-[#8A7250]"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
+                >
+                  ✦ 點任一張牌，跳出這張牌單獨的牌義
+                </p>
 
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setSelectedCard(idx)}
-                        aria-pressed={isActive}
-                        className={`group relative rounded-xl border p-3 text-center outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/60 ${
-                          isActive
-                            ? "border-[#D1BE9B]/70 bg-[#FFFDF8]/82 shadow-[0_0_0_1px_rgba(209,190,155,0.30),0_0_28px_rgba(209,190,155,0.44),0_14px_34px_rgba(138,114,80,0.12)]"
-                            : "glass-panel border-[#D1BE9B]/15 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45 hover:shadow-[0_12px_26px_rgba(209,190,155,0.18)]"
-                        }`}
-                      >
-                        <div
-                          className={`pointer-events-none absolute -inset-1 rounded-[15px] transition-opacity duration-300 ${
-                            isActive
-                              ? "opacity-100"
-                              : "opacity-0 group-hover:opacity-60"
-                          } bg-[radial-gradient(circle_at_50%_18%,rgba(255,248,220,0.92),rgba(209,190,155,0.24)_42%,transparent_72%)] blur-[2px]`}
-                        />
-                        <div className="relative">
-                          <div
-                            className="text-[9px] tracking-[0.14em] text-[#D1BE9B] mb-1"
-                            style={{
-                              fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 200,
-                            }}
-                          >
-                            {SPREAD_POSITIONS[idx].label}
-                          </div>
-                          <div
-                            className={`mx-auto mb-2 w-20 sm:w-24 aspect-[2/3] rounded-lg transition-all duration-300 ${
+                <Carousel
+                  setApi={setReadingCarouselApi}
+                  opts={{
+                    align: "center",
+                    breakpoints: { "(min-width: 768px)": { active: false } },
+                  }}
+                >
+                  <CarouselContent className="-ml-3 px-1 py-2">
+                    {drawnCards.map((drawn, idx) => {
+                      const isActive = selectedCard === idx;
+
+                      return (
+                        <CarouselItem
+                          key={idx}
+                          className="basis-full pl-3 md:basis-1/5"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => selectCard(idx)}
+                            aria-pressed={isActive}
+                            aria-label={`看${SPREAD_POSITIONS[idx].readingLabel}・${drawn.card.name}${drawn.reversed ? "逆位" : "正位"}的解讀`}
+                            className={`group relative h-full w-full rounded-xl border p-3 text-center outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/60 ${
                               isActive
-                                ? "scale-[1.03] drop-shadow-[0_0_18px_rgba(209,190,155,0.62)]"
-                                : "group-hover:drop-shadow-[0_8px_18px_rgba(209,190,155,0.30)]"
+                                ? "border-[#D1BE9B]/70 bg-[#FFFDF8]/82 shadow-[0_0_0_1px_rgba(209,190,155,0.30),0_0_28px_rgba(209,190,155,0.44),0_14px_34px_rgba(138,114,80,0.12)]"
+                                : "glass-panel border-[#D1BE9B]/15 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45 hover:shadow-[0_12px_26px_rgba(209,190,155,0.18)]"
                             }`}
                           >
-                            <CardFace
-                              card={drawn.card}
-                              reversed={drawn.reversed}
+                            <div
+                              className={`pointer-events-none absolute -inset-1 rounded-[15px] transition-opacity duration-300 ${
+                                isActive
+                                  ? "opacity-100"
+                                  : "opacity-0 group-hover:opacity-60"
+                              } bg-[radial-gradient(circle_at_50%_18%,rgba(255,248,220,0.92),rgba(209,190,155,0.24)_42%,transparent_72%)] blur-[2px]`}
                             />
-                          </div>
-                          <div
-                            className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
+                            <div className="relative">
+                              <div
+                                className="text-[9px] tracking-[0.14em] text-[#D1BE9B] mb-1"
+                                style={{
+                                  fontFamily: "Noto Serif TC, serif",
+                                  fontWeight: 200,
+                                }}
+                              >
+                                {SPREAD_POSITIONS[idx].label}
+                              </div>
+                              <div
+                                className={`mx-auto mb-2 w-20 sm:w-24 aspect-[2/3] rounded-lg transition-all duration-300 ${
+                                  isActive
+                                    ? "scale-[1.03] drop-shadow-[0_0_18px_rgba(209,190,155,0.62)]"
+                                    : "group-hover:drop-shadow-[0_8px_18px_rgba(209,190,155,0.30)]"
+                                }`}
+                              >
+                                <CardFace
+                                  card={drawn.card}
+                                  reversed={drawn.reversed}
+                                />
+                              </div>
+                              <div
+                                className="text-[11px] tracking-[0.1em] text-[#31353A]/82"
+                                style={{
+                                  fontFamily: "Noto Serif TC, serif",
+                                  fontWeight: 300,
+                                }}
+                              >
+                                {drawn.card.name}
+                              </div>
+                              <div
+                                className={`mt-0.5 text-[10px] tracking-[0.08em] ${
+                                  drawn.reversed
+                                    ? "text-[#EAA8AC]"
+                                    : "text-[#A38D6B]"
+                                }`}
+                                style={{
+                                  fontFamily: "Noto Serif TC, serif",
+                                  fontWeight: 200,
+                                }}
+                              >
+                                {drawn.reversed ? "逆位" : "正位"}
+                              </div>
+                            </div>
+                          </button>
+                        </CarouselItem>
+                      );
+                    })}
+                  </CarouselContent>
+                </Carousel>
+
+                <p
+                  className={`mt-3 text-center text-[11px] tracking-[0.18em] text-[#31353A]/46 transition-opacity duration-500 md:hidden ${
+                    readingSwipeHintSeen ? "opacity-0" : "opacity-100"
+                  }`}
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 200,
+                  }}
+                  aria-hidden={readingSwipeHintSeen}
+                >
+                  ← 左右滑動看每張牌，點牌看牌義 →
+                </p>
+
+                <div className="mt-2 flex items-center justify-center gap-2 md:hidden">
+                  {drawnCards.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => selectCard(idx)}
+                      aria-label={`看第 ${idx + 1} 張・${SPREAD_POSITIONS[idx].readingLabel}`}
+                      aria-current={selectedCard === idx}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        selectedCard === idx
+                          ? "w-5 bg-[#D1BE9B]"
+                          : "w-1.5 bg-[#D1BE9B]/35"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {/* 單張牌義：跳出小視窗，不再擠在牌陣下面 */}
+                <Dialog
+                  open={openedCard !== null}
+                  onOpenChange={open => {
+                    if (!open) setOpenedCard(null);
+                  }}
+                >
+                  <DialogContent className="max-w-[min(30rem,calc(100vw-2rem))] border-[#D1BE9B]/30 bg-[#FFFDF8]/97 p-6 shadow-[0_28px_70px_rgba(138,114,80,0.22)] backdrop-blur-xl sm:rounded-2xl">
+                    {openedCard !== null && drawnCards[openedCard] && (
+                      <>
+                        <DialogHeader className="text-left">
+                          <span
+                            className="w-fit rounded-full border border-[#D1BE9B]/32 bg-white/58 px-3 py-1 text-[11px] tracking-[0.18em] text-[#8A7250]"
                             style={{
                               fontFamily: "Noto Serif TC, serif",
                               fontWeight: 300,
                             }}
                           >
-                            {drawn.card.name}
-                          </div>
-                          <div
-                            className={`mt-0.5 text-[10px] tracking-[0.08em] ${
-                              drawn.reversed
-                                ? "text-[#EAA8AC]"
-                                : "text-[#A38D6B]"
-                            }`}
+                            {SPREAD_POSITIONS[openedCard].readingLabel}
+                          </span>
+                          <DialogTitle
+                            className="text-[16px] font-normal tracking-[0.12em] text-[#31353A]/88"
                             style={{
                               fontFamily: "Noto Serif TC, serif",
-                              fontWeight: 200,
+                              fontWeight: 300,
                             }}
                           >
-                            {drawn.reversed ? "逆位" : "正位"}
+                            {drawnCards[openedCard].card.name}
+                            <span
+                              className={`ml-2 text-[12px] ${
+                                drawnCards[openedCard].reversed
+                                  ? "text-[#EAA8AC]"
+                                  : "text-[#A38D6B]"
+                              }`}
+                            >
+                              {drawnCards[openedCard].reversed
+                                ? "逆位"
+                                : "正位"}
+                            </span>
+                          </DialogTitle>
+                          <DialogDescription
+                            className="text-[11px] italic tracking-wider text-[#D1BE9B]"
+                            style={{ fontFamily: "Cormorant Garamond, serif" }}
+                          >
+                            {drawnCards[openedCard].card.en}
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="flex gap-4">
+                          <div className="w-24 flex-shrink-0 sm:w-28">
+                            <CardFace
+                              card={drawnCards[openedCard].card}
+                              reversed={drawnCards[openedCard].reversed}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <p
+                              className="text-[11px] tracking-[0.14em] text-[#31353A]/54"
+                              style={{
+                                fontFamily: "Noto Serif TC, serif",
+                                fontWeight: 300,
+                              }}
+                            >
+                              {SPREAD_POSITIONS[openedCard].label}
+                            </p>
+                            <p
+                              className="mt-1.5 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
+                              style={{
+                                fontFamily: "Noto Serif TC, serif",
+                                fontWeight: 200,
+                              }}
+                            >
+                              {SPREAD_POSITIONS[openedCard].desc}
+                            </p>
                           </div>
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
 
-                {selectedCard !== null && drawnCards[selectedCard] && (
-                  <div className="mt-4 rounded-2xl border border-[#D1BE9B]/24 bg-[#FFFDF8]/72 px-5 py-4 shadow-[0_14px_36px_rgba(138,114,80,0.08)] animate-fade-in-up">
-                    <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <span
-                        className="rounded-full border border-[#D1BE9B]/32 bg-white/58 px-3 py-1 text-[11px] tracking-[0.18em] text-[#8A7250]"
-                        style={{
-                          fontFamily: "Noto Serif TC, serif",
-                          fontWeight: 300,
-                        }}
-                      >
-                        {SPREAD_POSITIONS[selectedCard].readingLabel}
-                      </span>
-                      <span
-                        className="text-[11px] tracking-[0.14em] text-[#31353A]/54"
-                        style={{
-                          fontFamily: "Noto Serif TC, serif",
-                          fontWeight: 300,
-                        }}
-                      >
-                        {SPREAD_POSITIONS[selectedCard].label}
-                      </span>
-                    </div>
-                    <h3
-                      className="text-[15px] tracking-[0.12em] text-[#31353A]/88"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      {drawnCards[selectedCard].card.name}
-                      <span className="ml-2 text-[12px] text-[#A38D6B]">
-                        {drawnCards[selectedCard].reversed ? "逆位" : "正位"}
-                      </span>
-                    </h3>
-                    <p
-                      className="mt-2 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 200,
-                      }}
-                    >
-                      {SPREAD_POSITIONS[selectedCard].desc}
-                    </p>
-                    <p
-                      className="mt-3 border-t border-[#D1BE9B]/14 pt-3 text-[13px] leading-[2] tracking-[0.07em] text-[#31353A]/76"
-                      style={{
-                        fontFamily: "Noto Sans TC, sans-serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      {drawnCards[selectedCard].reversed
-                        ? drawnCards[selectedCard].card.reversed
-                        : drawnCards[selectedCard].card.meaning}
-                    </p>
-                  </div>
-                )}
+                        <p
+                          className="max-h-[38vh] overflow-y-auto border-t border-[#D1BE9B]/14 pt-3 text-[13px] leading-[2] tracking-[0.07em] text-[#31353A]/76"
+                          style={{
+                            fontFamily: "Noto Sans TC, sans-serif",
+                            fontWeight: 300,
+                          }}
+                        >
+                          {drawnCards[openedCard].reversed
+                            ? drawnCards[openedCard].card.reversed
+                            : drawnCards[openedCard].card.meaning}
+                        </p>
+                      </>
+                    )}
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {/* AI interpretation */}
@@ -4225,6 +4366,33 @@ export default function TarotPage() {
                           付費
                         </span>
                       </div>
+                      <div className="mb-4 flex items-center gap-3 rounded-2xl border border-[#06C755]/16 bg-white/62 px-3 py-2.5">
+                        <img
+                          src="/gooday-logo.png"
+                          alt="Gooday 日日好日"
+                          className="h-11 w-11 shrink-0 rounded-full border border-[#06C755]/18 bg-white object-cover"
+                        />
+                        <span className="flex flex-col gap-1">
+                          <span
+                            className="text-[11.5px] tracking-[0.12em] text-[#267345]"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 400,
+                            }}
+                          >
+                            HealingPick × Gooday 日日好日
+                          </span>
+                          <span
+                            className="text-[11px] leading-[1.7] tracking-[0.06em] text-[#31353A]/58"
+                            style={{
+                              fontFamily: "Noto Sans TC, sans-serif",
+                              fontWeight: 300,
+                            }}
+                          >
+                            合作占卜師一對一解讀
+                          </span>
+                        </span>
+                      </div>
                       <p
                         className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/66"
                         style={{
@@ -4232,7 +4400,7 @@ export default function TarotPage() {
                           fontWeight: 300,
                         }}
                       >
-                        真人塔羅師重新開牌，適合深入看關係走向、對方想法、下一步行動。
+                        還想再問得更深嗎？像「他到底怎麼想」「這一步該不該走」，可以請日日好日真人老師重新開牌，陪你問到清楚。
                       </p>
                       <p
                         className="mt-3 text-[12px] tracking-[0.1em] text-[#267345]"
@@ -4241,7 +4409,7 @@ export default function TarotPage() {
                           fontWeight: 400,
                         }}
                       >
-                        1 題 NT$250｜3 題 NT$700｜主題套裝 NT$999 起
+                        先從 1 題 NT$250 開始問
                       </p>
                       <div className="mt-4 flex flex-col gap-3">
                         <a
@@ -4261,6 +4429,16 @@ export default function TarotPage() {
                             <ExternalLink className="h-3.5 w-3.5" />
                           </button>
                         </a>
+                        <Link
+                          href="/tarot/human"
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#06C755]/26 bg-white/70 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] no-underline transition-all duration-300 hover:bg-white active:scale-95"
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 300,
+                          }}
+                        >
+                          查看日日好日真人占卜服務
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -4286,6 +4464,7 @@ export default function TarotPage() {
                       setDrawnCards([]);
                       setRevealedCards(new Set());
                       setSelectedCard(null);
+                      setOpenedCard(null);
                       setQuestion("");
                       setFollowUpQuestion("");
                       setFollowUpExchanges([]);

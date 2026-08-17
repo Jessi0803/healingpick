@@ -608,6 +608,134 @@ body::after {
   border: 1px solid rgba(209, 190, 155, 0.18);
 }
 
+/* Hero choice pills — frosted glass lit from above, color pooling at the top edge */
+.hero-pill {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    var(--pill-tint) 0%,
+    rgba(255, 255, 255, 0.8) 62%,
+    rgba(255, 255, 255, 0.62) 100%
+  );
+  backdrop-filter: blur(10px) saturate(125%);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  border: 1px solid var(--pill-line);
+  color: var(--pill-ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 3px rgba(49, 53, 58, 0.06),
+    0 10px 22px -16px var(--pill-glow);
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s ease,
+    background 0.5s ease,
+    border-color 0.5s ease;
+}
+
+/* Light sweeps across once on hover */
+.hero-pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 34%,
+    rgba(255, 255, 255, 0.42) 48%,
+    transparent 62%
+  );
+  opacity: 0;
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+.hero-pill:hover {
+  background: linear-gradient(
+    180deg,
+    var(--pill-tint-hover) 0%,
+    rgba(255, 255, 255, 0.82) 66%,
+    rgba(255, 255, 255, 0.66) 100%
+  );
+  border-color: var(--pill-line-hover);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 18px 30px -20px var(--pill-glow),
+    0 2px 4px rgba(49, 53, 58, 0.05);
+}
+
+.hero-pill:hover::after {
+  animation: pillSheen 1.05s ease-out;
+}
+
+.hero-pill:active {
+  transform: translateY(0) scale(0.97);
+}
+
+@keyframes pillSheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+  28% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+.hero-pill--lavender {
+  --pill-tint: rgba(206, 197, 224, 0.26);
+  --pill-tint-hover: rgba(200, 190, 222, 0.4);
+  --pill-line: rgba(163, 151, 196, 0.16);
+  --pill-line-hover: rgba(163, 151, 196, 0.3);
+  --pill-glow: rgba(140, 125, 180, 0.38);
+  --pill-ink: #5a5175;
+}
+
+.hero-pill--gold {
+  --pill-tint: rgba(213, 197, 167, 0.34);
+  --pill-tint-hover: rgba(207, 188, 152, 0.5);
+  --pill-line: rgba(163, 141, 107, 0.2);
+  --pill-line-hover: rgba(163, 141, 107, 0.36);
+  --pill-glow: rgba(150, 124, 80, 0.4);
+  --pill-ink: #57451f;
+}
+
+.hero-pill--rose {
+  --pill-tint: rgba(226, 195, 199, 0.26);
+  --pill-tint-hover: rgba(224, 183, 189, 0.4);
+  --pill-line: rgba(196, 157, 155, 0.16);
+  --pill-line-hover: rgba(196, 157, 155, 0.3);
+  --pill-glow: rgba(180, 125, 122, 0.36);
+  --pill-ink: #875550;
+}
+
+.hero-pill--mist {
+  --pill-tint: rgba(193, 205, 218, 0.26);
+  --pill-tint-hover: rgba(183, 198, 214, 0.4);
+  --pill-line: rgba(140, 157, 175, 0.16);
+  --pill-line-hover: rgba(140, 157, 175, 0.3);
+  --pill-glow: rgba(95, 115, 138, 0.36);
+  --pill-ink: #4b5664;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-pill,
+  .hero-pill:hover,
+  .hero-pill:active {
+    transform: none;
+  }
+
+  .hero-pill:hover::after {
+    animation: none;
+  }
+}
+
 /* Gold emboss text */
 .text-gold-emboss {
   font-family: 'Noto Serif TC', serif;
@@ -1608,5 +1736,22 @@ body::after {
   .quiz-archive-seal,
   .quiz-card-glint {
     transition-duration: 0ms;
+  }
+}
+
+/* Wish ritual page — the candle, its halo and the turning wish ring all rest
+   for readers who ask for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .wish-ritual .animate-flame,
+  .wish-ritual .animate-glow-pulse,
+  .wish-ritual .rotate-slow {
+    animation: none;
+  }
+  .wish-ritual .animate-spark {
+    animation: none;
+    opacity: 0;
+  }
+  .wish-ritual .animate-glow-pulse {
+    opacity: 0.4;
   }
 }
