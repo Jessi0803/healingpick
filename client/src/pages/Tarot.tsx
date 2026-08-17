@@ -25,6 +25,7 @@ import PageLayout from "@/components/PageLayout";
 import FeedbackCompanion from "@/components/FeedbackCompanion";
 import FeedbackGalleryDialog from "@/components/FeedbackGalleryDialog";
 import { trpc } from "@/lib/trpc";
+import { revealElement } from "@/lib/revealElement";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Streamdown } from "streamdown";
 import { CatWaving, CatListening } from "@/components/CatElements";
@@ -1564,6 +1565,8 @@ export default function TarotPage() {
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const readingResultRef = useRef<HTMLDivElement | null>(null);
+  const readingSectionRef = useRef<HTMLDivElement | null>(null);
+  const cardDetailRef = useRef<HTMLDivElement | null>(null);
   const tarotStardustCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
@@ -1697,6 +1700,12 @@ export default function TarotPage() {
     }
   }, [interpretMutation.isPending, llmInterpretation, scrollToSection]);
 
+  // 一切到解讀頁就把牌陣＋當下那張牌的解讀帶到畫面上，不用再自己往下滑。
+  useEffect(() => {
+    if (step !== "reading") return;
+    scrollToSection(readingSectionRef, "start");
+  }, [step, scrollToSection]);
+
   const getReadingCardsPayload = (cards = drawnCards) =>
     cards.map((d, i) => ({
       name: d.card.name,
@@ -1799,6 +1808,12 @@ export default function TarotPage() {
     if (readingCarouselApi.selectedScrollSnap() === selectedCard) return;
     readingCarouselApi.scrollTo(selectedCard);
   }, [readingCarouselApi, selectedCard]);
+
+  // 點牌之後把那張牌的解讀捲進畫面，手機才不用自己往下滑。
+  const selectCard = useCallback((idx: number) => {
+    setSelectedCard(idx);
+    revealElement(cardDetailRef.current, "center");
+  }, []);
 
   const startReading = (cards = drawnCards) => {
     setStep("reading");
@@ -3720,8 +3735,11 @@ export default function TarotPage() {
 
           {/* ── READING ────────────────────────────────────────────────────── */}
           {step === "reading" && (
-            <div className="animate-fade-in-up">
-              <div className="text-center mb-10">
+            <div
+              ref={readingSectionRef}
+              className="animate-fade-in-up scroll-mt-28"
+            >
+              <div className="text-center mb-6">
                 <span
                   className="text-[11px] tracking-[0.4em] text-[#D1BE9B] uppercase"
                   style={{
@@ -3744,6 +3762,16 @@ export default function TarotPage() {
 
               {/* Cards summary */}
               <div className="mb-10">
+                <p
+                  className="mx-auto mb-4 w-fit rounded-full border border-[#D1BE9B]/35 bg-[#FFFDF8]/76 px-4 py-1.5 text-center text-[11px] tracking-[0.16em] text-[#8A7250]"
+                  style={{
+                    fontFamily: "Noto Serif TC, serif",
+                    fontWeight: 300,
+                  }}
+                >
+                  ✦ 點下面任一張牌，看這張牌單獨的解讀
+                </p>
+
                 <Carousel
                   setApi={setReadingCarouselApi}
                   opts={{
@@ -3762,8 +3790,9 @@ export default function TarotPage() {
                         >
                           <button
                             type="button"
-                            onClick={() => setSelectedCard(idx)}
+                            onClick={() => selectCard(idx)}
                             aria-pressed={isActive}
+                            aria-label={`看${SPREAD_POSITIONS[idx].readingLabel}・${drawn.card.name}${drawn.reversed ? "逆位" : "正位"}的解讀`}
                             className={`group relative h-full w-full rounded-xl border p-3 text-center outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/60 ${
                               isActive
                                 ? "border-[#D1BE9B]/70 bg-[#FFFDF8]/82 shadow-[0_0_0_1px_rgba(209,190,155,0.30),0_0_28px_rgba(209,190,155,0.44),0_14px_34px_rgba(138,114,80,0.12)]"
@@ -3847,7 +3876,7 @@ export default function TarotPage() {
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => setSelectedCard(idx)}
+                      onClick={() => selectCard(idx)}
                       aria-label={`看第 ${idx + 1} 張・${SPREAD_POSITIONS[idx].readingLabel}`}
                       aria-current={selectedCard === idx}
                       className={`h-1.5 rounded-full transition-all duration-300 ${
@@ -3860,7 +3889,10 @@ export default function TarotPage() {
                 </div>
 
                 {selectedCard !== null && drawnCards[selectedCard] && (
-                  <div className="mt-4 rounded-2xl border border-[#D1BE9B]/24 bg-[#FFFDF8]/72 px-5 py-4 shadow-[0_14px_36px_rgba(138,114,80,0.08)] animate-fade-in-up">
+                  <div
+                    ref={cardDetailRef}
+                    className="mt-4 scroll-mt-28 rounded-2xl border border-[#D1BE9B]/24 bg-[#FFFDF8]/72 px-5 py-4 shadow-[0_14px_36px_rgba(138,114,80,0.08)] animate-fade-in-up"
+                  >
                     <div className="mb-2 flex flex-wrap items-center gap-2">
                       <span
                         className="rounded-full border border-[#D1BE9B]/32 bg-white/58 px-3 py-1 text-[11px] tracking-[0.18em] text-[#8A7250]"

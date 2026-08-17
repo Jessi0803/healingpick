@@ -50,6 +50,7 @@ import {
 } from "@/data/products";
 import { useRotatingText } from "@/hooks/useRotatingText";
 import { normalizeDateInput, toDateInputValue } from "@/lib/dateInput";
+import { revealElement } from "@/lib/revealElement";
 
 const ZIWEI_WAITING_MESSAGES = [
   "Mochi 正在整理線索，但看起來像在發呆。",
@@ -679,6 +680,7 @@ export default function ZiweiPage() {
     useState(false);
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const readingResultRef = useRef<HTMLDivElement | null>(null);
+  const palaceDetailRef = useRef<HTMLDivElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
   const appliedProfileDefaultsRef = useRef(false);
@@ -1295,6 +1297,13 @@ export default function ZiweiPage() {
 
   const selectedPalace =
     astrolabe?.palaces.find(p => p.name === selectedPalaceName) ?? null;
+
+  // 點宮位之後把那一宮的解讀捲進畫面，手機上面板在命盤下面，才不用自己滑。
+  const togglePalace = (palaceName: string) => {
+    const isSelected = selectedPalaceName === palaceName;
+    setSelectedPalaceName(isSelected ? null : palaceName);
+    if (!isSelected) revealElement(palaceDetailRef.current, "start");
+  };
   const soulPalaceName =
     astrolabe?.palaces.find(p => p.name === "命宮")?.name ?? "命宮";
   const ziweiRecommendationMessage =
@@ -2239,13 +2248,22 @@ export default function ZiweiPage() {
                   {/* Chart grid */}
                   <div className="flex-1">
                     <p
-                      className="mb-3 text-center text-[13px] tracking-[0.24em] text-[#8A7250]"
+                      className="mb-2 text-center text-[13px] tracking-[0.24em] text-[#8A7250]"
                       style={{
                         fontFamily: "Noto Serif TC, serif",
                         fontWeight: 400,
                       }}
                     >
                       ◎ 你的命盤
+                    </p>
+                    <p
+                      className="mx-auto mb-3 w-fit rounded-full border border-[#D1BE9B]/35 bg-[#FFFDF8]/76 px-4 py-1.5 text-center text-[11px] tracking-[0.16em] text-[#8A7250]"
+                      style={{
+                        fontFamily: "Noto Serif TC, serif",
+                        fontWeight: 300,
+                      }}
+                    >
+                      ✦ 點任一個宮位，看那一宮的解讀
                     </p>
                     <div
                       className="grid gap-1.5"
@@ -2263,12 +2281,18 @@ export default function ZiweiPage() {
                         return (
                           <div
                             key={palace.name}
-                            onClick={() =>
-                              setSelectedPalaceName(
-                                isSelected ? null : palace.name
-                              )
-                            }
-                            className={`relative rounded-xl p-3 cursor-pointer border transition-all duration-300 ${
+                            role="button"
+                            tabIndex={0}
+                            aria-pressed={isSelected}
+                            aria-label={`看${palace.name}的解讀`}
+                            onClick={() => togglePalace(palace.name)}
+                            onKeyDown={event => {
+                              if (event.key !== "Enter" && event.key !== " ")
+                                return;
+                              event.preventDefault();
+                              togglePalace(palace.name);
+                            }}
+                            className={`relative rounded-xl p-3 cursor-pointer border outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#D1BE9B]/60 ${
                               isSelected
                                 ? "border-[#D1BE9B] shadow-[0_4px_20px_rgba(209,190,155,0.3)] scale-[1.02]"
                                 : "border-[#D1BE9B]/20 hover:border-[#D1BE9B]/40 hover:scale-[1.01]"
@@ -2436,7 +2460,7 @@ export default function ZiweiPage() {
                   </div>
 
                   {/* Palace detail */}
-                  <div className="xl:w-72">
+                  <div ref={palaceDetailRef} className="xl:w-72 scroll-mt-28">
                     {selectedPalace ? (
                       <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/20 animate-fade-in-up">
                         <div className="flex items-center gap-2 mb-4">
@@ -2616,7 +2640,22 @@ export default function ZiweiPage() {
                           </div>
                         )}
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="glass-panel rounded-2xl p-6 border border-[#D1BE9B]/15 text-center">
+                        <div className="text-2xl mb-3 opacity-30">☯</div>
+                        <p
+                          className="text-xs leading-[2] tracking-[0.15em] text-[#31353A]/50"
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 200,
+                          }}
+                        >
+                          點命盤上任一個宮位
+                          <br />
+                          看那一宮的解讀
+                        </p>
+                      </div>
+                    )}
 
                     {/* Actions */}
                     <div className="mt-4 flex flex-col gap-2">
