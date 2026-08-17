@@ -34,6 +34,7 @@ import { CatListening } from "@/components/CatElements";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
 import CustomBraceletCta from "@/components/CustomBraceletCta";
+import ProductQuickView from "@/components/ProductQuickView";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { recommendForFortune } from "@/data/recommend";
@@ -278,11 +279,10 @@ function ProductCard({
     role
   );
   const roleLabel = role === "primary" ? "最呼應此刻" : "想加強也可看";
-  const productHref = product.href ?? `/shop/${product.slug}`;
 
   if (role === "secondary") {
     return (
-      <Link href={productHref}>
+      <ProductQuickView product={product}>
         <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-white/45 p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45">
           <div className="aspect-square w-full overflow-hidden rounded-xl bg-[#F0EBE3]/40">
             <ProductImageWatermark
@@ -313,11 +313,11 @@ function ProductCard({
             saleClassName="text-[11px] leading-tight text-[#A38D6B]"
           />
         </div>
-      </Link>
+      </ProductQuickView>
     );
   }
   return (
-    <Link href={productHref}>
+    <ProductQuickView product={product}>
       <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
         <div className="mx-auto aspect-square w-full max-w-[220px] rounded-xl overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40 sm:mx-0 sm:w-32 sm:max-w-none">
           <ProductImageWatermark
@@ -406,7 +406,7 @@ function ProductCard({
           </span>
         </div>
       </div>
-    </Link>
+    </ProductQuickView>
   );
 }
 

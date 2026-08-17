@@ -7,7 +7,6 @@ import {
   type RefObject,
 } from "react";
 import { Loader2, Moon, Sparkles } from "lucide-react";
-import { Link } from "wouter";
 import { toast } from "sonner";
 import { Streamdown } from "streamdown";
 import PageLayout from "@/components/PageLayout";
@@ -22,6 +21,7 @@ import { CatPeeking } from "@/components/CatElements";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
 import CustomBraceletCta from "@/components/CustomBraceletCta";
+import ProductQuickView from "@/components/ProductQuickView";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -81,11 +81,10 @@ function ProductCard({
     role
   );
   const roleLabel = role === "primary" ? "最貼近這個夢" : "也可以一起看";
-  const productHref = product.href ?? `/shop/${product.slug}`;
 
   if (role === "secondary") {
     return (
-      <Link href={productHref}>
+      <ProductQuickView product={product}>
         <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-white/45 p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45">
           <div className="aspect-square w-full overflow-hidden rounded-xl bg-[#F0EBE3]/40">
             <ProductImageWatermark
@@ -116,12 +115,12 @@ function ProductCard({
             saleClassName="text-[11px] leading-tight text-[#A38D6B]"
           />
         </div>
-      </Link>
+      </ProductQuickView>
     );
   }
 
   return (
-    <Link href={productHref}>
+    <ProductQuickView product={product}>
       <div className="flex cursor-pointer flex-col gap-4 rounded-2xl border border-[#D1BE9B]/25 bg-white/42 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/50 sm:flex-row">
         <div className="mx-auto aspect-square w-full max-w-[220px] flex-shrink-0 overflow-hidden rounded-xl bg-[#F0EBE3]/40 sm:mx-0 sm:w-32 sm:max-w-none">
           <ProductImageWatermark
@@ -207,7 +206,7 @@ function ProductCard({
           </span>
         </div>
       </div>
-    </Link>
+    </ProductQuickView>
   );
 }
 

@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { CatListening, CatPeeking } from "@/components/CatElements";
 import SalePrice from "@/components/SalePrice";
 import CustomBraceletCta from "@/components/CustomBraceletCta";
+import ProductQuickView from "@/components/ProductQuickView";
 import {
   Dialog,
   DialogContent,
@@ -94,11 +95,10 @@ function ProductCard({
     Boolean(recommendationContext)
   );
   const roleLabel = role === "primary" ? "最呼應此刻" : "想加強也可看";
-  const productHref = product.href ?? `/shop/${product.slug}`;
 
   if (role === "secondary") {
     return (
-      <Link href={productHref}>
+      <ProductQuickView product={product}>
         <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#D1BE9B]/22 bg-white/45 p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D1BE9B]/45">
           <div className="aspect-square w-full overflow-hidden rounded-xl bg-[#F0EBE3]/40">
             <ProductImageWatermark
@@ -129,11 +129,11 @@ function ProductCard({
             saleClassName="text-[11px] leading-tight text-[#A38D6B]"
           />
         </div>
-      </Link>
+      </ProductQuickView>
     );
   }
   return (
-    <Link href={productHref}>
+    <ProductQuickView product={product}>
       <div className="flex flex-col sm:flex-row gap-3 p-3 rounded-xl border border-[#D1BE9B]/25 bg-white/40 hover:border-[#D1BE9B]/50 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
         <div className="w-full h-48 sm:w-28 sm:h-28 rounded-lg overflow-hidden flex-shrink-0 bg-[#F0EBE3]/40">
           <ProductImageWatermark
@@ -211,7 +211,7 @@ function ProductCard({
           </span>
         </div>
       </div>
-    </Link>
+    </ProductQuickView>
   );
 }
 

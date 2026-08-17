@@ -3,12 +3,12 @@
  * Design: Wabi-Sabi Luxe × Morandi Oat Milk — Premium 4-in-1 Interaction Portal
  */
 import { useState } from "react";
-import { Link } from "wouter";
 import PageLayout from "@/components/PageLayout";
 import { CatSitting, CatPeeking } from "@/components/CatElements";
 import { QUIZZES, Quiz, QuizQuestion } from "@/data/quizzes";
 import ProductImageWatermark from "@/components/ProductImageWatermark";
 import SalePrice from "@/components/SalePrice";
+import ProductQuickView from "@/components/ProductQuickView";
 import {
   findProduct,
   getContextualRecommendationReason,
@@ -732,7 +732,10 @@ export default function QuizPage() {
 
                     <div className="flex flex-col sm:flex-row gap-6 items-center bg-white/40 border border-[#D1BE9B]/20 p-5 rounded-3xl shadow-sm hover:shadow-md transition-shadow duration-300">
                       {/* Product Image preview */}
-                      <Link href={`/shop/${recommendedProduct.slug}`}>
+                      <ProductQuickView
+                        product={recommendedProduct}
+                        className="block"
+                      >
                         <div className="w-28 h-28 flex-shrink-0 overflow-hidden rounded-2xl border border-[#D1BE9B]/15 cursor-pointer">
                           <ProductImageWatermark
                             product={recommendedProduct}
@@ -740,7 +743,7 @@ export default function QuizPage() {
                             imageClassName="w-full h-full object-cover transition-transform duration-500"
                           />
                         </div>
-                      </Link>
+                      </ProductQuickView>
 
                       {/* Product Details info */}
                       <div className="flex-1 text-center sm:text-left">
@@ -781,13 +784,14 @@ export default function QuizPage() {
 
                       {/* Product actions */}
                       <div className="flex w-full flex-col gap-2 sm:w-auto">
-                        <Link
-                          href={`/shop/${recommendedProduct.slug}`}
-                          className="w-full py-2.5 px-6 text-center text-[10.5px] tracking-[0.2em] border border-[#D1BE9B]/35 bg-white/55 text-[#A38D6B] rounded-full hover:bg-[#F0EBE3] hover:border-[#D1BE9B]/60 transition-all duration-300 active:scale-95 shadow-sm font-light select-none cursor-pointer"
-                          style={{ fontFamily: "Noto Serif TC, serif" }}
+                        <ProductQuickView
+                          product={recommendedProduct}
+                          className="w-full py-2.5 px-6 text-center text-[10.5px] tracking-[0.2em] border border-[#D1BE9B]/35 bg-white/55 text-[#A38D6B] rounded-full hover:bg-[#F0EBE3] hover:border-[#D1BE9B]/60 transition-all duration-300 active:scale-95 shadow-sm font-light select-none"
                         >
-                          商品詳情 ✦
-                        </Link>
+                          <span style={{ fontFamily: "Noto Serif TC, serif" }}>
+                            商品詳情 ✦
+                          </span>
+                        </ProductQuickView>
                         <button
                           onClick={() => handleBuy(recommendedProduct.name)}
                           className="w-full py-2.5 px-6 text-[10.5px] tracking-[0.2em] bg-[#3D4144] text-[#FAF7F4] rounded-full hover:bg-[#D1BE9B] hover:text-[#31353A] transition-all duration-300 active:scale-95 shadow-sm font-light select-none cursor-pointer"
