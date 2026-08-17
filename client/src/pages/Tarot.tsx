@@ -4332,6 +4332,33 @@ export default function TarotPage() {
                           付費
                         </span>
                       </div>
+                      <div className="mb-4 flex items-center gap-3 rounded-2xl border border-[#06C755]/16 bg-white/62 px-3 py-2.5">
+                        <img
+                          src="/gooday-logo.png"
+                          alt="Gooday 日日好日"
+                          className="h-11 w-11 shrink-0 rounded-full border border-[#06C755]/18 bg-white object-cover"
+                        />
+                        <span className="flex flex-col gap-1">
+                          <span
+                            className="text-[11.5px] tracking-[0.12em] text-[#267345]"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 400,
+                            }}
+                          >
+                            HealingPick × Gooday 日日好日
+                          </span>
+                          <span
+                            className="text-[11px] leading-[1.7] tracking-[0.06em] text-[#31353A]/58"
+                            style={{
+                              fontFamily: "Noto Sans TC, sans-serif",
+                              fontWeight: 300,
+                            }}
+                          >
+                            合作占卜師一對一解讀
+                          </span>
+                        </span>
+                      </div>
                       <p
                         className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/66"
                         style={{
@@ -4339,7 +4366,7 @@ export default function TarotPage() {
                           fontWeight: 300,
                         }}
                       >
-                        真人塔羅師重新開牌，適合深入看關係走向、對方想法、下一步行動。
+                        還想再問得更深嗎？像「他到底怎麼想」「這一步該不該走」，可以請日日好日真人老師重新開牌，陪你問到清楚。
                       </p>
                       <p
                         className="mt-3 text-[12px] tracking-[0.1em] text-[#267345]"
@@ -4348,7 +4375,7 @@ export default function TarotPage() {
                           fontWeight: 400,
                         }}
                       >
-                        1 題 NT$250｜3 題 NT$700｜主題套裝 NT$999 起
+                        先從 1 題 NT$250 開始問
                       </p>
                       <div className="mt-4 flex flex-col gap-3">
                         <a
@@ -4368,6 +4395,16 @@ export default function TarotPage() {
                             <ExternalLink className="h-3.5 w-3.5" />
                           </button>
                         </a>
+                        <Link
+                          href="/tarot/human"
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#06C755]/26 bg-white/70 px-5 py-3 text-[11px] tracking-[0.16em] text-[#267345] no-underline transition-all duration-300 hover:bg-white active:scale-95"
+                          style={{
+                            fontFamily: "Noto Serif TC, serif",
+                            fontWeight: 300,
+                          }}
+                        >
+                          查看日日好日真人占卜服務
+                        </Link>
                       </div>
                     </div>
                   </div>

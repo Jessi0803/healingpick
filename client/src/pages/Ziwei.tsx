@@ -1431,29 +1431,59 @@ export default function ZiweiPage() {
           >
             ◎ 想請真人老師再看一次嗎
           </p>
+          <div className="flex items-center gap-3 rounded-2xl border border-[#D1BE9B]/22 bg-white/56 px-3 py-2.5">
+            <img
+              src="/gooday-logo.png"
+              alt="Gooday 日日好日"
+              className="h-11 w-11 shrink-0 rounded-full border border-[#D1BE9B]/35 bg-white object-cover"
+            />
+            <span className="flex flex-col gap-1">
+              <span
+                className="text-[11.5px] tracking-[0.12em] text-[#8A7250]"
+                style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 400 }}
+              >
+                HealingPick × Gooday 日日好日
+              </span>
+              <span
+                className="text-[11px] leading-[1.7] tracking-[0.06em] text-[#31353A]/58"
+                style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
+              >
+                真人老師一對一延伸解讀
+              </span>
+            </span>
+          </div>
           <p
             className="text-[12px] leading-[2] tracking-[0.08em] text-[#31353A]/66"
             style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
           >
-            Mochi 先幫你把命盤重點整理出來；如果你想把感情、工作、人際或近期選擇看得更細，也可以預約 Gooday 日日好日真人老師一對一延伸解讀。
+            還想再問得更深嗎？可以請 Gooday 日日好日真人老師一對一，把命盤和你現在的處境一起看。
           </p>
           <div className="rounded-2xl border border-[#D1BE9B]/18 bg-white/48 px-4 py-3">
             <p
               className="text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/62"
               style={{ fontFamily: "Noto Sans TC, sans-serif", fontWeight: 300 }}
             >
-              適合想確認「這個盤現在最該注意哪裡」、或想針對某段關係、事業方向、下一步行動深入聊的人。
+              適合想把某段關係、事業方向或下一步，問到有答案的人。
             </p>
           </div>
-          <a
-            href={OFFICIAL_LINE_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#06C755] px-6 py-2.5 text-center text-[11px] tracking-[0.18em] text-white no-underline transition-all duration-300 hover:bg-[#05B84F] active:scale-95 sm:self-start"
-            style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
-          >
-            LINE 預約真人延伸解讀
-          </a>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a
+              href={OFFICIAL_LINE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#06C755] px-6 py-2.5 text-center text-[11px] tracking-[0.18em] text-white no-underline transition-all duration-300 hover:bg-[#05B84F] active:scale-95"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              LINE 預約真人延伸解讀
+            </a>
+            <Link
+              href="/tarot/human"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#D1BE9B]/45 bg-white/60 px-6 py-2.5 text-center text-[11px] tracking-[0.18em] text-[#8A7250] no-underline transition-all duration-300 hover:border-[#A38D6B]/55 hover:bg-white/80 hover:text-[#31353A] active:scale-95"
+              style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
+            >
+              查看日日好日真人占卜服務
+            </Link>
+          </div>
         </div>
       </div>
     );
