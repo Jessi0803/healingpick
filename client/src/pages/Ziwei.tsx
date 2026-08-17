@@ -1895,6 +1895,18 @@ export default function ZiweiPage() {
                 </div>
 
                 {renderPopularQuestions()}
+
+                {creditsQuery.data?.enabled && (
+                  <p
+                    className="mt-4 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
+                    style={{
+                      fontFamily: "Noto Serif TC, serif",
+                      fontWeight: 200,
+                    }}
+                  >
+                    每天免費 2 次，00:00 重置；用完後命盤解讀消耗 1 點。
+                  </p>
+                )}
               </div>
 
               <div
@@ -2156,17 +2168,6 @@ export default function ZiweiPage() {
                   <div className="mt-5 flex justify-center">
                     <MoodClawMachine onPrizeCaught={setCaughtMoodPlushie} />
                   </div>
-                )}
-                {creditsQuery.data?.enabled && (
-                  <p
-                    className="mt-3 text-center text-[11px] leading-[1.8] tracking-[0.12em] text-[#31353A]/45"
-                    style={{
-                      fontFamily: "Noto Serif TC, serif",
-                      fontWeight: 200,
-                    }}
-                  >
-                    每天免費 2 次，00:00 重置；用完後命盤解讀消耗 1 點。
-                  </p>
                 )}
               </div>
 
