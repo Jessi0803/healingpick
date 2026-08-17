@@ -25,13 +25,13 @@ import PageLayout from "@/components/PageLayout";
 import FeedbackCompanion from "@/components/FeedbackCompanion";
 import FeedbackGalleryDialog from "@/components/FeedbackGalleryDialog";
 import { trpc } from "@/lib/trpc";
-import { revealElement } from "@/lib/revealElement";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Streamdown } from "streamdown";
 import { CatWaving, CatListening } from "@/components/CatElements";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -1543,6 +1543,7 @@ export default function TarotPage() {
   );
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [openedCard, setOpenedCard] = useState<number | null>(null);
   const [readingCarouselApi, setReadingCarouselApi] = useState<CarouselApi>();
   const [readingSwipeHintSeen, setReadingSwipeHintSeen] = useState(false);
   const [shuffling, setShuffling] = useState(false);
@@ -1566,7 +1567,6 @@ export default function TarotPage() {
   const moodClawSectionRef = useRef<HTMLDivElement | null>(null);
   const readingResultRef = useRef<HTMLDivElement | null>(null);
   const readingSectionRef = useRef<HTMLDivElement | null>(null);
-  const cardDetailRef = useRef<HTMLDivElement | null>(null);
   const tarotStardustCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const followUpRequestInFlightRef = useRef<string | null>(null);
   const completedFollowUpRequestKeysRef = useRef(new Set<string>());
@@ -1809,15 +1809,16 @@ export default function TarotPage() {
     readingCarouselApi.scrollTo(selectedCard);
   }, [readingCarouselApi, selectedCard]);
 
-  // 點牌之後把那張牌的解讀捲進畫面，手機才不用自己往下滑。
+  // 點牌就跳出那張牌的牌義，不用捲到下面找。滑動輪播只換選取的牌，不開視窗。
   const selectCard = useCallback((idx: number) => {
     setSelectedCard(idx);
-    revealElement(cardDetailRef.current, "center");
+    setOpenedCard(idx);
   }, []);
 
   const startReading = (cards = drawnCards) => {
     setStep("reading");
     setSelectedCard(cards.length > 0 ? 0 : null);
+    setOpenedCard(null);
     setReadingSwipeHintSeen(false);
     setLlmInterpretation("");
     setReadingRecommendation(null);
@@ -3769,7 +3770,7 @@ export default function TarotPage() {
                     fontWeight: 300,
                   }}
                 >
-                  ✦ 點下面任一張牌，看這張牌單獨的解讀
+                  ✦ 點任一張牌，跳出這張牌單獨的牌義
                 </p>
 
                 <Carousel
@@ -3868,7 +3869,7 @@ export default function TarotPage() {
                   }}
                   aria-hidden={readingSwipeHintSeen}
                 >
-                  ← 左右滑動看每張牌的解讀 →
+                  ← 左右滑動看每張牌，點牌看牌義 →
                 </p>
 
                 <div className="mt-2 flex items-center justify-center gap-2 md:hidden">
@@ -3888,65 +3889,98 @@ export default function TarotPage() {
                   ))}
                 </div>
 
-                {selectedCard !== null && drawnCards[selectedCard] && (
-                  <div
-                    ref={cardDetailRef}
-                    className="mt-4 scroll-mt-28 rounded-2xl border border-[#D1BE9B]/24 bg-[#FFFDF8]/72 px-5 py-4 shadow-[0_14px_36px_rgba(138,114,80,0.08)] animate-fade-in-up"
-                  >
-                    <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <span
-                        className="rounded-full border border-[#D1BE9B]/32 bg-white/58 px-3 py-1 text-[11px] tracking-[0.18em] text-[#8A7250]"
-                        style={{
-                          fontFamily: "Noto Serif TC, serif",
-                          fontWeight: 300,
-                        }}
-                      >
-                        {SPREAD_POSITIONS[selectedCard].readingLabel}
-                      </span>
-                      <span
-                        className="text-[11px] tracking-[0.14em] text-[#31353A]/54"
-                        style={{
-                          fontFamily: "Noto Serif TC, serif",
-                          fontWeight: 300,
-                        }}
-                      >
-                        {SPREAD_POSITIONS[selectedCard].label}
-                      </span>
-                    </div>
-                    <h3
-                      className="text-[15px] tracking-[0.12em] text-[#31353A]/88"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      {drawnCards[selectedCard].card.name}
-                      <span className="ml-2 text-[12px] text-[#A38D6B]">
-                        {drawnCards[selectedCard].reversed ? "逆位" : "正位"}
-                      </span>
-                    </h3>
-                    <p
-                      className="mt-2 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
-                      style={{
-                        fontFamily: "Noto Serif TC, serif",
-                        fontWeight: 200,
-                      }}
-                    >
-                      {SPREAD_POSITIONS[selectedCard].desc}
-                    </p>
-                    <p
-                      className="mt-3 border-t border-[#D1BE9B]/14 pt-3 text-[13px] leading-[2] tracking-[0.07em] text-[#31353A]/76"
-                      style={{
-                        fontFamily: "Noto Sans TC, sans-serif",
-                        fontWeight: 300,
-                      }}
-                    >
-                      {drawnCards[selectedCard].reversed
-                        ? drawnCards[selectedCard].card.reversed
-                        : drawnCards[selectedCard].card.meaning}
-                    </p>
-                  </div>
-                )}
+                {/* 單張牌義：跳出小視窗，不再擠在牌陣下面 */}
+                <Dialog
+                  open={openedCard !== null}
+                  onOpenChange={open => {
+                    if (!open) setOpenedCard(null);
+                  }}
+                >
+                  <DialogContent className="max-w-[min(30rem,calc(100vw-2rem))] border-[#D1BE9B]/30 bg-[#FFFDF8]/97 p-6 shadow-[0_28px_70px_rgba(138,114,80,0.22)] backdrop-blur-xl sm:rounded-2xl">
+                    {openedCard !== null && drawnCards[openedCard] && (
+                      <>
+                        <DialogHeader className="text-left">
+                          <span
+                            className="w-fit rounded-full border border-[#D1BE9B]/32 bg-white/58 px-3 py-1 text-[11px] tracking-[0.18em] text-[#8A7250]"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 300,
+                            }}
+                          >
+                            {SPREAD_POSITIONS[openedCard].readingLabel}
+                          </span>
+                          <DialogTitle
+                            className="text-[16px] font-normal tracking-[0.12em] text-[#31353A]/88"
+                            style={{
+                              fontFamily: "Noto Serif TC, serif",
+                              fontWeight: 300,
+                            }}
+                          >
+                            {drawnCards[openedCard].card.name}
+                            <span
+                              className={`ml-2 text-[12px] ${
+                                drawnCards[openedCard].reversed
+                                  ? "text-[#EAA8AC]"
+                                  : "text-[#A38D6B]"
+                              }`}
+                            >
+                              {drawnCards[openedCard].reversed
+                                ? "逆位"
+                                : "正位"}
+                            </span>
+                          </DialogTitle>
+                          <DialogDescription
+                            className="text-[11px] italic tracking-wider text-[#D1BE9B]"
+                            style={{ fontFamily: "Cormorant Garamond, serif" }}
+                          >
+                            {drawnCards[openedCard].card.en}
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="flex gap-4">
+                          <div className="w-24 flex-shrink-0 sm:w-28">
+                            <CardFace
+                              card={drawnCards[openedCard].card}
+                              reversed={drawnCards[openedCard].reversed}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <p
+                              className="text-[11px] tracking-[0.14em] text-[#31353A]/54"
+                              style={{
+                                fontFamily: "Noto Serif TC, serif",
+                                fontWeight: 300,
+                              }}
+                            >
+                              {SPREAD_POSITIONS[openedCard].label}
+                            </p>
+                            <p
+                              className="mt-1.5 text-[12px] leading-[1.9] tracking-[0.08em] text-[#31353A]/58"
+                              style={{
+                                fontFamily: "Noto Serif TC, serif",
+                                fontWeight: 200,
+                              }}
+                            >
+                              {SPREAD_POSITIONS[openedCard].desc}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p
+                          className="max-h-[38vh] overflow-y-auto border-t border-[#D1BE9B]/14 pt-3 text-[13px] leading-[2] tracking-[0.07em] text-[#31353A]/76"
+                          style={{
+                            fontFamily: "Noto Sans TC, sans-serif",
+                            fontWeight: 300,
+                          }}
+                        >
+                          {drawnCards[openedCard].reversed
+                            ? drawnCards[openedCard].card.reversed
+                            : drawnCards[openedCard].card.meaning}
+                        </p>
+                      </>
+                    )}
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {/* AI interpretation */}
@@ -4430,6 +4464,7 @@ export default function TarotPage() {
                       setDrawnCards([]);
                       setRevealedCards(new Set());
                       setSelectedCard(null);
+                      setOpenedCard(null);
                       setQuestion("");
                       setFollowUpQuestion("");
                       setFollowUpExchanges([]);
