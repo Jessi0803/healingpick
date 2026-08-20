@@ -438,7 +438,7 @@ export default function Home() {
 
         <div
           id="home-main-choices"
-          className="max-w-3xl z-10 animate-fade-in-up -mt-16 scroll-mt-24 md:-mt-24"
+          className="max-w-3xl z-10 animate-fade-in-up -mt-16 scroll-mt-24 md:-mt-24 lg:max-w-4xl"
         >
           {/* Mochi portrait */}
           <div className="mb-1 flex justify-center">
