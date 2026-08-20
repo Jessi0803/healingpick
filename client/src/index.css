@@ -671,31 +671,12 @@ body::after {
   pointer-events: none;
 }
 
-/* Every pill carries the same two-line block, so the row keeps one baseline */
-.hero-pill__label {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.3rem;
-  line-height: 1;
-}
-
 .hero-pill__zh {
   white-space: nowrap;
   font-size: 12.5px;
   letter-spacing: 0.18em;
   /* letter-spacing also trails the last glyph; pull it back so the block optically centers */
   margin-right: -0.18em;
-}
-
-.hero-pill__en {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 12.5px;
-  letter-spacing: 0.1em;
-  white-space: nowrap;
-  opacity: 0.7;
 }
 
 .hero-pill__glyph {
