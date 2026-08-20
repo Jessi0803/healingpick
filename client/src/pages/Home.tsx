@@ -478,11 +478,11 @@ export default function Home() {
           <div className="mx-auto grid w-full max-w-[17rem] grid-cols-1 gap-3 sm:max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
             <Link href="/tarot">
               <button
-                className="group hero-pill hero-pill--lavender flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-2.5"
+                className="group hero-pill hero-pill--lavender flex min-h-[3.5rem] w-full items-center justify-center gap-2.5 rounded-full px-4 py-1.5"
                 style={{ fontFamily: "Noto Serif TC, serif", fontWeight: 300 }}
               >
                 <span
-                  className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full border border-white/70 bg-white/85 shadow-[0_4px_14px_rgba(155,141,192,0.22)] transition-colors duration-500 group-hover:bg-white"
+                  className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border border-[#D1BE9B]/55 bg-white shadow-[0_5px_16px_rgba(163,141,107,0.30)] transition-colors duration-500 group-hover:border-[#A38D6B]/75"
                   aria-hidden="true"
                 >
                   <img
@@ -491,7 +491,12 @@ export default function Home() {
                     className="h-full w-full object-cover"
                   />
                 </span>
-                <span className="hero-pill__zh">塔羅占卜</span>
+                <span className="hero-pill__stack">
+                  <span className="hero-pill__zh">塔羅占卜</span>
+                  <span className="hero-pill__sub">
+                    日日好日 <span className="hero-pill__mark">gooday</span>
+                  </span>
+                </span>
                 <span
                   className="hero-pill__spark hero-pill__spark--a"
                   aria-hidden="true"

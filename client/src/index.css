@@ -679,6 +679,30 @@ body::after {
   margin-right: -0.18em;
 }
 
+/* The tarot pill stacks the Gooday collab line under its label */
+.hero-pill__stack {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  line-height: 1;
+}
+
+.hero-pill__sub {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  opacity: 0.72;
+}
+
+.hero-pill__mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+}
+
 .hero-pill__glyph {
   flex: none;
   font-size: 14px;
