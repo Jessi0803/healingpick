@@ -12,6 +12,7 @@ import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } fro
 import { Link, useLocation } from 'wouter';
 import {
   ArrowLeft,
+  ArrowRight,
   CalendarDays,
   Camera,
   ClipboardList,
@@ -84,13 +85,11 @@ const LIGHTBOX_IMAGES = [
 ];
 
 // Hero 背景飄浮的微光星點位置。
+// 首屏只留 3 顆微光，避免和右下角的回饋小貓、頂部跑馬燈一起搶注意力。
 const SPARKLES = [
-  { top: '12%', left: '7%', size: 7, delay: '0s' },
-  { top: '24%', left: '84%', size: 4, delay: '1.3s' },
-  { top: '58%', left: '14%', size: 5, delay: '2.2s' },
-  { top: '46%', left: '70%', size: 4, delay: '0.7s' },
-  { top: '78%', left: '40%', size: 6, delay: '1.8s' },
   { top: '16%', left: '50%', size: 3, delay: '2.7s' },
+  { top: '24%', left: '84%', size: 4, delay: '1.3s' },
+  { top: '46%', left: '70%', size: 4, delay: '0.7s' },
 ];
 
 const STEP_ITEMS = [
@@ -266,6 +265,7 @@ export default function CustomBraceletPage() {
   const [location] = useLocation();
   const mode: BraceletMode = location.includes('/numerology') ? 'numerology' : 'general';
   const copy = PAGE_COPY[mode];
+  const otherMode = MODE_OPTIONS.find((option) => option.mode !== mode)!;
   const { addItem } = useCart();
   const [form, setForm] = useState<CustomForm>(FORM_INITIAL);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -423,9 +423,9 @@ export default function CustomBraceletPage() {
 
   return (
     <PageLayout>
-      <div className="min-h-screen bg-[#FAF7F4] px-4 py-12 md:px-8">
+      <div className="min-h-screen bg-[#FAF7F4] px-4 pb-12 pt-6 md:px-8 md:py-12">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-8 animate-fade-in-up">
+          <div className="mb-5 animate-fade-in-up md:mb-8">
             <Link href={CUSTOM_BRACELET_CATEGORY_HREF}>
               <button
                 className="inline-flex items-center gap-2 border-none bg-transparent text-xs tracking-[0.2em] text-[#31353A]/62 transition-colors duration-300 hover:text-[#31353A]"
@@ -455,81 +455,153 @@ export default function CustomBraceletPage() {
               ))}
             </div>
 
-            <div className="relative z-10 grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] md:gap-12">
-            <div className="relative">
-              <p
-                className="mb-3 animate-fade-in-up text-[19px] italic tracking-[0.02em] text-[#A38D6B]"
-                style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
-              >
-                {copy.heroEyebrow}
-              </p>
-              <h1
-                className="mb-4 text-3xl leading-[1.35] tracking-[0.12em] text-[#31353A] md:text-[2.6rem]"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-              >
-                {copy.title.split('').map((ch, i) => (
-                  <span
-                    key={i}
-                    className="tagline-char"
-                    style={{ animationDelay: `${0.12 + i * 0.06}s`, color: i < copy.titleAccent ? '#A38D6B' : undefined }}
-                  >
-                    {ch}
-                  </span>
-                ))}
-              </h1>
-              <div
-                className="animate-fade-in-up mb-5 inline-flex items-baseline gap-3 rounded-full border border-[#D1BE9B]/35 bg-white/58 px-5 py-2.5 text-[#8F7957] shadow-[0_10px_24px_rgba(163,141,107,0.07)]"
-                style={{ fontFamily: 'Noto Serif TC, serif', animationDelay: '0.42s' }}
-              >
-                <span className="text-[11px] tracking-[0.18em]" style={{ fontWeight: 300 }}>
-                  客製價格
-                </span>
-                <SalePrice
-                  price={copy.price}
-                  className="flex flex-wrap items-baseline gap-2"
-                  originalClassName="text-[12px] tracking-[0.08em] text-[#31353A]/40 line-through"
-                  saleClassName="text-[18px] tracking-[0.08em] text-[#8F7957]"
-                />
-              </div>
-              <div
-                className="animate-fade-in-up mb-5 grid max-w-xl grid-cols-2 rounded-2xl border border-[#D1BE9B]/24 bg-white/50 p-1.5 shadow-[0_10px_28px_rgba(163,141,107,0.08)]"
-                style={{ animationDelay: '0.48s' }}
-              >
-                {MODE_OPTIONS.map((option) => {
-                  const active = mode === option.mode;
-                  return (
-                    <Link
-                      key={option.mode}
-                      href={option.href}
-                      className={`rounded-xl px-3 py-3 text-center transition-all duration-200 ${
-                        active
-                          ? 'bg-[#3D4144] text-[#FAF7F4] shadow-[0_8px_18px_rgba(61,65,68,0.16)]'
-                          : 'text-[#31353A]/68 hover:bg-[#D1BE9B]/14 hover:text-[#8A7250]'
-                      }`}
-                    >
-                      <span
-                        className="block text-[12px] tracking-[0.16em]"
-                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 400 }}
-                      >
-                        {option.label}
-                      </span>
-                      <span
-                        className={`mt-1 block text-[10px] tracking-[0.08em] ${
-                          active ? 'text-[#FAF7F4]/72' : 'text-[#31353A]/45'
-                        }`}
-                        style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                      >
-                        {option.note}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-              {copy.heroIntro && (
-                <div
-                  className="animate-fade-in-up mb-5 overflow-hidden rounded-3xl border border-[#C9B7E0]/35 bg-gradient-to-br from-white/62 to-[#F1EAFA]/48 px-5 py-4 shadow-[0_12px_30px_rgba(150,130,190,0.10)]"
-                  style={{ animationDelay: '0.5s' }}
+            <div className="relative z-10 flex flex-col gap-4 md:grid md:grid-cols-[1.05fr_0.95fr] md:grid-rows-[auto_1fr] md:items-start md:gap-x-12 md:gap-y-6">
+              {/* 首屏上半：eyebrow → 標題 → 價格。價格拿掉膠囊外框，讓首屏只剩主視覺一個「有容器」的元素。 */}
+              <div className="relative md:col-start-1 md:row-start-1">
+                <p
+                  className="mb-3 animate-fade-in-up text-[19px] italic tracking-[0.02em] text-[#A38D6B]"
+                  style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 400 }}
                 >
+                  {copy.heroEyebrow}
+                </p>
+                <h1
+                  className="mb-4 text-3xl leading-[1.35] tracking-[0.12em] text-[#31353A] md:text-[2.6rem]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                >
+                  {copy.title.split('').map((ch, i) => (
+                    <span
+                      key={i}
+                      className="tagline-char"
+                      style={{ animationDelay: `${0.12 + i * 0.06}s`, color: i < copy.titleAccent ? '#A38D6B' : undefined }}
+                    >
+                      {ch}
+                    </span>
+                  ))}
+                </h1>
+                <div
+                  className="animate-fade-in-up flex items-baseline gap-3 text-[#8F7957]"
+                  style={{ fontFamily: 'Noto Serif TC, serif', animationDelay: '0.42s' }}
+                >
+                  <span className="text-[11px] tracking-[0.18em]" style={{ fontWeight: 300 }}>
+                    客製價格
+                  </span>
+                  <SalePrice
+                    price={copy.price}
+                    className="flex flex-wrap items-baseline gap-2"
+                    originalClassName="text-[12px] tracking-[0.08em] text-[#31353A]/40 line-through"
+                    saleClassName="text-[20px] tracking-[0.08em] text-[#8F7957]"
+                  />
+                </div>
+              </div>
+
+              {/* 主視覺：手機上緊接在價格之後（先看到商品再被要求行動），桌機仍回到右欄。 */}
+              <div className="animate-fade-in-up md:col-start-2 md:row-start-1 md:row-span-2 md:self-center">
+                <div className="grid grid-cols-3 gap-3">
+                  <TiltImage
+                    src={HERO_IMAGES[0]}
+                    alt="客製化手鍊實拍主視覺"
+                    onClick={() => openLightbox(HERO_IMAGES[0])}
+                    className="group col-span-3 aspect-[16/10] overflow-hidden rounded-3xl md:aspect-[16/11] border border-[#D1BE9B]/25 bg-[#F7F1E8] shadow-[0_16px_40px_rgba(209,190,155,0.18)] will-change-transform"
+                    imgClassName="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                  {/* 手機只留主圖，縮圖排收成一行文字連結，把首屏空間讓給 CTA。 */}
+                  <button
+                    type="button"
+                    onClick={() => openLightbox(GALLERY_IMAGES[3])}
+                    className="col-span-3 inline-flex items-center justify-center gap-1.5 text-[11px] tracking-[0.14em] text-[#A38D6B] transition-colors duration-300 hover:text-[#8A7250] md:hidden"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    <span className="text-sm">＋</span>
+                    看更多實拍
+                  </button>
+                  <div className="col-span-3 hidden grid-cols-3 gap-3 md:grid">
+                    {HERO_IMAGES.slice(1).map((src, idx) => (
+                      <button
+                        key={src}
+                        type="button"
+                        onClick={() => openLightbox(src)}
+                        className={`group col-span-1 aspect-square overflow-hidden rounded-2xl border border-[#D1BE9B]/25 bg-[#F7F1E8] shadow-sm ${
+                          idx === 0 ? 'animate-float-soft-delay-1' : 'animate-float-soft-delay-2'
+                        }`}
+                      >
+                        <img
+                          src={src}
+                          alt="客製化手鍊實拍"
+                          className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                        />
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => openLightbox(GALLERY_IMAGES[3])}
+                      className="animate-float-soft col-span-1 flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border border-[#D1BE9B]/30 bg-[#D1BE9B]/10 text-center transition-colors hover:bg-[#D1BE9B]/18"
+                    >
+                      <span className="text-lg text-[#A38D6B]">＋</span>
+                      <span
+                        className="text-[11px] tracking-[0.1em] text-[#A38D6B]"
+                        style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                      >
+                        看更多實拍
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 首屏下半：只有一顆實心主 CTA，顧客回饋與模式切換降級成文字連結。 */}
+              <div className="md:col-start-1 md:row-start-2">
+                <div className="animate-fade-in-up" style={{ animationDelay: '0.85s' }}>
+                  <a
+                    href="#custom-form"
+                    className="group inline-flex items-center gap-2 rounded-full bg-[#3D4144] px-6 py-3 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#3D4144]/10 transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    <Sparkles className="h-4 w-4 transition-transform duration-500 group-hover:rotate-[18deg]" />
+                    開始客製我的手鍊
+                  </a>
+                </div>
+                <div
+                  className="animate-fade-in-up mt-4 flex flex-wrap items-center gap-x-6 gap-y-3"
+                  style={{ animationDelay: '0.92s' }}
+                >
+                  <a
+                    href="#real-feedback"
+                    className="group inline-flex items-center gap-2 text-xs tracking-[0.18em] text-[#8F7957] transition-colors duration-300 hover:text-[#A38D6B]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    <Camera className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" strokeWidth={1.55} />
+                    <span>
+                      <span style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 500 }}>
+                        Real Feedback
+                      </span>
+                      <span className="mx-2 text-[#D1BE9B]">｜</span>
+                      顧客回饋
+                    </span>
+                  </a>
+                  <Link
+                    href={otherMode.href}
+                    className="group inline-flex items-center gap-1.5 text-xs tracking-[0.14em] text-[#31353A]/55 transition-colors duration-300 hover:text-[#8F7957]"
+                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
+                  >
+                    想改看 {otherMode.label}
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={1.55} />
+                  </Link>
+                </div>
+                <p
+                  className="animate-fade-in-up mt-3 text-[11px] tracking-[0.14em] text-[#31353A]/50"
+                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300, animationDelay: '0.98s' }}
+                >
+                  單條免運 · 設計圖 3 次免修 · 終生免費換線
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* 品牌說明／生命靈數介紹：從首屏下移，讓 hero 專注在「看圖 → 開始客製」。 */}
+          <Reveal className="mb-16 md:mb-20">
+            <div className="mx-auto max-w-2xl">
+              {copy.heroIntro && (
+                <div className="mb-5 overflow-hidden rounded-3xl border border-[#C9B7E0]/35 bg-gradient-to-br from-white/62 to-[#F1EAFA]/48 px-5 py-4 shadow-[0_12px_30px_rgba(150,130,190,0.10)]">
                   <div className="mb-2 flex items-center gap-2 text-[#8E79A8]">
                     <CalendarDays className="h-4 w-4" strokeWidth={1.5} />
                     <span
@@ -549,93 +621,13 @@ export default function CustomBraceletPage() {
                 </div>
               )}
               <p
-                className="animate-fade-in-up mb-7 max-w-xl whitespace-pre-line text-[14.5px] leading-[2] tracking-[0.04em] text-[#31353A]/78"
-                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300, animationDelay: '0.7s' }}
+                className="whitespace-pre-line text-[14.5px] leading-[2] tracking-[0.04em] text-[#31353A]/78"
+                style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
               >
                 {copy.heroLead}
               </p>
-              <div className="animate-fade-in-up flex flex-wrap items-center gap-3" style={{ animationDelay: '0.85s' }}>
-                <a
-                  href="#custom-form"
-                  className="group inline-flex items-center gap-2 rounded-full bg-[#3D4144] px-6 py-3 text-xs tracking-[0.22em] text-[#FAF7F4] shadow-md shadow-[#3D4144]/10 transition-all duration-300 hover:bg-[#D1BE9B] hover:text-[#31353A] active:scale-95"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  <Sparkles className="h-4 w-4 transition-transform duration-500 group-hover:rotate-[18deg]" />
-                  開始客製我的手鍊
-                </a>
-                <a
-                  href="#real-feedback"
-                  className="group inline-flex items-center gap-2 rounded-full border border-[#D1BE9B]/30 bg-white/54 px-5 py-3 text-xs tracking-[0.18em] text-[#8F7957] shadow-[0_10px_24px_rgba(163,141,107,0.07)] transition-all duration-300 hover:border-[#A38D6B]/42 hover:bg-white/78 active:scale-95"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  <Camera className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" strokeWidth={1.55} />
-                  <span>
-                    <span style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 500 }}>
-                      Real Feedback
-                    </span>
-                    <span className="mx-2 text-[#D1BE9B]">｜</span>
-                    顧客回饋
-                  </span>
-                </a>
-                <Link
-                  href={CUSTOM_BRACELET_CATEGORY_HREF}
-                  className="group inline-flex items-center gap-2 rounded-full border border-[#D1BE9B]/30 bg-white/42 px-5 py-3 text-xs tracking-[0.18em] text-[#31353A]/62 shadow-[0_10px_24px_rgba(163,141,107,0.05)] transition-all duration-300 hover:border-[#A38D6B]/42 hover:bg-white/72 hover:text-[#31353A] active:scale-95"
-                  style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                >
-                  <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" strokeWidth={1.55} />
-                  返回客製款列表
-                </Link>
-                <span
-                  className="text-[11px] tracking-[0.14em] text-[#31353A]/50"
-                  style={{ fontFamily: 'Noto Sans TC, sans-serif', fontWeight: 300 }}
-                >
-                  單條免運 · 設計圖 3 次免修 · 終生免費換線
-                </span>
-              </div>
             </div>
-
-            <div className="animate-fade-in-up">
-              <div className="grid grid-cols-3 gap-3">
-                <TiltImage
-                  src={HERO_IMAGES[0]}
-                  alt="客製化手鍊實拍主視覺"
-                  onClick={() => openLightbox(HERO_IMAGES[0])}
-                  className="group col-span-3 aspect-[16/11] overflow-hidden rounded-3xl border border-[#D1BE9B]/25 bg-[#F7F1E8] shadow-[0_16px_40px_rgba(209,190,155,0.18)] will-change-transform"
-                  imgClassName="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
-                />
-                {HERO_IMAGES.slice(1).map((src, idx) => (
-                  <button
-                    key={src}
-                    type="button"
-                    onClick={() => openLightbox(src)}
-                    className={`group col-span-1 aspect-square overflow-hidden rounded-2xl border border-[#D1BE9B]/25 bg-[#F7F1E8] shadow-sm ${
-                      idx === 0 ? 'animate-float-soft-delay-1' : 'animate-float-soft-delay-2'
-                    }`}
-                  >
-                    <img
-                      src={src}
-                      alt="客製化手鍊實拍"
-                      className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
-                    />
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => openLightbox(GALLERY_IMAGES[3])}
-                  className="animate-float-soft col-span-1 flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border border-[#D1BE9B]/30 bg-[#D1BE9B]/10 text-center transition-colors hover:bg-[#D1BE9B]/18"
-                >
-                  <span className="text-lg text-[#A38D6B]">＋</span>
-                  <span
-                    className="text-[11px] tracking-[0.1em] text-[#A38D6B]"
-                    style={{ fontFamily: 'Noto Serif TC, serif', fontWeight: 300 }}
-                  >
-                    看更多實拍
-                  </span>
-                </button>
-              </div>
-            </div>
-            </div>
-          </section>
+          </Reveal>
 
           {/* 客製 3 步驟 */}
           <Reveal className="mb-16 md:mb-20">
